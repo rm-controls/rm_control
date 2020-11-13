@@ -1,0 +1,36 @@
+//
+// Created by qiayuan on 7/7/20.
+//
+
+#ifndef SRC_RM_COMMON_INCLUDE_ROS_UTILITIES_H_
+#define SRC_RM_COMMON_INCLUDE_ROS_UTILITIES_H_
+#include <ros/ros.h>
+#include <XmlRpcException.h>
+
+template<typename T>
+T getParam(ros::NodeHandle &pnh,
+           const std::string &param_name, const T &default_val) {
+  T param_val;
+  pnh.param<T>(param_name, param_val, default_val);
+  return param_val;
+}
+
+inline double xmlRpcGetDouble(
+    XmlRpc::XmlRpcValue &value,
+    const std::string &field,
+    double default_value) {
+  if (value.hasMember(field)) {
+    ROS_ASSERT((value[field].getType() == XmlRpc::XmlRpcValue::TypeDouble) ||
+        (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt));
+    if (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt) {
+      int tmp = value[field];
+      return (double) tmp;
+    } else {
+      return value[field];
+    }
+  } else {
+    return default_value;
+  }
+}
+
+#endif //SRC_RM_COMMON_INCLUDE_ROS_UTILITIES_H_
