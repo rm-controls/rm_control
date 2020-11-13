@@ -1,0 +1,3 @@
+bool detector_switch
+---
+bool is_success
