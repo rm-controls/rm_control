@@ -23,7 +23,7 @@ add_service_files(
 )
 
 add_message_files(
-    DIRECTORY msg/referee_system
+    DIRECTORY msg/referee
     FILES
     BonusStatus.msg
     GameResult.msg
@@ -40,6 +40,14 @@ add_message_files(
     RobotStatus.msg
     RobotBulletRemain.msg
     SupplierStatus.msg
+)
+
+add_message_files(
+    DIRECTORY msg/detection
+    FILES
+    TargetDetection.msg
+    TargetDetectionArray.msg
+    TrackData.msg
 )
 
 # Generate added messages and services with any dependencies listed here
