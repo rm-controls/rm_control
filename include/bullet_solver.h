@@ -8,10 +8,10 @@
 template<typename T>
 class BulletSolver {
  public:
-  BulletSolver(T resistance_coff, T g, T delay, T dt, T timeout) :
-      resistance_coff_(resistance_coff),
-      dt_(dt), g_(g), delay_(delay),
-      timeout_(timeout) {};
+    BulletSolver(T resistance_coff, T g, T delay, T dt, T timeout) :
+        resistance_coff_(resistance_coff),
+        dt_(dt), g_(g), delay_(delay),
+        timeout_(timeout) {};
   virtual ~BulletSolver() = default;
   virtual void setTarget(const T *pos, const T *vel) = 0;
   virtual void setBulletSpeed(T speed) { bullet_speed_ = speed; };
