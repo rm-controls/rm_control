@@ -33,4 +33,11 @@ T square(T val) {
   return val * val;
 }
 
+template<typename T>
+T alpha(T cutoff, double freq){
+    T tau = 1.0 / (2 * M_PI * cutoff);
+    T te = 1.0 / freq;
+    return 1.0 / (1.0 + tau / te);
+}
+
 #endif //SRC_RM_COMMON_INCLUDE_MATH_UTILITIES_H_
