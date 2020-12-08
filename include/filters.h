@@ -145,7 +145,7 @@ class RampFilter : public Filter<T> {
 template<typename T>
 class OneEuroFilter : public Filter<T>{
 public:
-    OneEuroFilter(double _freq, int duration, T _mincutoff, T _beta, T _dcutoff);
+    OneEuroFilter(double _freq, T _mincutoff, T _beta, T _dcutoff);
     ~OneEuroFilter();
     void input(T input_value);
     T output();
@@ -154,9 +154,7 @@ public:
 private:
     double freq;
     bool firsttime;
-    int duration;
     T mincutoff, beta, dcutoff;
-    T last_time_;
     T x_prev, dhatxprev, hatxprev;
     T filtered_val;
 };
