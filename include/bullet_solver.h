@@ -5,18 +5,22 @@
 #ifndef SRC_RM_COMMON_INCLUDE_BULLET_SOLVER_H_
 #define SRC_RM_COMMON_INCLUDE_BULLET_SOLVER_H_
 
+#include "cpp_types.h"
 template<typename T>
 class BulletSolver {
  public:
-    BulletSolver(T resistance_coff, T g, T delay, T dt, T timeout) :
-        resistance_coff_(resistance_coff),
-        dt_(dt), g_(g), delay_(delay),
-        timeout_(timeout) {};
+  BulletSolver(T resistance_coff, T g, T delay, T dt, T timeout) :
+      resistance_coff_(resistance_coff),
+      dt_(dt), g_(g), delay_(delay),
+      timeout_(timeout) {};
   virtual ~BulletSolver() = default;
-  virtual void setTarget(const T *pos, const T *vel) = 0;
+  virtual void setTarget(const DVec<T> &pos, const DVec<T> &vel) = 0;
   virtual void setBulletSpeed(T speed) { bullet_speed_ = speed; };
-  virtual void solve(const T *angle_init) = 0;
-  virtual void output(T *angle_solved) = 0;
+  virtual void solve(const DVec<T> &angle_init) = 0;
+  virtual void output(DVec<T> &angle_solved) = 0;
+  virtual std::vector<double> getPointData() {
+
+  }
  protected:
   T bullet_speed_{};
   T resistance_coff_, g_, dt_, timeout_, delay_;
@@ -26,14 +30,14 @@ template<typename T>
 class Bullet2DSolver : public BulletSolver<T> {
  public:
   using BulletSolver<T>::BulletSolver;
-  void setTarget(const T *pos, const T *vel) override {
+  void setTarget(const DVec<T> &pos, const DVec<T> &vel) override {
     target_x_ = pos[0] + vel[0] * this->delay_;
     target_z_ = pos[1] + vel[1] * this->delay_;
     target_dx_ = vel[0];
     target_dz_ = vel[1];
   };
-  void solve(const T *angle_init) override;
-  void output(T *angle_solved) override {
+  void solve(const DVec<T> &angle_init) override;
+  void output(DVec<T> &angle_solved) override {
     angle_solved[0] = pitch_solved_;
   }
  protected:
@@ -65,7 +69,7 @@ template<typename T>
 class Bullet3DSolver : public BulletSolver<T> {
  public:
   using BulletSolver<T>::BulletSolver;
-  void setTarget(const T *pos, const T *vel) override {
+  void setTarget(const DVec<T> &pos, const DVec<T> &vel) override {
     target_x_ = pos[0] + vel[0] * this->delay_;
     target_y_ = pos[1] + vel[1] * this->delay_;
     target_z_ = pos[2] + vel[2] * this->delay_;
@@ -73,10 +77,10 @@ class Bullet3DSolver : public BulletSolver<T> {
     target_dy_ = vel[1];
     target_dz_ = vel[2];
   };
-  void solve(const T *angle_init) override;
-  void output(T *angle) override {
-    angle[0] = yaw_solved_;
-    angle[1] = pitch_solved_;
+  void solve(const DVec<T> &angle_init) override;
+  void output(DVec<T> &angle_solved) override {
+    angle_solved[0] = yaw_solved_;
+    angle_solved[1] = pitch_solved_;
   }
  protected:
   virtual double computeError(T yaw, T pitch, T *error_polar) = 0;

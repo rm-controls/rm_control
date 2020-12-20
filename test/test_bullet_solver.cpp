@@ -12,10 +12,11 @@ int main(int argc, char **argv) {
   Approx3DSolver<double> approx3d(0.1, 9.8, 0.01, 0.0001, 3.);
 
   double bullet_speed = 18.;
-  double angle_init[2]{}, angle_solved[2]{};
+  Vec2<double> angle_init{};
+  DVec<double> angle_solved{};
 
-  double pos_2d[2] = {10, 1};
-  double vel_2d[2] = {1, 1};
+  Vec2<double> pos_2d{};
+  Vec2<double> vel_2d{};
 
   iter2d.setTarget(pos_2d, vel_2d);
   iter2d.setBulletSpeed(bullet_speed);
@@ -28,8 +29,8 @@ int main(int argc, char **argv) {
   approx2d.output(angle_solved);
   std::cout << angle_solved[0] << std::endl;
 
-  double pos_3d[3] = {7, 0, 1};
-  double vel_3d[3] = {0, 1, 0};
+  Vec3<double> pos_3d{};
+  Vec3<double> vel_3d{};
 
   iter3d.setTarget(pos_3d, vel_3d);
   iter3d.setBulletSpeed(bullet_speed);

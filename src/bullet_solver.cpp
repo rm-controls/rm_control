@@ -13,7 +13,7 @@ class BulletSolver<float>;
 
 ///////////////////////////Bullet2DSolver/////////////////////////////
 template<typename T>
-void Bullet2DSolver<T>::solve(const T *angle_init) {
+void Bullet2DSolver<T>::solve(const DVec<T> &angle_init) {
   T pitch_point = std::atan2(target_z_, target_x_);
   T error_point = computeError(pitch_point);
   T error_init = computeError(angle_init[0]);
@@ -101,7 +101,7 @@ class Approx2DSolver<float>;
 
 ///////////////////////////Bullet3DSolver/////////////////////////////
 template<typename T>
-void Bullet3DSolver<T>::solve(const T *angle_init) {
+void Bullet3DSolver<T>::solve(const DVec<T> &angle_init) {
   T error_theta_z_init[2]{}, error_theta_z_point[2]{};
 
   T error_init = computeError(angle_init[0], angle_init[1], error_theta_z_init);
