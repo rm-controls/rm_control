@@ -17,10 +17,8 @@ class BulletSolver {
   virtual void setTarget(const DVec<T> &pos, const DVec<T> &vel) = 0;
   virtual void setBulletSpeed(T speed) { bullet_speed_ = speed; };
   virtual void solve(const DVec<T> &angle_init) = 0;
-  virtual void output(DVec<T> &angle_solved) = 0;
-  virtual std::vector<double> getPointData() {
-
-  }
+  virtual void output(Vec2<T> &angle_solved) = 0;
+  virtual std::vector<DVec<T>> getPointData() = 0;
  protected:
   T bullet_speed_{};
   T resistance_coff_, g_, dt_, timeout_, delay_;
@@ -37,7 +35,7 @@ class Bullet2DSolver : public BulletSolver<T> {
     target_dz_ = vel[1];
   };
   void solve(const DVec<T> &angle_init) override;
-  void output(DVec<T> &angle_solved) override {
+  void output(Vec2<T> &angle_solved) override {
     angle_solved[0] = pitch_solved_;
   }
  protected:
@@ -78,10 +76,11 @@ class Bullet3DSolver : public BulletSolver<T> {
     target_dz_ = vel[2];
   };
   void solve(const DVec<T> &angle_init) override;
-  void output(DVec<T> &angle_solved) override {
+  void output(Vec2<T> &angle_solved) override {
     angle_solved[0] = yaw_solved_;
     angle_solved[1] = pitch_solved_;
   }
+  std::vector<DVec<T>> getPointData() override;
  protected:
   virtual double computeError(T yaw, T pitch, T *error_polar) = 0;
   T target_x_{}, target_y_{}, target_z_{},
