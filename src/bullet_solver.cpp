@@ -145,7 +145,7 @@ void Bullet3DSolver<T>::solve(const DVec<T> &angle_init) {
 }
 
 template<typename T>
-std::vector<DVec<T>> Bullet3DSolver<T>::getPointData() {
+std::vector<Vec3<T>> Bullet3DSolver<T>::getPointData3D() {
   T target_x = this->target_x_;
   T target_y = this->target_y_;
   T target_rho =
@@ -154,11 +154,10 @@ std::vector<DVec<T>> Bullet3DSolver<T>::getPointData() {
       std::cos(yaw_solved_) * this->target_dx_ + std::sin(yaw_solved_) * this->target_dy_;
   T bullet_v_rho = this->bullet_speed_ * std::cos(pitch_solved_) - target_v_rho;
   T bullet_v_z = this->bullet_speed_ * std::sin(pitch_solved_) - this->target_dz_;
-  std::vector<DVec<T>> model_data;
   Vec3<T> point_data{};
-  model_data.push_back(point_data);
-  for (int i = 20; i > 0; i--) {
-    T rt_bullet_rho = target_rho / i;
+  std::vector<Vec3<T>> model_data{};
+  for (int i = 0; i < 20; i++) {
+    T rt_bullet_rho = target_rho * i / 19;
     this->fly_time_ = (-std::log(1 - rt_bullet_rho * this->resistance_coff_
         / bullet_v_rho)) / this->resistance_coff_;
     T rt_bullet_z =
@@ -168,7 +167,7 @@ std::vector<DVec<T>> Bullet3DSolver<T>::getPointData() {
             / this->resistance_coff_;
     point_data[0] = rt_bullet_rho * std::cos(yaw_solved_);
     point_data[1] = rt_bullet_rho * std::sin(yaw_solved_);
-    point_data[0] = rt_bullet_z;
+    point_data[2] = rt_bullet_z;
     model_data.push_back(point_data);
   }
   return model_data;

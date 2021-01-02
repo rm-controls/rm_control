@@ -18,7 +18,7 @@ class BulletSolver {
   virtual void setBulletSpeed(T speed) { bullet_speed_ = speed; };
   virtual void solve(const DVec<T> &angle_init) = 0;
   virtual void output(Vec2<T> &angle_solved) = 0;
-  virtual std::vector<DVec<T>> getPointData() = 0;
+  virtual std::vector<Vec3<T>> getPointData3D() = 0;
  protected:
   T bullet_speed_{};
   T resistance_coff_, g_, dt_, timeout_, delay_;
@@ -80,7 +80,7 @@ class Bullet3DSolver : public BulletSolver<T> {
     angle_solved[0] = yaw_solved_;
     angle_solved[1] = pitch_solved_;
   }
-  std::vector<DVec<T>> getPointData() override;
+  std::vector<Vec3<T>> getPointData3D() override;
  protected:
   virtual double computeError(T yaw, T pitch, T *error_polar) = 0;
   T target_x_{}, target_y_{}, target_z_{},
@@ -94,6 +94,7 @@ class Iter3DSolver : public Bullet3DSolver<T> {
  public:
   using Bullet3DSolver<T>::Bullet3DSolver;
   using Bullet3DSolver<T>::solve;
+  using Bullet3DSolver<T>::getPointData3D;
  private:
   double computeError(T yaw, T pitch, T *error_polar) override;
 };
@@ -103,6 +104,7 @@ class Approx3DSolver : public Bullet3DSolver<T> {
  public:
   using Bullet3DSolver<T>::Bullet3DSolver;
   using Bullet3DSolver<T>::solve;
+  using Bullet3DSolver<T>::getPointData3D;
  private:
   double computeError(T yaw, T pitch, T *error_polar) override;
 };
