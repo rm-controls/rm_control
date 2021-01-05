@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
     rm_msgs
     roscpp
     geometry_msgs
+    realtime_tools
     )
 
 catkin_package(
