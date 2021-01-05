@@ -10,9 +10,8 @@
 
 class LowPassFilter {
  public:
-  LowPassFilter() = default;
-  LowPassFilter(ros::NodeHandle &nh, double cutoff_frequency);
-  void input(double in, const ros::Duration &period);
+  explicit LowPassFilter(ros::NodeHandle &nh);
+  void input(double in);
   double output();
  private:
   double in_[3]{};
@@ -27,6 +26,9 @@ class LowPassFilter {
   // Used to check for tan(0)==>NaN in the filter calculation
   double tan_filt_ = 1.;
   bool is_debug_{};
+
+  ros::Time prev_time_;
+  ros::Duration delta_t_;
 
   std::shared_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray>> realtime_pub_{};
 };
