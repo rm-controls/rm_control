@@ -50,8 +50,8 @@ void LowPassFilter::input(double in) {
 
   out_[2] = out_[1];
   out_[1] = out_[0];
-  out_[0] = (1 / (1 + c_ * c_ + 1.414 * c_)) * (in_[2] + 2 * in_[1] + in_[0] -
-      (c_ * c_ - 1.414 * c_ + 1) * out_[2] - (-2 * c_ * c_ + 2) * out_[1]);
+  out_[0] = (1 / (1 + c_ * c_ + M_SQRT2 * c_)) * (in_[2] + 2 * in_[1] + in_[0] -
+      (c_ * c_ - M_SQRT2 * c_ + 1) * out_[2] - (-2 * c_ * c_ + 2) * out_[1]);
 
   if (is_debug_) {
     if (realtime_pub_->trylock()) {
