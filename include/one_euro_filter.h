@@ -5,13 +5,7 @@
 #ifndef SRC_RM_INCLUDE_ONEEURO_FILTER_H
 #define SRC_RM_INCLUDE_ONEEURO_FILTER_H
 
-#include <iostream>
 #include <cmath>
-#include <vector>
-#include <algorithm>
-#include <iterator>
-#include <cstdlib>
-#include "cpp_types.h"
 
 template<typename T>
 class OneEuroFilter{
@@ -22,6 +16,7 @@ public:
         x_prev = 0;
         hatxprev = 0;
         dhatxprev = 0;
+        filtered_val = 0;
     };
 
     ~OneEuroFilter() = default;

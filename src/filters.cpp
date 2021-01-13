@@ -397,6 +397,7 @@ OneEuroFilter<T>::OneEuroFilter(double _freq, T _mincutoff, T _beta, T _dcutoff)
     x_prev = 0;
     hatxprev = 0;
     dhatxprev = 0;
+    filtered_val = 0;
 };
 
 template<typename T>
@@ -405,10 +406,10 @@ OneEuroFilter<T>::~OneEuroFilter() = default;
 template<typename T>
 void OneEuroFilter<T>::input(T input_value) {
     T dx = 0;
-    if (!firsttime)
-        dx = (input_value - x_prev) * freq;
     if (firsttime)
         dhatxprev = dx;
+    else
+        dx = (input_value - x_prev) * freq;
     T edx = alpha(dcutoff, freq) * dx + (1-alpha(dcutoff, freq)) * dhatxprev;
     dhatxprev = edx;
     T cutoff = mincutoff + beta * std::abs(static_cast<double>(edx));
