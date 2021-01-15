@@ -9,9 +9,9 @@ This is a ROS control warped interface for RoboMaster motor and some robot hardw
 
 The source code is released under a [BSD 3-Clause license](LICENSE).
 
-**Author: Péter Fankhauser<br />
-Affiliation: [ANYbotics](https://www.anybotics.com/)<br />
-Maintainer: Péter Fankhauser, pfankhauser@anybotics.com**
+**Author: QiayuanLiao<br />
+Affiliation: [Dynamicx]()<br />
+Maintainer: QiayuanLiao, liaoqiayuan@gmail.com**
 
 The rm_base package has been tested under [ROS] Melodic and Noetic on respectively 18.04 and 20.04. This is research
 code, expect that it changes often and any fitness for a particular purpose is disclaimed.
@@ -58,10 +58,19 @@ Or better, use `rosdep`:
 
 #### Dependencies
 
-- [Robot Operating System (ROS)](http://wiki.ros.org) (middleware for robotics),
-- [Eigen] (linear algebra library)
-
-  sudo rosdep install --from-paths src
+- [Robot Operating System (ROS)](http://wiki.ros.org) (middleware for robotics)
+- [rm_msg](https://github.com/gdut-dynamic-x/rm_msgs)
+- [rm_common](https://github.com/gdut-dynamic-x/rm_common)
+- hardware_interface
+- urdf
+- transmission_interface
+- joint_limits_interface
+- controller_manager
+- socketcan_interface
+- angles
+- realtime_tools
+- tf2_ros
+- kdl_parser
 
 #### Building
 
@@ -152,7 +161,7 @@ Config file folder/set 2
 
 ## Nodes
 
-### ros_package_template
+### rm_base
 
 Reads temperature measurements and computed the average.
 
@@ -184,9 +193,23 @@ Reads temperature measurements and computed the average.
 
   The size of the cache.
 
-### NODE_B_NAME
+### dbus_node
 
 ...
+
+## Plugins
+
+### robot_state_controller
+
+#### Subscribed Topics
+
+...
+
+#### Published Topics
+
+...
+
+### RevoluteTransmission
 
 ## Bugs & Feature Requests
 
