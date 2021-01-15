@@ -1,0 +1,6 @@
+actuator_coefficient:
+  rm_3508: # RoboMaster 3508 motor
+    act2pos: 3.99456179e-5  # 2PI/8192*(187/3591)
+    act2vel: 0.0054532426   # 2PI/60*(187/3591)
+    act2effort: 0.00036621  # 20/16384*0.3
+    effort2act: 2730.6666   # 1/act2effort

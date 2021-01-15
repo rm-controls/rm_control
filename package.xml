@@ -1,22 +1,37 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ros_package_template</name>
+  <name>rm_base</name>
   <version>0.1.0</version>
-  <description>A template for ROS packages.</description>
-  <maintainer email="pfankhauser@anybotics.com">Peter Fankhauser</maintainer>
+  <description>ROS control warped interface for RoboMaster motor and some robot hardware</description>
+  <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
+
   <license>BSD</license>
-  <!--  <url type="website">https://github.com/ethz-asl/ros_best_practices</url>-->
-  <!--  <url type="bugtracker">https://github.com/ethz-asl/ros_best_practices/issues</url>-->
-  <author email="pfankhauser@anybotics.com">Peter Fankhauser</author>
+  <author email="liaoqiayuan@gmail.com">Qiayuan Liao</author>
 
   <!-- buildtool_depend: dependencies of the build process -->
   <buildtool_depend>catkin</buildtool_depend>
   <!-- build_depend: dependencies only used in source files -->
-  <build_depend>boost</build_depend>
   <!-- depend: build, export, and execution dependency -->
-  <depend>eigen</depend>
   <depend>roscpp</depend>
-  <depend>sensor_msgs</depend>
+  <depend>roslint</depend>
 
-  <build_depend>roslint</build_depend>
+  <depend>rm_common</depend>
+  <depend>controller_interface</depend>
+  <depend>controller_manager</depend>
+  <depend>hardware_interface</depend>
+  <depend>urdf</depend>
+  <depend>transmission_interface</depend>
+  <depend>joint_limits_interface</depend>
+  <depend>socketcan_interface</depend>
+  <depend>angles</depend>
+  <depend>realtime_tools</depend>
+
+  <depend>kdl_parser</depend>
+  <depend>tf2_ros</depend>
+  <exec_depend>pluginlib</exec_depend>
+
+  <export>
+    <transmission_interface plugin="${prefix}/rm_base_loader_plugins.xml"/>
+    <controller_interface plugin="${prefix}/robot_state_plugin.xml"/>
+  </export>
 </package>

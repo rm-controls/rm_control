@@ -1,0 +1,31 @@
+<robot name="test_robot">
+  <link name="world"/>
+  <link name="link1"/>
+  <link name="link2"/>
+
+  <joint name="fixed" type="fixed">
+    <parent link="world"/>
+    <child link="link1"/>
+  </joint>
+  <joint name="joint1" type="revolute">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <limit lower="0.0"
+           upper="6.2"
+           effort="5.0"
+           velocity="100.0"/>
+    <origin xyz="0 0 0.25"/>
+
+  </joint>
+
+  <transmission name="revolute_trans">
+    <type>transmission_interface/RevoluteTransmission</type>
+    <joint name="joint1">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="act_test_can0">
+      <mechanicalReduction>1</mechanicalReduction>
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+</robot>

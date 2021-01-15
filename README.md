@@ -2,12 +2,8 @@
 
 ## Overview
 
-This is a template: replace, remove, and add where required. Describe here what this package does and what it's meant
-for in a few sentences.
-
-**Keywords:** example, package, template
-
-Or, add some keywords to the Bitbucket or GitHub repository.
+This is a ROS control warped interface for RoboMaster motor and some robot hardware
+**Keywords:** ROS, RoboMaster
 
 ### License
 
@@ -17,8 +13,8 @@ The source code is released under a [BSD 3-Clause license](LICENSE).
 Affiliation: [ANYbotics](https://www.anybotics.com/)<br />
 Maintainer: Péter Fankhauser, pfankhauser@anybotics.com**
 
-The PACKAGE NAME package has been tested under [ROS] Indigo, Melodic and Noetic on respectively Ubuntu 14.04, 18.04 and
-20.04. This is research code, expect that it changes often and any fitness for a particular purpose is disclaimed.
+The rm_base package has been tested under [ROS] Melodic and Noetic on respectively 18.04 and 20.04. This is research
+code, expect that it changes often and any fitness for a particular purpose is disclaimed.
 
 [![Build Status](http://rsl-ci.ethz.ch/buildStatus/icon?job=ros_best_practices)](http://rsl-ci.ethz.ch/job/ros_best_practices/)
 
@@ -78,28 +74,37 @@ using
 	rosdep install --from-paths . --ignore-src
 	catkin_make
 
-### Running in Docker
+[comment]: <> (### Running in Docker)
 
-Docker is a great way to run an application with all dependencies and libraries bundles together. Make sure
-to [install Docker](https://docs.docker.com/get-docker/) first.
+[comment]: <> (Docker is a great way to run an application with all dependencies and libraries bundles together. Make sure)
 
-First, spin up a simple container:
+[comment]: <> (to [install Docker]&#40;https://docs.docker.com/get-docker/&#41; first.)
 
-	docker run -ti --rm --name ros-container ros:noetic bash
+[comment]: <> (First, spin up a simple container:)
 
-This downloads the `ros:noetic` image from the Docker Hub, indicates that it requires an interactive terminal (`-t, -i`)
-, gives it a name (`--name`), removes it after you exit the container (`--rm`) and runs a command (`bash`).
+[comment]: <> (	docker run -ti --rm --name ros-container ros:noetic bash)
 
-Now, create a catkin workspace, clone the package, build it, done!
+[comment]: <> (This downloads the `ros:noetic` image from the Docker Hub, indicates that it requires an interactive terminal &#40;`-t, -i`&#41;)
 
-	apt-get update && apt-get install -y git
-	mkdir -p /ws/src && cd /ws/src
-	git clone https://github.com/leggedrobotics/ros_best_practices.git
-	cd ..
-	rosdep install --from-path src
-	catkin_make
-	source devel/setup.bash
-	roslaunch ros_package_template ros_package_template.launch
+[comment]: <> (, gives it a name &#40;`--name`&#41;, removes it after you exit the container &#40;`--rm`&#41; and runs a command &#40;`bash`&#41;.)
+
+[comment]: <> (Now, create a catkin workspace, clone the package, build it, done!)
+
+[comment]: <> (	apt-get update && apt-get install -y git)
+
+[comment]: <> (	mkdir -p /ws/src && cd /ws/src)
+
+[comment]: <> (	git clone https://github.com/leggedrobotics/ros_best_practices.git)
+
+[comment]: <> (	cd ..)
+
+[comment]: <> (	rosdep install --from-path src)
+
+[comment]: <> (	catkin_make)
+
+[comment]: <> (	source devel/setup.bash)
+
+[comment]: <> (	roslaunch ros_package_template ros_package_template.launch)
 
 ### Unit Tests
 

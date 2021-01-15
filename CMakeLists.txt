@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ros_package_template)
+project(rm_base)
 
 ## Use C++14
 set(CMAKE_CXX_STANDARD 14)
@@ -13,13 +13,23 @@ add_definitions(-Wall -Werror)
 find_package(catkin REQUIRED
     COMPONENTS
     roscpp
-    sensor_msgs
     roslint
+
+    rm_common
+    hardware_interface
+    urdf
+    transmission_interface
+    joint_limits_interface
+    controller_manager
+    socketcan_interface
+    angles
+    realtime_tools
+    tf2_ros
+    kdl_parser
     )
 
 ## Find system libraries
-find_package(Eigen3 REQUIRED)
-find_package(Boost REQUIRED)
+#find_package(Eigen3 REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -33,20 +43,23 @@ find_package(Boost REQUIRED)
 catkin_package(
     INCLUDE_DIRS
     include
-    ## This is only necessary because Eigen3 sets a non-standard EIGEN3_INCLUDE_DIR variable
-    ${EIGEN3_INCLUDE_DIR}
     LIBRARIES
-    ${PROJECT_NAME}_core
+    ${PROJECT_NAME}
     CATKIN_DEPENDS
     roscpp
-    sensor_msgs
+    roslint
+    rm_common
+    hardware_interface
+    urdf
+    transmission_interface
+    joint_limits_interface
+    controller_manager
+    socketcan_interface
+    angles
+    realtime_tools
+    tf2_ros
+    kdl_parser
     DEPENDS
-    ## find_package(Eigen3) provides a non standard EIGEN3_INCLUDE_DIR instead of Eigen3_INCLUDE_DIRS.
-    ## Therefore, the DEPEND does not work as expected and we need to add the directory to the INCLUDE_DIRS
-    # Eigen3
-
-    ## Boost is not part of the DEPENDS since it is only used in source files,
-    ## Dependees do not depend on Boost when they depend on this package.
 )
 
 ###########
@@ -54,45 +67,39 @@ catkin_package(
 ###########
 
 ## Specify additional locations of header files
-## Your package locations should be listed before other locations
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
-    # Set manually because Eigen sets a non standard INCLUDE DIR
-    ${EIGEN3_INCLUDE_DIR}
-    # Set because Boost is an internal dependency, not transitive.
-    ${Boost_INCLUDE_DIRS}
 )
-
-## Declare a cpp library
-add_library(${PROJECT_NAME}_core
-    src/Algorithm.cpp
+add_library(${PROJECT_NAME}_loader_plugins
+    src/base/transmission/revolute_transmission_loader.cpp
     )
-target_compile_features(${PROJECT_NAME}_core INTERFACE cxx_std_11)
-
+add_library(robot_state_controller
+    src/base/robot_state_controller/robot_state_controller.cpp
+    src/base/robot_state_controller/tf_rt_broadcaster.cpp
+    )
 ## Declare cpp executables
 add_executable(${PROJECT_NAME}
-    src/${PROJECT_NAME}_node.cpp
-    src/RosPackageTemplate.cpp
+    src/base/${PROJECT_NAME}.cpp
+    src/base/hardware_interface/hardware_interface.cpp
+    src/base/hardware_interface/can_bus.cpp
+    src/base/control_loop.cpp
     )
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
-
-## Add dependencies to exported targets, like ROS msgs or srvs
-add_dependencies(${PROJECT_NAME}_core
-    ${catkin_EXPORTED_TARGETS}
-    )
-
-add_dependencies(${PROJECT_NAME}
-    ${catkin_EXPORTED_TARGETS}
-    )
+add_executable(dbus_node
+    src/dbus/dbus_node.cpp
+    src/dbus/dbus.cpp)
 
 ## Specify libraries to link executable targets against
-target_link_libraries(${PROJECT_NAME}_core
+target_link_libraries(${PROJECT_NAME}_loader_plugins
     ${catkin_LIBRARIES}
     )
-
+target_link_libraries(robot_state_controller
+    ${catkin_LIBRARIES}
+    )
 target_link_libraries(${PROJECT_NAME}
-    ${PROJECT_NAME}_core
+    ${catkin_LIBRARIES}
+    )
+target_link_libraries(dbus_node
     ${catkin_LIBRARIES}
     )
 
@@ -102,7 +109,7 @@ target_link_libraries(${PROJECT_NAME}
 
 # Mark executables and/or libraries for installation
 install(
-    TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_core
+    TARGETS ${PROJECT_NAME} ${PROJECT_NAME}
     ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -125,14 +132,14 @@ install(
 ## Testing ##
 #############
 
-if (${CATKIN_ENABLE_TESTING})
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-  ## Add gtest based cpp test target and link libraries
-  catkin_add_gtest(${PROJECT_NAME}-test
-      test/test_ros_package_template.cpp
-      test/AlgorithmTest.cpp)
-  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_core)
-endif ()
+#if (${CATKIN_ENABLE_TESTING})
+#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+#  ## Add gtest based cpp test target and link libraries
+#  catkin_add_gtest(${PROJECT_NAME}-test
+#      test/test_ros_package_template.cpp
+#      test/AlgorithmTest.cpp)
+#  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_core)
+#endif ()
 
 ##########################
 ## Static code analysis ##

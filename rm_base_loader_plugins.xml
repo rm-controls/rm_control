@@ -1,0 +1,11 @@
+<library path="lib/librm_base_loader_plugins">
+  <!-- Transmission types -->
+  <class name="transmission_interface/RevoluteTransmission"
+         type="transmission_interface::RevoluteTransmissionLoader"
+         base_class_type="transmission_interface::TransmissionLoader">
+    <description>
+      Load from a URDF description the configuration of a revolute transmission.
+    </description>
+  </class>
+
+</library>

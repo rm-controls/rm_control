@@ -1,0 +1,12 @@
+<library path="lib/librobot_state_controller">
+  <!-- controller_interface types -->
+  <class name="robot_state_controller/RobotStateController"
+         type="robot_state_controller::RobotStateController"
+         base_class_type="controller_interface::ControllerBase">
+    <description>
+      This controller publishes the readings of all available tf by listen the joint_data
+      The controller expects a JointStateInterface type of hardware interface.
+    </description>
+  </class>
+
+</library>
