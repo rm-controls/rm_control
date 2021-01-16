@@ -2,8 +2,8 @@
 // Created by qiayuan on 12/28/20.
 //
 
-#ifndef RM_BASE_INCLUDE_BASE_CAN_BUS_H_
-#define RM_BASE_INCLUDE_BASE_CAN_BUS_H_
+#ifndef RM_BASE_INCLUDE_RM_BASE_CAN_BUS_H_
+#define RM_BASE_INCLUDE_RM_BASE_CAN_BUS_H_
 
 #include <string>
 #include <unordered_map>
@@ -48,4 +48,4 @@ class CanBus {
 };
 }
 
-#endif  //RM_BASE_INCLUDE_BASE_CAN_BUS_H_
+#endif  //RM_BASE_INCLUDE_RM_BASE_CAN_BUS_H_

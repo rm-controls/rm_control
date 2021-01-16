@@ -2,10 +2,10 @@
 // Created by qiayuan on 12/30/20.
 //
 
-#ifndef RM_BASE_INCLUDE_BASE_CONTROL_LOOP_H_
-#define RM_BASE_INCLUDE_BASE_CONTROL_LOOP_H_
+#ifndef RM_BASE_INCLUDE_RM_BASE_CONTROL_LOOP_H_
+#define RM_BASE_INCLUDE_RM_BASE_CONTROL_LOOP_H_
 
-#include "base/hardware_interface/hardware_interface.h"
+#include "rm_base/hardware_interface/hardware_interface.h"
 
 // Timer
 #include <chrono>
@@ -62,4 +62,4 @@ class RmBaseLoop {
 };
 }// namespace rm_base
 
-#endif //RM_BASE_INCLUDE_BASE_CONTROL_LOOP_H_
+#endif //RM_BASE_INCLUDE_RM_BASE_CONTROL_LOOP_H_

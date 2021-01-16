@@ -2,8 +2,8 @@
 // Created by qiayuan on 12/21/20.
 //
 
-#ifndef RM_BASE_INCLUDE_BASE_HARDWARE_INTERFACE_H_
-#define RM_BASE_INCLUDE_BASE_HARDWARE_INTERFACE_H_
+#ifndef RM_BASE_INCLUDE_RM_BASE_HARDWARE_INTERFACE_H_
+#define RM_BASE_INCLUDE_RM_BASE_HARDWARE_INTERFACE_H_
 
 #include <vector>
 #include <string>
@@ -23,7 +23,7 @@
 #include <joint_limits_interface/joint_limits_interface.h>
 #include <hardware_interface/imu_sensor_interface.h>
 
-#include "base/hardware_interface/robot_state_interface.h"
+#include "rm_base/hardware_interface/robot_state_interface.h"
 #include "can_bus.h"
 
 namespace rm_base {
@@ -73,4 +73,4 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
 };
 
 }
-#endif //RM_BASE_INCLUDE_BASE_HARDWARE_INTERFACE_H_
+#endif //RM_BASE_INCLUDE_RM_BASE_HARDWARE_INTERFACE_H_

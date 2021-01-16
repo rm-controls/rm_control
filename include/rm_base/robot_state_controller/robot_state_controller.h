@@ -2,8 +2,8 @@
 // Created by qiayuan on 1/3/21.
 //
 
-#ifndef RM_BASE_INCLUDE_BASE_ROBOT_STATES_CONTROLLER_ROBOT_STATE_CONTROLLER_H_
-#define RM_BASE_INCLUDE_BASE_ROBOT_STATES_CONTROLLER_ROBOT_STATE_CONTROLLER_H_
+#ifndef RM_BASE_INCLUDE_RM_BASE_ROBOT_STATES_CONTROLLER_ROBOT_STATE_CONTROLLER_H_
+#define RM_BASE_INCLUDE_RM_BASE_ROBOT_STATES_CONTROLLER_ROBOT_STATE_CONTROLLER_H_
 
 #include <controller_interface/multi_interface_controller.h>
 #include <hardware_interface/joint_state_interface.h>
@@ -11,8 +11,8 @@
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/buffer.h>
-#include "base/robot_state_controller/tf_rt_broadcaster.h"
-#include "base/hardware_interface/robot_state_interface.h"
+#include "rm_base/robot_state_controller/tf_rt_broadcaster.h"
+#include "rm_base/hardware_interface/robot_state_interface.h"
 
 namespace robot_state_controller {
 class SegmentPair {
@@ -54,4 +54,4 @@ class RobotStateController : public controller_interface::MultiInterfaceControll
 
 }
 
-#endif //RM_BASE_INCLUDE_BASE_ROBOT_STATES_CONTROLLER_ROBOT_STATE_CONTROLLER_H_
+#endif //RM_BASE_INCLUDE_RM_BASE_ROBOT_STATES_CONTROLLER_ROBOT_STATE_CONTROLLER_H_

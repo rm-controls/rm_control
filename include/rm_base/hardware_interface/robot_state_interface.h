@@ -2,8 +2,8 @@
 // Created by qiayuan on 1/3/21.
 //
 
-#ifndef RM_BASE_INCLUDE_BASE_HARDWARE_INTERFACE_ROBOT_STATE_INTERFACE_H_
-#define RM_BASE_INCLUDE_BASE_HARDWARE_INTERFACE_ROBOT_STATE_INTERFACE_H_
+#ifndef RM_BASE_INCLUDE_RM_BASE_HARDWARE_INTERFACE_ROBOT_STATE_INTERFACE_H_
+#define RM_BASE_INCLUDE_RM_BASE_HARDWARE_INTERFACE_ROBOT_STATE_INTERFACE_H_
 
 #pragma once
 #include <hardware_interface/internal/hardware_resource_manager.h>
@@ -43,4 +43,4 @@ class RobotStateHandle {
 
 class RobotStateInterface : public HardwareResourceManager<RobotStateHandle, ClaimResources> {};
 }
-#endif //SRC_RM_SOFTWARE_RM_BASE_INCLUDE_BASE_HARDWARE_INTERFACE_ROBOT_STATES_INTERFACE_H_
+#endif //SRC_RM_SOFTWARE_RM_BASE_INCLUDE_RM_BASE_HARDWARE_INTERFACE_ROBOT_STATES_INTERFACE_H_

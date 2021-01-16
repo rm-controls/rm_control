@@ -6,7 +6,7 @@
 #include <kdl_parser/kdl_parser.hpp>
 #include <tf2_kdl/tf2_kdl.h>
 
-#include "base/robot_state_controller/robot_state_controller.h"
+#include "rm_base/robot_state_controller/robot_state_controller.h"
 
 namespace robot_state_controller {
 

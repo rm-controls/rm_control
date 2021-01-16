@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 
-#include "base/hardware_interface/can_bus.h"
+#include "rm_base/hardware_interface/can_bus.h"
 #include <ros/ros.h>
 #include <socketcan_interface/threading.h>
 

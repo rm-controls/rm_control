@@ -72,18 +72,18 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 add_library(${PROJECT_NAME}_loader_plugins
-    src/base/transmission/revolute_transmission_loader.cpp
+    src/rm_base/transmission/revolute_transmission_loader.cpp
     )
 add_library(robot_state_controller
-    src/base/robot_state_controller/robot_state_controller.cpp
-    src/base/robot_state_controller/tf_rt_broadcaster.cpp
+    src/rm_base/robot_state_controller/robot_state_controller.cpp
+    src/rm_base/robot_state_controller/tf_rt_broadcaster.cpp
     )
 ## Declare cpp executables
 add_executable(${PROJECT_NAME}
-    src/base/${PROJECT_NAME}.cpp
-    src/base/hardware_interface/hardware_interface.cpp
-    src/base/hardware_interface/can_bus.cpp
-    src/base/control_loop.cpp
+    src/rm_base/${PROJECT_NAME}.cpp
+    src/rm_base/hardware_interface/hardware_interface.cpp
+    src/rm_base/hardware_interface/can_bus.cpp
+    src/rm_base/control_loop.cpp
     )
 add_executable(dbus_node
     src/dbus/dbus_node.cpp

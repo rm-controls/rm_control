@@ -5,7 +5,7 @@
 // Pluginlib
 #include <pluginlib/class_list_macros.hpp>
 
-#include "base/transmission/revolute_transmission_loader.h"
+#include "rm_base/transmission/revolute_transmission_loader.h"
 
 namespace transmission_interface {
 

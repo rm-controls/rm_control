@@ -2,8 +2,8 @@
 // Created by qiayuan on 1/3/21.
 //
 
-#ifndef RM_BASE_INCLUDE_BASE_ROBOT_STATE_CONTROLLER_TF_RT_BROADCASTER_H_
-#define RM_BASE_INCLUDE_BASE_ROBOT_STATE_CONTROLLER_TF_RT_BROADCASTER_H_
+#ifndef RM_BASE_INCLUDE_RM_BASE_ROBOT_STATE_CONTROLLER_TF_RT_BROADCASTER_H_
+#define RM_BASE_INCLUDE_RM_BASE_ROBOT_STATE_CONTROLLER_TF_RT_BROADCASTER_H_
 #include <ros/ros.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <realtime_tools/realtime_publisher.h>
@@ -29,4 +29,4 @@ class StaticTfRtBroadcaster : public TfRtBroadcaster {
 };
 
 }
-#endif //RM_BASE_INCLUDE_BASE_ROBOT_STATE_CONTROLLER_TF_RT_BROADCASTER_H_
+#endif //RM_BASE_INCLUDE_RM_BASE_ROBOT_STATE_CONTROLLER_TF_RT_BROADCASTER_H_

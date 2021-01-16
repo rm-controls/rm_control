@@ -8,7 +8,7 @@
 #include <joint_limits_interface/joint_limits_urdf.h>
 #include <joint_limits_interface/joint_limits_rosparam.h>
 
-#include "base/hardware_interface/hardware_interface.h"
+#include "rm_base/hardware_interface/hardware_interface.h"
 
 bool rm_base::RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
   // Parse actuator coefficient specified by user (stored on ROS parameter server)
