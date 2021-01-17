@@ -141,19 +141,27 @@ bool rm_base::RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_dat
         ROS_ERROR_STREAM("Actuator " << it->first << " has no associated ID.");
         continue;
       }
-      std::string bus = act_datas[it->first]["bus"],
-          type = act_datas[it->first]["type"];
+      std::string bus = act_datas[it->first]["bus"], type = act_datas[it->first]["type"];
       int id = static_cast<int>(act_datas[it->first]["id"]);
+
+      // check define of act_coeffs
+      if (type2act_coeffs_.find(type) == type2act_coeffs_.end()) {
+        ROS_ERROR_STREAM("Type " << type << " has no associated coefficient.");
+        return false;
+      }
 
       // for bus interface
       if (bus_id2act_data_.find(bus) == bus_id2act_data_.end())
         bus_id2act_data_.insert(std::make_pair(bus, std::unordered_map<int, ActData>()));
-      if (bus_id2act_data_[bus].find(id) == bus_id2act_data_[bus].end()) {
+
+      if (!(bus_id2act_data_[bus].find(id) == bus_id2act_data_[bus].end())) {
+        ROS_ERROR_STREAM("Repeat actuator bus on " << bus << " and ID " << id);
+        return false;
+      } else {
         ros::NodeHandle nh = ros::NodeHandle(robot_hw_nh, "actuators/" + it->first);
         bus_id2act_data_[bus].insert(
             std::make_pair(id, ActData{.type = type, .lp_filter=new LowPassFilter(nh)}));
-      } else
-        ROS_ERROR_STREAM("Repeat actuator bus on " << bus << " and ID " << id);
+      }
 
       // for ros_control interface
       hardware_interface::ActuatorStateHandle act_state(it->first,
@@ -166,9 +174,12 @@ bool rm_base::RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_dat
             hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].cmd_effort));
       }
         // TODO: add MIT Cheetah motor support
-      else
+      else {
         ROS_ERROR_STREAM("Actuator " << it->first <<
                                      "'s type neither RoboMaster(rm_xxx) nor Cheetah(cheetah_xxx)");
+        return false;
+      }
+
     }
     registerInterface(&act_state_interface_);
     registerInterface(&effort_act_interface_);
