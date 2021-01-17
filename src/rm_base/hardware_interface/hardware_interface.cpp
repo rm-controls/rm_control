@@ -232,9 +232,10 @@ bool rm_base::RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle &root_nh)
   std::vector<std::string> names = effort_joint_interface->getNames();
   joint_limits_interface::JointLimits joint_limits; // Position
   joint_limits_interface::SoftJointLimits soft_limits; // Soft Position
-  bool has_joint_limits{}, has_soft_limits{};
 
   for (const auto &name: names) {
+    bool has_joint_limits{}, has_soft_limits{};
+
     hardware_interface::JointHandle joint_handle = effort_joint_interface->getHandle(name);
     // Get limits from URDF
     urdf::JointConstSharedPtr urdf_joint = urdf_model_->getJoint(name);
