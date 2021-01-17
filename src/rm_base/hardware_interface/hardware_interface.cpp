@@ -108,6 +108,10 @@ bool rm_base::RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_c
         act_coeff.effort2act = xmlRpcGetDouble(act_coeffs[it->first], "effort2act", 0.0);
       else
         ROS_ERROR_STREAM("Actuator type " << it->first << " has no associated effort2act.");
+      if (it->second.hasMember("max_out"))
+        act_coeff.max_out = xmlRpcGetDouble(act_coeffs[it->first], "max_out", 0.0);
+      else
+        ROS_ERROR_STREAM("Actuator type " << it->first << " has no associated max_out.");
 
       std::string type = it->first;
       if (type2act_coeffs_.find(type) == type2act_coeffs_.end())

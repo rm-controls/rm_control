@@ -44,9 +44,7 @@ void rm_base::CanBus::write() {
         continue;
       const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(item.second.type)->second;
       int id = item.first - 0x201;
-
-      double cmd = minAbs(30000.0, act_coeff.effort2act * item.second.cmd_effort); //add max_range to act_data
-
+      double cmd = minAbs(act_coeff.max_out, act_coeff.effort2act * item.second.cmd_effort); //add max_range to act_data
       if (-1 < id && id < 4) {
         rm_frame0_.data[2 * id] = (uint8_t) (static_cast<int16_t>(cmd) >> 8u);
         rm_frame0_.data[2 * id + 1] = (uint8_t) cmd;
