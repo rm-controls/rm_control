@@ -4,9 +4,11 @@
 #include <string>
 #include <memory>
 
-#include "rm_base/hardware_interface/can_bus.h"
 #include <ros/ros.h>
 #include <socketcan_interface/threading.h>
+#include <math_utilities.h>
+
+#include "rm_base/hardware_interface/can_bus.h"
 
 rm_base::CanBus::CanBus(const std::string &bus_name, CanActDataPtr data_prt)
     : data_prt_(data_prt), bus_name_(bus_name) {
@@ -42,13 +44,15 @@ void rm_base::CanBus::write() {
         continue;
       const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(item.second.type)->second;
       int id = item.first - 0x201;
-      int16_t cmd = act_coeff.effort2act * item.second.cmd_effort;
+
+      double cmd = minAbs(30000.0, act_coeff.effort2act * item.second.cmd_effort); //add max_range to act_data
+
       if (-1 < id && id < 4) {
-        rm_frame0_.data[2 * id] = (uint8_t) (cmd >> 8u);
+        rm_frame0_.data[2 * id] = (uint8_t) (static_cast<int16_t>(cmd) >> 8u);
         rm_frame0_.data[2 * id + 1] = (uint8_t) cmd;
         has_write_frame0 = true;
       } else if (3 < id && id < 8) {
-        rm_frame1_.data[2 * (id - 4)] = (uint8_t) (cmd >> 8u);
+        rm_frame1_.data[2 * (id - 4)] = (uint8_t) (static_cast<int16_t>(cmd) >> 8u);
         rm_frame1_.data[2 * (id - 4) + 1] = (uint8_t) cmd;
         has_write_frame1 = true;
       }
