@@ -164,7 +164,11 @@ bool rm_base::RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_dat
       } else {
         ros::NodeHandle nh = ros::NodeHandle(robot_hw_nh, "actuators/" + it->first);
         bus_id2act_data_[bus].insert(
-            std::make_pair(id, ActData{.type = type, .lp_filter=new LowPassFilter(nh)}));
+            std::make_pair(id, ActData{.type =  type,
+                                       .pos = 0, .vel = 0, .effort = 0, .cmd_pos = 0,
+                                       .cmd_vel = 0, .cmd_effort = 0, .q_circle = 0,
+                                       .q_last = 0, .temp = 0,
+                                       .lp_filter=new LowPassFilter(nh)}));
       }
 
       // for ros_control interface
