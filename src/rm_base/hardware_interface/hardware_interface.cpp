@@ -60,7 +60,13 @@ bool rm_base::RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeH
 }
 
 void rm_base::RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &period) {
-  // NOTE: read data first!
+  // Low pass filt
+  for (auto &bus:bus_id2act_data_)
+    for (auto &act_data:bus.second) {
+      act_data.second.lp_filter->input(time, period, act_data.second.vel);
+      act_data.second.vel = act_data.second.lp_filter->output();
+    }
+  // NOTE: read all data before  propagate!
   act_to_jnt_state_->propagate();
 
   // Set all cmd to zero to avoid crazy soft limit oscillation when not controller loaded
