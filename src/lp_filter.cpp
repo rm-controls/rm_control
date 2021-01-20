@@ -37,7 +37,7 @@ void LowPassFilter::input(double in) {
   if (cutoff_frequency_ != -1 && cutoff_frequency_ > 0) {
 
     // Check if tan(_) is really small, could cause c = NaN
-    tan_filt_ = tan((cutoff_frequency_ * 6.2832) * delta_t_.toSec() / 2);
+    tan_filt_ = tan((cutoff_frequency_ * 6.2832) * delta_t_.toSec() / 2.);
 
     // Avoid tan(0) ==> NaN
     if ((tan_filt_ <= 0.) && (tan_filt_ > -0.01))
