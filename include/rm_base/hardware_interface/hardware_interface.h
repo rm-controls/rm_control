@@ -42,6 +42,7 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
 
   bool parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs);
   bool parseActData(XmlRpc::XmlRpcValue &act_datas, ros::NodeHandle &robot_hw_nh);
+  bool parseImuData(XmlRpc::XmlRpcValue &imu_datas, ros::NodeHandle &robot_hw_nh);
   bool load_urdf(ros::NodeHandle &root_nh);
   bool setupTransmission(ros::NodeHandle &root_nh);
   bool setupJointLimit(ros::NodeHandle &root_nh);
@@ -68,6 +69,9 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
   // Actuator
   std::unordered_map<std::string, ActCoeff> type2act_coeffs_;
   std::unordered_map<std::string, std::unordered_map<int, ActData>> bus_id2act_data_;
+
+  // Imu
+  std::unordered_map<std::string, std::unordered_map<int, ImuData>> bus_id2imu_data_;
 
   std::vector<CanBus *> can_buses_;
 };

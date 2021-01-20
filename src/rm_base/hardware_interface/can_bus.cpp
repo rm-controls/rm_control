@@ -10,15 +10,27 @@
 
 #include "rm_base/hardware_interface/can_bus.h"
 
-rm_base::CanBus::CanBus(const std::string &bus_name, CanActDataPtr data_prt)
+namespace rm_base {
+
+float int16ToFloat(unsigned short data) {
+  if (data == 0)
+    return 0;
+  float *fp32;
+  unsigned int fInt32 = ((data & 0x8000) << 16) |
+      (((((data >> 10) & 0x1f) - 0x0f + 0x7f) & 0xff) << 23) | ((data & 0x03FF) << 13);
+  fp32 = (float *) &fInt32;
+  return *fp32;
+}
+
+CanBus::CanBus(const std::string &bus_name, CanDataPtr data_prt)
     : data_prt_(data_prt), bus_name_(bus_name) {
   driver_ = std::make_shared<can::ThreadedSocketCANInterface>();
   // Initialize device at can_device, false for no loop back.
-  if (!driver_->init(bus_name, false, can::NoSettings::create())) {
+  if (!driver_->init(bus_name, false, can::NoSettings::create()))
     ROS_FATAL("Failed to initialize can_device at %s", bus_name.c_str());
-  } else {
+  else
     ROS_INFO("Successfully connected to %s.", bus_name.c_str());
-  }
+
   // Register handler for frames and state changes.
   frame_listener_ = driver_->createMsgListenerM(this, &CanBus::frameCallback);
   state_listener_ = driver_->createStateListenerM(this, &CanBus::stateCallback);
@@ -30,7 +42,7 @@ rm_base::CanBus::CanBus(const std::string &bus_name, CanActDataPtr data_prt)
   rm_frame1_.dlc = 8;
 }
 
-void rm_base::CanBus::write() {
+void CanBus::write() {
   if (!driver_->getState().isReady())
     return;
   bool has_write_frame0{}, has_write_frame1{};
@@ -63,12 +75,8 @@ void rm_base::CanBus::write() {
     driver_->send(rm_frame1_);
 }
 
-void rm_base::CanBus::frameCallback(const can::Frame &frame) {
-  if (data_prt_.id2act_data_->find(frame.id) == data_prt_.id2act_data_->end())
-    ROS_ERROR_STREAM_ONCE(
-        "Can not find defined actuator, id: 0x"
-            << std::hex << frame.id << " on bus: " << bus_name_);
-  else {
+void CanBus::frameCallback(const can::Frame &frame) {
+  if (data_prt_.id2act_data_->find(frame.id) != data_prt_.id2act_data_->end()) {
     ActData &act_data = data_prt_.id2act_data_->find(frame.id)->second;
 
     if (act_data.type.find("rm") != std::string::npos) {      // unpack RoboMaster Motor
@@ -93,11 +101,40 @@ void rm_base::CanBus::frameCallback(const can::Frame &frame) {
       // Low pass filt
       act_data.lp_filter->input(act_data.vel);
       act_data.vel = act_data.lp_filter->output();
+      return;
     }
+  } else {
+    // Check if imu
+    float imu_frame_data[4] = {0};
+    for (int i = 0; i < 4; ++i)
+      imu_frame_data[i] = int16ToFloat((frame.data[i * 2] << 8) | frame.data[i * 2 + 1]);
+    int j = 0;
+    for (auto itr = data_prt_.id2imu_data_->find(frame.id); j < 3; // imu data are consisted of three frames
+         ++itr, ++j) {
+      if (itr != data_prt_.id2imu_data_->end()) {
+        switch (j) {
+          case 0:itr->second.acc[0] = imu_frame_data[0];
+            itr->second.acc[1] = imu_frame_data[1];
+            itr->second.acc[2] = imu_frame_data[2];
+            itr->second.gyr[0] = imu_frame_data[3];
+            return;
+          case 1:itr->second.gyr[1] = imu_frame_data[0];
+            itr->second.gyr[2] = imu_frame_data[1];
+            itr->second.quat[0] = imu_frame_data[2];
+            itr->second.quat[1] = imu_frame_data[3];
+            return;
+          case 2:itr->second.quat[2] = imu_frame_data[0];
+            itr->second.quat[3] = imu_frame_data[1];
+            return;
+          default:break;
+        }
+      }
+    }
+    ROS_WARN_STREAM_ONCE("Can not find defined device, id: 0x" << std::hex << frame.id << " on bus: " << bus_name_);
   }
 }
 
-void rm_base::CanBus::stateCallback(const can::State &state) {
+void CanBus::stateCallback(const can::State &state) {
   std::string err;
   driver_->translateError(state.internal_error, err);
   if (!state.internal_error) {
@@ -105,4 +142,6 @@ void rm_base::CanBus::stateCallback(const can::State &state) {
   } else {
     ROS_ERROR("Error: %s, asio: %s, %s", err.c_str(), state.error_code.message().c_str(), bus_name_.c_str());
   }
+}
+
 }

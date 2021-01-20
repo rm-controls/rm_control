@@ -7,8 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
 ## enforcing cleaner code.
-add_definitions(-Wall -Werror)
-
+add_definitions(-Wall -Werror -Wno-inconsistent-missing-override)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
@@ -78,6 +77,7 @@ add_library(robot_state_controller
     src/rm_base/robot_state_controller/robot_state_controller.cpp
     src/rm_base/robot_state_controller/tf_rt_broadcaster.cpp
     )
+
 ## Declare cpp executables
 add_executable(${PROJECT_NAME}
     src/rm_base/${PROJECT_NAME}.cpp
@@ -85,6 +85,7 @@ add_executable(${PROJECT_NAME}
     src/rm_base/hardware_interface/can_bus.cpp
     src/rm_base/control_loop.cpp
     )
+
 add_executable(dbus_node
     src/dbus/dbus_node.cpp
     src/dbus/dbus.cpp)

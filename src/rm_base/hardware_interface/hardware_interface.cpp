@@ -46,7 +46,10 @@ bool rm_base::RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeH
       if (bus_name.find("can") != std::string::npos)
         can_buses_.push_back(
             new CanBus(bus_name,
-                       CanActDataPtr{.type2act_coeffs_=&type2act_coeffs_, .id2act_data_ = &bus_id2act_data_[bus_name]}));
+                       CanDataPtr{
+                           .type2act_coeffs_=&type2act_coeffs_,
+                           .id2act_data_ = &bus_id2act_data_[bus_name],
+                           .id2imu_data_ = &bus_id2imu_data_[bus_name]}));
       else
         ROS_ERROR_STREAM("Unknown bus: " << bus_name);
     }
@@ -202,6 +205,11 @@ bool rm_base::RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_dat
   return true;
 }
 
+bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue &act_datas, ros::NodeHandle &robot_hw_nh) {
+
+  return true;
+}
+
 bool rm_base::RmBaseHardWareInterface::load_urdf(ros::NodeHandle &root_nh) {
   if (urdf_model_ == nullptr)
     urdf_model_ = std::make_shared<urdf::Model>();
@@ -293,4 +301,3 @@ bool rm_base::RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle &root_nh)
 
   return true;
 }
-
