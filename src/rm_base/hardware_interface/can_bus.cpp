@@ -90,6 +90,9 @@ void rm_base::CanBus::frameCallback(const can::Frame &frame) {
       act_data.effort = act_coeff.act2effort * static_cast<double> (cur);
       act_data.temp = temp;
 
+      // Low pass filt
+      act_data.lp_filter->input(act_data.vel);
+      act_data.vel = act_data.lp_filter->output();
     }
   }
 }
