@@ -13,7 +13,11 @@
 
 namespace rm_base {
 
-struct ActCoeff { double act2pos, act2vel, act2effort, pos2act, vel2act, effort2act, max_out; };
+struct ActCoeff {
+  double act2pos, act2vel, act2effort, pos2act, vel2act, effort2act, max_out,
+      act2pos_offset, act2vel_offset, act2effort_offset, kp2act, kd2act; // for MIT Cheetah motor
+};
+
 struct ActData {
   std::string type;
   double pos, vel, effort, cmd_pos, cmd_vel, cmd_effort;
