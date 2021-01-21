@@ -57,7 +57,8 @@ void rm_base::CanBus::write() {
     } else if (item.second.type.find("cheetah") != std::string::npos) {
       can::Frame frame{};
       const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(item.second.type)->second;
-      frame.id = item.first; // TODO(qiayuan) Check the CAN id
+      frame.id = item.first;
+      frame.dlc = 8;
       uint16_t q_des = (int) (act_coeff.pos2act * (item.second.cmd_pos - act_coeff.act2pos_offset));
       uint16_t qd_des = (int) (act_coeff.vel2act * (item.second.cmd_vel - act_coeff.act2vel_offset));
       uint16_t kp = 0.;
@@ -74,7 +75,6 @@ void rm_base::CanBus::write() {
       frame.data[7] = tau & 0xff;
       driver_->send(frame);
     }
-
   }
 
   if (has_write_frame0)

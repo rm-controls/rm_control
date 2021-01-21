@@ -84,6 +84,7 @@ bool rm_base::RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_c
     for (XmlRpc::XmlRpcValue::ValueStruct::const_iterator it = act_coeffs.begin(); it != act_coeffs.end(); ++it) {
       ActCoeff act_coeff{};
 
+      // All motor
       if (it->second.hasMember("act2pos"))
         act_coeff.act2pos = xmlRpcGetDouble(act_coeffs[it->first], "act2pos", 0.);
       else
@@ -112,6 +113,28 @@ bool rm_base::RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_c
         act_coeff.max_out = xmlRpcGetDouble(act_coeffs[it->first], "max_out", 0.0);
       else
         ROS_ERROR_STREAM("Actuator type " << it->first << " has no associated max_out.");
+
+      // MIT Cheetah Motor
+      if (it->second.hasMember("act2pos_offset"))
+        act_coeff.act2pos_offset = xmlRpcGetDouble(act_coeffs[it->first], "act2pos_offset", -12.5);
+      else
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated act2pos_offset.");
+      if (it->second.hasMember("act2vel_offset"))
+        act_coeff.act2vel_offset = xmlRpcGetDouble(act_coeffs[it->first], "act2vel_offset", -65.0);
+      else
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated act2vel_offset.");
+      if (it->second.hasMember("act2effort_offset"))
+        act_coeff.act2effort_offset = xmlRpcGetDouble(act_coeffs[it->first], "act2effort_offset", -18.0);
+      else
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated act2effort_offset.");
+      if (it->second.hasMember("kp2act"))
+        act_coeff.kp2act = xmlRpcGetDouble(act_coeffs[it->first], "kp2act", 8.19);
+      else
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated kp2act.");
+      if (it->second.hasMember("kp2act"))
+        act_coeff.kp2act = xmlRpcGetDouble(act_coeffs[it->first], "kd2act", 819);
+      else
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated kd2act.");
 
       std::string type = it->first;
       if (type2act_coeffs_.find(type) == type2act_coeffs_.end())
