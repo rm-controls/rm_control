@@ -5,4 +5,7 @@ uint8 TWIST = 3
 uint8 GYRO = 4
 
 uint8 mode
+
+float32 coeff
+
 geometry_msgs/Accel accel
