@@ -6,6 +6,7 @@ uint8 GYRO = 4
 
 uint8 mode
 
-float32 coeff
+float32 power_limit_current
+bool exceed
 
 geometry_msgs/Accel accel
