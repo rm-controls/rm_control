@@ -24,3 +24,4 @@ actuator_coefficient:
     kp2act: 8.19            # 4095/500
     kd2act: 819             # 4095/5
     effort2act: 113.75      # 4095/36
+    max_out: 0

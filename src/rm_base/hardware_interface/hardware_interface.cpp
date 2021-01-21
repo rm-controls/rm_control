@@ -177,12 +177,11 @@ bool rm_base::RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_dat
                                                         &bus_id2act_data_[bus][id].vel,
                                                         &bus_id2act_data_[bus][id].effort);
       act_state_interface_.registerHandle(act_state);
-      if (type.find("rm") != std::string::npos) { // RoboMaster motors are effect actuator
+      if (type.find("rm") != std::string::npos
+          || type.find("cheetah") != std::string::npos) { // RoboMaster motors are effect actuator
         effort_act_interface_.registerHandle(
             hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].cmd_effort));
-      }
-        // TODO: add MIT Cheetah motor support
-      else {
+      } else {
         ROS_ERROR_STREAM("Actuator " << it->first <<
                                      "'s type neither RoboMaster(rm_xxx) nor Cheetah(cheetah_xxx)");
         return false;
