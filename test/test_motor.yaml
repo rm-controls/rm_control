@@ -7,7 +7,12 @@ rm_base:
 
   # Configurations of the actuators
   actuators:
-    act_test_can0:
+    act_mit_cheetah:
+      bus: can0
+      id: 0x003
+      type: cheetah
+
+    act_3508:
       bus: can0
       id: 0x201
       type: rm_3508
