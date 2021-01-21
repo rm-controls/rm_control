@@ -5,4 +5,8 @@ uint8 TWIST = 3
 uint8 GYRO = 4
 uint8 current_up_limit
 uint8 mode
+
+float32 power_limit_current
+bool exceed
+
 geometry_msgs/Accel accel
