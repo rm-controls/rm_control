@@ -31,6 +31,12 @@ void StaticTfRtBroadcaster::init(ros::NodeHandle &root_nh) {
   realtime_pub_.reset(new realtime_tools::RealtimePublisher<tf2_msgs::TFMessage>(root_nh, "/tf_static", 10, true));
 }
 
+void StaticTfRtBroadcaster::sendTransform(const geometry_msgs::TransformStamped &transform) {
+  std::vector<geometry_msgs::TransformStamped> v1;
+  v1.push_back(transform);
+  sendTransform(v1);
+}
+
 void StaticTfRtBroadcaster::sendTransform(const std::vector<geometry_msgs::TransformStamped> &transforms) {
   for (const auto &transform : transforms) {
     bool match_found = false;

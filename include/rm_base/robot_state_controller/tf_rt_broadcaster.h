@@ -13,7 +13,7 @@ class TfRtBroadcaster {
  public:
   TfRtBroadcaster() = default;
   virtual void init(ros::NodeHandle &root_nh);
-  void sendTransform(const geometry_msgs::TransformStamped &transform);
+  virtual void sendTransform(const geometry_msgs::TransformStamped &transform);
   virtual void sendTransform(const std::vector<geometry_msgs::TransformStamped> &transforms);
  protected:
   ros::NodeHandle node_;
@@ -23,6 +23,7 @@ class TfRtBroadcaster {
 class StaticTfRtBroadcaster : public TfRtBroadcaster {
  public:
   void init(ros::NodeHandle &root_nh) override;
+  void sendTransform(const geometry_msgs::TransformStamped &transform) override;
   void sendTransform(const std::vector<geometry_msgs::TransformStamped> &transforms) override;
  private:
   tf2_msgs::TFMessage net_message_{};
