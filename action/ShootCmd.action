@@ -1,0 +1,11 @@
+# goal
+int8 mode
+int64 num
+float64 speed
+float32 hz
+---
+# result
+bool finish
+---
+# feedback
+int64 send_num
