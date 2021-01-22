@@ -120,6 +120,9 @@ void rm_base::CanBus::frameCallback(const can::Frame &frame) {
         act_data.pos = act_coeff.act2pos * static_cast<double> (q) + act_coeff.act2pos_offset;
         act_data.vel = act_coeff.act2vel * static_cast<double> (qd) + act_coeff.act2vel_offset;
         act_data.effort = act_coeff.act2effort * static_cast<double> (cur) + act_coeff.act2effort_offset;
+        // Low pass filt
+        act_data.lp_filter->input(act_data.vel);
+        act_data.vel = act_data.lp_filter->output();
       }
     }
   } else

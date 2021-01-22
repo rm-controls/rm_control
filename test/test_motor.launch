@@ -9,6 +9,7 @@
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
         output="screen" args="
         rm_base/robot_state_controller
+        rm_base/joint_state_controller
         rm_base/joint_mit_cheetah_position_controller
 "/>
 
