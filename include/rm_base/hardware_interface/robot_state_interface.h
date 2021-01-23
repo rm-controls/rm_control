@@ -41,14 +41,6 @@ class RobotStateHandle {
     return true;
   }
 
-  void pubTransform(const geometry_msgs::TransformStamped &transform) {
-    tf_broadcaster_->sendTransform(transform);
-  }
-
-  void pubStaticTransform(const geometry_msgs::TransformStamped &transform) {
-    static_tf_broadcaster_->sendTransform(transform);
-  }
-
   std::string getName() const { return name_; }
 
  private:
