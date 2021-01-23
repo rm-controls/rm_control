@@ -6,7 +6,7 @@
 #define SRC_RM_COMMON_INCLUDE_ORI_TOOL_H_
 #include <geometry_msgs/Quaternion.h>
 #include <tf/transform_datatypes.h>
-#include <Eigen/Core>
+#include <eigen3/Eigen/Core>
 
 /*!
  * Convert a quaternion to RPY.  Uses ZYX order (yaw-pitch-roll), but returns
