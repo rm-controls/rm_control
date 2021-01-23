@@ -59,3 +59,36 @@ tf::Quaternion getAverageQuaternion(const std::vector<tf::Quaternion> &quaternio
   );
   return mean_orientation;
 }
+
+tf::Quaternion rotationMatrixToQuaternion(const Eigen::Map<Eigen::Matrix3f> &rot) {
+
+  Eigen::Matrix3f r = rot.transpose();
+  tf::Quaternion quat;
+  double trace = r.trace();
+  if (trace > 0.0) {
+    double s = sqrt(trace + 1.0) * 2.0;
+    quat.setValue((r(2, 1) - r(1, 2)) / s,
+                  (r(0, 2) - r(2, 0)) / s,
+                  (r(1, 0) - r(0, 1)) / s,
+                  0.25 * s);
+  } else if ((r(0, 0) > r(1, 1)) && (r(0, 0) > r(2, 2))) {
+    double s = sqrt(1.0 + r(0, 0) - r(1, 1) - r(2, 2)) * 2.0;
+    quat.setValue(0.25 * s,
+                  (r(0, 1) + r(1, 0)) / s,
+                  (r(0, 2) + r(2, 0)) / s,
+                  (r(2, 1) - r(1, 2)) / s);
+  } else if (r(1, 1) > r(2, 2)) {
+    double s = sqrt(1.0 + r(1, 1) - r(0, 0) - r(2, 2)) * 2.0;
+    quat.setValue((r(0, 1) + r(1, 0)) / s,
+                  (r(0, 1) + r(1, 0)) / s,
+                  0.25 * s,
+                  (r(0, 2) - r(2, 0)) / s);
+  } else {
+    double s = sqrt(1.0 + r(2, 2) - r(0, 0) - r(1, 1)) * 2.0;
+    quat.setValue((r(0, 2) + r(2, 0)) / s,
+                  (r(1, 2) + r(2, 1)) / s,
+                  0.25 * s,
+                  (r(1, 0) - r(0, 1)) / s);
+  }
+  return quat;
+}
