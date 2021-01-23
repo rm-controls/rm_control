@@ -4,7 +4,6 @@
 
 #include "ori_tool.h"
 #include "math_utilities.h"
-#include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Eigenvalues>
 
 void quatToRPY(const geometry_msgs::Quaternion &q,
@@ -60,9 +59,9 @@ tf::Quaternion getAverageQuaternion(const std::vector<tf::Quaternion> &quaternio
   return mean_orientation;
 }
 
-tf::Quaternion rotationMatrixToQuaternion(const Eigen::Map<Eigen::Matrix3f> &rot) {
+tf::Quaternion rotationMatrixToQuaternion(const Eigen::Map<Eigen::Matrix3d> &rot) {
 
-  Eigen::Matrix3f r = rot.transpose();
+  Eigen::Matrix3d r = rot.transpose();
   tf::Quaternion quat;
   double trace = r.trace();
   if (trace > 0.0) {
