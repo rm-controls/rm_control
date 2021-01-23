@@ -8,8 +8,9 @@
 
 namespace robot_state_controller {
 void TfRtBroadcaster::init(ros::NodeHandle &root_nh) {
-  realtime_pub_.reset(new realtime_tools::RealtimePublisher<tf2_msgs::TFMessage>(root_nh, "/tf", 10));
+  realtime_pub_.reset(new realtime_tools::RealtimePublisher<tf2_msgs::TFMessage>(root_nh, "/tf", 100));
 }
+
 void TfRtBroadcaster::sendTransform(const geometry_msgs::TransformStamped &transform) {
   std::vector<geometry_msgs::TransformStamped> v1;
   v1.push_back(transform);
@@ -28,7 +29,7 @@ void TfRtBroadcaster::sendTransform(const std::vector<geometry_msgs::TransformSt
 }
 
 void StaticTfRtBroadcaster::init(ros::NodeHandle &root_nh) {
-  realtime_pub_.reset(new realtime_tools::RealtimePublisher<tf2_msgs::TFMessage>(root_nh, "/tf_static", 10, true));
+  realtime_pub_.reset(new realtime_tools::RealtimePublisher<tf2_msgs::TFMessage>(root_nh, "/tf_static", 100, true));
 }
 
 void StaticTfRtBroadcaster::sendTransform(const geometry_msgs::TransformStamped &transform) {
