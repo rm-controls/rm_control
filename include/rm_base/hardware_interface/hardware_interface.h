@@ -38,6 +38,10 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
 
   void write(const ros::Time &time, const ros::Duration &period) override;
 
+  bool checkForConflict(const std::list<hardware_interface::ControllerInfo> &info) const override {
+    return false; // TODO implement it
+  }
+
  private:
 
   bool parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs);
