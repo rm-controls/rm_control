@@ -1,6 +1,5 @@
 # goal
 int8 mode
-int64 num
 float64 speed
 float32 hz
 ---

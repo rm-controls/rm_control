@@ -54,7 +54,7 @@ add_message_files(
 
 add_action_files(
     FILES
-    ShootCmd.action
+    Shoot.action
 )
 
 # Generate added messages and services with any dependencies listed here
