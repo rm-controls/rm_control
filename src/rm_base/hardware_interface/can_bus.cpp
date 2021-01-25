@@ -111,18 +111,18 @@ void CanBus::frameCallback(const can::Frame &frame) {
 
     for (auto &itr :*data_prt_.id2imu_data_) { // imu data are consisted of three frames
       switch (frame.id - static_cast<unsigned int>(itr.first)) {
-        case 0:itr.second.acc[0] = imu_frame_data[0];
-          itr.second.acc[1] = imu_frame_data[1];
-          itr.second.acc[2] = imu_frame_data[2];
-          itr.second.gyr[0] = imu_frame_data[3];
+        case 0:itr.second.linear_acc[0] = imu_frame_data[0];
+          itr.second.linear_acc[1] = imu_frame_data[1];
+          itr.second.linear_acc[2] = imu_frame_data[2];
+          itr.second.angular_vel[0] = imu_frame_data[3];
           return;
-        case 1:itr.second.gyr[1] = imu_frame_data[0];
-          itr.second.gyr[2] = imu_frame_data[1];
-          itr.second.quat[0] = imu_frame_data[2];
-          itr.second.quat[1] = imu_frame_data[3];
+        case 1:itr.second.angular_vel[1] = imu_frame_data[0];
+          itr.second.angular_vel[2] = imu_frame_data[1];
+          itr.second.ori[1] = imu_frame_data[2]; // Note the quaternion order
+          itr.second.ori[2] = imu_frame_data[3];
           return;
-        case 2:itr.second.quat[2] = imu_frame_data[0];
-          itr.second.quat[3] = imu_frame_data[1];
+        case 2:itr.second.ori[3] = imu_frame_data[0];
+          itr.second.ori[0] = imu_frame_data[1];
           return;
         default:break;
       }
