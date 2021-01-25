@@ -108,28 +108,26 @@ void CanBus::frameCallback(const can::Frame &frame) {
     float imu_frame_data[4] = {0};
     for (int i = 0; i < 4; ++i)
       imu_frame_data[i] = int16ToFloat((frame.data[i * 2] << 8) | frame.data[i * 2 + 1]);
-    int j = 0;
-    for (auto itr = data_prt_.id2imu_data_->find(frame.id); j < 3; // imu data are consisted of three frames
-         ++itr, ++j) {
-      if (itr != data_prt_.id2imu_data_->end()) {
-        switch (j) {
-          case 0:itr->second.acc[0] = imu_frame_data[0];
-            itr->second.acc[1] = imu_frame_data[1];
-            itr->second.acc[2] = imu_frame_data[2];
-            itr->second.gyr[0] = imu_frame_data[3];
-            return;
-          case 1:itr->second.gyr[1] = imu_frame_data[0];
-            itr->second.gyr[2] = imu_frame_data[1];
-            itr->second.quat[0] = imu_frame_data[2];
-            itr->second.quat[1] = imu_frame_data[3];
-            return;
-          case 2:itr->second.quat[2] = imu_frame_data[0];
-            itr->second.quat[3] = imu_frame_data[1];
-            return;
-          default:break;
-        }
+
+    for (auto &itr :*data_prt_.id2imu_data_) { // imu data are consisted of three frames
+      switch (frame.id - static_cast<unsigned int>(itr.first)) {
+        case 0:itr.second.acc[0] = imu_frame_data[0];
+          itr.second.acc[1] = imu_frame_data[1];
+          itr.second.acc[2] = imu_frame_data[2];
+          itr.second.gyr[0] = imu_frame_data[3];
+          return;
+        case 1:itr.second.gyr[1] = imu_frame_data[0];
+          itr.second.gyr[2] = imu_frame_data[1];
+          itr.second.quat[0] = imu_frame_data[2];
+          itr.second.quat[1] = imu_frame_data[3];
+          return;
+        case 2:itr.second.quat[2] = imu_frame_data[0];
+          itr.second.quat[3] = imu_frame_data[1];
+          return;
+        default:break;
       }
     }
+
     ROS_WARN_STREAM_ONCE("Can not find defined device, id: 0x" << std::hex << frame.id << " on bus: " << bus_name_);
   }
 }
