@@ -17,32 +17,11 @@ add_message_files(
         ShootCmd.msg
         GimbalCmd.msg
         GimbalTrackCmd.msg
-        FSMCmd.msg
 )
 
 add_service_files(
     FILES
     ContinousDetectorSwitch.srv
-)
-
-add_message_files(
-    DIRECTORY msg/referee
-    FILES
-    BonusStatus.msg
-    GameResult.msg
-    GameStatus.msg
-    GameRobotHP.msg
-    GameWarning.msg
-    AerialRobotEnergy.msg
-    GameRobotPos.msg
-    ProjectileSupply.msg
-    RobotBonus.msg
-    RobotDamage.msg
-    RobotHeat.msg
-    RobotShoot.msg
-    RobotStatus.msg
-    RobotBulletRemain.msg
-    SupplierStatus.msg
 )
 
 add_message_files(
