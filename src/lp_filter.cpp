@@ -96,6 +96,15 @@ void DigitalLpFilter::input(double lpf_in) {
   Lpf_in_prev_[0] = lpf_in;
   Lpf_out_prev_[1] = Lpf_out_prev_[0];
   Lpf_out_prev_[0] = lpf_out_;
+
+  if (is_debug_) {
+    if (realtime_pub_->trylock()) {
+      realtime_pub_->msg_.data.clear();
+      realtime_pub_->msg_.data.push_back(Lpf_in_prev_[0]);
+      realtime_pub_->msg_.data.push_back(Lpf_out_prev_[0]);
+      realtime_pub_->unlockAndPublish();
+    }
+  }
 }
 
 double DigitalLpFilter::output() {
