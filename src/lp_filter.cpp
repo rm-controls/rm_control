@@ -108,3 +108,5 @@ void DigitalLpFilter::clear() {
   Lpf_out_prev_[1] = 0;
   Lpf_out_prev_[0] = 0;
 }
+
+DigitalLpFilter::~DigitalLpFilter() = default;
