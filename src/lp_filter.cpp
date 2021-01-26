@@ -66,3 +66,45 @@ void LowPassFilter::input(double in) {
 double LowPassFilter::output() {
   return out_[0];
 }
+
+///////////////////DigitalLpFilter/////////////////////
+DigitalLpFilter::DigitalLpFilter(ros::NodeHandle &nh) {
+  nh.param("wc", wc_, 200.);
+  nh.param("ts", ts_, 0.001);
+  nh.param("lp_debug", is_debug_, false);
+  Lpf_in_prev_[0] = Lpf_in_prev_[1] = 0;
+  Lpf_out_prev_[0] = Lpf_out_prev_[1] = 0;
+  Lpf_in1_ = 0, Lpf_in2_ = 0, Lpf_in3_ = 0, Lpf_out1_ = 0, Lpf_out2_ = 0;
+  float den = 2500 * ts_ * ts_ * wc_ * wc_ + 7071 * ts_ * wc_ + 10000;
+
+  Lpf_in1_ = 2500 * ts_ * ts_ * wc_ * wc_ / den;
+  Lpf_in2_ = 5000 * ts_ * ts_ * wc_ * wc_ / den;
+  Lpf_in3_ = 2500 * ts_ * ts_ * wc_ * wc_ / den;
+  Lpf_out1_ = -(5000 * ts_ * ts_ * wc_ * wc_ - 20000) / den;
+  Lpf_out2_ = -(2500 * ts_ * ts_ * wc_ * wc_ - 7071 * ts_ * wc_ + 10000) / den;
+
+  if (is_debug_)
+    realtime_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray>(nh, "DigitalLpFilter", 100));
+}
+
+void DigitalLpFilter::input(double lpf_in) {
+  lpf_out_ = Lpf_in1_ * lpf_in + Lpf_in2_ * Lpf_in_prev_[0] +
+      Lpf_in3_ * Lpf_in_prev_[1] +  // input component
+      Lpf_out1_ * Lpf_out_prev_[0] +
+      Lpf_out2_ * Lpf_out_prev_[1];  // output component
+  Lpf_in_prev_[1] = Lpf_in_prev_[0];
+  Lpf_in_prev_[0] = lpf_in;
+  Lpf_out_prev_[1] = Lpf_out_prev_[0];
+  Lpf_out_prev_[0] = lpf_out_;
+}
+
+double DigitalLpFilter::output() {
+  return lpf_out_;
+}
+
+void DigitalLpFilter::clear() {
+  Lpf_in_prev_[1] = 0;
+  Lpf_in_prev_[0] = 0;
+  Lpf_out_prev_[1] = 0;
+  Lpf_out_prev_[0] = 0;
+}

@@ -33,4 +33,32 @@ class LowPassFilter {
   std::shared_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray>> realtime_pub_{};
 };
 
+class Filter {
+ public:
+  Filter() = default;
+  virtual ~Filter() = default;
+  virtual void input(double input_value) = 0;
+  virtual double output() = 0;
+  virtual void clear() = 0;
+ protected:
+  bool is_debug_{};
+  std::shared_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray>> realtime_pub_{};
+};
+
+class DigitalLpFilter : public Filter {
+ public:
+  explicit DigitalLpFilter(ros::NodeHandle &nh);
+  ~DigitalLpFilter();
+  void input(double input_value);
+  double output();
+  void clear();
+
+ private:
+  double Lpf_in_prev_[2];
+  double Lpf_out_prev_[2];
+  double Lpf_in1_, Lpf_in2_, Lpf_in3_, Lpf_out1_, Lpf_out2_;
+  double lpf_out_;
+  double wc_{}, ts_{};
+};
+
 #endif //SRC_RM_SOFTWARE_RM_COMMON_INCLUDE_LP_FILTER_H_
