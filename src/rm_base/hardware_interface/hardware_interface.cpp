@@ -168,7 +168,7 @@ bool rm_base::RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_dat
                 .pos = 0, .vel = 0, .effort = 0, .cmd_pos = 0,
                 .cmd_vel = 0, .cmd_effort = 0, .q_circle = 0,
                 .q_last = 0, .temp = 0,
-                .lp_filter=new LowPassFilter(nh)}));
+                .lp_filter=new DigitalLpFilter(nh)}));
       }
 
       // for ros_control interface

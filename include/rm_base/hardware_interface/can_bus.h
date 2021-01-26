@@ -21,7 +21,7 @@ struct ActData {
   int64_t q_circle;
   uint16_t q_last;
   uint8_t temp;
-  LowPassFilter *lp_filter;
+  DigitalLpFilter *lp_filter;
 };
 
 struct CanActDataPtr {
