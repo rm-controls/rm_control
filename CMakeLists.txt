@@ -10,13 +10,14 @@ find_package(catkin REQUIRED COMPONENTS
     )
 
 add_message_files(
-        FILES
-        Joint.msg
-        DbusData.msg
-        ChassisCmd.msg
-        ShootCmd.msg
-        GimbalCmd.msg
-        GimbalTrackCmd.msg
+    FILES
+    Joint.msg
+    DbusData.msg
+    ChassisCmd.msg
+    ShootCmd.msg
+    GimbalCmd.msg
+    GimbalTrackCmd.msg
+    Referee.msg
 )
 
 add_service_files(

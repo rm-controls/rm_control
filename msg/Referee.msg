@@ -1,0 +1,4 @@
+uint16 chassis_volt
+uint16 chassis_current
+float32 chassis_power
+uint16 chassis_power_buffer
