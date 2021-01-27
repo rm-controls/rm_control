@@ -1,2 +1,2 @@
-float64 pitch_error
-float64 yaw_error
+float64 error_yaw
+float64 error_pitch
