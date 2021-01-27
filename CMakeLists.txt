@@ -16,6 +16,7 @@ add_message_files(
     ChassisCmd.msg
     ShootCmd.msg
     GimbalCmd.msg
+    GimbalDesError.msg
     GimbalTrackCmd.msg
     Referee.msg
 )
