@@ -1,3 +1,3 @@
-uint8 target_id
+uint8 id
 float64 confidence
 geometry_msgs/PoseStamped pose
