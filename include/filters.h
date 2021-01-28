@@ -142,4 +142,21 @@ class RampFilter : public Filter<T> {
   T dt_;
 };
 
+template<typename T>
+class OneEuroFilter : public Filter<T>{
+public:
+    OneEuroFilter(double _freq, T _mincutoff, T _beta, T _dcutoff);
+    ~OneEuroFilter();
+    void input(T input_value);
+    T output();
+    void clear();
+
+private:
+    double freq;
+    bool firsttime;
+    T mincutoff, beta, dcutoff;
+    T x_prev, dhatxprev, hatxprev;
+    T filtered_val;
+};
+
 #endif //SRC_RM_COMMON_INCLUDE_FILTERS_H_

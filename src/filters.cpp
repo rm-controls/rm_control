@@ -387,3 +387,54 @@ template
 class RampFilter<float>;
 template
 class RampFilter<double>;
+
+/*============================================================================*/
+
+template<typename T>
+OneEuroFilter<T>::OneEuroFilter(double _freq, T _mincutoff, T _beta, T _dcutoff)
+        : freq(_freq), mincutoff(_mincutoff), beta(_beta), dcutoff(_dcutoff) {
+    firsttime = true;
+    x_prev = 0;
+    hatxprev = 0;
+    dhatxprev = 0;
+    filtered_val = 0;
+};
+
+template<typename T>
+OneEuroFilter<T>::~OneEuroFilter() = default;
+
+template<typename T>
+void OneEuroFilter<T>::input(T input_value) {
+    T dx = 0;
+    if (firsttime)
+        dhatxprev = dx;
+    else
+        dx = (input_value - x_prev) * freq;
+    T edx = alpha(dcutoff, freq) * dx + (1-alpha(dcutoff, freq)) * dhatxprev;
+    dhatxprev = edx;
+    T cutoff = mincutoff + beta * std::abs(static_cast<double>(edx));
+
+    if (firsttime)
+        hatxprev = input_value;
+    filtered_val = alpha(cutoff, freq) * input_value + (1-alpha(cutoff, freq)) * hatxprev;
+    hatxprev = filtered_val;
+    firsttime = false;
+}
+
+template<typename T>
+T OneEuroFilter<T>::output() {
+    return filtered_val;
+}
+
+template<typename T>
+void OneEuroFilter<T>::clear() {
+    firsttime = true;
+    x_prev = 0;
+    hatxprev = 0;
+    dhatxprev = 0;
+}
+
+template
+class OneEuroFilter<float>;
+template
+class OneEuroFilter<double>;
