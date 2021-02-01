@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ros_package_template)
+project(rm_description)
 
 ## Use C++14
 set(CMAKE_CXX_STANDARD 14)
