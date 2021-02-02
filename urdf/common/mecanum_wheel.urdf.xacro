@@ -1,4 +1,4 @@
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="test">
 
   <xacro:property name="wheel_radius" value="0.07625"/>
   <xacro:property name="M_PI" value="3.14159265359"/>
@@ -13,6 +13,10 @@
           </xacro:if>
         </geometry>
       </visual>
+      <inertial>
+        <mass value="0.59"/>
+        <inertia ixx="1.416e-3" ixy="0.0" ixz="0.0" iyy="2.749e-3" iyz="0.0" izz="1.416e-3"/>
+      </inertial>
     </link>
     <link name="${prefix}_rotor">
       <collision>
@@ -20,6 +24,10 @@
           <sphere radius="${wheel_radius}"/>
         </geometry>
       </collision>
+      <inertial>
+        <mass value="0.036"/>
+        <inertia ixx="3128e-9" ixy="-1638.12e-9" ixz="0.0" iyy="3128e-9" iyz="0.0" izz="4766e-9"/>
+      </inertial>
     </link>
     <joint name="${prefix}_rotor_joint" type="continuous">
       <axis xyz="${reflect * 0.70719678} ${reflect * 0.70719678} 0"/>
@@ -27,29 +35,5 @@
       <child link="${prefix}_rotor"/>
     </joint>
   </xacro:macro>
-
-
-  <!--  <xacro:mecanum_wheel prefix="test" reflect="1"/>-->
-  <link name="wheel">
-    <visual>
-      <geometry>
-        <mesh filename="package://rm_description/meshes/common/mecanum_wheel.stl"/>
-      </geometry>
-    </visual>
-    <collision>
-      <geometry>
-        <sphere radius="${wheel_radius}"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <!--  <xacro:mecanum_wheel prefix="test" reflect="1"/>-->
-
-  <!-- Gazebo plugin for ROS Control -->
-  <gazebo>
-    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>/</robotNamespace>
-    </plugin>
-  </gazebo>
 
 </robot>
