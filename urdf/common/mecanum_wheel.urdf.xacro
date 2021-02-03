@@ -5,10 +5,10 @@
     <link name="${prefix}_wheel">
       <visual>
         <geometry>
-          <mesh filename="package://rm_description/meshes/common/mecanum_wheel.stl"/>
-          <xacro:if value="${reflect == -1}">
-            <origin rpy="0 0 pi"/>
+          <xacro:if value="${reflect == '-1'}">
+            <!--            //TODO: add right threaded wheel-->
           </xacro:if>
+          <mesh filename="package://rm_description/meshes/common/mecanum_wheel.stl"/>
         </geometry>
       </visual>
       <inertial>
@@ -30,11 +30,12 @@
     <joint name="${prefix}_wheel_joint" type="continuous">
       <axis xyz="0 1 0"/>
       <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_offset_z}" rpy="0 0 0"/>
+      <dynamics damping="0.1" friction="0.1"/>
       <parent link="${parent}"/>
       <child link="${prefix}_wheel"/>
     </joint>
     <joint name="${prefix}_rotor_joint" type="continuous">
-      <axis xyz="${reflect * 0.70719678} ${reflect * 0.70719678} 0"/>
+      <axis xyz="${0.70719678} ${reflect * 0.70719678} 0"/>
       <parent link="${prefix}_wheel"/>
       <child link="${prefix}_rotor"/>
     </joint>
