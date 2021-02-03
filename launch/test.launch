@@ -7,6 +7,12 @@
   <param name="robot_description" command="$(find xacro)/xacro $(arg model)"/>
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model base"/>
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-z 0.5 -param robot_description -urdf -model base"/>
 
+  <rosparam command="load"
+            file="$(find urdf_sim_tutorial)/config/joints.yaml"
+            ns="r2d2_joint_state_controller"/>
+
+  <node name="r2d2_controller_spawner" pkg="controller_manager" type="spawner"
+        args="r2d2_joint_state_controller"/>
 </launch>

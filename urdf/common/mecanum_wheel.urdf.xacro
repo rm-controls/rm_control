@@ -5,10 +5,14 @@
     <link name="${prefix}_wheel">
       <visual>
         <geometry>
-          <xacro:if value="${reflect == '-1'}">
-            <!--            //TODO: add right threaded wheel-->
+          <xacro:if value="${reflect == 1}">
+            <mesh filename="package://rm_description/meshes/common/left_threaded_mecanum_wheel.stl"
+                  scale="0.035 0.035 0.035"/>
           </xacro:if>
-          <mesh filename="package://rm_description/meshes/common/mecanum_wheel.stl"/>
+          <xacro:if value="${reflect == -1}">
+            <mesh filename="package://rm_description/meshes/common/right_threaded_mecanum_wheel.stl"
+                  scale="0.035 0.035 0.035"/>
+          </xacro:if>
         </geometry>
       </visual>
       <inertial>
@@ -26,6 +30,10 @@
         <mass value="0.036"/>
         <inertia ixx="3128e-9" ixy="-1638.12e-9" ixz="0.0" iyy="3128e-9" iyz="0.0" izz="4766e-9"/>
       </inertial>
+      <gazebo>
+        <mu1>0.8</mu1>
+        <mu2>0.8</mu2>
+      </gazebo>
     </link>
     <joint name="${prefix}_wheel_joint" type="continuous">
       <axis xyz="0 1 0"/>
