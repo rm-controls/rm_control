@@ -1,0 +1,51 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find rm_description)/urdf/common/mecanum_wheel.urdf.xacro"/>
+
+  <!-- simplified box collision geometry for base -->
+  <xacro:property name="base_mass" value="10.0"/>
+  <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
+  <xacro:property name="wheel_track" value="0.500"/>
+  <xacro:property name="wheel_base" value="0.475"/>
+  <xacro:property name="wheel_offset_z" value="-0.036"/>
+  <xacro:property name="wheel_joint_damping" value="1.0"/>
+  <xacro:property name="wheel_joint_friction" value="1.0"/>
+
+  <link name="base_link">
+    <inertial>
+      <mass value="${base_mass}"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="5.652232699207" ixy="-0.009719934438" ixz="1.293988226423" iyy="5.669473158652"
+               iyz="-0.007379583694" izz="3.683196351726"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://rm_description/meshes/hero/base.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="DarkGrey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://rm_description/meshes/hero/base.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <xacro:mecanum_wheel prefix="front_left" parent="base_link"
+                       wheel_x_offset="${wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
+                       wheel_z_offset="${wheel_offset_z}"
+                       reflect="1"/>
+  <xacro:mecanum_wheel prefix="front_right" parent="base_link"
+                       wheel_x_offset="${wheel_track/2}" wheel_y_offset="${wheel_base/2}"
+                       wheel_z_offset="${wheel_offset_z}"
+                       reflect="-1"/>
+  <xacro:mecanum_wheel prefix="back_left" parent="base_link"
+                       wheel_x_offset="${-wheel_track/2}" wheel_y_offset="${wheel_base/2}"
+                       wheel_z_offset="${wheel_offset_z}"
+                       reflect="1"/>
+  <xacro:mecanum_wheel prefix="back_right" parent="base_link"
+                       wheel_x_offset="${-wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
+                       wheel_z_offset="${wheel_offset_z}"
+                       reflect="-1"/>
+</robot>
