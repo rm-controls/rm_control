@@ -9,10 +9,10 @@
   <!-- push robot_description to factory and spawn robot in gazebo -->
   <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-z 0.5 -param robot_description -urdf -model base"/>
 
-  <rosparam command="load"
-            file="$(find urdf_sim_tutorial)/config/joints.yaml"
-            ns="r2d2_joint_state_controller"/>
+  <rosparam command="load" file="$(find urdf_sim_tutorial)/config/joints.yaml"/>
 
   <node name="r2d2_controller_spawner" pkg="controller_manager" type="spawner"
-        args="r2d2_joint_state_controller"/>
+        args="front_left_wheel_controller front_right_wheel_controller
+              back_left_wheel_controller back_right_wheel_controller"
+        output="screen"/>
 </launch>

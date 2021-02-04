@@ -2,6 +2,7 @@
 
   <xacro:property name="wheel_radius" value="0.07625"/>
   <xacro:macro name="mecanum_wheel" params="prefix parent wheel_x_offset wheel_y_offset wheel_z_offset reflect">
+    <!--  link  -->
     <link name="${prefix}_wheel">
       <visual>
         <geometry>
@@ -31,10 +32,12 @@
         <inertia ixx="3128e-9" ixy="-1638.12e-9" ixz="0.0" iyy="3128e-9" iyz="0.0" izz="4766e-9"/>
       </inertial>
       <gazebo>
-        <mu1>0.8</mu1>
-        <mu2>0.8</mu2>
+        <mu1>200</mu1>
+        <mu2>200</mu2>
       </gazebo>
     </link>
+
+    <!--  joint  -->
     <joint name="${prefix}_wheel_joint" type="continuous">
       <axis xyz="0 1 0"/>
       <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_offset_z}" rpy="0 0 0"/>
@@ -47,6 +50,18 @@
       <parent link="${prefix}_wheel"/>
       <child link="${prefix}_rotor"/>
     </joint>
+    <!-- transmission -->
+    <transmission name="${prefix}_wheel_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <actuator name="${prefix}_wheel_actuator">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>${reflect}</mechanicalReduction>
+      </actuator>
+      <joint name="${prefix}_wheel_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+    </transmission>
+
   </xacro:macro>
 
 </robot>
