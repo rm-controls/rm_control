@@ -2,15 +2,16 @@
 
   <xacro:property name="wheel_radius" value="0.07625"/>
   <xacro:property name="wheel_length" value="0.0269"/>
-  <xacro:property name="rotor_radius" value="0.006"/>
+  <xacro:property name="rotor_radius" value="0.008"/>
 
   <xacro:macro name="rotor" params="prefix suffix theta">
     <!--  link  -->
     <link name="${prefix}_rotor_${suffix}">
       <collision>
-        <!--        <origin rpy="0 ${pi/2} ${-pi/4}"/>-->
+        <!--  still has wrong ration of rotor-->
         <!--        <geometry>-->
-        <!--          <cylinder radius="${rotor_radius}" length="${wheel_length}"/>-->
+        <!--          <mesh filename="package://rm_description/meshes/common/rotor.stl"-->
+        <!--                scale="0.001 0.001 0.001"/>-->
         <!--        </geometry>-->
         <geometry>
           <sphere radius="${rotor_radius}"/>
@@ -44,11 +45,11 @@
         <geometry>
           <xacro:if value="${reflect == 1}">
             <mesh filename="package://rm_description/meshes/common/right_threaded_mecanum_wheel.stl"
-                  scale="0.035 0.035 0.035"/>
+                  scale="0.001 0.001 0.001"/>
           </xacro:if>
           <xacro:if value="${reflect == -1}">
             <mesh filename="package://rm_description/meshes/common/left_threaded_mecanum_wheel.stl"
-                  scale="0.035 0.035 0.035"/>
+                  scale="0.001 0.001 0.001"/>
           </xacro:if>
         </geometry>
       </visual>
@@ -67,7 +68,7 @@
       <child link="${prefix}_wheel"/>
     </joint>
 
-    <!-- rotor -->
+    <!-- 16 rotor  2pi/16=0.393-->
     <xacro:rotor prefix="${prefix}" suffix="0" theta="${0*0.393}"/>
     <xacro:rotor prefix="${prefix}" suffix="1" theta="${1*0.393}"/>
     <xacro:rotor prefix="${prefix}" suffix="2" theta="${2*0.393}"/>
