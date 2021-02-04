@@ -31,11 +31,11 @@
   </link>
 
   <xacro:mecanum_wheel prefix="front_left" parent="base_link"
-                       wheel_x_offset="${wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
+                       wheel_x_offset="${wheel_track/2}" wheel_y_offset="${wheel_base/2}"
                        wheel_z_offset="${wheel_offset_z}"
                        reflect="1"/>
   <xacro:mecanum_wheel prefix="front_right" parent="base_link"
-                       wheel_x_offset="${wheel_track/2}" wheel_y_offset="${wheel_base/2}"
+                       wheel_x_offset="${wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
                        wheel_z_offset="${wheel_offset_z}"
                        reflect="-1"/>
   <xacro:mecanum_wheel prefix="back_left" parent="base_link"
