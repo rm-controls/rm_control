@@ -1,8 +1,9 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:property name="wheel_radius" value="0.07625"/>
-  <xacro:property name="wheel_length" value="0.0269"/>
   <xacro:property name="rotor_radius" value="0.008"/>
+  <xacro:property name="wheel_joint_effort" value="0.1"/>
+  <xacro:property name="wheel_joint_velocity" value="100"/>
 
   <xacro:macro name="rotor" params="prefix suffix theta">
     <!--  link  -->
@@ -19,22 +20,26 @@
       </collision>
       <inertial>
         <mass value="0.036"/>
-        <inertia ixx="3128e-9" ixy="-1638.12e-9" ixz="0.0" iyy="3128e-9" iyz="0.0" izz="4766e-9"/>
+        <inertia ixx="3128e-9" ixy="0.0" ixz="0.0" iyy="3128e-9" iyz="0.0" izz="3128e-9"/>
       </inertial>
-      <gazebo>
-        <mu1>200</mu1>
-        <mu2>200</mu2>
-      </gazebo>
     </link>
 
     <joint name="${prefix}_rotor_${suffix}_joint" type="continuous">
       <origin
-          xyz="${(wheel_radius-rotor_radius)*cos(theta-pi/2) * 0.70719678} 0 ${(wheel_radius-rotor_radius)*sin(theta-pi/2) * 0.70719678}"
+          xyz="${(wheel_radius-rotor_radius)*cos(theta-pi/2)} 0 ${(wheel_radius-rotor_radius)*sin(theta-pi/2)}"
           rpy="0 0 0"/>
       <axis xyz="${cos(theta) * 0.70719678} ${- reflect * 0.70719678} ${sin(theta) * 0.70719678}"/>
       <parent link="${prefix}_wheel"/>
       <child link="${prefix}_rotor_${suffix}"/>
     </joint>
+
+    <gazebo reference="${prefix}_rotor_${suffix}">
+      <mu1 value="2000.0"/>
+      <mu2 value="2000.0"/>
+      <kp value="1000000.0"/>
+      <kd value="100.0"/>
+      <material>Gazebo/Black</material>
+    </gazebo>
 
   </xacro:macro>
 
@@ -63,7 +68,7 @@
     <joint name="${prefix}_wheel_joint" type="continuous">
       <axis xyz="0 1 0"/>
       <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_offset_z}" rpy="0 0 0"/>
-      <dynamics damping="0.1" friction="0.1"/>
+      <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
       <parent link="${parent}"/>
       <child link="${prefix}_wheel"/>
     </joint>
@@ -91,7 +96,7 @@
       <type>transmission_interface/SimpleTransmission</type>
       <actuator name="${prefix}_wheel_actuator">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>${reflect}</mechanicalReduction>
+        <mechanicalReduction>1</mechanicalReduction>
       </actuator>
       <joint name="${prefix}_wheel_joint">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>

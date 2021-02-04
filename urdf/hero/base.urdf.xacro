@@ -23,10 +23,10 @@
       <material name="DarkGrey"/>
     </visual>
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://rm_description/meshes/hero/base.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
+      <!--      <origin xyz="0 0 0" rpy="0 0 0"/>-->
+      <!--      <geometry>-->
+      <!--        <mesh filename="package://rm_description/meshes/hero/base.stl" scale="0.001 0.001 0.001"/>-->
+      <!--      </geometry>-->
     </collision>
   </link>
 
