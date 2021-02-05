@@ -14,11 +14,4 @@
   <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
         args="-z 0.5 -param robot_description -urdf -model base" output="screen"/>
 
-  <rosparam command="load" file="$(find urdf_sim_tutorial)/config/joints.yaml"/>
-
-  <node name="r2d2_controller_spawner" pkg="controller_manager" type="spawner"
-        args="front_left_wheel_controller front_right_wheel_controller
-                back_left_wheel_controller back_right_wheel_controller
-                joint_state_controller"
-        output="screen"/>
 </launch>
