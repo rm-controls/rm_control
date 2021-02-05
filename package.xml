@@ -2,14 +2,19 @@
 <package format="2">
   <name>rm_description</name>
   <version>0.1.0</version>
-  <description>A template for ROS packages.</description>
-  <maintainer email="pfankhauser@anybotics.com">Peter Fankhauser</maintainer>
+  <description>RoboMaster robot description files</description>
+  <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
   <license>BSD</license>
-  <!--  <url type="website">https://github.com/ethz-asl/ros_best_practices</url>-->
-  <!--  <url type="bugtracker">https://github.com/ethz-asl/ros_best_practices/issues</url>-->
-  <author email="pfankhauser@anybotics.com">Peter Fankhauser</author>
+  <author email="liaoqiayuan@gmail.com">Qiayuan Liao</author>
 
   <!-- buildtool_depend: dependencies of the build process -->
   <buildtool_depend>catkin</buildtool_depend>
-  <!-- build_depend: dependencies only used in source files -->
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros_control</exec_depend>
+  <exec_depend>joint_state_controller</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>urdf_tutorial</exec_depend>
+  <exec_depend>xacro</exec_depend>
+
 </package>

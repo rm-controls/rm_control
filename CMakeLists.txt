@@ -37,6 +37,6 @@ catkin_package(
 
 # Mark other files for installation
 install(
-    DIRECTORY urdf meshes
+    DIRECTORY launch meshes urdf worlds
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
