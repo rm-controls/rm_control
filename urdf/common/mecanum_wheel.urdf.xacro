@@ -21,8 +21,34 @@
     <!--  link  -->
     <link name="${prefix}_roller_${suffix}">
       <collision>
-        <origin
-            xyz="0 0 0" quat_xyzw="quaternion_x quaternion_y quaternion_z quaternion_w"/>
+        <!--  quat_xyzw dosen't work ?! covert to rpy-->
+        <xacro:property name="t" value="${2. * (quaternion_w * quaternion_y - quaternion_z * quaternion_x)}"/>
+
+        <xacro:if value="${t > 1}">
+          <origin rpy="${atan2(2. * (quaternion_w * quaternion_x + quaternion_y * quaternion_z),
+                              1. - 2. * (quaternion_x * quaternion_x + quaternion_y * quaternion_y))}
+                     ${asin(1)}
+                     ${atan2(2. * (quaternion_w * quaternion_z + quaternion_x * quaternion_y),
+                              1. - 2. * (quaternion_y * quaternion_y + quaternion_z * quaternion_z))}"
+                  xyz="0 0 0"/>
+        </xacro:if>
+        <xacro:if value="${-1 > t}">
+          <origin rpy="${atan2(2. * (quaternion_w * quaternion_x + quaternion_y * quaternion_z),
+                              1. - 2. * (quaternion_x * quaternion_x + quaternion_y * quaternion_y))}
+                     ${asin(-1)}
+                     ${atan2(2. * (quaternion_w * quaternion_z + quaternion_x * quaternion_y),
+                              1. - 2. * (quaternion_y * quaternion_y + quaternion_z * quaternion_z))}"
+                  xyz="0 0 0"/>
+        </xacro:if>
+        <xacro:if value="${t > -1 and 1 > t}">
+          <origin rpy="${atan2(2. * (quaternion_w * quaternion_x + quaternion_y * quaternion_z),
+                              1. - 2. * (quaternion_x * quaternion_x + quaternion_y * quaternion_y))}
+                     ${asin(t)}
+                     ${atan2(2. * (quaternion_w * quaternion_z + quaternion_x * quaternion_y),
+                              1. - 2. * (quaternion_y * quaternion_y + quaternion_z * quaternion_z))}"
+                  xyz="0 0 0"/>
+        </xacro:if>
+
         <geometry>
           <mesh filename="package://rm_description/meshes/common/roller.stl" scale="0.001 0.001 0.001"/>
         </geometry>
