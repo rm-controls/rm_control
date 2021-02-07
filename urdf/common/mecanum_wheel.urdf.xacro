@@ -2,8 +2,8 @@
 
   <xacro:property name="wheel_radius" value="0.07625"/>
   <xacro:property name="rotor_radius" value="0.008"/>
-  <xacro:property name="wheel_joint_effort" value="0.1"/>
-  <xacro:property name="wheel_joint_velocity" value="100"/>
+  <xacro:property name="wheel_joint_effort" value="5"/>
+  <xacro:property name="wheel_joint_velocity" value="50"/>
 
   <xacro:macro name="rotor" params="prefix suffix theta">
     <!--  link  -->
@@ -65,10 +65,12 @@
     </link>
 
     <!--  joint  -->
-    <joint name="${prefix}_wheel_joint" type="continuous">
+    <joint name="${prefix}_wheel_joint" type="revolute">
       <axis xyz="0 1 0"/>
       <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_offset_z}" rpy="0 0 0"/>
-      <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
+      <!--      limit not work while type="continuous"-->
+      <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}" lower="-1e16" upper="1e16"/>
+      <dynamics damping="0.0" friction="0.05"/>
       <parent link="${parent}"/>
       <child link="${prefix}_wheel"/>
     </joint>
