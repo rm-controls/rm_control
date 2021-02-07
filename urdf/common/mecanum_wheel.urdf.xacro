@@ -1,21 +1,30 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:property name="wheel_radius" value="0.07625"/>
-  <xacro:property name="rotor_radius" value="0.008"/>
+  <xacro:property name="roller_radius" value="0.008"/>
   <xacro:property name="wheel_joint_effort" value="5"/>
   <xacro:property name="wheel_joint_velocity" value="50"/>
 
-  <xacro:macro name="rotor" params="prefix suffix theta">
+  <xacro:macro name="roller" params="prefix suffix theta">
+    <!-- rotation math: roller_joint_axis -->
+    <xacro:property name="sqrt_2_2" value="${sqrt(2)/2}"/>
+    <xacro:property name="roller_joint_axis_x" value="${cos(theta) * sqrt_2_2}"/>
+    <xacro:property name="roller_joint_axis_y" value="${-reflect * sqrt_2_2}"/>
+    <xacro:property name="roller_joint_axis_z" value="${sin(theta) * sqrt_2_2}"/>
+    <!-- rotation math: get quaternion between x_axis (1,0,0) and roller_joint_axis
+    https://stackoverflow.com/questions/1171849/finding-quaternion-representing-the-rotation-from-one-vector-to-another -->
+    <xacro:property name="quaternion_x" value="${0}"/>
+    <xacro:property name="quaternion_y" value="${roller_joint_axis_z}"/>
+    <xacro:property name="quaternion_z" value="${-roller_joint_axis_y}"/>
+    <xacro:property name="quaternion_w" value="${1+roller_joint_axis_x}"/>
+
     <!--  link  -->
-    <link name="${prefix}_rotor_${suffix}">
+    <link name="${prefix}_roller_${suffix}">
       <collision>
-        <!--  still has wrong ration of rotor-->
-        <!--        <geometry>-->
-        <!--          <mesh filename="package://rm_description/meshes/common/rotor.stl"-->
-        <!--                scale="0.001 0.001 0.001"/>-->
-        <!--        </geometry>-->
+        <origin
+            xyz="0 0 0" quat_xyzw="quaternion_x quaternion_y quaternion_z quaternion_w"/>
         <geometry>
-          <sphere radius="${rotor_radius}"/>
+          <mesh filename="package://rm_description/meshes/common/roller.stl" scale="0.001 0.001 0.001"/>
         </geometry>
       </collision>
       <inertial>
@@ -24,16 +33,16 @@
       </inertial>
     </link>
 
-    <joint name="${prefix}_rotor_${suffix}_joint" type="continuous">
+    <joint name="${prefix}_roller_${suffix}_joint" type="continuous">
       <origin
-          xyz="${(wheel_radius-rotor_radius)*cos(theta-pi/2)} 0 ${(wheel_radius-rotor_radius)*sin(theta-pi/2)}"
+          xyz="${(wheel_radius-roller_radius)*cos(theta-pi/2)} 0 ${(wheel_radius-roller_radius)*sin(theta-pi/2)}"
           rpy="0 0 0"/>
-      <axis xyz="${cos(theta) * 0.70719678} ${- reflect * 0.70719678} ${sin(theta) * 0.70719678}"/>
+      <axis xyz="${roller_joint_axis_x} ${roller_joint_axis_y} ${roller_joint_axis_z}"/>
       <parent link="${prefix}_wheel"/>
-      <child link="${prefix}_rotor_${suffix}"/>
+      <child link="${prefix}_roller_${suffix}"/>
     </joint>
 
-    <gazebo reference="${prefix}_rotor_${suffix}">
+    <gazebo reference="${prefix}_roller_${suffix}">
       <mu1 value="2000.0"/>
       <mu2 value="2000.0"/>
       <kp value="1000000.0"/>
@@ -75,23 +84,23 @@
       <child link="${prefix}_wheel"/>
     </joint>
 
-    <!-- 16 rotor  2pi/16=0.393-->
-    <xacro:rotor prefix="${prefix}" suffix="0" theta="${0*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="1" theta="${1*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="2" theta="${2*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="3" theta="${3*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="4" theta="${4*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="5" theta="${5*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="6" theta="${6*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="7" theta="${7*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="8" theta="${8*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="9" theta="${9*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="10" theta="${10*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="11" theta="${11*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="12" theta="${12*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="13" theta="${13*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="14" theta="${14*0.393}"/>
-    <xacro:rotor prefix="${prefix}" suffix="15" theta="${15*0.393}"/>
+    <!-- 16 roller  2pi/16=0.393-->
+    <xacro:roller prefix="${prefix}" suffix="0" theta="${0*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="1" theta="${1*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="2" theta="${2*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="3" theta="${3*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="4" theta="${4*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="5" theta="${5*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="6" theta="${6*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="7" theta="${7*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="8" theta="${8*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="9" theta="${9*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="10" theta="${10*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="11" theta="${11*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="12" theta="${12*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="13" theta="${13*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="14" theta="${14*0.393}"/>
+    <xacro:roller prefix="${prefix}" suffix="15" theta="${15*0.393}"/>
 
     <!-- transmission -->
     <transmission name="${prefix}_wheel_trans">
