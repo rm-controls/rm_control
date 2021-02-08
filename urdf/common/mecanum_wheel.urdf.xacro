@@ -1,7 +1,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:property name="wheel_radius" value="0.07625"/>
-  <xacro:property name="roller_radius" value="0.008"/>
+  <xacro:property name="roller_radius" value="0.009"/>
   <xacro:property name="wheel_joint_effort" value="5"/>
   <xacro:property name="wheel_joint_velocity" value="50"/>
 
@@ -13,41 +13,26 @@
     <xacro:property name="roller_joint_axis_z" value="${sin(theta) * sqrt_2_2}"/>
     <!-- rotation math: get quaternion between x_axis (1,0,0) and roller_joint_axis
     https://stackoverflow.com/questions/1171849/finding-quaternion-representing-the-rotation-from-one-vector-to-another -->
-    <xacro:property name="quaternion_x" value="${0}"/>
-    <xacro:property name="quaternion_y" value="${roller_joint_axis_z}"/>
-    <xacro:property name="quaternion_z" value="${-roller_joint_axis_y}"/>
-    <xacro:property name="quaternion_w" value="${1+roller_joint_axis_x}"/>
+    <xacro:property name="quat_x" value="${0}"/>
+    <xacro:property name="quat_y" value="${roller_joint_axis_z}"/>
+    <xacro:property name="quat_z" value="${-roller_joint_axis_y}"/>
+    <xacro:property name="quat_w" value="${-(1+roller_joint_axis_x)}"/>
+    <xacro:property name="quat_length" value="${sqrt(quat_y*quat_y + quat_z * quat_z+quat_w * quat_w)}"/>
+    <xacro:property name="quat_normal_x" value="${0}"/>
+    <xacro:property name="quat_normal_y" value="${quat_y/quat_length}"/>
+    <xacro:property name="quat_normal_z" value="${quat_z/quat_length}"/>
+    <xacro:property name="quat_normal_w" value="${quat_w/quat_length}"/>
 
     <!--  link  -->
     <link name="${prefix}_roller_${suffix}">
       <collision>
         <!--  quat_xyzw dosen't work ?! covert to rpy-->
-        <xacro:property name="t" value="${2. * (quaternion_w * quaternion_y - quaternion_z * quaternion_x)}"/>
-
-        <xacro:if value="${t > 1}">
-          <origin rpy="${atan2(2. * (quaternion_w * quaternion_x + quaternion_y * quaternion_z),
-                              1. - 2. * (quaternion_x * quaternion_x + quaternion_y * quaternion_y))}
-                     ${asin(1)}
-                     ${atan2(2. * (quaternion_w * quaternion_z + quaternion_x * quaternion_y),
-                              1. - 2. * (quaternion_y * quaternion_y + quaternion_z * quaternion_z))}"
-                  xyz="0 0 0"/>
-        </xacro:if>
-        <xacro:if value="${-1 > t}">
-          <origin rpy="${atan2(2. * (quaternion_w * quaternion_x + quaternion_y * quaternion_z),
-                              1. - 2. * (quaternion_x * quaternion_x + quaternion_y * quaternion_y))}
-                     ${asin(-1)}
-                     ${atan2(2. * (quaternion_w * quaternion_z + quaternion_x * quaternion_y),
-                              1. - 2. * (quaternion_y * quaternion_y + quaternion_z * quaternion_z))}"
-                  xyz="0 0 0"/>
-        </xacro:if>
-        <xacro:if value="${t > -1 and 1 > t}">
-          <origin rpy="${atan2(2. * (quaternion_w * quaternion_x + quaternion_y * quaternion_z),
-                              1. - 2. * (quaternion_x * quaternion_x + quaternion_y * quaternion_y))}
-                     ${asin(t)}
-                     ${atan2(2. * (quaternion_w * quaternion_z + quaternion_x * quaternion_y),
-                              1. - 2. * (quaternion_y * quaternion_y + quaternion_z * quaternion_z))}"
-                  xyz="0 0 0"/>
-        </xacro:if>
+        <origin rpy="${atan2(2. * (quat_normal_w * quat_normal_x + quat_normal_y * quat_normal_z),
+                              1. - 2. * (quat_normal_x * quat_normal_x + quat_normal_y * quat_normal_y))}
+                     ${asin(2. * (quat_normal_w * quat_normal_y - quat_normal_z * quat_normal_x))}
+                     ${atan2(2. * (quat_normal_w * quat_normal_z + quat_normal_x * quat_normal_y),
+                              1. - 2. * (quat_normal_y * quat_normal_y + quat_normal_z * quat_normal_z))}"
+                xyz="0 0 0"/>
 
         <geometry>
           <mesh filename="package://rm_description/meshes/common/roller.stl" scale="0.001 0.001 0.001"/>
@@ -64,6 +49,7 @@
           xyz="${(wheel_radius-roller_radius)*cos(theta-pi/2)} 0 ${(wheel_radius-roller_radius)*sin(theta-pi/2)}"
           rpy="0 0 0"/>
       <axis xyz="${roller_joint_axis_x} ${roller_joint_axis_y} ${roller_joint_axis_z}"/>
+      <dynamics damping="0.0" friction="0.001"/>
       <parent link="${prefix}_wheel"/>
       <child link="${prefix}_roller_${suffix}"/>
     </joint>
