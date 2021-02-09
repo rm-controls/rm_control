@@ -23,7 +23,8 @@
 #include <joint_limits_interface/joint_limits_interface.h>
 #include <hardware_interface/imu_sensor_interface.h>
 
-#include "rm_base/hardware_interface/robot_state_interface.h"
+#include <robot_state_controller/robot_state_interface.h>
+
 #include "can_bus.h"
 
 namespace rm_base {

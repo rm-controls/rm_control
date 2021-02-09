@@ -24,8 +24,7 @@ find_package(catkin REQUIRED
     socketcan_interface
     angles
     realtime_tools
-    tf2_ros
-    kdl_parser
+    robot_state_controller
     )
 
 ## Find system libraries
@@ -57,8 +56,7 @@ catkin_package(
     socketcan_interface
     angles
     realtime_tools
-    tf2_ros
-    kdl_parser
+    robot_state_controller
     DEPENDS
 )
 
