@@ -32,6 +32,5 @@
 
   <export>
     <transmission_interface plugin="${prefix}/rm_base_loader_plugins.xml"/>
-    <controller_interface plugin="${prefix}/robot_state_plugin.xml"/>
   </export>
 </package>
