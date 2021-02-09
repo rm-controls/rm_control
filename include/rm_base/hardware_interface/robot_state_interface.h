@@ -19,10 +19,8 @@ namespace hardware_interface {
 class RobotStateHandle {
  public:
   RobotStateHandle() = default;
-  RobotStateHandle(std::string name, tf2_ros::Buffer *buffer,
-                   robot_state_controller::TfRtBroadcaster *tf_bro,
-                   robot_state_controller::StaticTfRtBroadcaster *static_tf_bro)
-      : name_(std::move(name)), buffer_(buffer), tf_broadcaster_(tf_bro), static_tf_broadcaster_{static_tf_bro} {};
+  RobotStateHandle(std::string name, tf2_ros::Buffer *buffer)
+      : name_(std::move(name)), buffer_(buffer) {};
 
   geometry_msgs::TransformStamped lookupTransform(const std::string &target_frame, const std::string &source_frame,
                                                   const ros::Time &time) {
@@ -45,9 +43,7 @@ class RobotStateHandle {
 
  private:
   std::string name_;
-  tf2_ros::Buffer *buffer_;
-  robot_state_controller::TfRtBroadcaster *tf_broadcaster_;
-  robot_state_controller::StaticTfRtBroadcaster *static_tf_broadcaster_;
+  tf2_ros::Buffer *buffer_{};
 
 };
 
