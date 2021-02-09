@@ -23,7 +23,8 @@
 #include <joint_limits_interface/joint_limits_interface.h>
 #include <hardware_interface/imu_sensor_interface.h>
 
-#include "rm_base/hardware_interface/robot_state_interface.h"
+#include <robot_state_controller/robot_state_interface.h>
+
 #include "can_bus.h"
 
 namespace rm_base {
@@ -37,6 +38,10 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
   void read(const ros::Time &time, const ros::Duration &period) override;
 
   void write(const ros::Time &time, const ros::Duration &period) override;
+
+  bool checkForConflict(const std::list<hardware_interface::ControllerInfo> &info) const override {
+    return false; // TODO implement it
+  }
 
  private:
 

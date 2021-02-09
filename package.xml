@@ -25,13 +25,9 @@
   <depend>socketcan_interface</depend>
   <depend>angles</depend>
   <depend>realtime_tools</depend>
-
-  <depend>kdl_parser</depend>
-  <depend>tf2_ros</depend>
-  <exec_depend>pluginlib</exec_depend>
+  <depend>robot_state_controller</depend>
 
   <export>
     <transmission_interface plugin="${prefix}/rm_base_loader_plugins.xml"/>
-    <controller_interface plugin="${prefix}/robot_state_plugin.xml"/>
   </export>
 </package>
