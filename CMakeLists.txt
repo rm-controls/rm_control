@@ -23,8 +23,7 @@ find_package(catkin REQUIRED
     socketcan_interface
     angles
     realtime_tools
-    tf2_ros
-    kdl_parser
+    robot_state_controller
     )
 
 ## Find system libraries
@@ -56,8 +55,7 @@ catkin_package(
     socketcan_interface
     angles
     realtime_tools
-    tf2_ros
-    kdl_parser
+    robot_state_controller
     DEPENDS
 )
 
@@ -73,11 +71,6 @@ include_directories(
 add_library(${PROJECT_NAME}_loader_plugins
     src/rm_base/transmission/revolute_transmission_loader.cpp
     )
-add_library(robot_state_controller
-    src/rm_base/robot_state_controller/robot_state_controller.cpp
-    src/rm_base/robot_state_controller/tf_rt_broadcaster.cpp
-    )
-
 ## Declare cpp executables
 add_executable(${PROJECT_NAME}
     src/rm_base/${PROJECT_NAME}.cpp
@@ -85,16 +78,12 @@ add_executable(${PROJECT_NAME}
     src/rm_base/hardware_interface/can_bus.cpp
     src/rm_base/control_loop.cpp
     )
-
 add_executable(dbus_node
     src/dbus/dbus_node.cpp
     src/dbus/dbus.cpp)
 
 ## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}_loader_plugins
-    ${catkin_LIBRARIES}
-    )
-target_link_libraries(robot_state_controller
     ${catkin_LIBRARIES}
     )
 target_link_libraries(${PROJECT_NAME}
