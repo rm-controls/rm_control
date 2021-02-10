@@ -17,5 +17,7 @@
   <depend>gazebo_ros</depend>
   <depend>gazebo_ros_control</depend>
   <depend>robot_state_controller</depend>
-
+  <export>
+    <gazebo_ros_control plugin="${prefix}/rm_robot_hw_sim_plugins.xml"/>
+  </export>
 </package>

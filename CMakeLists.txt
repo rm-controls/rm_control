@@ -20,6 +20,10 @@ find_package(catkin REQUIRED
     robot_state_controller
     )
 
+# Depend on system install of Gazebo
+find_package(GAZEBO REQUIRED)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
+
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -36,17 +40,11 @@ catkin_package(
     ${PROJECT_NAME}
     CATKIN_DEPENDS
     roscpp
-    gazebo
+
     gazebo_ros
     gazebo_ros_control
     robot_state_controller
     DEPENDS
-    ## find_package(Eigen3) provides a non standard EIGEN3_INCLUDE_DIR instead of Eigen3_INCLUDE_DIRS.
-    ## Therefore, the DEPEND does not work as expected and we need to add the directory to the INCLUDE_DIRS
-    # Eigen3
-
-    ## Boost is not part of the DEPENDS since it is only used in source files,
-    ## Dependees do not depend on Boost when they depend on this package.
 )
 
 ###########
@@ -58,11 +56,12 @@ catkin_package(
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
+    ${GAZEBO_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
-    src/Algorithm.cpp
+    src/rm_robot_hw_sim.cpp
     )
 
 add_dependencies(${PROJECT_NAME}
@@ -71,6 +70,7 @@ add_dependencies(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     ${catkin_LIBRARIES}
+    ${GAZEBO_LIBRARIES}
     )
 
 #############
