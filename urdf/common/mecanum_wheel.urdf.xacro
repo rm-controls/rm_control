@@ -5,7 +5,7 @@
   <xacro:property name="wheel_joint_effort" value="5"/>
   <xacro:property name="wheel_joint_velocity" value="50"/>
 
-  <xacro:macro name="roller" params="prefix suffix theta">
+  <xacro:macro name="roller" params="prefix suffix theta roller_type">
     <!-- rotation math: roller_joint_axis -->
     <xacro:property name="sqrt_2_2" value="${sqrt(2)/2}"/>
     <xacro:property name="roller_joint_axis_x" value="${cos(theta) * sqrt_2_2}"/>
@@ -26,17 +26,23 @@
     <!--  link  -->
     <link name="${prefix}_roller_${suffix}">
       <collision>
-        <!--  quat_xyzw dosen't work ?! covert to rpy-->
-        <origin rpy="${atan2(2. * (quat_normal_w * quat_normal_x + quat_normal_y * quat_normal_z),
+        <xacro:if value="${roller_type=='realistic'}">
+          <!--  quat_xyzw dosen't work ?! covert to rpy-->
+          <origin rpy="${atan2(2. * (quat_normal_w * quat_normal_x + quat_normal_y * quat_normal_z),
                               1. - 2. * (quat_normal_x * quat_normal_x + quat_normal_y * quat_normal_y))}
                      ${asin(2. * (quat_normal_w * quat_normal_y - quat_normal_z * quat_normal_x))}
                      ${atan2(2. * (quat_normal_w * quat_normal_z + quat_normal_x * quat_normal_y),
                               1. - 2. * (quat_normal_y * quat_normal_y + quat_normal_z * quat_normal_z))}"
-                xyz="0 0 0"/>
-
-        <geometry>
-          <mesh filename="package://rm_description/meshes/common/roller.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
+                  xyz="0 0 0"/>
+          <geometry>
+            <mesh filename="package://rm_description/meshes/common/roller.stl" scale="0.001 0.001 0.001"/>
+          </geometry>
+        </xacro:if>
+        <xacro:if value="${roller_type=='simple'}">
+          <geometry>
+            <sphere radius="${roller_radius}"/>
+          </geometry>
+        </xacro:if>
       </collision>
       <inertial>
         <mass value="0.036"/>
@@ -64,7 +70,8 @@
 
   </xacro:macro>
 
-  <xacro:macro name="mecanum_wheel" params="prefix parent wheel_x_offset wheel_y_offset wheel_z_offset reflect">
+  <xacro:macro name="mecanum_wheel"
+               params="prefix connected_to wheel_x_offset wheel_y_offset wheel_z_offset reflect roller_type">
     <!--  link  -->
     <link name="${prefix}_wheel">
       <visual>
@@ -92,27 +99,29 @@
       <!--      limit not work while type="continuous"-->
       <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}" lower="-1e16" upper="1e16"/>
       <dynamics damping="0.0" friction="0.05"/>
-      <parent link="${parent}"/>
+      <parent link="${connected_to}"/>
       <child link="${prefix}_wheel"/>
     </joint>
 
-    <!-- 16 roller  2pi/16=0.393-->
-    <xacro:roller prefix="${prefix}" suffix="0" theta="${0*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="1" theta="${1*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="2" theta="${2*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="3" theta="${3*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="4" theta="${4*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="5" theta="${5*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="6" theta="${6*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="7" theta="${7*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="8" theta="${8*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="9" theta="${9*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="10" theta="${10*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="11" theta="${11*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="12" theta="${12*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="13" theta="${13*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="14" theta="${14*0.393}"/>
-    <xacro:roller prefix="${prefix}" suffix="15" theta="${15*0.393}"/>
+    <xacro:unless value="${roller_type=='none'}">
+      <!-- 16 roller  2pi/16=0.393-->
+      <xacro:roller prefix="${prefix}" suffix="0" theta="${0*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="1" theta="${1*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="2" theta="${2*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="3" theta="${3*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="4" theta="${4*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="5" theta="${5*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="6" theta="${6*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="7" theta="${7*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="8" theta="${8*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="9" theta="${9*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="10" theta="${10*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="11" theta="${11*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="12" theta="${12*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="13" theta="${13*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="14" theta="${14*0.393}" roller_type="${roller_type}"/>
+      <xacro:roller prefix="${prefix}" suffix="15" theta="${15*0.393}" roller_type="${roller_type}"/>
+    </xacro:unless>
 
     <!-- transmission -->
     <transmission name="${prefix}_wheel_trans">
