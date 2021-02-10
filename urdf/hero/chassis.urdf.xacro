@@ -49,8 +49,9 @@
 
   <!-- Gazebo plugin for ROS Control -->
   <gazebo>
-    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+    <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
       <robotNamespace>/</robotNamespace>
+      <robotSimType>rm_gazebo/RmRobotHWSim</robotSimType>
     </plugin>
   </gazebo>
 
