@@ -60,15 +60,15 @@ include_directories(
 )
 
 ## Declare a cpp library
-add_library(${PROJECT_NAME}
+add_library(rm_robot_hw_sim
     src/rm_robot_hw_sim.cpp
     )
 
-add_dependencies(${PROJECT_NAME}
+add_dependencies(rm_robot_hw_sim
     ${catkin_EXPORTED_TARGETS}
     )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(rm_robot_hw_sim
     ${catkin_LIBRARIES}
     ${GAZEBO_LIBRARIES}
     )

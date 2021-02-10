@@ -3,6 +3,9 @@
 //
 
 #include "rm_gazebo/rm_robot_hw_sim.h"
+
+#include <gazebo_ros_control/gazebo_ros_control_plugin.h>
+
 namespace rm_gazebo {
 
 bool RmRobotHWSim::initSim(const std::string &robot_namespace,
@@ -18,3 +21,4 @@ bool RmRobotHWSim::initSim(const std::string &robot_namespace,
 }
 
 PLUGINLIB_EXPORT_CLASS(rm_gazebo::RmRobotHWSim, gazebo_ros_control::RobotHWSim)
+GZ_REGISTER_MODEL_PLUGIN(gazebo_ros_control::GazeboRosControlPlugin) // Default plugin
