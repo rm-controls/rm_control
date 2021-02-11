@@ -28,7 +28,7 @@ expect that it changes often and any fitness for a particular purpose is disclai
 #### Dependencies
 
 - [Robot Operating System (ROS)](http://wiki.ros.org) (middleware for robotics),
-- [rm_gazebo]()
+- [rm_gazebo](https://github.com/gdut-dynamic-x/rm_gazebo) if `use_rm_gazbe`
 - gazebo_ros
 - gazebo_ros_control
 - xacro
