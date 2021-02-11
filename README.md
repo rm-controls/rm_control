@@ -69,6 +69,7 @@ Run the simulation with:
     - **`load_shooter`** Load shooter URDF. Default: `true`.
     - **`load_gazebo`** Load Gazebo params and run Gazebo. Default: `true`.
     - **`use_rm_gazebo`** Use Gazebo params and run Gazebo. Default: `false`.
+    - **`paused`** Paused simulation when load Gazbeo. Default: `true`.
 
   Chassis argument set
     - **`roller_type`** How to simulate the roller of mecanum wheel, set `simple` to use sphere roller for speed up
