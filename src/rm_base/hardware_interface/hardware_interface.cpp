@@ -10,7 +10,9 @@
 
 #include "rm_base/hardware_interface/hardware_interface.h"
 
-bool rm_base::RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
+namespace rm_base {
+
+bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
   // Parse actuator coefficient specified by user (stored on ROS parameter server)
   XmlRpc::XmlRpcValue xml_rpc_value;
   if (!robot_hw_nh.getParam("actuator_coefficient", xml_rpc_value))
@@ -59,7 +61,7 @@ bool rm_base::RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeH
   return true;
 }
 
-void rm_base::RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &period) {
+void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &period) {
   // NOTE: read all data before  propagate!
   act_to_jnt_state_->propagate();
 
@@ -70,7 +72,7 @@ void rm_base::RmBaseHardWareInterface::read(const ros::Time &time, const ros::Du
     effort_joint_interface->getHandle(name).setCommand(0);
 }
 
-void rm_base::RmBaseHardWareInterface::write(const ros::Time &time, const ros::Duration &period) {
+void RmBaseHardWareInterface::write(const ros::Time &time, const ros::Duration &period) {
   effort_jnt_saturation_interface_.enforceLimits(period);
   effort_jnt_soft_limits_interface_.enforceLimits(period);
   jnt_to_act_effort_->propagate();
@@ -78,7 +80,7 @@ void rm_base::RmBaseHardWareInterface::write(const ros::Time &time, const ros::D
     item->write();
 }
 
-bool rm_base::RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs) {
+bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs) {
   ROS_ASSERT(act_coeffs.getType() == XmlRpc::XmlRpcValue::TypeStruct);
   try {
     for (XmlRpc::XmlRpcValue::ValueStruct::const_iterator it = act_coeffs.begin(); it != act_coeffs.end(); ++it) {
@@ -130,7 +132,7 @@ bool rm_base::RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_c
   return true;
 }
 
-bool rm_base::RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::NodeHandle &robot_hw_nh) {
+bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::NodeHandle &robot_hw_nh) {
   ROS_ASSERT(act_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
 
   try {
@@ -202,7 +204,7 @@ bool rm_base::RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_dat
   return true;
 }
 
-bool rm_base::RmBaseHardWareInterface::load_urdf(ros::NodeHandle &root_nh) {
+bool RmBaseHardWareInterface::load_urdf(ros::NodeHandle &root_nh) {
   if (urdf_model_ == nullptr)
     urdf_model_ = std::make_shared<urdf::Model>();
   // get the urdf param on param server
@@ -210,7 +212,7 @@ bool rm_base::RmBaseHardWareInterface::load_urdf(ros::NodeHandle &root_nh) {
   return !urdf_string_.empty() && urdf_model_->initString(urdf_string_);
 }
 
-bool rm_base::RmBaseHardWareInterface::setupTransmission(ros::NodeHandle &root_nh) {
+bool RmBaseHardWareInterface::setupTransmission(ros::NodeHandle &root_nh) {
   try {
     transmission_loader_ = std::make_unique<transmission_interface::TransmissionInterfaceLoader>(
         this, &robot_transmissions_);
@@ -235,7 +237,7 @@ bool rm_base::RmBaseHardWareInterface::setupTransmission(ros::NodeHandle &root_n
   return true;
 }
 
-bool rm_base::RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle &root_nh) {
+bool RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle &root_nh) {
   auto effort_joint_interface = this->get<hardware_interface::EffortJointInterface>();
   std::vector<std::string> names = effort_joint_interface->getNames();
   joint_limits_interface::JointLimits joint_limits; // Position
@@ -294,3 +296,4 @@ bool rm_base::RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle &root_nh)
   return true;
 }
 
+}
