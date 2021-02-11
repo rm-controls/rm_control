@@ -6,6 +6,7 @@
   <arg name="load_gazebo" default="true"/>
   <arg name="use_rm_gazebo" default="false"/>
   <arg name="roller_type" default="realistic"/>
+  <arg name="paused" default="true"/>
 
   <param name="robot_description" command="$(find xacro)/xacro $(find rm_description)/urdf/hero/hero.urdf.xacro
          load_chassis:=$(arg load_chassis) load_gimbal:=$(arg load_gimbal) load_shooter:=$(arg load_shooter)
@@ -14,7 +15,7 @@
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include if="$(arg load_gazebo)" file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="paused" value="true"/>
+    <arg name="paused" value="$(arg paused)"/>
     <arg name="world_name" value="$(find rm_description)/worlds/empty.world"/>
   </include>
 
