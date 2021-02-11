@@ -28,6 +28,7 @@ expect that it changes often and any fitness for a particular purpose is disclai
 #### Dependencies
 
 - [Robot Operating System (ROS)](http://wiki.ros.org) (middleware for robotics),
+- [rm_gazebo]()
 - gazebo_ros
 - gazebo_ros_control
 - xacro
@@ -51,7 +52,7 @@ using
 
 Run the simulation with:
 
-	roslaunch rm_description hero_chassis_only.launch
+	roslaunch rm_description hero.launch
 
 ## Config files
 
@@ -59,7 +60,20 @@ Run the simulation with:
 
 ## Launch files
 
-* **hero_chassis_only.launch:** Launch Gazebo and load hero robot with chassis only.
+* **hero.launch:** Launch Gazebo and load hero robot.
+
+  Loading argument set
+
+    - **`load_chassis`** Load chassis URDF. Default: `true`.
+    - **`load_gimbal`** Load gimbal URDF. Default: `true`.
+    - **`load_shooter`** Load shooter URDF. Default: `true`.
+    - **`load_gazebo`** Load Gazebo params and run Gazebo. Default: `true`.
+    - **`use_rm_gazebo`** Use Gazebo params and run Gazebo. Default: `false`.
+
+  Chassis argument set
+    - **`roller_type`** How to simulate the roller of mecanum wheel, set `simple` to use sphere roller for speed up
+      simulation, set `none` for real robot. Default: `realistic`(use one sphere with two
+      capsule [roller.stl](meshes/common/roller.stl)).
 
 ## Bugs & Feature Requests
 
