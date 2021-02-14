@@ -33,10 +33,6 @@ expect that it changes often and any fitness for a particular purpose is disclai
 - gazebo_ros_control
 - xacro
 
-Install dependencies:
-
-    sudo rosdep install rm_description
-
 #### Building
 
 To build from source, clone the latest version from this repository into your catkin workspace and compile the package
@@ -46,6 +42,7 @@ using
 	git clone git@github.com:gdut-dynamic-x/rm_description.git
     # git clone https://github.com/gdut-dynamic-x/rm_description.git
 	cd ../
+	rosdep install --from-paths . --ignore-src
 	catkin build # Actually nothing to build
 
 ## Usage
