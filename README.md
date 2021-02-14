@@ -24,28 +24,6 @@ The PACKAGE NAME package has been tested under [ROS] Indigo, Melodic and Noetic 
 
 ![Example image](doc/example.jpg)
 
-[comment]: <> (### Publications)
-
-[comment]: <> (If you use this work in an academic context, please cite the following publication&#40;s&#41;:)
-
-[comment]: <> (* P. Fankhauser, M. Bloesch, C. Gehring, M. Hutter, and R. Siegwart: **PAPER TITLE**. IEEE/RSJ International Conference)
-
-[comment]: <> (  on Intelligent Robots and Systems &#40;IROS&#41;, 2015. &#40;[PDF]&#40;http://dx.doi.org/10.3929/ethz-a-010173654&#41;&#41;)
-
-[comment]: <> (        @inproceedings{Fankhauser2015,)
-
-[comment]: <> (            author = {Fankhauser, P\'{e}ter and Hutter, Marco},)
-
-[comment]: <> (            booktitle = {IEEE/RSJ International Conference on Intelligent Robots and Systems &#40;IROS&#41;},)
-
-[comment]: <> (            title = {{PAPER TITLE}},)
-
-[comment]: <> (            publisher = {IEEE},)
-
-[comment]: <> (            year = {2015})
-
-[comment]: <> (        })
-
 ## Installation
 
 ### Installation from Packages
@@ -64,6 +42,7 @@ Or better, use `rosdep`:
 
 - [Robot Operating System (ROS)](http://wiki.ros.org) (middleware for robotics),
 - [Eigen] (linear algebra library)
+- [libignition-rendering3](https://ignitionrobotics.org/api/rendering/4.1/installation.html)
 
   sudo rosdep install --from-paths src
 
@@ -77,29 +56,6 @@ using
 	cd ../
 	rosdep install --from-paths . --ignore-src
 	catkin_make
-
-### Running in Docker
-
-Docker is a great way to run an application with all dependencies and libraries bundles together. Make sure
-to [install Docker](https://docs.docker.com/get-docker/) first.
-
-First, spin up a simple container:
-
-	docker run -ti --rm --name ros-container ros:noetic bash
-
-This downloads the `ros:noetic` image from the Docker Hub, indicates that it requires an interactive terminal (`-t, -i`)
-, gives it a name (`--name`), removes it after you exit the container (`--rm`) and runs a command (`bash`).
-
-Now, create a catkin workspace, clone the package, build it, done!
-
-	apt-get update && apt-get install -y git
-	mkdir -p /ws/src && cd /ws/src
-	git clone https://github.com/leggedrobotics/ros_best_practices.git
-	cd ..
-	rosdep install --from-path src
-	catkin_make
-	source devel/setup.bash
-	roslaunch ros_package_template ros_package_template.launch
 
 ### Unit Tests
 
@@ -179,10 +135,6 @@ Reads temperature measurements and computed the average.
 
   The size of the cache.
 
-### NODE_B_NAME
-
-...
-
 ## Bugs & Feature Requests
 
 Please report bugs and request features using the [Issue Tracker](https://github.com/gdut-dynamic-x/rm_template/issues)
@@ -191,10 +143,3 @@ Please report bugs and request features using the [Issue Tracker](https://github
 
 [ROS]: http://www.ros.org
 
-[rviz]: http://wiki.ros.org/rviz
-
-[Eigen]: http://eigen.tuxfamily.org
-
-[std_srvs/Trigger]: http://docs.ros.org/api/std_srvs/html/srv/Trigger.html
-
-[sensor_msgs/Temperature]: http://docs.ros.org/api/sensor_msgs/html/msg/Temperature.html
