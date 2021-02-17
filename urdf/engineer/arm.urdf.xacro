@@ -39,9 +39,7 @@
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/link1_collision.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
+        <!--TODO: add collision-->
       </collision>
     </link>
 
