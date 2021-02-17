@@ -80,7 +80,7 @@
       <collision>
         <origin xyz="0.100 0 0"/>
         <geometry>
-          <box size="0.248.78 0.089 0.0895"/>
+          <box size="0.2488 0.089 0.0895"/>
         </geometry>
       </collision>
     </link>
