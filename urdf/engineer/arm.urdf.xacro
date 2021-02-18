@@ -38,8 +38,10 @@
         </geometry>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <!--TODO: add collision-->
+        <origin xyz="-0.02 0 0.05" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.200 0.182 0.100"/>
+        </geometry>
       </collision>
     </link>
 
@@ -78,9 +80,9 @@
         </geometry>
       </visual>
       <collision>
-        <origin xyz="0.100 0 0"/>
+        <origin xyz="0.090 0 0"/>
         <geometry>
-          <box size="0.2488 0.089 0.0895"/>
+          <box size="0.245 0.089 0.0895"/>
         </geometry>
       </collision>
     </link>
@@ -132,7 +134,7 @@
       <axis xyz="0 0 1"/>
       <origin xyz="0 0 0.019"/>
       <!--      limit not work while type="continuous"-->
-      <limit effort="20" velocity="999" lower="-1e16" upper="1e16"/>
+      <limit effort="20" velocity="25" lower="-${3*pi}" upper="${3*pi}"/>
       <dynamics damping="0.0" friction="0.1"/>
       <parent link="link0"/>
       <child link="link1"/>
@@ -141,7 +143,7 @@
     <joint name="joint2" type="revolute">
       <axis xyz="0 1 0"/>
       <origin xyz="0.11341 0 0.1380"/>
-      <limit effort="60" velocity="10" lower="-1e16" upper="1e16"/>
+      <limit effort="60" velocity="10" lower="-${pi}" upper="${0.44*pi}"/>
       <dynamics damping="0.0" friction="0.2"/>
       <parent link="link1"/>
       <child link="link2"/>
@@ -150,7 +152,7 @@
     <joint name="joint3" type="revolute">
       <axis xyz="0 1 0"/>
       <origin xyz="0.250 0 0"/>
-      <limit effort="30" velocity="10" lower="-1e16" upper="1e16"/>
+      <limit effort="30" velocity="10" lower="-${0.722*pi}" upper="${0.722*pi}"/>
       <dynamics damping="0.0" friction="0.1"/>
       <parent link="link2"/>
       <child link="link3"/>
@@ -159,7 +161,7 @@
     <joint name="joint4" type="revolute">
       <axis xyz="0 1 0"/>
       <origin xyz="0.180 0 0"/>
-      <limit effort="1.2" velocity="50" lower="-1e16" upper="1e16"/>
+      <limit effort="1.2" velocity="34" lower="-${0.55*pi}" upper="${0.55*pi}"/>
       <dynamics damping="0.0" friction="0.05"/>
       <parent link="link3"/>
       <child link="link4"/>
@@ -168,7 +170,7 @@
     <joint name="joint5" type="revolute">
       <axis xyz="1 0 0"/>
       <origin xyz="0 0 0"/>
-      <limit effort="1.2" velocity="50" lower="-1e16" upper="1e16"/>
+      <limit effort="1.2" velocity="34" lower="-${2*pi}" upper="${2*pi}"/>
       <dynamics damping="0.0" friction="0.05"/>
       <parent link="link4"/>
       <child link="link5"/>
