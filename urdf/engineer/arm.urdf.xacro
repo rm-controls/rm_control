@@ -1,6 +1,6 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="arm" params="fix">
+  <xacro:macro name="arm" params="connected_to">
 
     <!--  link  -->
     <link name="link0">
@@ -130,6 +130,12 @@
     </link>
 
     <!--  joint  -->
+    <joint name="joint0" type="fixed">
+      <origin xyz="0 0 0.35"/>
+      <parent link="${connected_to}"/>
+      <child link="link0"/>
+    </joint>
+
     <joint name="joint1" type="revolute">
       <axis xyz="0 0 1"/>
       <origin xyz="0 0 0.019"/>
@@ -144,7 +150,7 @@
       <axis xyz="0 1 0"/>
       <origin xyz="0.11341 0 0.1380"/>
       <limit effort="60" velocity="10" lower="-${pi}" upper="${0.44*pi}"/>
-      <dynamics damping="0.0" friction="0.2"/>
+      <dynamics damping="0.0" friction="0.8"/>
       <parent link="link1"/>
       <child link="link2"/>
     </joint>
@@ -153,7 +159,7 @@
       <axis xyz="0 1 0"/>
       <origin xyz="0.250 0 0"/>
       <limit effort="30" velocity="10" lower="-${0.722*pi}" upper="${0.722*pi}"/>
-      <dynamics damping="0.0" friction="0.1"/>
+      <dynamics damping="0.0" friction="0.5"/>
       <parent link="link2"/>
       <child link="link3"/>
     </joint>
@@ -175,6 +181,63 @@
       <parent link="link4"/>
       <child link="link5"/>
     </joint>
+
+    <!-- transmission -->
+    <transmission name="joint1_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <actuator name="joint1_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        <offset>0</offset>
+      </actuator>
+      <joint name="joint1">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+    </transmission>
+    <transmission name="joint2_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <actuator name="joint2_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        <offset>0</offset>
+      </actuator>
+      <joint name="joint2">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+    </transmission>
+    <transmission name="joint3_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <actuator name="joint3_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        <offset>0</offset>
+      </actuator>
+      <joint name="joint3">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+    </transmission>
+    <transmission name="joint4_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <actuator name="joint4_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        <offset>0</offset>
+      </actuator>
+      <joint name="joint4">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+    </transmission>
+    <transmission name="joint5_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <actuator name="joint5_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        <offset>0</offset>
+      </actuator>
+      <joint name="joint5">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+    </transmission>
 
   </xacro:macro>
 
