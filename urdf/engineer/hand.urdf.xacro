@@ -83,5 +83,26 @@
       <mimic joint="right_finger_joint"/>
     </joint>
 
+    <transmission name="trans_right_finger_joint">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="right_finger_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="right_finger_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+    <transmission name="trans_left_finger_joint">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="left_finger_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="left_finger_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
   </xacro:macro>
 </robot>
