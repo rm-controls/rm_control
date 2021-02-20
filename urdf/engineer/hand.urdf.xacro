@@ -59,7 +59,7 @@
     </link>
 
     <xacro:unless value="${connected_to == ''}">
-      <joint name="$palm_joint" type="fixed">
+      <joint name="palm_joint" type="fixed">
         <parent link="${connected_to}"/>
         <child link="palm"/>
         <origin xyz="${xyz}" rpy="${rpy}"/>
@@ -78,7 +78,7 @@
       <parent link="palm"/>
       <child link="left_finger"/>
       <origin xyz="0.032 0 0" rpy="0 0 0"/>
-      <axis xyz="0 1- 0"/>
+      <axis xyz="0 -1 0"/>
       <limit effort="20" lower="0.0" upper="0.02" velocity="0.5"/>
       <mimic joint="right_finger_joint"/>
     </joint>
