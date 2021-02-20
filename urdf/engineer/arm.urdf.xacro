@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:macro name="arm" params="connected_to">
@@ -177,7 +178,7 @@
     </joint>
 
     <!-- transmission -->
-    <transmission name="joint1_trans">
+    <transmission name="trans_joint1">
       <type>transmission_interface/SimpleTransmission</type>
       <actuator name="joint1_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -188,7 +189,7 @@
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
     </transmission>
-    <transmission name="joint2_trans">
+    <transmission name="trans_joint2">
       <type>transmission_interface/SimpleTransmission</type>
       <actuator name="joint2_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -199,7 +200,7 @@
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
     </transmission>
-    <transmission name="joint3_trans">
+    <transmission name="trans_joint3">
       <type>transmission_interface/SimpleTransmission</type>
       <actuator name="joint3_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -210,7 +211,7 @@
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
     </transmission>
-    <transmission name="joint4_trans">
+    <transmission name="trans_joint4">
       <type>transmission_interface/SimpleTransmission</type>
       <actuator name="joint4_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -221,7 +222,7 @@
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
     </transmission>
-    <transmission name="joint5_trans">
+    <transmission name="trans_joint5">
       <type>transmission_interface/SimpleTransmission</type>
       <actuator name="joint5_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
