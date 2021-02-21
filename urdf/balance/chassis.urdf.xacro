@@ -1,21 +1,19 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:include filename="$(find rm_description)/urdf/common/rubber_wheel.urdf.xacro"/>
+    <xacro:include filename="$(find rm_description)/urdf/balance/rubber_wheel.urdf.xacro"/>
 
     <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
-    <xacro:property name="wheel_base" value="0.475"/>
-    <xacro:property name="wheel_offset_z" value="-0.036"/>
-    <xacro:property name="wheel_joint_damping" value="1.0"/>
-    <xacro:property name="wheel_joint_friction" value="1.0"/>
+    <xacro:property name="wheel_base" value="0.405"/>
+    <xacro:property name="wheel_offset_z" value="-0.085"/>
 
     <xacro:macro name="chassis">
 
         <link name="base_link">
             <inertial>
-                <mass value="17.23"/>
-                <origin xyz="0 0 0"/>
-                <inertia ixx="2.708e+5" ixy="14.57" ixz="-3.207e+3" iyy="3.585e+5"
-                         iyz="-3.192e+3" izz="2.504e+5"/>
+                <mass value="17.21"/>
+                <origin xyz="-0.006488 0.006497 0.062596"/>
+                <inertia ixx="0.2744" ixy="-2.342e-5" ixz="2.162e-3" iyy="0.2444"
+                         iyz="-2.346e-3" izz="0.1928"/>
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -24,9 +22,10 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 -0.067" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://rm_description/meshes/balance/base.stl" scale="0.001 0.001 0.001"/>
+                    <!--                    <mesh filename="package://rm_description/meshes/balance/base.stl" scale="0.001 0.001 0.001"/>-->
+                    <box size="0.35 0.22 0.03"/>
                 </geometry>
             </collision>
         </link>
