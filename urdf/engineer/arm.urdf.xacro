@@ -77,9 +77,9 @@
         </geometry>
       </visual>
       <collision>
-        <origin xyz="0.090 0 0"/>
+        <origin xyz="0.060 0 0"/>
         <geometry>
-          <box size="0.245 0.089 0.0895"/>
+          <box size="0.200 0.08 0.07"/>
         </geometry>
       </collision>
     </link>
