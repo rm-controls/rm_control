@@ -13,10 +13,14 @@
     <child link="link_mit_cheetah"/>
     <origin xyz="0 0 0.25"/>
   </joint>
-  <joint name="joint_mit_cheetah" type="continuous">
+
+  <joint name="joint_mit_cheetah" type="revolute">
+    <axis xyz="0 1 0"/>
+    <origin xyz="0.250 0 0"/>
+    <limit effort="30" velocity="10" lower="-2.268" upper="2.268"/>
+    <dynamics damping="0.0" friction="0.5"/>
     <parent link="link_mit_cheetah"/>
     <child link="link_end"/>
-    <origin xyz="0 0 0.25"/>
   </joint>
 
   <transmission name="joint_3508_trans">
@@ -34,9 +38,10 @@
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint_mit_cheetah">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <offset>1.759</offset>
     </joint>
     <actuator name="act_mit_cheetah">
-      <mechanicalReduction>1</mechanicalReduction>
+      <mechanicalReduction>-3</mechanicalReduction>
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </actuator>
   </transmission>

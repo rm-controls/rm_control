@@ -117,9 +117,20 @@ void rm_base::CanBus::frameCallback(const can::Frame &frame) {
         uint16_t qd = (frame.data[3] << 4) | (frame.data[4] >> 4);
         uint16_t cur = ((frame.data[4] & 0xF) << 8) | frame.data[5];
         // Converter raw CAN data to position velocity and effort.
-        act_data.pos = act_coeff.act2pos * static_cast<double> (q) + act_coeff.act2pos_offset;
         act_data.vel = act_coeff.act2vel * static_cast<double> (qd) + act_coeff.act2vel_offset;
         act_data.effort = act_coeff.act2effort * static_cast<double> (cur) + act_coeff.act2effort_offset;
+        // Multiple cycle encoder
+        // NOTE: Raw data range is -4pi~4pi
+        double pos_new =
+            act_coeff.act2pos * static_cast<double> (q) + act_coeff.act2pos_offset
+                + static_cast<double>(act_data.q_circle) * 8 * M_PI;
+        if (pos_new - act_data.pos > 4 * M_PI)
+          act_data.q_circle--;
+        else if (pos_new - act_data.pos < -4 * M_PI)
+          act_data.q_circle++;
+        act_data.pos = act_coeff.act2pos * static_cast<double> (q) + act_coeff.act2pos_offset
+            + static_cast<double>(act_data.q_circle) * 8 * M_PI;
+
         // Low pass filt
         act_data.lp_filter->input(act_data.vel);
         act_data.vel = act_data.lp_filter->output();
