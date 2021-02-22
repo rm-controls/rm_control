@@ -177,63 +177,10 @@
       <child link="link5"/>
     </joint>
 
-    <!-- transmission -->
-    <transmission name="trans_joint1">
-      <type>transmission_interface/SimpleTransmission</type>
-      <actuator name="joint1_motor">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-        <offset>0</offset>
-      </actuator>
-      <joint name="joint1">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
-    </transmission>
-    <transmission name="trans_joint2">
-      <type>transmission_interface/SimpleTransmission</type>
-      <actuator name="joint2_motor">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-        <offset>0</offset>
-      </actuator>
-      <joint name="joint2">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
-    </transmission>
-    <transmission name="trans_joint3">
-      <type>transmission_interface/SimpleTransmission</type>
-      <actuator name="joint3_motor">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-        <offset>0</offset>
-      </actuator>
-      <joint name="joint3">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
-    </transmission>
-    <transmission name="trans_joint4">
-      <type>transmission_interface/SimpleTransmission</type>
-      <actuator name="joint4_motor">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-        <offset>0</offset>
-      </actuator>
-      <joint name="joint4">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
-    </transmission>
-    <transmission name="trans_joint5">
-      <type>transmission_interface/SimpleTransmission</type>
-      <actuator name="joint5_motor">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-        <offset>0</offset>
-      </actuator>
-      <joint name="joint5">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
-    </transmission>
+    <!-- extensions -->
+    <xacro:include filename="$(find rm_description)/urdf/engineer/arm.transmission.xacro"/>
+    <xacro:arm_transmission/>
+    <!--TODO: Add gazebo-->
 
   </xacro:macro>
-
 </robot>
