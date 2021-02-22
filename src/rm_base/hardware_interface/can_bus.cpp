@@ -54,6 +54,26 @@ void rm_base::CanBus::write() {
         rm_frame1_.data[2 * (id - 4) + 1] = (uint8_t) cmd;
         has_write_frame1 = true;
       }
+    } else if (item.second.type.find("cheetah") != std::string::npos) {
+      can::Frame frame{};
+      const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(item.second.type)->second;
+      frame.id = item.first;
+      frame.dlc = 8;
+      uint16_t q_des = (int) (act_coeff.pos2act * (item.second.cmd_pos - act_coeff.act2pos_offset));
+      uint16_t qd_des = (int) (act_coeff.vel2act * (item.second.cmd_vel - act_coeff.act2vel_offset));
+      uint16_t kp = 0.;
+      uint16_t kd = 0.;
+      uint16_t tau = (int) (act_coeff.effort2act * (item.second.cmd_effort - act_coeff.act2effort_offset));
+      // TODO(qiayuan) add posistion vel and effort hardware interface for MIT Cheetah Motor.
+      frame.data[0] = q_des >> 8;
+      frame.data[1] = q_des & 0xFF;
+      frame.data[2] = qd_des >> 4;
+      frame.data[3] = ((qd_des & 0xF) << 4) | (kp >> 8);
+      frame.data[4] = kp & 0xFF;
+      frame.data[5] = kd >> 4;
+      frame.data[6] = ((kd & 0xF) << 4) | (tau >> 8);
+      frame.data[7] = tau & 0xff;
+      driver_->send(frame);
     }
   }
 
@@ -64,37 +84,61 @@ void rm_base::CanBus::write() {
 }
 
 void rm_base::CanBus::frameCallback(const can::Frame &frame) {
-  if (data_prt_.id2act_data_->find(frame.id) == data_prt_.id2act_data_->end())
-    ROS_ERROR_STREAM_ONCE(
-        "Can not find defined actuator, id: 0x"
-            << std::hex << frame.id << " on bus: " << bus_name_);
-  else {
+  if (data_prt_.id2act_data_->find(frame.id) != data_prt_.id2act_data_->end()) {
     ActData &act_data = data_prt_.id2act_data_->find(frame.id)->second;
+    const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
 
     if (act_data.type.find("rm") != std::string::npos) {      // unpack RoboMaster Motor
       uint16_t q = (frame.data[0] << 8u) | frame.data[1];
       int16_t qd = (frame.data[2] << 8u) | frame.data[3];
       int16_t cur = (frame.data[4] << 8u) | frame.data[5];
       uint8_t temp = frame.data[6];
-
       if (q - act_data.q_last > 4096)
         act_data.q_circle--;
       else if (q - act_data.q_last < -4096)
         act_data.q_circle++;
       act_data.q_last = q;
-
-      const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
-      // Converter raw CAN data to position velocity effort.
+      // Converter raw CAN data to position velocity and effort.
       act_data.pos = act_coeff.act2pos * static_cast<double> (q + 8191 * act_data.q_circle);
       act_data.vel = act_coeff.act2vel * static_cast<double> (qd);
       act_data.effort = act_coeff.act2effort * static_cast<double> (cur);
       act_data.temp = temp;
-
       // Low pass filt
       act_data.lp_filter->input(act_data.vel);
       act_data.vel = act_data.lp_filter->output();
     }
-  }
+  } else if (frame.id == static_cast<unsigned int>(0x000)) {
+    if (data_prt_.id2act_data_->find(frame.data[0]) != data_prt_.id2act_data_->end()) {
+      ActData &act_data = data_prt_.id2act_data_->find(frame.data[0])->second;
+      const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
+
+      if (act_data.type.find("cheetah") != std::string::npos) { // MIT Cheetah Motor
+        uint16_t q = (frame.data[1] << 8) | frame.data[2];
+        uint16_t qd = (frame.data[3] << 4) | (frame.data[4] >> 4);
+        uint16_t cur = ((frame.data[4] & 0xF) << 8) | frame.data[5];
+        // Converter raw CAN data to position velocity and effort.
+        act_data.vel = act_coeff.act2vel * static_cast<double> (qd) + act_coeff.act2vel_offset;
+        act_data.effort = act_coeff.act2effort * static_cast<double> (cur) + act_coeff.act2effort_offset;
+        // Multiple cycle encoder
+        // NOTE: Raw data range is -4pi~4pi
+        double pos_new =
+            act_coeff.act2pos * static_cast<double> (q) + act_coeff.act2pos_offset
+                + static_cast<double>(act_data.q_circle) * 8 * M_PI;
+        if (pos_new - act_data.pos > 4 * M_PI)
+          act_data.q_circle--;
+        else if (pos_new - act_data.pos < -4 * M_PI)
+          act_data.q_circle++;
+        act_data.pos = act_coeff.act2pos * static_cast<double> (q) + act_coeff.act2pos_offset
+            + static_cast<double>(act_data.q_circle) * 8 * M_PI;
+
+        // Low pass filt
+        act_data.lp_filter->input(act_data.vel);
+        act_data.vel = act_data.lp_filter->output();
+      }
+    }
+  } else
+    ROS_ERROR_STREAM_ONCE("Can not find defined actuator, id: 0x" << std::hex << frame.id << " on bus: " << bus_name_);
+
 }
 
 void rm_base::CanBus::stateCallback(const can::State &state) {

@@ -86,6 +86,7 @@ bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs) {
     for (XmlRpc::XmlRpcValue::ValueStruct::const_iterator it = act_coeffs.begin(); it != act_coeffs.end(); ++it) {
       ActCoeff act_coeff{};
 
+      // All motor
       if (it->second.hasMember("act2pos"))
         act_coeff.act2pos = xmlRpcGetDouble(act_coeffs[it->first], "act2pos", 0.);
       else
@@ -114,6 +115,28 @@ bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs) {
         act_coeff.max_out = xmlRpcGetDouble(act_coeffs[it->first], "max_out", 0.0);
       else
         ROS_ERROR_STREAM("Actuator type " << it->first << " has no associated max_out.");
+
+      // MIT Cheetah Motor
+      if (it->second.hasMember("act2pos_offset"))
+        act_coeff.act2pos_offset = xmlRpcGetDouble(act_coeffs[it->first], "act2pos_offset", -12.5);
+      else
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated act2pos_offset.");
+      if (it->second.hasMember("act2vel_offset"))
+        act_coeff.act2vel_offset = xmlRpcGetDouble(act_coeffs[it->first], "act2vel_offset", -65.0);
+      else
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated act2vel_offset.");
+      if (it->second.hasMember("act2effort_offset"))
+        act_coeff.act2effort_offset = xmlRpcGetDouble(act_coeffs[it->first], "act2effort_offset", -18.0);
+      else
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated act2effort_offset.");
+      if (it->second.hasMember("kp2act"))
+        act_coeff.kp2act = xmlRpcGetDouble(act_coeffs[it->first], "kp2act", 8.19);
+      else
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated kp2act.");
+      if (it->second.hasMember("kp2act"))
+        act_coeff.kp2act = xmlRpcGetDouble(act_coeffs[it->first], "kd2act", 819);
+      else
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated kd2act.");
 
       std::string type = it->first;
       if (type2act_coeffs_.find(type) == type2act_coeffs_.end())
@@ -179,12 +202,11 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
                                                         &bus_id2act_data_[bus][id].vel,
                                                         &bus_id2act_data_[bus][id].effort);
       act_state_interface_.registerHandle(act_state);
-      if (type.find("rm") != std::string::npos) { // RoboMaster motors are effect actuator
+      if (type.find("rm") != std::string::npos
+          || type.find("cheetah") != std::string::npos) { // RoboMaster motors are effect actuator
         effort_act_interface_.registerHandle(
             hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].cmd_effort));
-      }
-        // TODO: add MIT Cheetah motor support
-      else {
+      } else {
         ROS_ERROR_STREAM("Actuator " << it->first <<
                                      "'s type neither RoboMaster(rm_xxx) nor Cheetah(cheetah_xxx)");
         return false;
