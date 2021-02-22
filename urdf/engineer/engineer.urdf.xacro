@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="engineer">
   <xacro:arg name="load_chassis" default="false"/>
   <xacro:arg name="load_arm" default="true"/>
-  <xacro:arg name="load_gazebo" default="true"/>
+  <xacro:arg name="use_simulation" default="true"/>
   <xacro:arg name="use_rm_gazebo" default="false"/>
   <xacro:arg name="roller_type" default="realistic"/>
   <xacro:arg name="fixed_arm" default="true"/>
@@ -14,6 +14,7 @@
 
   <xacro:if value="$(arg load_arm)">
     <xacro:include filename="$(find rm_description)/urdf/engineer/arm.urdf.xacro"/>
+    <xacro:include filename="$(find rm_description)/urdf/engineer/arm.transmission.xacro"/>
     <xacro:if value="$(arg fixed_arm)">
       <link name="world"/>
       <xacro:arm connected_to="world"/>
@@ -21,11 +22,17 @@
     <xacro:unless value="$(arg fixed_arm)">
       <xacro:arm connected_to="base_link"/>
     </xacro:unless>
+    <xacro:if value="$(arg use_simulation)">
+      <xacro:arm_transmission differential_wrist="false"/>
+    </xacro:if>
+    <xacro:unless value="$(arg use_simulation)">
+      <xacro:arm_transmission differential_wrist="true"/>
+    </xacro:unless>
     <xacro:include filename="$(find rm_description)/urdf/engineer/hand.urdf.xacro"/>
     <xacro:hand connected_to="link5" xyz="0.039 0 0"/>
   </xacro:if>
 
-  <xacro:if value="$(arg load_gazebo)">
+  <xacro:if value="$(arg use_simulation)">
     <xacro:if value="$(arg use_rm_gazebo)">
       <gazebo>
         <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">

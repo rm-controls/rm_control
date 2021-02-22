@@ -178,8 +178,7 @@
     </joint>
 
     <!-- extensions -->
-    <xacro:include filename="$(find rm_description)/urdf/engineer/arm.transmission.xacro"/>
-    <xacro:arm_transmission/>
+
     <!--TODO: Add gazebo-->
 
   </xacro:macro>
