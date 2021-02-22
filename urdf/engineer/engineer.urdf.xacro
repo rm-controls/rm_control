@@ -28,8 +28,8 @@
     <xacro:unless value="$(arg use_simulation)">
       <xacro:arm_transmission differential_wrist="true"/>
     </xacro:unless>
-    <xacro:include filename="$(find rm_description)/urdf/engineer/hand.urdf.xacro"/>
-    <xacro:hand connected_to="link5" xyz="0.039 0 0"/>
+    <!--    <xacro:include filename="$(find rm_description)/urdf/engineer/hand.urdf.xacro"/>-->
+    <!--    <xacro:hand connected_to="link5" xyz="0.039 0 0"/>-->
   </xacro:if>
 
   <xacro:if value="$(arg use_simulation)">

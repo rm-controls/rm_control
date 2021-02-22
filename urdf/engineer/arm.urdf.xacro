@@ -144,7 +144,7 @@
     <joint name="joint2" type="revolute">
       <axis xyz="0 1 0"/>
       <origin xyz="0.11341 0 0.1380"/>
-      <limit effort="60" velocity="10" lower="-${pi}" upper="${0.44*pi}"/>
+      <limit effort="30" velocity="10" lower="-${pi}" upper="${0.44*pi}"/>
       <dynamics damping="0.0" friction="0.8"/>
       <parent link="link1"/>
       <child link="link2"/>
@@ -176,10 +176,6 @@
       <parent link="link4"/>
       <child link="link5"/>
     </joint>
-
-    <!-- extensions -->
-
-    <!--TODO: Add gazebo-->
 
   </xacro:macro>
 </robot>
