@@ -1,15 +1,15 @@
 rm_base:
   bus:
     - can0
-
+    - can1
   loop_frequency: 1000
   cycle_time_error_threshold: 0.001
 
   # Configurations of the actuators
   actuators:
     act_mit_cheetah:
-      bus: can0
-      id: 0x003
+      bus: can1
+      id: 0x002
       type: cheetah
 
     act_3508:
