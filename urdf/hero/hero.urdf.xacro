@@ -3,7 +3,7 @@
   <xacro:arg name="load_chassis" default="true"/>
   <xacro:arg name="load_gimbal" default="true"/>
   <xacro:arg name="load_shooter" default="true"/>
-  <xacro:arg name="load_gazebo" default="true"/>
+  <xacro:arg name="use_simulation" default="true"/>
   <xacro:arg name="use_rm_gazebo" default="false"/>
   <xacro:arg name="roller_type" default="realistic"/>
 
@@ -18,7 +18,7 @@
   <xacro:if value="$(arg load_shooter)">
   </xacro:if>
 
-  <xacro:if value="$(arg load_gazebo)">
+  <xacro:if value="$(arg use_simulation)">
     <xacro:if value="$(arg use_rm_gazebo)">
       <gazebo>
         <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
