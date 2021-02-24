@@ -63,13 +63,12 @@
 
     </joint>
 
-
     <link name="pitch_link">
         <inertial>
             <mass value="1.538674"/>
-            <origin xyz="0.049138 -0.002939 0.348926"/>
-            <inertia ixx="1.93e-1" ixy="6.188e-5" ixz="-2.95e-2" iyy="2.016e-1"
-                     iyz="1.256e-3" izz="1.021e-2"/>
+            <origin xyz="0.080443 -0.002306 0.010242"/>
+            <inertia ixx="4.18e-3" ixy="-2.3e-5" ixz="-1.212e-3" iyy="2.369e-2"
+                     iyz="-6.373e-5" izz="2.286e-2"/>
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -87,10 +86,10 @@
 
     <joint name="pitch_joint"  type="revolute">
         <origin xyz="0 0 0.2841"  rpy="0 0 0" />
-        <limit effort="30" velocity="10" lower="-0.436323" upper="0.7853982"/>
+        <limit effort="3000" velocity="1000" lower="-0.436323" upper="0.7853982"/>
         <parent link="yaw_base_link" />
         <child link="pitch_link" />
-        <axis xyz="1 0 0 " />
+        <axis xyz="0 1 0 " />
 
     </joint>
 
