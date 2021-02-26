@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 2.8.3)
 project(rm_common)
 
 find_package(catkin REQUIRED COMPONENTS
-    rm_msgs
     roscpp
+    tf
+    rm_msgs
     geometry_msgs
     realtime_tools
     )
