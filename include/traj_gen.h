@@ -68,7 +68,8 @@ class RampTraj {
         return speed_ * (t - time_acc_) + a0_ + c0_ * (time_acc_ * time_acc_);
       else
         return a1_ + b1_ * t + c1_ * t * t;
-    }
+    } else
+      return target_;
   }
 
   T getVel(T t) {
@@ -83,7 +84,8 @@ class RampTraj {
         return speed_;
       else
         return b1_ + 2. * c1_ * t;
-    }
+    } else
+      return 0.;
   }
 
   T getAcc(T t) {
@@ -98,7 +100,8 @@ class RampTraj {
         return 0;
       else
         return 2. * c1_;
-    }
+    } else
+      return 0.;
   }
 };
 

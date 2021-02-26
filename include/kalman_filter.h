@@ -74,11 +74,11 @@ class KalmanFilter {
   }
 
  private:
-  bool inited;
   DMat<T> A_, B_, H_, I_;
   DMat<T> Q_, R_, P_, P_new_, K_;
   DVec<T> x_;
   const int m_, n_;//dimension
+  bool inited;
 };
 
 #endif //SRC_RM_COMMON_INCLUDE_KALMAN_FILTER_H_
