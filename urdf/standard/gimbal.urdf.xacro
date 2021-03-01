@@ -1,6 +1,4 @@
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-    <xacro:include filename="$(find rm_description)/urdf/infantry/chassis.urdf.xacro"/>
+<robot>
 
     <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
 
@@ -15,13 +13,13 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/infantry/yaw_base.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/standard/yaw_base.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/infantry/yaw_base.stl"  scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/standard/yaw_base.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
     </link>
@@ -45,13 +43,13 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/infantry/yaw_arm.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/standard/yaw_arm.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/infantry/yaw_arm.stl"  scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/standard/yaw_arm.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
     </link>
@@ -73,13 +71,13 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/infantry/pitch.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/standard/pitch.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/infantry/pitch.stl"  scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/standard/pitch.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
     </link>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="infantry">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="standard">
   <xacro:arg name="load_chassis" default="true"/>
   <xacro:arg name="load_gimbal" default="true"/>
   <xacro:arg name="load_shooter" default="true"/>
@@ -8,12 +8,12 @@
   <xacro:arg name="roller_type" default="realistic"/>
 
   <xacro:if value="$(arg load_chassis)">
-    <xacro:include filename="$(find rm_description)/urdf/infantry/chassis.urdf.xacro"/>
+    <xacro:include filename="$(find rm_description)/urdf/standard/chassis.urdf.xacro"/>
     <xacro:chassis roller_type="$(arg roller_type)"/>
   </xacro:if>
 
   <xacro:if value="$(arg load_gimbal)">
-    <xacro:include filename="$(find rm_description)/urdf/infantry/gimbal.urdf.xacro"/>
+    <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.urdf.xacro"/>
   </xacro:if>
 
   <xacro:if value="$(arg load_shooter)">
