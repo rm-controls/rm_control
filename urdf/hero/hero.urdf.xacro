@@ -13,6 +13,7 @@
   </xacro:if>
 
   <xacro:if value="$(arg load_gimbal)">
+    <xacro:include filename="$(find rm_description)/urdf/hero/gimbal.urdf.xacro"/>
   </xacro:if>
 
   <xacro:if value="$(arg load_shooter)">
@@ -35,5 +36,7 @@
       </gazebo>
     </xacro:unless>
   </xacro:if>
+
+
 
 </robot>
