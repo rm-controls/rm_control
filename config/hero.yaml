@@ -1,0 +1,85 @@
+rm_base:
+  bus:
+    - can0
+    - can1
+  loop_frequency: 1000
+  cycle_time_error_threshold: 0.001
+  # Configurations of the actuators
+  actuators:
+    actuator_yaw:
+      bus: can0
+      id: 0x205
+      type: rm_6020
+      lp_cutoff_frequency: 100
+      wc: 600
+      ts: 0.001
+      lp_debug: true
+
+    actuator_pitch:
+      bus: can1
+      id: 0x206
+      type: rm_6020
+      lp_cutoff_frequency: 100
+      wc: 600
+      ts: 0.001
+      lp_debug: true
+
+    actuator_fiction_left:
+      bus: can1
+      id: 0x201
+      type: rm_3508_dir
+      lp_cutoff_frequency: 100
+      wc: 600
+      ts: 0.001
+      lp_debug: true
+
+    actuator_fiction_right:
+      bus: can1
+      id: 0x202
+      type: rm_3508_dir
+      lp_cutoff_frequency: 100
+      wc: 600
+      ts: 0.001
+      lp_debug: true
+
+    actuator_trigger:
+      bus: can0
+      id: 0x206
+      type: rm_3508
+      lp_cutoff_frequency: 200
+      wc: 300
+      ts: 0.001
+      lp_debug: true
+
+    actuator_rf:
+      bus: can0
+      id: 0x201
+      type: rm_3508
+      lp_cutoff_frequency: 100
+      wc: 900
+      ts: 0.001
+      lp_debug: true
+    actuator_lf:
+      bus: can0
+      id: 0x202
+      type: rm_3508
+      lp_cutoff_frequency: 100
+      wc: 900
+      ts: 0.001
+      lp_debug: true
+    actuator_lb:
+      bus: can0
+      id: 0x203
+      type: rm_3508
+      lp_cutoff_frequency: 100
+      wc: 900
+      ts: 0.001
+      lp_debug: true
+    actuator_rb:
+      bus: can0
+      id: 0x204
+      type: rm_3508
+      lp_cutoff_frequency: 100
+      wc: 900
+      ts: 0.001
+      lp_debug: true
