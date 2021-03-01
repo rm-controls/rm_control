@@ -14,11 +14,11 @@ rm_base::CanBus::CanBus(const std::string &bus_name, CanActDataPtr data_prt)
     : data_prt_(data_prt), bus_name_(bus_name) {
   driver_ = std::make_shared<can::ThreadedSocketCANInterface>();
   // Initialize device at can_device, false for no loop back.
-  if (!driver_->init(bus_name, false, can::NoSettings::create())) {
-    ROS_FATAL("Failed to initialize can_device at %s", bus_name.c_str());
-  } else {
-    ROS_INFO("Successfully connected to %s.", bus_name.c_str());
+  while (!driver_->init(bus_name, false, can::NoSettings::create()) && ros::ok()) {
+    ROS_ERROR_THROTTLE(2., "Failed to initialize can_device at %s", bus_name.c_str());
+    ros::Duration(.5).sleep();
   }
+  ROS_INFO("Successfully connected to %s.", bus_name.c_str());
   // Register handler for frames and state changes.
   frame_listener_ = driver_->createMsgListenerM(this, &CanBus::frameCallback);
   state_listener_ = driver_->createStateListenerM(this, &CanBus::stateCallback);
@@ -32,7 +32,7 @@ rm_base::CanBus::CanBus(const std::string &bus_name, CanActDataPtr data_prt)
 
 void rm_base::CanBus::write() {
   if (!driver_->getState().isReady())
-    return;
+    driver_->recover();
   bool has_write_frame0{}, has_write_frame1{};
   // safety first
   std::fill(std::begin(rm_frame0_.data), std::end(rm_frame0_.data), 0);
