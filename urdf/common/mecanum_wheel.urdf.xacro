@@ -126,7 +126,7 @@
     <!-- transmission -->
     <transmission name="${prefix}_wheel_trans">
       <type>transmission_interface/SimpleTransmission</type>
-      <actuator name="${prefix}_wheel_actuator">
+      <actuator name="${prefix}_wheel_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
