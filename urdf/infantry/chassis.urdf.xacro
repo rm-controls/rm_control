@@ -48,6 +48,10 @@
                          wheel_x_offset="${-wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
                          wheel_z_offset="${wheel_offset_z}"
                          reflect="1" roller_type="${roller_type}"/>
+    <xacro:wheel_transmission prefix="front_left" mechanical_reduction="1"/>
+    <xacro:wheel_transmission prefix="front_right" mechanical_reduction="-1"/>
+    <xacro:wheel_transmission prefix="back_left" mechanical_reduction="1"/>
+    <xacro:wheel_transmission prefix="back_right" mechanical_reduction="-1"/>
 
   </xacro:macro>
 
