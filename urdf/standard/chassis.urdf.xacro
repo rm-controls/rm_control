@@ -14,8 +14,8 @@
     <link name="base_link">
       <inertial>
         <mass value="10"/>
-        <origin xyz="-0.025857  0  0.054312"/>
-        <inertia ixx="2.247e-1" ixy="-1.139e-5" ixz="2.983e-2" iyy="3.747e-1"
+        <origin xyz="-0.025077  0  0.055047"/>
+        <inertia ixx="2.247e-1" ixy="-1.139e-5" ixz="2.983e-2" iyy="3.771e-1"
                  iyz="3.3454e-6" izz="4.803e-1"/>
       </inertial>
       <visual>

@@ -1,6 +1,11 @@
-<robot>
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <link name="yaw_link">
+    <xacro:property name="threshold" value="0.01"/>
+    <xacro:property name="lower_limit" value="-0.436323"/>
+    <xacro:property name="upper_limit" value="0.7853982"/>
+
+    <link name="yaw">
         <inertial>
             <mass value="0.592087"/>
             <origin xyz="0 0 0.0127"/>
@@ -10,104 +15,61 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/standard/yaw_base.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/standard/yaw_base.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="package://rm_description/meshes/standard/yaw.stl"  scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
 
-    <joint name="yaw_joint"  type="fixed">
-        <origin xyz="0 0 0.0466"
+    <joint name="yaw_joint"  type="continuous">
+        <origin xyz="0 0 0.0696"
                 rpy="0 0 0" />
         <parent link="base_link" />
-        <child link="yaw_link" />
+        <child link="yaw" />
         <axis xyz="0 0 1" />
 
     </joint>
 
-    <link name="yaw_base_link">
-        <inertial>
-            <mass value="4.17874"/>
-            <origin xyz="-0.00282 0 0.06328"/>
-            <inertia ixx="2.401e-2" ixy="-1.449e-4" ixz="7.408e-4" iyy="2.166e-2"
-                     iyz="-1.47e-4" izz="5.707e-3"/>
-        </inertial>
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/standard/yaw_arm.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/standard/yaw_arm.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-        </collision>
-    </link>
-    <joint name="yaw_arm_joint"  type="continuous">
-        <origin xyz="0 0 0.023"  rpy="0 0 0" />
-        <parent link="yaw_link" />
-        <child link="yaw_base_link" />
-        <axis xyz="0 0 1" />
-
-    </joint>
-
-    <link name="pitch_link">
+    <link name="pitch">
         <inertial>
             <mass value="1.538674"/>
             <origin xyz="0.009047 -0.00307 0.019014"/>
-            <inertia ixx="1.217e-2" ixy="1.677e-3" ixz="3.224e-3" iyy="2.570e-2"
-                     iyz="-8.223e-4" izz="2.342e-2"/>
+            <inertia ixx="1.148e-2" ixy="1.569e-3" ixz="2.374e-3" iyy="2.472e-2"
+                     iyz="-8.276e-4" izz="2.189e-2"/>
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/standard/pitch.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="package://rm_description/meshes/standard/pitch.stl" scale="0.001 0.001 0.001" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/standard/pitch.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="package://rm_description/meshes/standard/pitch.stl"  scale="0.001 0.001 0.001" />
             </geometry>
         </collision>
     </link>
 
     <joint name="pitch_joint"  type="revolute">
         <origin xyz="0 0 0.189"  rpy="0 0 0" />
-        <limit effort="3000" velocity="1000" lower="-0.436323" upper="0.7853982"/>
-        <parent link="yaw_base_link" />
-        <child link="pitch_link" />
+        <limit effort="3000" velocity="1000" lower="${lower_limit}" upper="${upper_limit}"/>
+        <safety_controller k_velocity="10"
+                k_position="15"
+                soft_lower_limit="${lower_limit+threshold}"
+                soft_upper_limit="${upper_limit-threshold}" />
+
+        <parent link="yaw" />
+        <child link="pitch" />
         <axis xyz="0 1 0 " />
 
     </joint>
 
-    <!-- transmission -->
-    <transmission name="trans_yaw_arm_joint">
-        <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="yaw_arm_joint_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-        <joint name="yaw_arm_joint">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-    </transmission>
-    <transmission name="trans_pitch_joint">
-        <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="pitch_joint_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-        <joint name="pitch_joint">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-    </transmission>
+
 
 </robot>
