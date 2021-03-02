@@ -1,9 +1,4 @@
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-    <xacro:include filename="$(find rm_description)/urdf/hero/chassis.urdf.xacro"/>
-
-    <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
-
+<robot>
 
     <link name="yaw_link">
         <inertial>

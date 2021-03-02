@@ -1,8 +1,5 @@
 <robot>
 
-    <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
-
-
     <link name="yaw_link">
         <inertial>
             <mass value="0.592087"/>
