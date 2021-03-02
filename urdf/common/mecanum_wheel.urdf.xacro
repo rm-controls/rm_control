@@ -123,18 +123,19 @@
       <xacro:roller prefix="${prefix}" suffix="15" theta="${15*0.393}" roller_type="${roller_type}"/>
     </xacro:unless>
 
-    <!-- transmission -->
+  </xacro:macro>
+
+  <xacro:macro name="wheel_transmission" params="prefix mechanical_reduction">
     <transmission name="${prefix}_wheel_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <actuator name="${prefix}_wheel_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
+        <mechanicalReduction>${mechanical_reduction}</mechanicalReduction>
       </actuator>
       <joint name="${prefix}_wheel_joint">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
     </transmission>
-
   </xacro:macro>
 
 </robot>
