@@ -10,7 +10,7 @@
 
   <param name="robot_description" command="$(find xacro)/xacro $(find rm_description)/urdf/hero/hero.urdf.xacro
          load_chassis:=$(arg load_chassis) load_gimbal:=$(arg load_gimbal) load_shooter:=$(arg load_shooter)
-         load_gazebo:=$(arg load_gazebo) use_rm_gazebo:=$(arg use_rm_gazebo) roller_type:=$(arg roller_type)
+         use_simulation:=$(arg use_simulation) use_rm_gazebo:=$(arg use_rm_gazebo) roller_type:=$(arg roller_type)
 "/>
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
