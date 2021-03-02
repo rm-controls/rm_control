@@ -10,39 +10,20 @@ find_package(catkin REQUIRED COMPONENTS
     )
 
 add_message_files(
-        FILES
-        Joint.msg
-        DbusData.msg
-        ChassisCmd.msg
-        ShootCmd.msg
-        GimbalCmd.msg
-        GimbalTrackCmd.msg
-        FSMCmd.msg
+    FILES
+    Joint.msg
+    DbusData.msg
+    ChassisCmd.msg
+    ShootCmd.msg
+    GimbalCmd.msg
+    GimbalDesError.msg
+    GimbalTrackCmd.msg
+    Referee.msg
 )
 
 add_service_files(
     FILES
     ContinousDetectorSwitch.srv
-)
-
-add_message_files(
-    DIRECTORY msg/referee
-    FILES
-    BonusStatus.msg
-    GameResult.msg
-    GameStatus.msg
-    GameRobotHP.msg
-    GameWarning.msg
-    AerialRobotEnergy.msg
-    GameRobotPos.msg
-    ProjectileSupply.msg
-    RobotBonus.msg
-    RobotDamage.msg
-    RobotHeat.msg
-    RobotShoot.msg
-    RobotStatus.msg
-    RobotBulletRemain.msg
-    SupplierStatus.msg
 )
 
 add_message_files(

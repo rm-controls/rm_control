@@ -17,5 +17,21 @@ float64 m_z
 bool p_l
 bool p_r
 #key board
-bool[16] key
+bool key_w
+bool key_s
+bool key_a
+bool key_d
+bool key_shift
+bool key_ctrl
+bool key_q
+bool key_e
+bool key_r
+bool key_f
+bool key_g
+bool key_z
+bool key_x
+bool key_c
+bool key_v
+bool key_b
+
 time stamp
