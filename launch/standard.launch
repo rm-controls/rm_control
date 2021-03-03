@@ -21,6 +21,6 @@
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
   <node if="$(arg use_simulation)" name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
-        args="-z 0.5 -param robot_description -urdf -model hero" output="screen"/>
+        args="-z 0.5 -param robot_description -urdf -model standard" output="screen"/>
 
 </launch>
