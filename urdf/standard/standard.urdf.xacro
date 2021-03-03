@@ -15,14 +15,13 @@
 
   <xacro:if value="$(arg load_gimbal)">
     <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.urdf.xacro"/>
+    <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.transmission.urdf.xacro"/>
   </xacro:if>
 
   <xacro:if value="$(arg load_shooter)">
     <xacro:include filename="$(find rm_description)/urdf/standard/shooter.urdf.xacro"/>
-
+    <xacro:include filename="$(find rm_description)/urdf/standard/shooter.transmission.urdf.xacro"/>
   </xacro:if>
-
-  <xacro:include filename="$(find rm_description)/urdf/standard/standard.transmission.urdf.xacro"/>
 
   <xacro:if value="$(arg load_gazebo)">
     <xacro:if value="$(arg use_rm_gazebo)">
