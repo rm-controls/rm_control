@@ -1,0 +1,21 @@
+<!-- transmission -->
+<transmission name="trans_yaw_arm_joint">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="yaw_arm_joint_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="yaw_arm_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+</transmission>
+<transmission name="trans_pitch_joint">
+<type>transmission_interface/SimpleTransmission</type>
+<actuator name="pitch_joint_motor">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+</actuator>
+<joint name="pitch_joint">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+</joint>
+</transmission>
