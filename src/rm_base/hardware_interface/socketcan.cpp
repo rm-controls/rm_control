@@ -4,7 +4,6 @@
 #include "rm_base/hardware_interface/socketcan.h"
 #include <sys/socket.h>
 #include <sys/ioctl.h>
-
 #include <utility>
 
 namespace can {
@@ -21,7 +20,7 @@ SocketCAN::~SocketCAN() {
     this->close();
 }
 
-bool SocketCAN::open(char *interface, boost::function<void(const can_frame &frame)> handler) {
+bool SocketCAN::open(const std::string &interface, boost::function<void(const can_frame &frame)> handler) {
   reception_handler = std::move(handler);
   // Request a socket
   sock_fd_ = socket(PF_CAN, SOCK_RAW, CAN_RAW);
@@ -30,16 +29,17 @@ bool SocketCAN::open(char *interface, boost::function<void(const can_frame &fram
     return false;
   }
   printf("Created CAN socket with descriptor %d.\n", sock_fd_);
-
+  char name[16] = {};  // avoid stringop-truncation
+  strncpy(name, interface.c_str(), interface.size());
+  strncpy(interface_request_.ifr_name, name, IFNAMSIZ);
   // Get the index of the network interface
-  strncpy(interface_request_.ifr_name, interface, IFNAMSIZ);
   if (ioctl(sock_fd_, SIOCGIFINDEX, &interface_request_) == -1) {
-    printf("Unable to select CAN interface %s: I/O control error\n", interface);
+    printf("Unable to select CAN interface %s: I/O control error\n", name);
     // Invalidate unusable socket
     close();
     return false;
   }
-  printf("Found: %s has interface index %d.\n", interface, interface_request_.ifr_ifindex);
+  printf("Found: %s has interface index %d.\n", name, interface_request_.ifr_ifindex);
 
   // Bind the socket to the network interface
   address_.can_family = AF_CAN;

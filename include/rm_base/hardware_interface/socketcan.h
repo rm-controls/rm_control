@@ -35,7 +35,7 @@ class SocketCAN {
   /**
    * Open and bind socket
    */
-  bool open(char *, boost::function<void(const can_frame &frame)> handler);
+  bool open(const std::string &interface, boost::function<void(const can_frame &frame)> handler);
   /**
    * Close and unbind socket
    */

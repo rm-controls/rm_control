@@ -10,8 +10,7 @@
 rm_base::CanBus::CanBus(const std::string &bus_name, CanActDataPtr data_prt)
     : data_prt_(data_prt), bus_name_(bus_name) {
   // Initialize device at can_device, false for no loop back.
-  while (!socket_can_.open(const_cast<char *>(bus_name.c_str()),
-                           [this](auto &&PH1) { frameCallback(std::forward<decltype(PH1)>(PH1)); })
+  while (!socket_can_.open(bus_name, [this](auto &&PH1) { frameCallback(std::forward<decltype(PH1)>(PH1)); })
       && ros::ok()) {
     ROS_ERROR_THROTTLE(2., "Failed to initialize can_device at %s", bus_name.c_str());
     ros::Duration(.5).sleep();

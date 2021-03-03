@@ -5,6 +5,9 @@ project(rm_base)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Optimize
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
 ## enforcing cleaner code.
 add_definitions(-Wall -Werror)
