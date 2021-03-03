@@ -11,10 +11,9 @@ rm_base::CanBus::CanBus(const std::string &bus_name, CanActDataPtr data_prt)
     : data_prt_(data_prt), bus_name_(bus_name) {
   // Initialize device at can_device, false for no loop back.
   while (!socket_can_.open(bus_name, [this](auto &&PH1) { frameCallback(std::forward<decltype(PH1)>(PH1)); })
-      && ros::ok()) {
-    ROS_ERROR_THROTTLE(2., "Failed to initialize can_device at %s", bus_name.c_str());
+      && ros::ok())
     ros::Duration(.5).sleep();
-  }
+
   ROS_INFO("Successfully connected to %s.", bus_name.c_str());
   // Set up CAN package header
   rm_frame0_.can_id = 0x200;

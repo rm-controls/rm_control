@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <utility>
+#include <ros/ros.h>
 
 namespace can {
 
@@ -15,7 +16,6 @@ namespace can {
  */
 
 SocketCAN::~SocketCAN() {
-  printf("Destroying SocketCAN adapter...\n");
   if (this->is_open())
     this->close();
 }
@@ -25,32 +25,28 @@ bool SocketCAN::open(const std::string &interface, boost::function<void(const ca
   // Request a socket
   sock_fd_ = socket(PF_CAN, SOCK_RAW, CAN_RAW);
   if (sock_fd_ == -1) {
-    printf("Error: Unable to create a CAN socket\n");
+    ROS_ERROR("Error: Unable to create a CAN socket");
     return false;
   }
-  printf("Created CAN socket with descriptor %d.\n", sock_fd_);
   char name[16] = {};  // avoid stringop-truncation
   strncpy(name, interface.c_str(), interface.size());
   strncpy(interface_request_.ifr_name, name, IFNAMSIZ);
   // Get the index of the network interface
   if (ioctl(sock_fd_, SIOCGIFINDEX, &interface_request_) == -1) {
-    printf("Unable to select CAN interface %s: I/O control error\n", name);
+    ROS_ERROR("Unable to select CAN interface %s: I/O control error", name);
     // Invalidate unusable socket
     close();
     return false;
   }
-  printf("Found: %s has interface index %d.\n", name, interface_request_.ifr_ifindex);
-
   // Bind the socket to the network interface
   address_.can_family = AF_CAN;
   address_.can_ifindex = interface_request_.ifr_ifindex;
   int rc = bind(sock_fd_, reinterpret_cast<struct sockaddr *>(&address_), sizeof(address_));
   if (rc == -1) {
-    printf("Failed to bind socket to network interface\n");
+    ROS_ERROR("Failed to bind socket to %s network interface", name);
     close();
     return false;
   }
-  printf("Successfully bound socket to interface %d.\n", interface_request_.ifr_ifindex);
   // Start a separate, event-driven thread for frame reception
   return start_receiver_thread();
 }
@@ -61,12 +57,9 @@ void SocketCAN::close() {
 
   if (!is_open())
     return;
-
   // Close the file descriptor for our socket
   ::close(sock_fd_);
   sock_fd_ = -1;
-
-  printf("CAN socket destroyed.\n");
 }
 
 bool SocketCAN::is_open() const {
@@ -75,12 +68,11 @@ bool SocketCAN::is_open() const {
 
 void SocketCAN::wirte(can_frame *frame) const {
   if (!is_open()) {
-    printf("Unable to wirte: Socket not open\n");
+    ROS_ERROR_THROTTLE(5., "Unable to write: Socket %s not open", interface_request_.ifr_name);
     return;
   }
-  if (write(sock_fd_, frame, sizeof(can_frame)) == -1) {
-    printf("Unable to wirte\n");
-  }
+  if (write(sock_fd_, frame, sizeof(can_frame)) == -1)
+    ROS_DEBUG_THROTTLE(5., "Unable to write: The %s tx buffer may be full", interface_request_.ifr_name);
 }
 
 static void *socketcan_receiver_thread(void *argv) {
@@ -124,10 +116,10 @@ bool SocketCAN::start_receiver_thread() {
   terminate_receiver_thread_ = false;
   int rc = pthread_create(&receiver_thread_id_, nullptr, &socketcan_receiver_thread, this);
   if (rc != 0) {
-    printf("Unable to start receiver thread.\n");
+    ROS_ERROR("Unable to start receiver thread");
     return false;
   }
-  printf("Successfully started receiver thread with ID %d.\n", (int) receiver_thread_id_);
+  ROS_INFO("Successfully started receiver thread with ID %lu", receiver_thread_id_);
   return true;
 }
 
