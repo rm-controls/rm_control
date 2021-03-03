@@ -78,7 +78,9 @@ void SocketCAN::wirte(can_frame *frame) const {
     printf("Unable to wirte: Socket not open\n");
     return;
   }
-  write(sock_fd_, frame, sizeof(can_frame));
+  if (write(sock_fd_, frame, sizeof(can_frame)) == -1) {
+    printf("Unable to wirte\n");
+  }
 }
 
 static void *socketcan_receiver_thread(void *argv) {
@@ -93,12 +95,12 @@ static void *socketcan_receiver_thread(void *argv) {
   int maxfd = sock->sock_fd_;
   // How long 'select' shall wait before returning with timeout
   struct timeval timeout{};
-  timeout.tv_sec = 1.;
   // Buffer to store incoming frame
   can_frame rx_frame{};
   // Run until termination signal received
   sock->receiver_thread_running_ = true;
   while (!sock->terminate_receiver_thread_) {
+    timeout.tv_sec = 1.; // Should be set each loop
     // Clear descriptor set
     FD_ZERO(&descriptors);
     // Add socket descriptor
