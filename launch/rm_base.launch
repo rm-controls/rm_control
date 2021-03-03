@@ -1,0 +1,4 @@
+<launch>
+  <rosparam file="$(find rm_base)/config/actuator_coefficient.yaml" command="load" ns="rm_base"/>
+  <node name="rm_base" pkg="rm_base" type="rm_base" respawn="false" clear_params="true"/>
+</launch>

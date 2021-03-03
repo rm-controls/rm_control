@@ -1,13 +1,18 @@
 rm_base:
   bus:
     - can0
-
+    - can1
   loop_frequency: 1000
   cycle_time_error_threshold: 0.001
 
   # Configurations of the actuators
   actuators:
-    act_test_can0:
+    act_mit_cheetah:
+      bus: can1
+      id: 0x002
+      type: cheetah
+
+    act_3508:
       bus: can0
       id: 0x201
       type: rm_3508
@@ -15,10 +20,13 @@ rm_base:
 
   robot_state_controller:
     type: robot_state_controller/RobotStateController
-    publish_rate: 50
-  joint1_position_controller:
+    publish_rate: 100
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 100
+  joint_mit_cheetah_position_controller:
     type: effort_controllers/JointPositionController
-    joint: joint1
+    joint: joint_mit_cheetah
     pid: { p: 0.0, i: 0.0, d: 0.0 }
 
 joint_limits:

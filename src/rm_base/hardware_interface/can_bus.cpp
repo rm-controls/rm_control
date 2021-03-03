@@ -1,50 +1,28 @@
 //
 // Created by qiayuan on 12/28/20.
 //
-#include <string>
-#include <memory>
-
-#include <ros/ros.h>
-#include <socketcan_interface/threading.h>
-#include <math_utilities.h>
-
 #include "rm_base/hardware_interface/can_bus.h"
 
+#include <string>
+#include <ros/ros.h>
+#include <math_utilities.h>
 namespace rm_base {
-
-float int16ToFloat(unsigned short data) {
-  if (data == 0)
-    return 0;
-  float *fp32;
-  unsigned int fInt32 = ((data & 0x8000) << 16) |
-      (((((data >> 10) & 0x1f) - 0x0f + 0x7f) & 0xff) << 23) | ((data & 0x03FF) << 13);
-  fp32 = (float *) &fInt32;
-  return *fp32;
-}
-
-CanBus::CanBus(const std::string &bus_name, CanDataPtr data_prt)
+CanBus::CanBus(const std::string &bus_name, CanActDataPtr data_prt)
     : data_prt_(data_prt), bus_name_(bus_name) {
-  driver_ = std::make_shared<can::ThreadedSocketCANInterface>();
   // Initialize device at can_device, false for no loop back.
-  if (!driver_->init(bus_name, false, can::NoSettings::create()))
-    ROS_FATAL("Failed to initialize can_device at %s", bus_name.c_str());
-  else
-    ROS_INFO("Successfully connected to %s.", bus_name.c_str());
+  while (!socket_can_.open(bus_name, [this](auto &&PH1) { frameCallback(std::forward<decltype(PH1)>(PH1)); })
+      && ros::ok())
+    ros::Duration(.5).sleep();
 
-  // Register handler for frames and state changes.
-  frame_listener_ = driver_->createMsgListenerM(this, &CanBus::frameCallback);
-  state_listener_ = driver_->createStateListenerM(this, &CanBus::stateCallback);
+  ROS_INFO("Successfully connected to %s.", bus_name.c_str());
   // Set up CAN package header
-  rm_frame0_.id = 0x200;
-  rm_frame0_.dlc = 8;
-
-  rm_frame1_.id = 0x1FF;
-  rm_frame1_.dlc = 8;
+  rm_frame0_.can_id = 0x200;
+  rm_frame0_.can_dlc = 8;
+  rm_frame1_.can_id = 0x1FF;
+  rm_frame1_.can_dlc = 8;
 }
 
 void CanBus::write() {
-  if (!driver_->getState().isReady())
-    return;
   bool has_write_frame0{}, has_write_frame1{};
   // safety first
   std::fill(std::begin(rm_frame0_.data), std::end(rm_frame0_.data), 0);
@@ -66,44 +44,91 @@ void CanBus::write() {
         rm_frame1_.data[2 * (id - 4) + 1] = (uint8_t) cmd;
         has_write_frame1 = true;
       }
+    } else if (item.second.type.find("cheetah") != std::string::npos) {
+      can_frame frame{};
+      const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(item.second.type)->second;
+      frame.can_id = item.first;
+      frame.can_dlc = 8;
+      uint16_t q_des = (int) (act_coeff.pos2act * (item.second.cmd_pos - act_coeff.act2pos_offset));
+      uint16_t qd_des = (int) (act_coeff.vel2act * (item.second.cmd_vel - act_coeff.act2vel_offset));
+      uint16_t kp = 0.;
+      uint16_t kd = 0.;
+      uint16_t tau = (int) (act_coeff.effort2act * (item.second.cmd_effort - act_coeff.act2effort_offset));
+      // TODO(qiayuan) add posistion vel and effort hardware interface for MIT Cheetah Motor.
+      frame.data[0] = q_des >> 8;
+      frame.data[1] = q_des & 0xFF;
+      frame.data[2] = qd_des >> 4;
+      frame.data[3] = ((qd_des & 0xF) << 4) | (kp >> 8);
+      frame.data[4] = kp & 0xFF;
+      frame.data[5] = kd >> 4;
+      frame.data[6] = ((kd & 0xF) << 4) | (tau >> 8);
+      frame.data[7] = tau & 0xff;
+      socket_can_.wirte(&frame);
     }
   }
 
   if (has_write_frame0)
-    driver_->send(rm_frame0_);
+    socket_can_.wirte(&rm_frame0_);
   if (has_write_frame1)
-    driver_->send(rm_frame1_);
+    socket_can_.wirte(&rm_frame1_);
 }
 
-void CanBus::frameCallback(const can::Frame &frame) {
-  if (data_prt_.id2act_data_->find(frame.id) != data_prt_.id2act_data_->end()) {
-    ActData &act_data = data_prt_.id2act_data_->find(frame.id)->second;
+void CanBus::frameCallback(const can_frame &frame) {
+  if (data_prt_.id2act_data_->find(frame.can_id) != data_prt_.id2act_data_->end()) {
+    ActData &act_data = data_prt_.id2act_data_->find(frame.can_id)->second;
+    const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
 
     if (act_data.type.find("rm") != std::string::npos) {      // unpack RoboMaster Motor
       uint16_t q = (frame.data[0] << 8u) | frame.data[1];
       int16_t qd = (frame.data[2] << 8u) | frame.data[3];
       int16_t cur = (frame.data[4] << 8u) | frame.data[5];
       uint8_t temp = frame.data[6];
-
       if (q - act_data.q_last > 4096)
         act_data.q_circle--;
       else if (q - act_data.q_last < -4096)
         act_data.q_circle++;
       act_data.q_last = q;
-
-      const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
-      // Converter raw CAN data to position velocity effort.
+      // Converter raw CAN data to position velocity and effort.
       act_data.pos = act_coeff.act2pos * static_cast<double> (q + 8191 * act_data.q_circle);
       act_data.vel = act_coeff.act2vel * static_cast<double> (qd);
       act_data.effort = act_coeff.act2effort * static_cast<double> (cur);
       act_data.temp = temp;
-
       // Low pass filt
       act_data.lp_filter->input(act_data.vel);
       act_data.vel = act_data.lp_filter->output();
       return;
     }
-  } else {
+    else if (frame.can_id == static_cast<unsigned int>(0x000)) {
+      if (data_prt_.id2act_data_->find(frame.data[0]) != data_prt_.id2act_data_->end()) {
+        ActData &act_data = data_prt_.id2act_data_->find(frame.data[0])->second;
+        const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
+
+        if (act_data.type.find("cheetah") != std::string::npos) { // MIT Cheetah Motor
+          uint16_t q = (frame.data[1] << 8) | frame.data[2];
+          uint16_t qd = (frame.data[3] << 4) | (frame.data[4] >> 4);
+          uint16_t cur = ((frame.data[4] & 0xF) << 8) | frame.data[5];
+          // Converter raw CAN data to position velocity and effort.
+          act_data.vel = act_coeff.act2vel * static_cast<double> (qd) + act_coeff.act2vel_offset;
+          act_data.effort = act_coeff.act2effort * static_cast<double> (cur) + act_coeff.act2effort_offset;
+          // Multiple cycle encoder
+          // NOTE: Raw data range is -4pi~4pi
+          double pos_new =
+              act_coeff.act2pos * static_cast<double> (q) + act_coeff.act2pos_offset
+                  + static_cast<double>(act_data.q_circle) * 8 * M_PI;
+          if (pos_new - act_data.pos > 4 * M_PI)
+            act_data.q_circle--;
+          else if (pos_new - act_data.pos < -4 * M_PI)
+            act_data.q_circle++;
+          act_data.pos = act_coeff.act2pos * static_cast<double> (q) + act_coeff.act2pos_offset
+              + static_cast<double>(act_data.q_circle) * 8 * M_PI;
+
+          // Low pass filt
+          act_data.lp_filter->input(act_data.vel);
+          act_data.vel = act_data.lp_filter->output();
+        }
+      }
+    }
+  }
     // Check if imu
     float imu_frame_data[4] = {0};
     for (int i = 0; i < 4; ++i)
@@ -127,19 +152,8 @@ void CanBus::frameCallback(const can::Frame &frame) {
         default:break;
       }
     }
-
-    ROS_WARN_STREAM_ONCE("Can not find defined device, id: 0x" << std::hex << frame.id << " on bus: " << bus_name_);
-  }
-}
-
-void CanBus::stateCallback(const can::State &state) {
-  std::string err;
-  driver_->translateError(state.internal_error, err);
-  if (!state.internal_error) {
-    ROS_INFO("State: %s, asio: %s, %s", err.c_str(), state.error_code.message().c_str(), bus_name_.c_str());
-  } else {
-    ROS_ERROR("Error: %s, asio: %s, %s", err.c_str(), state.error_code.message().c_str(), bus_name_.c_str());
-  }
+    ROS_ERROR_STREAM_ONCE(
+        "Can not find defined actuator, id: 0x" << std::hex << frame.can_id << " on bus: " << bus_name_);
 }
 
 }

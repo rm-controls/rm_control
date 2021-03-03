@@ -5,6 +5,9 @@ project(rm_base)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Optimize
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
 ## enforcing cleaner code.
 add_definitions(-Wall -Werror -Wno-inconsistent-missing-override)
@@ -20,7 +23,6 @@ find_package(catkin REQUIRED
     transmission_interface
     joint_limits_interface
     controller_manager
-    socketcan_interface
     angles
     realtime_tools
     robot_state_controller
@@ -52,7 +54,6 @@ catkin_package(
     transmission_interface
     joint_limits_interface
     controller_manager
-    socketcan_interface
     angles
     realtime_tools
     robot_state_controller
@@ -75,6 +76,7 @@ add_library(${PROJECT_NAME}_loader_plugins
 add_executable(${PROJECT_NAME}
     src/rm_base/${PROJECT_NAME}.cpp
     src/rm_base/hardware_interface/hardware_interface.cpp
+    src/rm_base/hardware_interface/socketcan.cpp
     src/rm_base/hardware_interface/can_bus.cpp
     src/rm_base/control_loop.cpp
     )
