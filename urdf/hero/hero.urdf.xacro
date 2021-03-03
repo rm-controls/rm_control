@@ -37,6 +37,4 @@
     </xacro:unless>
   </xacro:if>
 
-
-
 </robot>

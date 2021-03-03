@@ -32,7 +32,6 @@
         <parent link="base_link" />
         <child link="yaw" />
         <axis xyz="0 0 1" />
-
     </joint>
 
     <link name="pitch">
@@ -63,13 +62,9 @@
                 k_position="15"
                 soft_lower_limit="${lower_limit+threshold}"
                 soft_upper_limit="${upper_limit-threshold}" />
-
         <parent link="yaw" />
         <child link="pitch" />
         <axis xyz="0 1 0 " />
-
     </joint>
-
-
 
 </robot>
