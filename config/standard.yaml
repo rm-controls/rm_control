@@ -6,7 +6,7 @@ rm_base:
   cycle_time_error_threshold: 0.001
   # Configurations of the actuators
   actuators:
-    yaw_arm_joint_motor:
+    yaw_joint_motor:
       bus: can1
       id: 0x205
       type: rm_6020
