@@ -39,7 +39,7 @@
     </link>
 
     <joint name="trigger_joint"  type="continuous">
-        <origin xyz="-0.073838 -0.037028 0"  rpy="0 0 0" />
+        <origin xyz="-0.064 0 0" rpy="0 0 0"/>
         <parent link="pitch" />
         <child link="trigger" />
         <axis xyz="0 0 1 " />
