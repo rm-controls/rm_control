@@ -26,11 +26,3 @@ rm_base:
       bus: can0
       id: 0x202
       type: rm_2006
-
-controllers:
-  robot_state_controller:
-    type: robot_state_controller/RobotStateController
-    publish_rate: 100
-  joint_state_controller:
-    type: joint_state_controller/JointStateController
-    publish_rate: 100
