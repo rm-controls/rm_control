@@ -8,9 +8,6 @@
   <xacro:arg name="use_rm_gazebo" default="false"/>
   <xacro:arg name="roller_type" default="realistic"/>
 
-
-
-
   <xacro:if value="$(arg load_chassis)">
     <xacro:include filename="$(find rm_description)/urdf/standard/chassis.urdf.xacro"/>
     <xacro:chassis roller_type="$(arg roller_type)"/>
@@ -24,6 +21,8 @@
     <xacro:include filename="$(find rm_description)/urdf/standard/shooter.urdf.xacro"/>
 
   </xacro:if>
+
+  <xacro:include filename="$(find rm_description)/urdf/standard/standard.transmission.urdf.xacro"/>
 
   <xacro:if value="$(arg load_gazebo)">
     <xacro:if value="$(arg use_rm_gazebo)">
