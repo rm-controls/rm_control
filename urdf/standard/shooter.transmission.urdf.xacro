@@ -1,29 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot>
 
-    <!-- transmission -->
-    <transmission name="trans_yaw_joint">
-        <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="yaw_joint_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-        <joint name="yaw_joint">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-    </transmission>
-
-    <transmission name="trans_pitch_joint">
-        <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="pitch_joint_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-        <joint name="pitch_joint">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-    </transmission>
-
     <transmission name="trans_trigger_joint">
         <type>transmission_interface/SimpleTransmission</type>
         <actuator name="trigger_joint_motor">
@@ -34,7 +11,6 @@
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
-
 
     <transmission name="trans_left_friction_wheel_joint_joint">
         <type>transmission_interface/SimpleTransmission</type>
@@ -57,4 +33,5 @@
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
+
 </robot>
