@@ -30,34 +30,6 @@
 
     </joint>
 
-    <link name="yaw_base_link">
-        <inertial>
-            <mass value="4.17874"/>
-            <origin xyz="-0.012411 -0.01295 0.120327"/>
-            <inertia ixx="7.425e-2" ixy="-4.926e-5" ixz="4.741e-3" iyy="7.597e-2"
-                     iyz="7.286e-5" izz="7.357e-3"/>
-        </inertial>
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/hero/yaw_arm.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/hero/yaw_arm.stl"  scale="0.001 0.001 0.001" />
-            </geometry>
-        </collision>
-    </link>
-    <joint name="yaw_arm_joint"  type="continuous">
-        <origin xyz="0 0 0"  rpy="0 0 0" />
-        <parent link="yaw_link" />
-        <child link="yaw_base_link" />
-        <axis xyz="0 0 1" />
-
-    </joint>
-
     <link name="pitch_link">
         <inertial>
             <mass value="1.538674"/>
@@ -82,34 +54,15 @@
     <joint name="pitch_joint"  type="revolute">
         <origin xyz="0 0 0.2841"  rpy="0 0 0" />
         <limit effort="3000" velocity="1000" lower="-0.436323" upper="0.7853982"/>
-        <parent link="yaw_base_link" />
+
+        <safety_controller k_velocity="10" k_position="15" soft_lower_limit="" soft_upper_limit="0.5" />
+
+        <parent link="yaw_link" />
         <child link="pitch_link" />
         <axis xyz="0 1 0 " />
 
     </joint>
 
-    <!-- transmission -->
-    <transmission name="trans_yaw_arm_joint">
-        <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="yaw_arm_joint_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-        <joint name="yaw_arm_joint">
-            <offset>0</offset>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-    </transmission>
-    <transmission name="trans_pitch_joint">
-        <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="pitch_joint_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-        <joint name="pitch_joint">
-            <offset>0</offset>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-    </transmission>
+
 
 </robot>
