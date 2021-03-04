@@ -59,7 +59,7 @@
 
     <joint name="pitch_joint" type="revolute">
         <origin xyz="0 0 0.189" rpy="0 0 0"/>
-        <dynamics damping="0.0" friction="0.5"/>
+        <dynamics damping="0.0" friction="0.1"/>
         <limit effort="1.2" velocity="13.82" lower="${lower_limit}" upper="${upper_limit}"/>
         <!--        <safety_controller k_velocity="10"-->
         <!--                           k_position="15"-->
