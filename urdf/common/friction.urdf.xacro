@@ -25,6 +25,7 @@
 
         <joint name="${prefixs}_friction_wheel_joint"  type="continuous">
             <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_offset_z}" rpy="0 0 0"/>"
+            <dynamics damping="0.0" friction="0.01"/>
             <limit upper="1e16" lower="-1e16" effort="0.156" velocity="942.00"/>
             <parent link="${connected_to}" />
             <child link="${prefixs}_friction_wheel" />
