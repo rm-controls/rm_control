@@ -26,6 +26,12 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
   else if (!parseActData(xml_rpc_value, robot_hw_nh))
     return false;
 
+  // Parse actuator specified by user (stored on ROS parameter server)
+  if (!robot_hw_nh.getParam("imus", xml_rpc_value))
+    ROS_WARN("No imu specified");
+  else if (!parseImuData(xml_rpc_value, robot_hw_nh))
+    return false;
+
   // Load urdf
   if (!load_urdf(root_nh))
     return false;
@@ -229,7 +235,6 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
 
 bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue &imu_datas, ros::NodeHandle &robot_hw_nh) {
   ROS_ASSERT(imu_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
-
   try {
     for (XmlRpc::XmlRpcValue::ValueStruct::const_iterator it = imu_datas.begin(); it != imu_datas.end(); ++it) {
       if (!it->second.hasMember("frame_id")) {
@@ -240,9 +245,6 @@ bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue &imu_dat
         continue;
       } else if (!it->second.hasMember("id")) {
         ROS_ERROR_STREAM("Imu " << it->first << " has no associated ID.");
-        continue;
-      } else if (!it->second.hasMember("type")) {
-        ROS_ERROR_STREAM("Imu " << it->first << " has no associated type.");
         continue;
       } else if (!it->second.hasMember("orientation_covariance_diagonal")) {
         ROS_ERROR_STREAM("Imu " << it->first << " has no associated orientation covariance diagonal.");
@@ -271,8 +273,7 @@ bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue &imu_dat
         ROS_ASSERT(linear_cov[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
 
       std::string frame_id = imu_datas[it->first]["frame_id"],
-          bus = imu_datas[it->first]["bus"],
-          type = imu_datas[it->first]["type"];
+          bus = imu_datas[it->first]["bus"];
       int id = static_cast<int>(imu_datas[it->first]["id"]);
 
       // for bus interface
@@ -294,9 +295,9 @@ bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue &imu_dat
                     0., static_cast<double>(angular_cov[1]), 0.,
                     0., 0., static_cast<double>(angular_cov[2])},
                 .linear_acc_cov{
-                    static_cast<double>(angular_cov[0]), 0., 0.,
-                    0., static_cast<double>(angular_cov[1]), 0.,
-                    0., 0., static_cast<double>(angular_cov[2])}}));
+                    static_cast<double>(linear_cov[0]), 0., 0.,
+                    0., static_cast<double>(linear_cov[1]), 0.,
+                    0., 0., static_cast<double>(linear_cov[2])}}));
 
       // for ros_control interface
       hardware_interface::ImuSensorHandle imu_sensor_handle(
