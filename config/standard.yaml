@@ -51,3 +51,11 @@ rm_base:
       id: 0x204
       type: rm_3508
       lp_cutoff_frequency: 100
+  imus:
+    base_imu:
+      frame_id: base_link
+      bus: can0
+      id: 0x300
+      orientation_covariance_diagonal: [0.0012, 0.0012, 0.0012]
+      angular_velocity_covariance: [0.0004, 0.0004, 0.0004]
+      linear_acceleration_covariance: [0.001, 0.001, 0.001]
