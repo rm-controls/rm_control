@@ -33,16 +33,11 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
     return false;
 
   // Load urdf
-  if (!load_urdf(root_nh))
-    return false;
-
+  load_urdf(root_nh);
   // Initialize transmission
-  if (!setupTransmission(root_nh))
-    return false;
-
+  setupTransmission(root_nh);
   // Initialize joint limit
-  if (!setupJointLimit(root_nh))
-    return false;
+  setupJointLimit(root_nh);
 
   // CAN Bus
   if (!robot_hw_nh.getParam("bus", xml_rpc_value))
@@ -72,19 +67,23 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
 
 void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &period) {
   // NOTE: read all data before  propagate!
-  act_to_jnt_state_->propagate();
+  if (is_actuator_specified_)
+    act_to_jnt_state_->propagate();
 
   // Set all cmd to zero to avoid crazy soft limit oscillation when not controller loaded
   auto effort_joint_interface = this->get<hardware_interface::EffortJointInterface>();
-  std::vector<std::string> names = effort_joint_interface->getNames();
-  for (const auto &name:names)
-    effort_joint_interface->getHandle(name).setCommand(0);
+  if (is_actuator_specified_) {
+    std::vector<std::string> names = effort_joint_interface->getNames();
+    for (const auto &name:names)
+      effort_joint_interface->getHandle(name).setCommand(0);
+  }
 }
 
 void RmBaseHardWareInterface::write(const ros::Time &time, const ros::Duration &period) {
   effort_jnt_saturation_interface_.enforceLimits(period);
   effort_jnt_soft_limits_interface_.enforceLimits(period);
-  jnt_to_act_effort_->propagate();
+  if (is_actuator_specified_)
+    jnt_to_act_effort_->propagate();
   for (auto &item:can_buses_)
     item->write();
 }
@@ -166,7 +165,6 @@ bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs) {
 
 bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::NodeHandle &robot_hw_nh) {
   ROS_ASSERT(act_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
-
   try {
     for (XmlRpc::XmlRpcValue::ValueStruct::const_iterator it = act_datas.begin(); it != act_datas.end(); ++it) {
       if (!it->second.hasMember("bus")) {
@@ -222,7 +220,7 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
     }
     registerInterface(&act_state_interface_);
     registerInterface(&effort_act_interface_);
-
+    is_actuator_specified_ = true;
   }
   catch (XmlRpc::XmlRpcException &e) {
     ROS_FATAL_STREAM("Exception raised by XmlRpc while reading the "
@@ -328,6 +326,7 @@ bool RmBaseHardWareInterface::load_urdf(ros::NodeHandle &root_nh) {
 }
 
 bool RmBaseHardWareInterface::setupTransmission(ros::NodeHandle &root_nh) {
+  if (!is_actuator_specified_) return true;
   try {
     transmission_loader_ = std::make_unique<transmission_interface::TransmissionInterfaceLoader>(
         this, &robot_transmissions_);
@@ -353,6 +352,7 @@ bool RmBaseHardWareInterface::setupTransmission(ros::NodeHandle &root_nh) {
 }
 
 bool RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle &root_nh) {
+  if (!is_actuator_specified_) return true;
   auto effort_joint_interface = this->get<hardware_interface::EffortJointInterface>();
   std::vector<std::string> names = effort_joint_interface->getNames();
   joint_limits_interface::JointLimits joint_limits; // Position
@@ -407,7 +407,6 @@ bool RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle &root_nh) {
           joint_limits_interface::EffortJointSaturationHandle(joint_handle, joint_limits));
     }
   }
-
   return true;
 }
 

@@ -44,6 +44,7 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
   }
 
  private:
+  bool is_actuator_specified_ = false;
 
   bool parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs);
   bool parseActData(XmlRpc::XmlRpcValue &act_datas, ros::NodeHandle &robot_hw_nh);
