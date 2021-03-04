@@ -25,7 +25,6 @@ struct ActData {
 };
 
 struct ImuData {
-  std::string type{};
   double ori[4]{};
   double ori_cov[9]{};
   double angular_vel[3]{};
