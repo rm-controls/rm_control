@@ -284,15 +284,18 @@ bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue &imu_dat
       } else
         bus_id2imu_data_[bus].insert(
             std::make_pair(id, ImuData{
-                .ori_cov{
+                .ori={},
+                .ori_cov={
                     static_cast<double>(ori_cov[0]), 0., 0.,
                     0., static_cast<double>(ori_cov[1]), 0.,
                     0., 0., static_cast<double>(ori_cov[2])},
-                .angular_vel_cov{
+                .angular_vel={},
+                .angular_vel_cov={
                     static_cast<double>(angular_cov[0]), 0., 0.,
                     0., static_cast<double>(angular_cov[1]), 0.,
                     0., 0., static_cast<double>(angular_cov[2])},
-                .linear_acc_cov{
+                .linear_acc ={},
+                .linear_acc_cov={
                     static_cast<double>(linear_cov[0]), 0., 0.,
                     0., static_cast<double>(linear_cov[1]), 0.,
                     0., 0., static_cast<double>(linear_cov[2])}}));
