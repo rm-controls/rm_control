@@ -18,6 +18,7 @@ rm_base:
       type: rm_3508
       lp_cutoff_frequency: 100
 
+controllers:
   robot_state_controller:
     type: robot_state_controller/RobotStateController
     publish_rate: 100
