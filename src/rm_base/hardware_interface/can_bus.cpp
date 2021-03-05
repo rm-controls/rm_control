@@ -170,8 +170,9 @@ void CanBus::frameCallback(const can_frame &frame) {
       }
     }
   }
-  ROS_ERROR_STREAM_ONCE(
-      "Can not find defined actuator, id: 0x" << std::hex << frame.can_id << " on bus: " << bus_name_);
+  if (!is_too_big)
+    ROS_ERROR_STREAM_ONCE(
+        "Can not find defined device, id: 0x" << std::hex << frame.can_id << " on bus: " << bus_name_);
 }
 
 }
