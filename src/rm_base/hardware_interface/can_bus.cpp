@@ -140,26 +140,34 @@ void CanBus::frameCallback(const can_frame &frame) {
       }
     }
   }
-  // Check if imu
+  // Check if IMU
   float imu_frame_data[4] = {0};
-  for (int i = 0; i < 4; ++i)
-    imu_frame_data[i] = int16ToFloat((frame.data[i * 2] << 8) | frame.data[i * 2 + 1]);
-  for (auto &itr :*data_prt_.id2imu_data_) { // imu data are consisted of three frames
-    switch (frame.can_id - static_cast<unsigned int>(itr.first)) {
-      case 0:itr.second.linear_acc[0] = imu_frame_data[0];
-        itr.second.linear_acc[1] = imu_frame_data[1];
-        itr.second.linear_acc[2] = imu_frame_data[2];
-        itr.second.angular_vel[0] = imu_frame_data[3];
-        return;
-      case 1:itr.second.angular_vel[1] = imu_frame_data[0];
-        itr.second.angular_vel[2] = imu_frame_data[1];
-        itr.second.ori[1] = imu_frame_data[2]; // Note the quaternion order
-        itr.second.ori[2] = imu_frame_data[3];
-        return;
-      case 2:itr.second.ori[3] = imu_frame_data[0];
-        itr.second.ori[0] = imu_frame_data[1];
-        return;
-      default:break;
+  bool is_too_big = false; // int16ToFloat failed sometime
+  for (int i = 0; i < 4; ++i) {
+    float value = int16ToFloat((frame.data[i * 2] << 8) | frame.data[i * 2 + 1]);
+    if (value > 1e3 || value < -1e3)
+      is_too_big = true;
+    else
+      imu_frame_data[i] = value;
+  }
+  if (!is_too_big) {
+    for (auto &itr :*data_prt_.id2imu_data_) { // imu data are consisted of three frames
+      switch (frame.can_id - static_cast<unsigned int>(itr.first)) {
+        case 0:itr.second.linear_acc[0] = imu_frame_data[0] * 9.81;
+          itr.second.linear_acc[1] = imu_frame_data[1] * 9.81;
+          itr.second.linear_acc[2] = imu_frame_data[2] * 9.81;
+          itr.second.angular_vel[0] = imu_frame_data[3] / 360. * 2. * M_PI;
+          return;
+        case 1:itr.second.angular_vel[1] = imu_frame_data[0] / 360. * 2. * M_PI;
+          itr.second.angular_vel[2] = imu_frame_data[1] / 360. * 2. * M_PI;
+          itr.second.ori[1] = imu_frame_data[2]; // Note the quaternion order
+          itr.second.ori[2] = imu_frame_data[3];
+          return;
+        case 2:itr.second.ori[3] = imu_frame_data[0];
+          itr.second.ori[0] = imu_frame_data[1];
+          return;
+        default:break;
+      }
     }
   }
   ROS_ERROR_STREAM_ONCE(
