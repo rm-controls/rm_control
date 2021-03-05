@@ -25,7 +25,7 @@
   <depend>angles</depend>
   <depend>realtime_tools</depend>
   <depend>robot_state_controller</depend>
-  <depend>imu_sensor_controller</depend>
+  <exec_depend>imu_sensor_controller</exec_depend>
 
   <export>
     <transmission_interface plugin="${prefix}/rm_base_loader_plugins.xml"/>
