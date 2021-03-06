@@ -2,8 +2,8 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:property name="threshold" value="0.1"/>
-    <xacro:property name="lower_limit" value="-0.79"/>
-    <xacro:property name="upper_limit" value="0.79"/>
+    <xacro:property name="pitch_lower_limit" value="-0.716"/>
+    <xacro:property name="pitch_upper_limit" value="0.487"/>
 
     <link name="yaw">
         <inertial>
@@ -15,13 +15,13 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/standard/yaw.stl"  scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
     </link>
@@ -30,11 +30,7 @@
         <origin xyz="0 0 0.0696"
                 rpy="0 0 0"/>
         <dynamics damping="0.0" friction="0.1"/>
-        <limit effort="1.2" velocity="31" lower="${lower_limit}" upper="${upper_limit}"/>
-        <safety_controller k_velocity="0.01"
-                           k_position="10000000"
-                           soft_lower_limit="${lower_limit+threshold}"
-                           soft_upper_limit="${upper_limit-threshold}"/>
+        <limit effort="1.2" velocity="31" lower="-1e10" upper="1e10"/>
         <parent link="base_link"/>
         <child link="yaw"/>
         <axis xyz="0 0 1"/>
@@ -50,7 +46,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/standard/pitch.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/standard/pitch.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
@@ -64,11 +60,10 @@
     <joint name="pitch_joint" type="revolute">
         <origin xyz="0 0 0.189" rpy="0 0 0"/>
         <dynamics damping="0.0" friction="0.1"/>
-        <limit effort="1.2" velocity="13.82" lower="${lower_limit}" upper="${upper_limit}"/>
-        <!--        <safety_controller k_velocity="10"-->
-        <!--                           k_position="15"-->
-        <!--                           soft_lower_limit="${lower_limit+threshold}"-->
-        <!--                           soft_upper_limit="${upper_limit-threshold}"/>-->
+        <limit effort="1.2" velocity="13.82" lower="${pitch_lower_limit}" upper="${pitch_upper_limit}"/>
+        <safety_controller k_position="100" k_velocity="0.1"
+                           soft_lower_limit="${pitch_lower_limit+threshold}"
+                           soft_upper_limit="${pitch_upper_limit-threshold}"/>
         <parent link="yaw"/>
         <child link="pitch"/>
         <axis xyz="0 1 0 "/>
