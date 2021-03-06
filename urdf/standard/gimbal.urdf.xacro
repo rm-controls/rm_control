@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:property name="threshold" value="0.01"/>
-    <xacro:property name="lower_limit" value="-0.436323"/>
-    <xacro:property name="upper_limit" value="0.7853982"/>
+    <xacro:property name="threshold" value="0.1"/>
+    <xacro:property name="lower_limit" value="-0.79"/>
+    <xacro:property name="upper_limit" value="0.79"/>
 
     <link name="yaw">
         <inertial>
@@ -26,10 +26,15 @@
         </collision>
     </link>
 
-    <joint name="yaw_joint" type="continuous">
+    <joint name="yaw_joint" type="revolute">
         <origin xyz="0 0 0.0696"
                 rpy="0 0 0"/>
         <dynamics damping="0.0" friction="0.1"/>
+        <limit effort="1.2" velocity="31" lower="${lower_limit}" upper="${upper_limit}"/>
+        <safety_controller k_velocity="0.01"
+                           k_position="10000000"
+                           soft_lower_limit="${lower_limit+threshold}"
+                           soft_upper_limit="${upper_limit-threshold}"/>
         <parent link="base_link"/>
         <child link="yaw"/>
         <axis xyz="0 0 1"/>
