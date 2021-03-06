@@ -95,10 +95,15 @@ void CanBus::frameCallback(const can_frame &frame) {
       int16_t qd = (frame.data[2] << 8u) | frame.data[3];
       int16_t cur = (frame.data[4] << 8u) | frame.data[5];
       uint8_t temp = frame.data[6];
-      if (q - act_data.q_last > 4096)
-        act_data.q_circle--;
-      else if (q - act_data.q_last < -4096)
-        act_data.q_circle++;
+
+      // Multiple cycle
+      if (act_data.seq != 0) {
+        if (q - act_data.q_last > 4096)
+          act_data.q_circle--;
+        else if (q - act_data.q_last < -4096)
+          act_data.q_circle++;
+      }
+      act_data.seq++;
       act_data.q_last = q;
       // Converter raw CAN data to position velocity and effort.
       act_data.pos = act_coeff.act2pos * static_cast<double> (q + 8191 * act_data.q_circle);
@@ -123,15 +128,18 @@ void CanBus::frameCallback(const can_frame &frame) {
         // Converter raw CAN data to position velocity and effort.
         act_data.vel = act_coeff.act2vel * static_cast<double> (qd) + act_coeff.act2vel_offset;
         act_data.effort = act_coeff.act2effort * static_cast<double> (cur) + act_coeff.act2effort_offset;
-        // Multiple cycle encoder
+        // Multiple cycle
         // NOTE: Raw data range is -4pi~4pi
-        double pos_new =
-            act_coeff.act2pos * static_cast<double> (q) + act_coeff.act2pos_offset
-                + static_cast<double>(act_data.q_circle) * 8 * M_PI;
-        if (pos_new - act_data.pos > 4 * M_PI)
-          act_data.q_circle--;
-        else if (pos_new - act_data.pos < -4 * M_PI)
-          act_data.q_circle++;
+        if (act_data.seq != 0) {
+          double pos_new =
+              act_coeff.act2pos * static_cast<double> (q) + act_coeff.act2pos_offset
+                  + static_cast<double>(act_data.q_circle) * 8 * M_PI;
+          if (pos_new - act_data.pos > 4 * M_PI)
+            act_data.q_circle--;
+          else if (pos_new - act_data.pos < -4 * M_PI)
+            act_data.q_circle++;
+        }
+        act_data.seq++;
         act_data.pos = act_coeff.act2pos * static_cast<double> (q) + act_coeff.act2pos_offset
             + static_cast<double>(act_data.q_circle) * 8 * M_PI;
         // Low pass filt

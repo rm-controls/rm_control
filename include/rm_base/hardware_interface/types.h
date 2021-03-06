@@ -4,6 +4,7 @@
 
 #ifndef RM_BASE_INCLUDE_RM_BASE_TYPES_H_
 #define RM_BASE_INCLUDE_RM_BASE_TYPES_H_
+
 #include <string>
 #include <lp_filter.h>
 #include <unordered_map>
@@ -17,7 +18,8 @@ struct ActCoeff {
 struct ActData {
   std::string type{};
   double pos{}, vel{}, effort{}, cmd_pos{}, cmd_vel{}, cmd_effort{};
-  // for RoboMaseter encoder
+  uint64_t seq{};
+  // For multiple cycle under absolute encoder (RoboMaster motor)
   int64_t q_circle{};
   uint16_t q_last{};
   uint8_t temp{};
