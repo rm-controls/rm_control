@@ -13,15 +13,15 @@
 
     <link name="base_link">
       <inertial>
-        <mass value="10"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="1.013" ixy="1.818e-3" ixz="5.843e-2" iyy="1.516"
-                 iyz="3.179e-2" izz="2.208"/>
+        <mass value="19.93"/>
+        <origin xyz="-0.02282 0.002773 0.008173"/>
+        <inertia ixx="5.96e-1" ixy="6.075e-3" ixz="4.655e-2" iyy="9.41e-1"
+                 iyz="-3.105e-3" izz="1.381e+0"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://rm_description/meshes/hero/base.stl" scale="0.001 0.001 0.001"/>
+          <mesh filename="package://rm_description/meshes/hero/base.stl" scale="0.001 .001 0.001"/>
         </geometry>
       </visual>
       <collision>
