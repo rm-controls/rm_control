@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hero">
+
   <xacro:arg name="load_chassis" default="true"/>
   <xacro:arg name="load_gimbal" default="true"/>
   <xacro:arg name="load_shooter" default="true"/>
-  <xacro:arg name="use_simulation" default="true"/>
+  <xacro:arg name="load_gazebo" default="true"/>
   <xacro:arg name="use_rm_gazebo" default="false"/>
   <xacro:arg name="roller_type" default="realistic"/>
 
@@ -14,12 +15,15 @@
 
   <xacro:if value="$(arg load_gimbal)">
     <xacro:include filename="$(find rm_description)/urdf/hero/gimbal.urdf.xacro"/>
+    <xacro:include filename="$(find rm_description)/urdf/hero/gimbal.transmission.urdf.xacro"/>
   </xacro:if>
 
   <xacro:if value="$(arg load_shooter)">
+    <xacro:include filename="$(find rm_description)/urdf/hero/shooter.urdf.xacro"/>
+    <xacro:include filename="$(find rm_description)/urdf/hero/shooter.transmission.urdf.xacro"/>
   </xacro:if>
 
-  <xacro:if value="$(arg use_simulation)">
+  <xacro:if value="$(arg load_gazebo)">
     <xacro:if value="$(arg use_rm_gazebo)">
       <gazebo>
         <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
@@ -36,5 +40,7 @@
       </gazebo>
     </xacro:unless>
   </xacro:if>
+
+
 
 </robot>
