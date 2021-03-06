@@ -14,7 +14,7 @@
     </transmission>
 
     <transmission name="trans_pitch_joint">
-        <type>transmission_interface/SimpleTransmission</type>
+        <type>transmission_interface/RevoluteTransmission</type>
         <actuator name="pitch_joint_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>-1</mechanicalReduction>
