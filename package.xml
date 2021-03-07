@@ -10,5 +10,7 @@
   <!-- buildtool_depend: dependencies of the build process -->
   <buildtool_depend>catkin</buildtool_depend>
   <exec_depend>xacro</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>hector_gazebo_plugins</exec_depend>
 
 </package>
