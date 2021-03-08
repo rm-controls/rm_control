@@ -1,0 +1,22 @@
+<launch>
+  <arg name="load_chassis" default="true"/>
+  <arg name="load_gimbal" default="true"/>
+  <arg name="load_shooter" default="true"/>
+  <arg name="paused" default="false"/>
+
+  <param name="robot_description" command="$(find xacro)/xacro $(find rm_description)/urdf/hero/hero.urdf.xacro
+         load_chassis:=$(arg load_chassis) load_gimbal:=$(arg load_gimbal) load_shooter:=$(arg load_shooter)
+         use_simulation:=true roller_type:=simple
+"/>
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="world_name" value="$(find rm_description)/worlds/empty.world"/>
+  </include>
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" clear_params="true"
+        args="-z 0.5 -param robot_description -urdf -model hero" output="screen"/>
+
+</launch>
