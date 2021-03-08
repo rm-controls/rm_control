@@ -3,7 +3,6 @@
   <xacro:arg name="load_chassis" default="false"/>
   <xacro:arg name="load_arm" default="true"/>
   <xacro:arg name="use_simulation" default="true"/>
-  <xacro:arg name="use_rm_gazebo" default="false"/>
   <xacro:arg name="roller_type" default="realistic"/>
 
   <xacro:if value="$(arg load_chassis)">
@@ -32,21 +31,12 @@
   </xacro:if>
 
   <xacro:if value="$(arg use_simulation)">
-    <xacro:if value="$(arg use_rm_gazebo)">
-      <gazebo>
-        <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
-          <robotNamespace>/</robotNamespace>
-          <robotSimType>rm_gazebo/RmRobotHWSim</robotSimType>
-        </plugin>
-      </gazebo>
-    </xacro:if>
-    <xacro:unless value="$(arg use_rm_gazebo)">
-      <gazebo>
-        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-          <robotNamespace>/</robotNamespace>
-        </plugin>
-      </gazebo>
-    </xacro:unless>
+    <gazebo>
+      <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
+        <robotNamespace>/</robotNamespace>
+        <robotSimType>rm_gazebo/RmRobotHWSim</robotSimType>
+      </plugin>
+    </gazebo>
   </xacro:if>
 
 </robot>
