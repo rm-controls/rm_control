@@ -1,3 +1,3 @@
-int32 id
+uint8 id
 float64 confidence
-geometry_msgs/PoseStamped pose
+geometry_msgs/Pose pose
