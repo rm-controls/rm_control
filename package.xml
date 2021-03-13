@@ -1,16 +1,15 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>rm_description</name>
-  <version>0.1.0</version>
-  <description>RoboMaster robot description files</description>
-  <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
-  <license>BSD</license>
-  <author email="liaoqiayuan@gmail.com">Qiayuan Liao</author>
+    <name>rm_description</name>
+    <version>0.1.0</version>
+    <description>RoboMaster robot description files</description>
+    <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
+    <license>BSD</license>
+    <author email="liaoqiayuan@gmail.com">Qiayuan Liao</author>
 
-  <!-- buildtool_depend: dependencies of the build process -->
-  <buildtool_depend>catkin</buildtool_depend>
-  <exec_depend>xacro</exec_depend>
-  <exec_depend>xacro</exec_depend>
-  <exec_depend>hector_gazebo_plugins</exec_depend>
+    <!-- buildtool_depend: dependencies of the build process -->
+    <buildtool_depend>catkin</buildtool_depend>
+    <exec_depend>xacro</exec_depend>
+    <exec_depend>xacro</exec_depend>
 
 </package>
