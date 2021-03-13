@@ -1,23 +1,27 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>rm_gazebo</name>
-  <version>0.1.0</version>
-  <description>A template for ROS packages.</description>
-  <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
-  <license>BSD</license>
-  <author email="liaoqiayuan@gmail.com">Qiayuan Liao</author>
+    <name>rm_gazebo</name>
+    <version>0.1.0</version>
+    <description>A template for ROS packages.</description>
+    <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
+    <license>BSD</license>
+    <author email="liaoqiayuan@gmail.com">Qiayuan Liao</author>
 
-  <!-- buildtool_depend: dependencies of the build process -->
-  <buildtool_depend>catkin</buildtool_depend>
-  <!-- depend: build, export, and execution dependency -->
-  <depend>roscpp</depend>
-  <depend>roslint</depend>
+    <!-- buildtool_depend: dependencies of the build process -->
+    <buildtool_depend>catkin</buildtool_depend>
+    <!-- depend: build, export, and execution dependency -->
+    <depend>roscpp</depend>
+    <depend>roslint</depend>
 
-  <depend>gazebo</depend>
-  <depend>gazebo_ros</depend>
-  <depend>gazebo_ros_control</depend>
-  <depend>robot_state_controller</depend>
-  <export>
-    <gazebo_ros_control plugin="${prefix}/rm_robot_hw_sim_plugins.xml"/>
-  </export>
+    <depend>gazebo</depend>
+    <depend>gazebo_ros</depend>
+    <depend>gazebo_ros_control</depend>
+    <depend>robot_state_controller</depend>
+
+    <exec_depend>hector_gazebo_plugins</exec_depend>
+    <exec_depend>realsense2_description</exec_depend>
+
+    <export>
+        <gazebo_ros_control plugin="${prefix}/rm_robot_hw_sim_plugins.xml"/>
+    </export>
 </package>
