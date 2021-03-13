@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lidar2d">
-    <xacro:macro name="lidar2d" params="connected_to lidar_link_name simulation xyz:='0 0 0' rpy:='0 0 0' ">
+    <xacro:macro name="lidar2d" params="connected_to lidar_name simulation xyz:='0 0 0' rpy:='0 0 0' ">
 
         <!-- Lidar is fixed to the connected_to link -->
-        <joint name="${lidar_link_name}_joint" type="fixed">
+        <joint name="${lidar_name}_joint" type="fixed">
             <origin xyz="${xyz}" rpy="${rpy}"/>
             <parent link="${connected_to}"/>
-            <child link="${lidar_link_name}"/>
+            <child link="${lidar_name}"/>
         </joint>
 
         <!-- Lidar link -->
-        <link name="${lidar_link_name}">
+        <link name="${lidar_name}">
             <inertial>
                 <mass value="0.114"/>
                 <origin xyz="0 0 0"/>
@@ -35,7 +35,7 @@
         </link>
 
         <xacro:if value="${simulation}">
-            <gazebo reference="${lidar_link_name}">
+            <gazebo reference="${lidar_name}">
                 <material>Gazebo/FlatBlack</material>
                 <sensor type="ray" name="lds_lfcd_sensor">
                     <pose>0 0 0 0 0 0</pose>
