@@ -1,0 +1,42 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find rm_description)/urdf/balance/rubber_wheel.urdf.xacro"/>
+
+    <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
+    <xacro:property name="wheel_base" value="0.405"/>
+    <xacro:property name="wheel_offset_z" value="-0.085"/>
+
+    <xacro:macro name="chassis">
+
+        <link name="base_link">
+            <inertial>
+                <mass value="17.21"/>
+                <origin xyz="-0.006488 0.006497 0.062596"/>
+                <inertia ixx="0.2744" ixy="-2.342e-5" ixz="2.162e-3" iyy="0.2444"
+                         iyz="-2.346e-3" izz="0.1928"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/balance/base.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 -0.067" rpy="0 0 0"/>
+                <geometry>
+                    <!--                    <mesh filename="package://rm_description/meshes/balance/base.stl" scale="0.001 0.001 0.001"/>-->
+                    <box size="0.35 0.22 0.03"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <xacro:rubber_wheel prefix="left" connected_to="base_link"
+                            wheel_x_offset="0" wheel_y_offset="${wheel_base/2}"
+                            wheel_z_offset="${wheel_offset_z}"/>
+        <xacro:rubber_wheel prefix="right" connected_to="base_link"
+                            wheel_x_offset="0" wheel_y_offset="${-wheel_base/2}"
+                            wheel_z_offset="${wheel_offset_z}"/>
+
+    </xacro:macro>
+
+</robot>
