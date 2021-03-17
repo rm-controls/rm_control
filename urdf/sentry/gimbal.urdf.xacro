@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="gimbal">
+
+    <link name="link_yaw">
+      <visual>
+        <geometry>
+          <mesh filename="package://rm_description/meshes/sentry/yaw.stl"
+                scale="0.001 0.001 0.001"/>
+        </geometry>
+      </visual>
+      <inertial>
+        <mass value="0.225984"/>
+        <origin xyz="0.00336 0 -0.0494" rpy="0 0 0"/>
+        <inertia ixx="9.791e-4" ixy="6.37e-10" ixz="6.197e-5" iyy="1.507e-3"
+                 iyz="1.806e-9" izz="7.527e-4"/>
+      </inertial>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rm_description/meshes/sentry/yaw.stl"
+                scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="yaw_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="link_yaw"/>
+      <axis xyz="0 0 1"/>
+      <origin xyz="0.0007 0.053 -0.31"/>
+      <dynamics damping="0" friction="0.1"/>
+      <limit effort="1.2" velocity="34" lower="-${2*pi}" upper="${2*pi}"/>
+    </joint>
+
+
+      <link name="link_pitch">
+        <inertial>
+          <mass value="1.155968"/>
+          <origin xyz="0.019 -0.045 0.022"/>
+          <inertia ixx="5.918e-3" ixy="1.6863e-6" ixz="2.4143e-6" iyy="2.048e-3"
+                   iyz="-1.348e-4" izz="7.506e-3"/>
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://rm_description/meshes/sentry/pitch.stl" scale="0.001 0.001 0.001"/>
+          </geometry>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://rm_description/meshes/sentry/pitch.stl" scale="0.001 0.001 0.001"/>
+          </geometry>
+        </collision>
+      </link>
+
+      <joint name="pitch_joint" type="revolute">
+        <parent link="link_yaw"/>
+        <child link="link_pitch"/>
+        <axis xyz="1 0 0"/>
+        <origin xyz="0 0 -0.1"/>
+        <dynamics damping="0" friction="0.1"/>
+        <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}" lower="0" upper="${pi/2}"/>
+      </joint>
+
+  </xacro:macro>
+
+</robot>
