@@ -25,7 +25,7 @@
                         <image>
                             <width>1280</width>
                             <height>720</height>
-                            <format>RGB8</format>
+                            <format>R8G8B8</format>
                         </image>
                         <clip>
                             <near>0.05</near>
@@ -39,9 +39,9 @@
                         <cameraName>${realsense_name}</cameraName>
                         <imageTopicName>color/image_raw</imageTopicName>
                         <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
-                        <depthImageTopicName>depth/image_raw</depthImageTopicName>
-                        <depthImageInfoTopicName>depth/camera_info</depthImageInfoTopicName>
-                        <pointCloudTopicName>depth/points</pointCloudTopicName>
+                        <depthImageTopicName>aligned_depth_to_color/image_raw</depthImageTopicName>
+                        <depthImageInfoTopicName>aligned_depth_to_color/camera_info</depthImageInfoTopicName>
+                        <pointCloudTopicName>depth/color/points</pointCloudTopicName>
                         <frameName>${realsense_name}_depth_optical_frame</frameName>
                         <pointCloudCutoff>0.5</pointCloudCutoff>
                         <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
