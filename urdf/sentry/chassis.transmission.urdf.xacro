@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot>
+
+
+<transmission name="trans_drive_joint">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="pitch_drive_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="drive_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+</transmission>
+
+</robot>
