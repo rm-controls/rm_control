@@ -2,7 +2,7 @@
 // Created by qiayuan on 12/21/20.
 //
 
-#include <ros_utilities.h>
+#include <rm_common/ros_utilities.h>
 #include <memory>
 #include <transmission_interface/transmission_interface_loader.h>
 #include <joint_limits_interface/joint_limits_urdf.h>

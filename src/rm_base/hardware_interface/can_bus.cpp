@@ -5,7 +5,7 @@
 
 #include <string>
 #include <ros/ros.h>
-#include <math_utilities.h>
+#include <rm_common/math_utilities.h>
 namespace rm_base {
 
 float int16ToFloat(unsigned short data) {

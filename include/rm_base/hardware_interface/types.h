@@ -6,7 +6,7 @@
 #define RM_BASE_INCLUDE_RM_BASE_TYPES_H_
 
 #include <string>
-#include <lp_filter.h>
+#include <rm_common/filters/lp_filter.h>
 #include <unordered_map>
 
 namespace rm_base {
