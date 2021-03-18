@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Optimize
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+# set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
 ## enforcing cleaner code.
@@ -19,11 +19,11 @@ find_package(catkin REQUIRED
 
         rm_common
         hardware_interface
-        urdf
+        controller_interface
         transmission_interface
         joint_limits_interface
         controller_manager
-        angles
+        urdf
         realtime_tools
         )
 
@@ -47,13 +47,14 @@ catkin_package(
         CATKIN_DEPENDS
         roscpp
         roslint
+
         rm_common
         hardware_interface
-        urdf
+        controller_interface
         transmission_interface
         joint_limits_interface
         controller_manager
-        angles
+        urdf
         realtime_tools
         DEPENDS
 )
@@ -109,7 +110,7 @@ install(
 install(
         DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-        FILES_MATCHING PATTERN "*.hpp"
+        FILES_MATCHING PATTERN "*.h"
 )
 
 # Mark other files for installation
