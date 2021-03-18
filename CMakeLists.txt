@@ -13,20 +13,19 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 add_definitions(-Wall -Werror -Wno-inconsistent-missing-override)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
-    COMPONENTS
-    roscpp
-    roslint
+        COMPONENTS
+        roscpp
+        roslint
 
-    rm_common
-    hardware_interface
-    urdf
-    transmission_interface
-    joint_limits_interface
-    controller_manager
-    angles
-    realtime_tools
-    robot_state_controller
-    )
+        rm_common
+        hardware_interface
+        urdf
+        transmission_interface
+        joint_limits_interface
+        controller_manager
+        angles
+        realtime_tools
+        )
 
 ## Find system libraries
 #find_package(Eigen3 REQUIRED)
@@ -41,23 +40,22 @@ find_package(catkin REQUIRED
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-    INCLUDE_DIRS
-    include
-    LIBRARIES
-    ${PROJECT_NAME}_loader_plugins
-    CATKIN_DEPENDS
-    roscpp
-    roslint
-    rm_common
-    hardware_interface
-    urdf
-    transmission_interface
-    joint_limits_interface
-    controller_manager
-    angles
-    realtime_tools
-    robot_state_controller
-    DEPENDS
+        INCLUDE_DIRS
+        include
+        LIBRARIES
+        ${PROJECT_NAME}_loader_plugins
+        CATKIN_DEPENDS
+        roscpp
+        roslint
+        rm_common
+        hardware_interface
+        urdf
+        transmission_interface
+        joint_limits_interface
+        controller_manager
+        angles
+        realtime_tools
+        DEPENDS
 )
 
 ###########
@@ -66,34 +64,34 @@ catkin_package(
 
 ## Specify additional locations of header files
 include_directories(
-    include
-    ${catkin_INCLUDE_DIRS}
+        include
+        ${catkin_INCLUDE_DIRS}
 )
 add_library(${PROJECT_NAME}_loader_plugins
-    src/rm_base/transmission/revolute_transmission_loader.cpp
-    )
+        src/rm_base/transmission/revolute_transmission_loader.cpp
+        )
 ## Declare cpp executables
 add_executable(${PROJECT_NAME}
-    src/rm_base/${PROJECT_NAME}.cpp
-    src/rm_base/hardware_interface/hardware_interface.cpp
-    src/rm_base/hardware_interface/socketcan.cpp
-    src/rm_base/hardware_interface/can_bus.cpp
-    src/rm_base/control_loop.cpp
-    )
+        src/rm_base/${PROJECT_NAME}.cpp
+        src/rm_base/hardware_interface/hardware_interface.cpp
+        src/rm_base/hardware_interface/socketcan.cpp
+        src/rm_base/hardware_interface/can_bus.cpp
+        src/rm_base/control_loop.cpp
+        )
 add_executable(dbus_node
-    src/dbus/dbus_node.cpp
-    src/dbus/dbus.cpp)
+        src/dbus/dbus_node.cpp
+        src/dbus/dbus.cpp)
 
 ## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}_loader_plugins
-    ${catkin_LIBRARIES}
-    )
+        ${catkin_LIBRARIES}
+        )
 target_link_libraries(${PROJECT_NAME}
-    ${catkin_LIBRARIES}
-    )
+        ${catkin_LIBRARIES}
+        )
 target_link_libraries(dbus_node
-    ${catkin_LIBRARIES}
-    )
+        ${catkin_LIBRARIES}
+        )
 
 #############
 ## Install ##
@@ -101,23 +99,23 @@ target_link_libraries(dbus_node
 
 # Mark executables and/or libraries for installation
 install(
-    TARGETS ${PROJECT_NAME} ${PROJECT_NAME}
-    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+        TARGETS ${PROJECT_NAME} ${PROJECT_NAME}
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 # Mark cpp header files for installation
 install(
-    DIRECTORY include/${PROJECT_NAME}/
-    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-    FILES_MATCHING PATTERN "*.hpp"
+        DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+        FILES_MATCHING PATTERN "*.hpp"
 )
 
 # Mark other files for installation
 install(
-    DIRECTORY doc
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        DIRECTORY doc
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 #############

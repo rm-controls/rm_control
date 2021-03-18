@@ -16,14 +16,14 @@
 #include <XmlRpcValue.h>
 
 // ROS control
+#include <hardware_interface/robot_hw.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
-#include <hardware_interface/robot_hw.h>
+#include <hardware_interface/imu_sensor_interface.h>
+#include <rm_common/hardware_interface/robot_state_interface.h>
+
 #include <transmission_interface/transmission_interface_loader.h>
 #include <joint_limits_interface/joint_limits_interface.h>
-#include <hardware_interface/imu_sensor_interface.h>
-
-#include <robot_state_controller/robot_state_interface.h>
 
 #include "can_bus.h"
 
