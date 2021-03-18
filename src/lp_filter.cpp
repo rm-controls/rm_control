@@ -2,8 +2,8 @@
 // Created by qiayuan on 1/5/21.
 //
 
-#include "lp_filter.h"
-#include "ros_utilities.h"
+#include "rm_common/filters/lp_filter.h"
+#include "rm_common/ros_utilities.h"
 
 LowPassFilter::LowPassFilter(ros::NodeHandle &nh) {
   nh.param("lp_cutoff_frequency", cutoff_frequency_, -1.);

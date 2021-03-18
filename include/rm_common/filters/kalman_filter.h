@@ -5,7 +5,7 @@
 #ifndef SRC_RM_COMMON_INCLUDE_KALMAN_FILTER_H_
 #define SRC_RM_COMMON_INCLUDE_KALMAN_FILTER_H_
 #include <iostream>
-#include "cpp_types.h"
+#include "rm_common/cpp_types.h"
 
 template<typename T>
 class KalmanFilter {

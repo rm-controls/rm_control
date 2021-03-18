@@ -2,7 +2,7 @@
 // Created by qiayuan on 3/21/20.
 //
 
-#include "traj_gen.h"
+#include "rm_common/traj_gen.h"
 #include <ros/ros.h>
 #include <rm_msgs/Joint.h>
 

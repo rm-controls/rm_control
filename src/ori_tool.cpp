@@ -2,8 +2,8 @@
 // Created by qiayuan on 8/13/20.
 //
 
-#include "ori_tool.h"
-#include "math_utilities.h"
+#include "rm_common/ori_tool.h"
+#include "rm_common/math_utilities.h"
 #include <eigen3/Eigen/Eigenvalues>
 
 void quatToRPY(const geometry_msgs::Quaternion &q,
