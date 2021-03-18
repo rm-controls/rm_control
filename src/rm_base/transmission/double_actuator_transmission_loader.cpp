@@ -2,16 +2,14 @@
 // Created by qiayuan on 1/2/21.
 //
 
-// Pluginlib
 #include <pluginlib/class_list_macros.hpp>
-
-#include "rm_base/transmission/revolute_transmission_loader.h"
+#include "rm_base/transmission/double_actuator_transmission_loader.h"
 
 namespace transmission_interface {
 
-TransmissionSharedPtr RevoluteTransmissionLoader::load(const TransmissionInfo &transmission_info) {
+TransmissionSharedPtr DoubleActuatorTransmissionLoader::load(const TransmissionInfo &transmission_info) {
   // Transmission should contain only one actuator/joint
-  if (!checkActuatorDimension(transmission_info, 1)) { return TransmissionSharedPtr(); }
+  if (!checkActuatorDimension(transmission_info, 2)) { return TransmissionSharedPtr(); }
   if (!checkJointDimension(transmission_info, 1)) { return TransmissionSharedPtr(); }
 
   // Parse actuator and joint xml elements
@@ -33,19 +31,18 @@ TransmissionSharedPtr RevoluteTransmissionLoader::load(const TransmissionInfo &t
 
   // Transmission instance
   try {
-    TransmissionSharedPtr transmission(new RevoluteTransmission(reduction, joint_offset));
+    TransmissionSharedPtr transmission(new DoubleActuatorTransmission(reduction, joint_offset));
     return transmission;
   }
   catch (const TransmissionInterfaceException &ex) {
     using hardware_interface::internal::demangledTypeName;
-    ROS_ERROR_STREAM_NAMED("parser", "Failed to construct transmission '" <<
-                                                                          transmission_info.name_ << "' of type '"
-                                                                          << demangledTypeName<RevoluteTransmission>()
-                                                                          << "'. " << ex.what());
+    ROS_ERROR_STREAM_NAMED("parser", "Failed to construct transmission '"
+        << transmission_info.name_ << "' of type '" << demangledTypeName<DoubleActuatorTransmission>()
+        << "'. " << ex.what());
     return TransmissionSharedPtr();
   }
 }
 }
 
-PLUGINLIB_EXPORT_CLASS(transmission_interface::RevoluteTransmissionLoader,
+PLUGINLIB_EXPORT_CLASS(transmission_interface::DoubleActuatorTransmission,
                        transmission_interface::TransmissionLoader)
