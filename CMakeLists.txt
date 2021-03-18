@@ -11,14 +11,14 @@ add_definitions(-Wall -Werror)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
-    COMPONENTS
-    roscpp
-    roslint
+        COMPONENTS
+        roscpp
+        roslint
 
-    gazebo_ros
-    gazebo_ros_control
-    robot_state_controller
-    )
+        rm_common
+        gazebo_ros
+        gazebo_ros_control
+        )
 
 # Depend on system install of Gazebo
 find_package(GAZEBO REQUIRED)
@@ -34,17 +34,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-    INCLUDE_DIRS
-    include
-    LIBRARIES
-    ${PROJECT_NAME}
-    CATKIN_DEPENDS
-    roscpp
+        INCLUDE_DIRS
+        include
+        LIBRARIES
+        ${PROJECT_NAME}
+        CATKIN_DEPENDS
+        roscpp
 
-    gazebo_ros
-    gazebo_ros_control
-    robot_state_controller
-    DEPENDS
+        rm_common
+        gazebo_ros
+        gazebo_ros_control
+        DEPENDS
 )
 
 ###########
@@ -54,24 +54,24 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-    include
-    ${catkin_INCLUDE_DIRS}
-    ${GAZEBO_INCLUDE_DIRS}
+        include
+        ${catkin_INCLUDE_DIRS}
+        ${GAZEBO_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
 add_library(rm_robot_hw_sim
-    src/rm_robot_hw_sim.cpp
-    )
+        src/rm_robot_hw_sim.cpp
+        )
 
 add_dependencies(rm_robot_hw_sim
-    ${catkin_EXPORTED_TARGETS}
-    )
+        ${catkin_EXPORTED_TARGETS}
+        )
 
 target_link_libraries(rm_robot_hw_sim
-    ${catkin_LIBRARIES}
-    ${GAZEBO_LIBRARIES}
-    )
+        ${catkin_LIBRARIES}
+        ${GAZEBO_LIBRARIES}
+        )
 
 #############
 ## Install ##
