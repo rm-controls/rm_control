@@ -1,0 +1,128 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find rm_description)/urdf/sentry/driven_wheel.urdf.xacro"/>
+
+  <xacro:macro name="chassis">
+
+    <!-- link -->
+    <link name="world"/>
+
+    <link name="link_track">
+      <inertial>
+        <mass value="29.08"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="8.676e-2" ixy="0" ixz="0" iyy="2.432"
+                 iyz="0" izz="2.501"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rm_description/meshes/sentry/track.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rm_description/meshes/sentry/track.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="base_link">
+      <inertial>
+        <mass value="7.41"/>
+        <origin xyz="0 0.055 -0.1747"/>
+        <inertia ixx="4.024e-1" ixy="7.617e-3" ixz="-1.318e-2" iyy="3.33e-1"
+                 iyz="7.959e-2" izz="1.802e-1"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rm_description/meshes/sentry/base_link.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rm_description/meshes/sentry/base_link.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="link_drive_wheel">
+      <inertial>
+        <mass value="0.0839"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="3.345e-5" ixy="0" ixz="0" iyy="4.185e-5"
+                 iyz="-2.8558e-8" izz="3.347e-5"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rm_description/meshes/sentry/drive_wheel.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rm_description/meshes/sentry/drive_wheel.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- joint -->
+    <joint name="track_joint" type="fixed">
+      <parent link="world"/>
+      <child link="link_track"/>
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="base_joint" type="prismatic">
+      <axis xyz="1 0 0"/>
+      <limit effort="1.2" velocity="34" lower="-${2*pi}" upper="${2*pi}"/>
+      <parent link="link_track"/>
+      <child link="base_link"/>
+      <origin xyz="0 -0.053 0.060" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="drive_joint" type="continuous">
+      <axis xyz="0 1 0"/>
+      <limit effort="1.2" velocity="34" lower="-${2*pi}" upper="${2*pi}"/>
+      <parent link="base_link"/>
+      <child link="link_drive_wheel"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <xacro:driven_wheel num="1">
+      <origin rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <origin xyz="-0.1 0.118 -0.015" rpy="0 0 0"/>
+    </xacro:driven_wheel>
+
+    <xacro:driven_wheel num="2">
+      <origin rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <origin xyz="0.1 0.118 -0.015" rpy="0 0 0"/>
+    </xacro:driven_wheel>
+
+    <xacro:driven_wheel num="3">
+      <origin rpy="${pi/2} 0 0"/>
+      <axis xyz="0 0 1"/>
+      <origin xyz="-0.1 0.158 -0.0635" rpy="0 0 0"/>
+    </xacro:driven_wheel>
+
+    <xacro:driven_wheel num="4">
+      <origin rpy="${pi/2} 0 0"/>
+      <axis xyz="0 0 1"/>
+      <origin xyz="0.1 0.158 -0.0635" rpy="0 0 0"/>
+    </xacro:driven_wheel>
+
+    <xacro:driven_wheel num="5">
+      <origin rpy="${pi/2} 0 0"/>
+      <axis xyz="0 0 1"/>
+      <origin xyz="0 -0.052 -0.0635" rpy="0 0 0"/>
+    </xacro:driven_wheel>
+
+  </xacro:macro>
+
+</robot>
