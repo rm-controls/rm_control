@@ -5,7 +5,7 @@
 #ifndef RM_GAZEBO_RM_ROBOT_HW_SIM_H
 #define RM_GAZEBO_RM_ROBOT_HW_SIM_H
 #include <gazebo_ros_control/default_robot_hw_sim.h>
-#include <robot_state_controller/robot_state_interface.h>
+#include <rm_common/hardware_interface/robot_state_interface.h>
 
 namespace rm_gazebo {
 class RmRobotHWSim : public gazebo_ros_control::DefaultRobotHWSim {

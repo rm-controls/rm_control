@@ -12,6 +12,7 @@
   <!-- depend: build, export, and execution dependency -->
   <depend>roscpp</depend>
   <depend>roslint</depend>
+  <depend>rm_common</depend>
 
   <depend>gazebo</depend>
   <depend>gazebo_ros</depend>

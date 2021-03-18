@@ -14,6 +14,7 @@ find_package(catkin REQUIRED
     COMPONENTS
     roscpp
     roslint
+    rm_common
 
     gazebo_ros
     gazebo_ros_control
@@ -40,6 +41,7 @@ catkin_package(
     ${PROJECT_NAME}
     CATKIN_DEPENDS
     roscpp
+    rm_common
 
     gazebo_ros
     gazebo_ros_control
