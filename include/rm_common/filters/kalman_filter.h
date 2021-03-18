@@ -2,8 +2,8 @@
 // Created by qiayuan on 4/3/20.
 //
 
-#ifndef SRC_RM_COMMON_INCLUDE_KALMAN_FILTER_H_
-#define SRC_RM_COMMON_INCLUDE_KALMAN_FILTER_H_
+#ifndef RM_COMMON_FILTERS_KALMAN_FILTER_H
+#define RM_COMMON_FILTERS_KALMAN_FILTER_H
 #include <iostream>
 #include "rm_common/cpp_types.h"
 
@@ -81,4 +81,4 @@ class KalmanFilter {
   bool inited;
 };
 
-#endif //SRC_RM_COMMON_INCLUDE_KALMAN_FILTER_H_
+#endif //RM_COMMON_FILTERS_KALMAN_FILTER_H

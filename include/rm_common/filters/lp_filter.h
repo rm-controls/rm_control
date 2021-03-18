@@ -2,8 +2,8 @@
 // Created by qiayuan on 1/5/21.
 //
 
-#ifndef RM_COMMON_INCLUDE_LP_FILTER_H_
-#define RM_COMMON_INCLUDE_LP_FILTER_H_
+#ifndef RM_COMMON_FILTERS_LP_FILTER_H
+#define RM_COMMON_FILTERS_LP_FILTER_H
 #include <dynamic_reconfigure/server.h>
 #include <realtime_tools/realtime_publisher.h>
 #include <std_msgs/Float64MultiArray.h>
@@ -33,4 +33,4 @@ class LowPassFilter {
   std::shared_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray>> realtime_pub_{};
 };
 
-#endif //SRC_RM_SOFTWARE_RM_COMMON_INCLUDE_LP_FILTER_H_
+#endif //RM_COMMON_FILTERS_LP_FILTER_H

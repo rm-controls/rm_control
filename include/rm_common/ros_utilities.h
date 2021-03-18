@@ -2,8 +2,8 @@
 // Created by qiayuan on 7/7/20.
 //
 
-#ifndef SRC_RM_COMMON_INCLUDE_ROS_UTILITIES_H_
-#define SRC_RM_COMMON_INCLUDE_ROS_UTILITIES_H_
+#ifndef RM_COMMON_ROS_UTILITIES_H
+#define RM_COMMON_ROS_UTILITIES_H
 #include <ros/ros.h>
 #include <XmlRpcException.h>
 
@@ -33,4 +33,4 @@ inline double xmlRpcGetDouble(
   }
 }
 
-#endif //SRC_RM_COMMON_INCLUDE_ROS_UTILITIES_H_
+#endif // RM_COMMON_ROS_UTILITIES_H

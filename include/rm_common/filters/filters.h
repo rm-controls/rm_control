@@ -1,5 +1,5 @@
-#ifndef SRC_RM_COMMON_INCLUDE_FILTERS_H_
-#define SRC_RM_COMMON_INCLUDE_FILTERS_H_
+#ifndef RM_COMMON_FILTERS_FILTERS_H
+#define RM_COMMON_FILTERS_FILTERS_H
 
 template<typename T>
 class Filter {
@@ -143,20 +143,20 @@ class RampFilter : public Filter<T> {
 };
 
 template<typename T>
-class OneEuroFilter : public Filter<T>{
-public:
-    OneEuroFilter(double _freq, T _mincutoff, T _beta, T _dcutoff);
-    ~OneEuroFilter();
-    void input(T input_value);
-    T output();
-    void clear();
+class OneEuroFilter : public Filter<T> {
+ public:
+  OneEuroFilter(double _freq, T _mincutoff, T _beta, T _dcutoff);
+  ~OneEuroFilter();
+  void input(T input_value);
+  T output();
+  void clear();
 
-private:
-    double freq;
-    bool firsttime;
-    T mincutoff, beta, dcutoff;
-    T x_prev, dhatxprev, hatxprev;
-    T filtered_val;
+ private:
+  double freq;
+  bool firsttime;
+  T mincutoff, beta, dcutoff;
+  T x_prev, dhatxprev, hatxprev;
+  T filtered_val;
 };
 
-#endif //SRC_RM_COMMON_INCLUDE_FILTERS_H_
+#endif //RM_COMMON_FILTERS_FILTERS_H

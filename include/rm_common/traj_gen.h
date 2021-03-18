@@ -2,8 +2,8 @@
 // Created by qiayuan on 3/21/20.
 //
 
-#ifndef SRC_RM_COMMON_INCLUDE_TRAJ_GEN_H_
-#define SRC_RM_COMMON_INCLUDE_TRAJ_GEN_H_
+#ifndef RM_COMMON_TF_RT_BROADCASTER_H
+#define RM_COMMON_TF_RT_BROADCASTER_H
 
 #include <cmath>
 #include <string>
@@ -141,4 +141,4 @@ class MinTimeTraj {
   }
 };
 
-#endif //SRC_RM_COMMON_INCLUDE_TRAJ_GEN_H_
+#endif // RM_COMMON_TF_RT_BROADCASTER_H

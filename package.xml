@@ -1,24 +1,26 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>rm_common</name>
-  <version>1.0.0</version>
-  <description>The rm_common package</description>
+    <name>rm_common</name>
+    <version>1.0.0</version>
+    <description>The rm_common package</description>
 
-  <maintainer email="liaoqiayuan@gmail.com">qiayuan</maintainer>
+    <maintainer email="liaoqiayuan@gmail.com">qiayuan</maintainer>
 
-  <license>TODO</license>
+    <license>TODO</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
+    <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>roscpp</depend>
-  <depend>tf</depend>
-  <depend>geometry_msgs</depend>
-  <build_depend>realtime_tools</build_depend>
-  <depend>rm_msgs</depend>
+    <depend>roscpp</depend>
+    <depend>roslint</depend>
 
-  <!-- The export tag contains other, unspecified, tags -->
-  <export>
-    <!-- Other tools can request additional information be placed here -->
+    <depend>tf</depend>
+    <depend>geometry_msgs</depend>
+    <depend>realtime_tools</depend>
+    <depend>rm_msgs</depend>
 
-  </export>
+    <!-- The export tag contains other, unspecified, tags -->
+    <export>
+        <!-- Other tools can request additional information be placed here -->
+
+    </export>
 </package>

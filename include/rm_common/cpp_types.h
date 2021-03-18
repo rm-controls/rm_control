@@ -2,8 +2,8 @@
 // Created by qiayuan on 4/3/20.
 //
 
-#ifndef SRC_RM_COMMON_INCLUDE_CPP_TYPES_H_
-#define SRC_RM_COMMON_INCLUDE_CPP_TYPES_H_
+#ifndef RM_COMMON_CPP_TYPES_H
+#define RM_COMMON_CPP_TYPES_H
 
 #include <eigen3/Eigen/Dense>
 
@@ -117,4 +117,4 @@ using D3Mat = typename Eigen::Matrix<T, 3, Eigen::Dynamic>;
 template<typename T>
 using vectorAligned = typename std::vector<T, Eigen::aligned_allocator<T>>;
 
-#endif //SRC_RM_COMMON_INCLUDE_CPP_TYPES_H_
+#endif // RM_COMMON_CPP_TYPES_H

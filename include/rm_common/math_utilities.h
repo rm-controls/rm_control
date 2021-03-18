@@ -2,8 +2,8 @@
 // Created by qiayuan on 12/22/19.
 //
 
-#ifndef SRC_RM_COMMON_INCLUDE_MATH_UTILITIES_H_
-#define SRC_RM_COMMON_INCLUDE_MATH_UTILITIES_H_
+#ifndef RM_COMMON_MATH_UTILITIES_H
+#define RM_COMMON_MATH_UTILITIES_H
 
 #include <cmath>
 template<typename T>
@@ -34,10 +34,10 @@ T square(T val) {
 }
 
 template<typename T>
-T alpha(T cutoff, double freq){
-    T tau = 1.0 / (2 * M_PI * cutoff);
-    T te = 1.0 / freq;
-    return 1.0 / (1.0 + tau / te);
+T alpha(T cutoff, double freq) {
+  T tau = 1.0 / (2 * M_PI * cutoff);
+  T te = 1.0 / freq;
+  return 1.0 / (1.0 + tau / te);
 }
 
-#endif //SRC_RM_COMMON_INCLUDE_MATH_UTILITIES_H_
+#endif // RM_COMMON_MATH_UTILITIES_H
