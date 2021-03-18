@@ -10,26 +10,28 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_definitions(-Wall -Werror)
 
 find_package(catkin REQUIRED COMPONENTS
-    roscpp
-    tf
-    rm_msgs
-    geometry_msgs
-    realtime_tools
-    )
+        roscpp
+        roslint
+
+        tf
+        rm_msgs
+        geometry_msgs
+        realtime_tools
+        )
 
 catkin_package(
-    INCLUDE_DIRS include
-    CATKIN_DEPENDS
-    rm_msgs
-    roscpp
-    DEPENDS
-    LIBRARIES
-    rm_common
+        INCLUDE_DIRS include
+        CATKIN_DEPENDS
+        rm_msgs
+        roscpp
+        DEPENDS
+        LIBRARIES
+        rm_common
 )
 
 include_directories(
-    ${catkin_INCLUDE_DIRS}
-    include
+        ${catkin_INCLUDE_DIRS}
+        include
 )
 
 file(GLOB_RECURSE sources "src/*.cpp")
@@ -41,3 +43,5 @@ add_executable(test_kalman test/test_kalman_filter.cpp)
 target_link_libraries(rm_common ${catkin_LIBRARIES})
 target_link_libraries(test_traj rm_common ${catkin_LIBRARIES})
 target_link_libraries(test_kalman rm_common ${catkin_LIBRARIES})
+
+roslint_cpp()
