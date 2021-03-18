@@ -7,10 +7,10 @@
 
     <link name="yaw">
         <inertial>
-            <mass value="9.19417"/>
+            <mass value="4.367"/>
             <origin xyz="0.042103 0.001062 0.132315"/>
-            <inertia ixx="2.820e-1" ixy="-1.017e-5" ixz="-3.986e-2" iyy="3.396e-1"
-                     iyz="1.293e-3" izz="7.004e-2"/>
+            <inertia ixx="7.943e-2" ixy="-4.889e-5" ixz="-5.618e-3" iyy="8.143e-2"
+                     iyz="-4.14e-5" izz="7.76e-3"/>
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -27,7 +27,7 @@
     </link>
 
     <joint name="yaw_joint" type="continuous">
-        <origin xyz="0 0 0.1"
+        <origin xyz="0 0 0.124"
                 rpy="0 0 0"/>
         <dynamics damping="0.0" friction="0.1"/>
         <limit effort="1.2" velocity="13.82" lower="${lower_limit}" upper="${upper_limit}"/>
@@ -38,10 +38,10 @@
 
     <link name="pitch">
         <inertial>
-            <mass value="1.956376"/>
-            <origin xyz="0.080443 -0.002306 0.294343"/>
-            <inertia ixx="1.148e-2" ixy="1.569e-3" ixz="2.374e-3" iyy="2.472e-2"
-                     iyz="-8.276e-4" izz="2.189e-2"/>
+            <mass value="1.65"/>
+            <origin xyz="0.080137 -0.002734 0.011093"/>
+            <inertia ixx="3.355e-3" ixy="2.3e-5" ixz="-1.069e-3" iyy="2.153e-2"
+                     iyz="-6.373e-5" izz="1.995e-2"/>
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -58,7 +58,7 @@
     </link>
 
     <joint name="pitch_joint" type="revolute">
-        <origin xyz="0 0 0.284" rpy="0 0 0"/>
+        <origin xyz="0 0 0.384" rpy="0 0 0"/>
         <dynamics damping="0.0" friction="0.1"/>
         <limit effort="1.2" velocity="13.82" lower="${lower_limit}" upper="${upper_limit}"/>
         <!--        <safety_controller k_velocity="10"-->

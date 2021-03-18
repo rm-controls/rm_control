@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot>
+
+    <transmission name="trans_yaw_joint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="yaw_joint_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="yaw_joint">
+            <offset>1.09</offset>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <transmission name="trans_pitch_joint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="pitch_joint_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="pitch_joint">
+            <offset>-2.46</offset>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+</robot>

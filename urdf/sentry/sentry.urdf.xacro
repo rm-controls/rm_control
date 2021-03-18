@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="sentry">
+
+    <xacro:arg name="load_chassis" default="true"/>
+    <xacro:arg name="load_gimbal" default="true"/>
+    <xacro:arg name="load_shooter" default="true"/>
+    <xacro:arg name="load_gazebo" default="true"/>
+    <xacro:arg name="use_rm_gazebo" default="false"/>
+
+    <xacro:if value="$(arg load_chassis)">
+        <xacro:include filename="$(find rm_description)/urdf/sentry/chassis.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/sentry/chassis.transmission.urdf.xacro"/>
+        <xacro:chassis/>
+    </xacro:if>
+
+    <xacro:if value="$(arg load_gimbal)">
+        <xacro:include filename="$(find rm_description)/urdf/sentry/gimbal.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/sentry/gimbal.transmission.urdf.xacro"/>
+        <xacro:gimbal/>
+    </xacro:if>
+
+    <xacro:if value="$(arg load_shooter)">
+        <xacro:include filename="$(find rm_description)/urdf/sentry/shooter.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/sentry/shooter.transmission.urdf.xacro"/>
+    </xacro:if>
+
+    <xacro:if value="$(arg load_gazebo)">
+        <xacro:if value="$(arg use_rm_gazebo)">
+            <gazebo>
+                <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
+                    <robotNamespace>/</robotNamespace>
+                    <robotSimType>rm_gazebo/RmRobotHWSim</robotSimType>
+                </plugin>
+            </gazebo>
+        </xacro:if>
+        <xacro:unless value="$(arg use_rm_gazebo)">
+            <gazebo>
+                <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+                    <robotNamespace>/mugator_manip</robotNamespace>
+                    <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+                    <legacyModeNS>true</legacyModeNS>
+                </plugin>
+            </gazebo>
+        </xacro:unless>
+    </xacro:if>
+
+</robot>
