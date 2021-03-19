@@ -4,25 +4,26 @@
 
 #ifndef RM_BASE_SRC_BASE_TRANSMISSION_REVOLUTE_TRANSMISSION_H_
 #define RM_BASE_SRC_BASE_TRANSMISSION_REVOLUTE_TRANSMISSION_H_
+#pragma once
+
+#include <cassert>
+#include <string>
+#include <vector>
+
 #include <transmission_interface/transmission.h>
 #include <transmission_interface/transmission_interface_exception.h>
-
-#include <utility>
 
 namespace transmission_interface {
 class DoubleActuatorTransmission : public Transmission {
  public:
-  DoubleActuatorTransmission(std::vector<double> actuator_reduction,
-                             double joint_reduction,
-                             double joint_offset = 0.0);
-  void actuatorToJointEffort(const ActuatorData &act_data,
-                             JointData &jnt_data) override;
-  void actuatorToJointVelocity(const ActuatorData &act_data,
-                               JointData &jnt_data) override;
-  void actuatorToJointPosition(const ActuatorData &act_data,
-                               JointData &jnt_data) override;
-  void jointToActuatorEffort(const JointData &jnt_data,
-                             ActuatorData &act_data) override;
+  DoubleActuatorTransmission(std::vector<double> actuator_reduction, double joint_reduction, double joint_offset = 0.0);
+
+  void actuatorToJointEffort(const ActuatorData &act_data, JointData &jnt_data) override;
+  void actuatorToJointVelocity(const ActuatorData &act_data, JointData &jnt_data) override;
+  void actuatorToJointPosition(const ActuatorData &act_data, JointData &jnt_data) override;
+  void jointToActuatorEffort(const JointData &jnt_data, ActuatorData &act_data) override;
+  void jointToActuatorVelocity(const JointData &jnt_data, ActuatorData &act_data) override {};
+  void jointToActuatorPosition(const JointData &jnt_data, ActuatorData &act_data) override {};
 
   std::size_t numActuators() const override { return 2; }
   std::size_t numJoints() const override { return 1; }
@@ -38,8 +39,7 @@ class DoubleActuatorTransmission : public Transmission {
 };
 
 DoubleActuatorTransmission::DoubleActuatorTransmission(std::vector<double> actuator_reduction,
-                                                       const double joint_reduction,
-                                                       const double joint_offset)
+                                                       double joint_reduction, double joint_offset)
     : act_reduction_(std::move(actuator_reduction)),
       jnt_reduction_(joint_reduction),
       jnt_offset_(joint_offset) {
