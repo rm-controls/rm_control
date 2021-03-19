@@ -4,30 +4,6 @@
 
   <xacro:macro name="chassis">
 
-    <!-- link -->
-    <link name="world"/>
-
-    <link name="link_track">
-      <inertial>
-        <mass value="29.08"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="8.676e-2" ixy="0" ixz="0" iyy="2.432"
-                 iyz="0" izz="2.501"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/sentry/track.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/sentry/track.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </collision>
-    </link>
-
     <link name="base_link">
       <inertial>
         <mass value="7.41"/>
@@ -70,20 +46,8 @@
       </collision>
     </link>
 
-    <!-- joint -->
-    <joint name="track_joint" type="fixed">
-      <parent link="world"/>
-      <child link="link_track"/>
-      <origin xyz="0 0 0.5" rpy="0 0 0"/>
-    </joint>
 
-    <joint name="base_joint" type="prismatic">
-      <axis xyz="1 0 0"/>
-      <limit effort="1.2" velocity="34" lower="-${2*pi}" upper="${2*pi}"/>
-      <parent link="link_track"/>
-      <child link="base_link"/>
-      <origin xyz="0 -0.053 0.060" rpy="0 0 0"/>
-    </joint>
+
 
     <joint name="drive_joint" type="continuous">
       <axis xyz="0 1 0"/>
