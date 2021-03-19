@@ -62,7 +62,7 @@
         <axis xyz="1 0 0"/>
         <origin xyz="0 0 -0.1"/>
         <dynamics damping="0" friction="0.1"/>
-        <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}" lower="0" upper="${pi/2}"/>
+        <limit effort="1.2" velocity="13.82" lower="0" upper="${pi/2}"/>
       </joint>
 
   </xacro:macro>
