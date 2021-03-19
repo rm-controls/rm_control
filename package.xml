@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ros_package_template</name>
+  <version>0.1.0</version>
+  <description>A template for ROS packages.</description>
+  <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
+  <license>BSD</license>
+  <author email="liaoqiayuan@gmail.com">Qiayuan Liao</author>
+
+  <!-- buildtool_depend: dependencies of the build process -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <!-- build_depend: dependencies only used in source files -->
+  <build_depend>boost</build_depend>
+  <!-- depend: build, export, and execution dependency -->
+  <depend>eigen</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+
+  <build_depend>roslint</build_depend>
+</package>
