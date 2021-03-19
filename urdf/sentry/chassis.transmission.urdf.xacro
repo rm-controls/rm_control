@@ -4,7 +4,7 @@
 
 <transmission name="trans_drive_joint">
     <type>transmission_interface/SimpleTransmission</type>
-    <actuator name="pitch_drive_joint">
+    <actuator name="drive_joint_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
     </actuator>

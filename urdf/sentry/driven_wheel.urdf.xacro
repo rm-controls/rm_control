@@ -19,7 +19,8 @@
                  iyz="0" izz="7.0766e-7"/>
       </inertial>
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+<!--        <origin xyz="0 0 0" rpy="0 0 0"/>-->
+        <xacro:insert_block name="pose"/>
         <geometry>
           <mesh filename="package://rm_description/meshes/sentry/driven_wheel.stl"
                 scale="0.001 0.001 0.001"/>
