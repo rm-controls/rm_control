@@ -1,42 +1,37 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="engineer">
-  <xacro:arg name="load_chassis" default="false"/>
-  <xacro:arg name="load_arm" default="true"/>
-  <xacro:arg name="use_simulation" default="true"/>
-  <xacro:arg name="roller_type" default="realistic"/>
+    <xacro:arg name="load_chassis" default="false"/>
+    <xacro:arg name="load_arm" default="true"/>
+    <xacro:arg name="use_simulation" default="true"/>
+    <xacro:arg name="roller_type" default="realistic"/>
 
-  <xacro:if value="$(arg load_chassis)">
-    <xacro:include filename="$(find rm_description)/urdf/hero/chassis.urdf.xacro"/>
-    <xacro:chassis roller_type="$(arg roller_type)"/>
-  </xacro:if>
-
-  <xacro:if value="$(arg load_arm)">
-    <xacro:include filename="$(find rm_description)/urdf/engineer/arm.urdf.xacro"/>
-    <xacro:include filename="$(find rm_description)/urdf/engineer/arm.transmission.xacro"/>
     <xacro:if value="$(arg load_chassis)">
-      <xacro:arm connected_to="base_link"/>
+        <xacro:include filename="$(find rm_description)/urdf/hero/chassis.urdf.xacro"/>
+        <xacro:chassis roller_type="$(arg roller_type)"/>
     </xacro:if>
-    <xacro:unless value="$(arg load_chassis)">
-      <link name="world"/>
-      <xacro:arm connected_to="world"/>
-    </xacro:unless>
-    <xacro:if value="$(arg use_simulation)">
-      <xacro:arm_transmission differential_wrist="false"/>
-    </xacro:if>
-    <xacro:unless value="$(arg use_simulation)">
-      <xacro:arm_transmission differential_wrist="true"/>
-    </xacro:unless>
-    <!--    <xacro:include filename="$(find rm_description)/urdf/engineer/hand.urdf.xacro"/>-->
-    <!--    <xacro:hand connected_to="link5" xyz="0.039 0 0"/>-->
-  </xacro:if>
 
-  <xacro:if value="$(arg use_simulation)">
-    <gazebo>
-      <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
-        <robotNamespace>/</robotNamespace>
-        <robotSimType>rm_gazebo/RmRobotHWSim</robotSimType>
-      </plugin>
-    </gazebo>
-  </xacro:if>
+    <xacro:if value="$(arg load_arm)">
+        <xacro:include filename="$(find rm_description)/urdf/engineer/arm.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/engineer/arm.transmission.xacro"/>
+        <xacro:if value="$(arg load_chassis)">
+            <xacro:arm connected_to="base_link"/>
+        </xacro:if>
+        <xacro:unless value="$(arg load_chassis)">
+            <link name="world"/>
+            <xacro:arm connected_to="world"/>
+        </xacro:unless>
+        <xacro:arm_transmission simulation="$(arg use_simulation)"/>
+        <!--    <xacro:include filename="$(find rm_description)/urdf/engineer/hand.urdf.xacro"/>-->
+        <!--    <xacro:hand connected_to="link5" xyz="0.039 0 0"/>-->
+    </xacro:if>
+
+    <xacro:if value="$(arg use_simulation)">
+        <gazebo>
+            <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
+                <robotNamespace>/</robotNamespace>
+                <robotSimType>rm_gazebo/RmRobotHWSim</robotSimType>
+            </plugin>
+        </gazebo>
+    </xacro:if>
 
 </robot>
