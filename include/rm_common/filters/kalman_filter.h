@@ -5,7 +5,7 @@
 #ifndef RM_COMMON_FILTERS_KALMAN_FILTER_H
 #define RM_COMMON_FILTERS_KALMAN_FILTER_H
 #include <iostream>
-#include "rm_common/cpp_types.h"
+#include "rm_common/eigen_types.h"
 
 template<typename T>
 class KalmanFilter {
