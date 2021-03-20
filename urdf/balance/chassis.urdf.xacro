@@ -32,10 +32,10 @@
 
         <xacro:rubber_wheel prefix="left" connected_to="base_link"
                             wheel_x_offset="0" wheel_y_offset="${wheel_base/2}"
-                            wheel_z_offset="${wheel_offset_z}" mechanical_reduction="0.166"/>
+                            wheel_z_offset="${wheel_offset_z}" mechanical_reduction="-0.166"/>
         <xacro:rubber_wheel prefix="right" connected_to="base_link"
                             wheel_x_offset="0" wheel_y_offset="${-wheel_base/2}"
-                            wheel_z_offset="${wheel_offset_z}" mechanical_reduction="-0.166"/>
+                            wheel_z_offset="${wheel_offset_z}" mechanical_reduction="0.166"/>
 
     </xacro:macro>
 
