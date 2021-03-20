@@ -70,7 +70,8 @@ class Lqr {
       }
       p_old = p;
     }
-    k_ = (r_ + b_t * p * b_).inverse() * (b_t * p * a_);
+
+    k_ = r_.inverse() * (b_t * p.transpose());
     return true;
   }
 
