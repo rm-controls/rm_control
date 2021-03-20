@@ -2,7 +2,7 @@
 // Created by chenzheng on 3/20/21.
 //
 
-#include "rm_common/lqr/lqr.h"
+#include "rm_common/lqr.h"
 
 int main(int argc, char **argv) {
   static const size_t STATE_DIM = 6;
@@ -38,6 +38,7 @@ int main(int argc, char **argv) {
       0, 1;
 
   Lqr<double> lqr(A, B, Q, R);
+  lqr.computeK();
   K = lqr.getK();
   std::cout << K << std::endl;
 
