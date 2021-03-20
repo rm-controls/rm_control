@@ -1,0 +1,2 @@
+rm_dbus:
+  serial_port: "/dev/usbDbus"

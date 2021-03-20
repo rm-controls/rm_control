@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
   if (sched_setscheduler(0, SCHED_FIFO, &params) == -1) {
     ROS_ERROR("[dbus] Set scheduler failed, RUN THIS NODE AS SUPER USER.\n");
   }
-  ros::init(argc, argv, "dbus_node");
+  ros::init(argc, argv, "rm_dbus");
   DBusNode dbus_node;
   ros::Rate loop_rate(60);
   while (ros::ok()) {
