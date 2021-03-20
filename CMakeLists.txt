@@ -43,11 +43,22 @@ file(GLOB_RECURSE sources "src/*.cpp")
 add_library(rm_common SHARED ${sources})
 add_executable(test_traj test/test_traj.cpp)
 add_executable(test_kalman test/test_kalman_filter.cpp)
-add_executable(test_lqr test/test_lqr.cpp)
 
 target_link_libraries(rm_common ${catkin_LIBRARIES})
 target_link_libraries(test_traj rm_common ${catkin_LIBRARIES})
 target_link_libraries(test_kalman rm_common ${catkin_LIBRARIES})
-target_link_libraries(test_lqr rm_common ${catkin_LIBRARIES})
+
+#############
+## Testing ##
+#############
+
+if (${CATKIN_ENABLE_TESTING})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+    ## Add gtest based cpp test target and link libraries
+    catkin_add_gtest(lqr_test
+            test/unit_test_lqr.cpp
+            test/LqrTest.cpp)
+    target_link_libraries(lqr_test rm_common)
+endif ()
 
 roslint_cpp()
