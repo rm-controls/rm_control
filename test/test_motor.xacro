@@ -38,10 +38,10 @@
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint_mit_cheetah">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      <offset>1.759</offset>
+      <offset>0</offset>
     </joint>
     <actuator name="act_mit_cheetah">
-      <mechanicalReduction>-3</mechanicalReduction>
+      <mechanicalReduction>0.1666</mechanicalReduction>
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </actuator>
   </transmission>
