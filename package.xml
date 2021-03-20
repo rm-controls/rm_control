@@ -9,7 +9,7 @@
     <license>TODO</license>
 
     <buildtool_depend>catkin</buildtool_depend>
-
+    <depend>eigen</depend>
     <depend>roscpp</depend>
     <depend>roslint</depend>
 
