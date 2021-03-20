@@ -1,6 +1,7 @@
 uint8 PASSIVE = 0
 uint8 READY = 1
 uint8 PUSH = 2
+uint8 STOP = 3
 
 uint8 SPEED_10M_PER_SECOND = 0
 uint8 SPEED_15M_PER_SECOND = 1
