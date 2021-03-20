@@ -15,8 +15,8 @@ class Lqr {
 
   template<typename TA, typename TB, typename TQ, typename TR>
   Lqr(const Eigen::MatrixBase<TA> &A, const Eigen::MatrixBase<TB> &B,
-      const Eigen::MatrixBase<TQ> &Q, const Eigen::MatrixBase<TR> &R, T eps = 1e-15) :
-      a_(A), b_(B), q_(Q), r_(R), eps_(eps) {
+      const Eigen::MatrixBase<TQ> &Q, const Eigen::MatrixBase<TR> &R) :
+      a_(A), b_(B), q_(Q), r_(R) {
     //check A
     static_assert(TA::RowsAtCompileTime == TA::ColsAtCompileTime, "lqr: A should be square matrix");
     //check B
@@ -30,6 +30,39 @@ class Lqr {
 
     k_.resize(TB::ColsAtCompileTime, TB::RowsAtCompileTime);
     k_.setZero();
+  }
+
+  bool solveRiccatiArimotoPotter(const Eigen::MatrixXd &A,
+                                 const Eigen::MatrixXd &B,
+                                 const Eigen::MatrixXd &Q,
+                                 const Eigen::MatrixXd &R, Eigen::MatrixXd &P) {
+
+    int dim_x = A.rows();
+
+    // set Hamilton matrix
+    Eigen::MatrixXd ham = Eigen::MatrixXd::Zero(2 * dim_x, 2 * dim_x);
+    ham << A, -B * R.inverse() * B.transpose(), -Q, -A.transpose();
+
+    // calc eigenvalues and eigenvectors
+    Eigen::EigenSolver<Eigen::MatrixXd> eigs(ham);
+
+    // extract stable eigenvectors into 'eigvec'
+    Eigen::MatrixXcd eigvec = Eigen::MatrixXcd::Zero(2 * dim_x, dim_x);
+    int j = 0;
+    for (int i = 0; i < 2 * dim_x; ++i) {
+      if (eigs.eigenvalues()[i].real() < 0.) {
+        eigvec.col(j) = eigs.eigenvectors().block(0, i, 2 * dim_x, 1);
+        ++j;
+      }
+    }
+
+    // calc P with stable eigen vector matrix
+    Eigen::MatrixXcd vs_1, vs_2;
+    vs_1 = eigvec.block(0, 0, dim_x, dim_x);
+    vs_2 = eigvec.block(dim_x, 0, dim_x, dim_x);
+    P = (vs_2 * vs_1.inverse()).real();
+
+    return true;
   }
 
   bool computeK() {
@@ -46,32 +79,12 @@ class Lqr {
       if (r_solver.eigenvalues()[i] <= 0)
         return false;
     }
-//    if (!isSymmetric(q_) || !isSymmetric(r_))
-//      return false;
+    if (!isSymmetric(q_) || !isSymmetric(r_))
+      return false;
 
-    // precompute as much as possible
-    DMat<T> a_t = a_.transpose();
-    DMat<T> b_t = b_.transpose();
-    // initialize P with Q
-    DMat<T> p = q_;
-    // iterate until P converges
-    unsigned int i = 0;
-    DMat<T> p_old = p;
-    while (true) {
-      i++;
-      // compute new P
-      p = a_t * p * a_ -
-          a_t * p * b_ * (r_ + b_t * p * b_).inverse() * b_t * p * a_ + q_;
-      // update delta
-      DMat<T> delta = p - p_old;
-      if (std::fabs(delta.maxCoeff()) < eps_) {
-        std::cout << "Number of iterations until convergence: " << i << std::endl;
-        break;
-      }
-      p_old = p;
-    }
-
-    k_ = r_.inverse() * (b_t * p.transpose());
+    DMat<T> p;
+    if (solveRiccatiArimotoPotter(a_, b_, q_, r_, p))
+      k_ = r_.inverse() * (b_.transpose() * p.transpose());
     return true;
   }
 
@@ -83,7 +96,7 @@ class Lqr {
   bool isSymmetric(DMat<T> m) {
     for (int i = 0; i < m.rows() - 1; ++i) {
       for (int j = i + 1; j < m.cols(); ++j) {
-        if (m[i][j - i] != m[j - i][i])
+        if (m(i, j - i) != m(j - i, i))
           return false;
       }
     }
@@ -91,7 +104,6 @@ class Lqr {
   }
 
   DMat<T> a_, b_, q_, r_, k_;
-  T eps_;
 };
 
 #endif //RM_COMMON_LQR_LQR_H
