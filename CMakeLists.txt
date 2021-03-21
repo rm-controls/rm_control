@@ -69,24 +69,24 @@ include_directories(
         ${catkin_INCLUDE_DIRS}
 )
 add_library(${PROJECT_NAME}_loader_plugins
-    src/transmission/revolute_transmission_loader.cpp
-    )
+        src/transmission/revolute_transmission_loader.cpp
+        )
 ## Declare cpp executables
 add_executable(${PROJECT_NAME}
-    src/${PROJECT_NAME}.cpp
-    src/hardware_interface/hardware_interface.cpp
-    src/hardware_interface/socketcan.cpp
-    src/hardware_interface/can_bus.cpp
-    src/control_loop.cpp
-    )
+        src/${PROJECT_NAME}.cpp
+        src/hardware_interface/hardware_interface.cpp
+        src/hardware_interface/socketcan.cpp
+        src/hardware_interface/can_bus.cpp
+        src/control_loop.cpp
+        )
 
 ## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}_loader_plugins
-    ${catkin_LIBRARIES}
-    )
+        ${catkin_LIBRARIES}
+        )
 target_link_libraries(${PROJECT_NAME}
-    ${catkin_LIBRARIES}
-    )
+        ${catkin_LIBRARIES}
+        )
 
 #############
 ## Install ##
