@@ -20,6 +20,6 @@
 
     <export>
         <gazebo_ros_control plugin="${prefix}/rm_robot_hw_sim_plugins.xml"/>
-        <gazebo_ros gazebo_model_path="${prefix}/models"/>
+        <gazebo_ros gazebo_model_path="${prefix}/.."/>
     </export>
 </package>
