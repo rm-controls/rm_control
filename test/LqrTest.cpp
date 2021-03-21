@@ -39,8 +39,8 @@ TEST(Lqr, lqr
   R << 1, 0,
       0, 1;
 
-  K << -36.4112, -1.51982, -2.23607, -2.45734, -0.707107, -0.725818,
-      -36.4112, -1.51982, -2.23607, -2.45734, 0.707107, 0.725818;
+  K << -36.4111581829, -1.5198212494, -2.2360679774, -2.4573417169, -0.7071067811, -0.7258175096,
+      -36.4111581829, -1.5198212494, -2.2360679774, -2.4573417169, 0.7071067811, 0.7258175096;
 
   Lqr<double> lqr(A, B, Q, R);
   lqr.computeK();
@@ -48,7 +48,7 @@ TEST(Lqr, lqr
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> average = lqr.getK();
   for (uint j = 0; j < CONTROL_DIM; ++j) {
     for (uint i = 0; i < STATE_DIM; ++i) {
-      EXPECT_NEAR(K(j, i), average(j, i), 1e-3);
+      EXPECT_NEAR(K(j, i), average(j, i), 1e-9);
     }
   }
 }
