@@ -6,7 +6,6 @@
 #define RM_COMMON_FILTERS_LQR_H
 #include <iostream>
 #include <Eigen/Dense>
-#include <Eigen/SparseLU>
 #include "eigen_types.h"
 
 template<typename T>
