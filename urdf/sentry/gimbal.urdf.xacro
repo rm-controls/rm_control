@@ -4,8 +4,8 @@
   <xacro:macro name="gimbal">
 
     <xacro:property name="threshold" value="0.1"/>
-    <xacro:property name="pitch_lower_limit" value="-0.716"/>
-    <xacro:property name="pitch_upper_limit" value="0.487"/>
+    <xacro:property name="pitch_lower_limit" value="0"/>
+    <xacro:property name="pitch_upper_limit" value="0.767"/>
 
     <link name="link_yaw">
       <visual>
