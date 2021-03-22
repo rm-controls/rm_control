@@ -29,6 +29,12 @@ class Lqr {
 
     k_.resize(TB::ColsAtCompileTime, TB::RowsAtCompileTime);
     k_.setZero();
+    a_rows_ = TA::RowsAtCompileTime;
+    b_cols_ = TB::ColsAtCompileTime;
+    c_.resize(1, TA::ColsAtCompileTime);
+    c_.setZero();
+    d_.resize(1, TB::ColsAtCompileTime);
+    d_.setZero();
   }
 
   bool solveRiccatiArimotoPotter(const Eigen::MatrixXd &A,
@@ -91,6 +97,24 @@ class Lqr {
     return k_;
   }
 
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> getNbar() {
+    Eigen::Matrix<T, 1, a_rows_ + 1> z;
+    z.setZero();
+    z(0, a_rows_) = 1;
+    Eigen::Matrix<T, a_rows_ + 1, a_rows_ + b_cols_> m;
+    m << a_, b_,
+        c_, d_;
+    Eigen::Matrix<T, a_rows_ + b_cols_, 1> n = m.inverse() * z.transpose();
+    Eigen::Matrix<T, a_rows_, 1> nx;
+    for (int i = 0; i < a_rows_; ++i)
+      nx(i, 0) = n(i, 0);
+    Eigen::Matrix<T, a_rows_, 1> nu;
+    for (int i = 0; i < b_cols_; ++i)
+      nu(i, 0) = n(i + a_rows_, 0);
+    nbar_ = nu + k_ * nx;
+    return nbar_;
+  }
+
  private:
   bool isSymmetric(DMat<T> m) {
     for (int i = 0; i < m.rows() - 1; ++i) {
@@ -102,7 +126,8 @@ class Lqr {
     return true;
   }
 
-  DMat<T> a_, b_, q_, r_, k_;
+  DMat<T> a_, b_, c_, d_, q_, r_, k_, nbar_;
+  int a_rows_, b_cols_;
 };
 
 #endif //RM_COMMON_LQR_LQR_H
