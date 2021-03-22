@@ -2,57 +2,37 @@ rm_base:
   bus:
     - can0
     - can1
-
   loop_frequency: 1000
   cycle_time_error_threshold: 0.001
-
   # Configurations of the actuators
   actuators:
-    actuator_wheel:
+    drive_joint_motor:
       bus: can0
-      id: 0x203
+      id: 0x201
       type: rm_3508
       lp_cutoff_frequency: 100
-      wc: 600
-      ts: 0.001
-    actuator_yaw:
-      bus: can1
+    yaw_joint_motor:
+      bus: can0
       id: 0x208
       type: rm_6020
       lp_cutoff_frequency: 100
-      wc: 800
-      ts: 0.001
-      lp_debug: true
-    actuator_pitch:
+    pitch_joint_motor:
       bus: can1
       id: 0x206
       type: rm_6020
       lp_cutoff_frequency: 100
-      wc: 800
-      ts: 0.001
-
-    actuator_fiction_left:
+    left_friction_wheel_joint_motor:
       bus: can1
       id: 0x201
       type: rm_3508_dir
       lp_cutoff_frequency: 100
-      wc: 600
-      ts: 0.001
-      lp_debug: true
-
-    actuator_fiction_right:
+    right_friction_wheel_joint_motor:
       bus: can1
-      id: 0x202
+      id: 0x203
       type: rm_3508_dir
       lp_cutoff_frequency: 100
-      wc: 600
-      ts: 0.001
-      lp_debug: true
-
-    actuator_trigger:
-      bus: can1
+    trigger_joint_motor:
+      bus: can0
       id: 0x203
       type: rm_2006
       lp_cutoff_frequency: 200
-      wc: 300
-      ts: 0.001
