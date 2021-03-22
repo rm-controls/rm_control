@@ -24,7 +24,6 @@
                 <geometry>
                     <mesh filename="package://rm_description/meshes/common/lds.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
-                <material name="dark"/>
             </visual>
             <collision>
                 <origin xyz="0.015 0 -0.0065" rpy="0 0 0"/>
