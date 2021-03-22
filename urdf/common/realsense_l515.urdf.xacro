@@ -7,7 +7,7 @@
         <xacro:include filename="$(find realsense2_description)/urdf/_l515.urdf.xacro"/>
         <xacro:unless value="${simulation}">
             <xacro:sensor_l515 parent="base_link" name="${realsense_name}"
-                               use_nominal_extrinsics="false" add_plug="true">
+                               use_nominal_extrinsics="false" add_plug="false">
                 <origin xyz="${xyz}" rpy="${rpy}"/>
             </xacro:sensor_l515>
         </xacro:unless>
@@ -35,12 +35,12 @@
                     <plugin name="${realsense_name}_controller" filename="libgazebo_ros_openni_kinect.so">
                         <baseline>0.2</baseline>
                         <alwaysOn>true</alwaysOn>
-                        <updateRate>1.0</updateRate>
+                        <updateRate>0.0</updateRate>
                         <cameraName>${realsense_name}</cameraName>
                         <imageTopicName>color/image_raw</imageTopicName>
                         <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
-                        <depthImageTopicName>aligned_depth_to_color/image_raw</depthImageTopicName>
-                        <depthImageInfoTopicName>aligned_depth_to_color/camera_info</depthImageInfoTopicName>
+                        <depthImageTopicName>depth/image_rect_raw</depthImageTopicName>
+                        <depthImageInfoTopicName>depth/camera_info</depthImageInfoTopicName>
                         <pointCloudTopicName>depth/color/points</pointCloudTopicName>
                         <frameName>${realsense_name}_depth_optical_frame</frameName>
                         <pointCloudCutoff>0.5</pointCloudCutoff>
