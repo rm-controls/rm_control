@@ -3,7 +3,7 @@
 
   <xacro:macro name="gimbal">
 
-    <link name="link_yaw">
+    <link name="yaw">
       <visual>
         <geometry>
           <mesh filename="package://rm_description/meshes/sentry/yaw.stl"
@@ -27,7 +27,7 @@
 
     <joint name="yaw_joint" type="continuous">
       <parent link="base_link"/>
-      <child link="link_yaw"/>
+      <child link="yaw"/>
       <axis xyz="0 0 1"/>
       <origin xyz="0.0007 0.053 -0.31"/>
       <dynamics damping="0" friction="0.1"/>
@@ -35,7 +35,7 @@
     </joint>
 
 
-      <link name="link_pitch">
+      <link name="pitch">
         <inertial>
           <mass value="1.155968"/>
           <origin xyz="0.019 -0.045 0.022"/>
@@ -57,8 +57,8 @@
       </link>
 
       <joint name="pitch_joint" type="revolute">
-        <parent link="link_yaw"/>
-        <child link="link_pitch"/>
+        <parent link="yaw"/>
+        <child link="pitch"/>
         <axis xyz="1 0 0"/>
         <origin xyz="0 0 -0.1"/>
         <dynamics damping="0" friction="0.1"/>
