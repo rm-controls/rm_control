@@ -29,8 +29,6 @@ class Lqr {
 
     k_.resize(TB::ColsAtCompileTime, TB::RowsAtCompileTime);
     k_.setZero();
-    a_rows_ = TA::RowsAtCompileTime;
-    b_cols_ = TB::ColsAtCompileTime;
     c_.resize(1, TA::ColsAtCompileTime);
     c_.setZero();
     d_.resize(1, TB::ColsAtCompileTime);
@@ -98,17 +96,19 @@ class Lqr {
   }
 
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> getNbar() {
-    Eigen::Matrix<T, 1, a_rows_ + 1> z;
+    DMat<T> z, m, n, nx, nu;
+    z.resize(1, a_.rows() + 1);
+    m.resize(a_.rows() + 1, a_.rows() + b_.cols());
+    n.resize(a_.rows() + b_.cols(), 1);
+    nx.resize(a_.rows(), 1);
+    nu.resize(a_.rows(), 1);
     z.setZero();
     z(0, a_rows_) = 1;
-    Eigen::Matrix<T, a_rows_ + 1, a_rows_ + b_cols_> m;
     m << a_, b_,
         c_, d_;
-    Eigen::Matrix<T, a_rows_ + b_cols_, 1> n = m.inverse() * z.transpose();
-    Eigen::Matrix<T, a_rows_, 1> nx;
+    n = m.inverse() * z.transpose();
     for (int i = 0; i < a_rows_; ++i)
       nx(i, 0) = n(i, 0);
-    Eigen::Matrix<T, a_rows_, 1> nu;
     for (int i = 0; i < b_cols_; ++i)
       nu(i, 0) = n(i + a_rows_, 0);
     nbar_ = nu + k_ * nx;
