@@ -45,8 +45,6 @@ TEST(Lqr, lqr
 
   Lqr<double> lqr(A, B, Q, R);
   lqr.computeK();
-  Nbar = lqr.getNbar();
-  std::cout << Nbar << std::endl;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> average = lqr.getK();
   for (uint j = 0; j < CONTROL_DIM; ++j) {
     for (uint i = 0; i < STATE_DIM; ++i) {
