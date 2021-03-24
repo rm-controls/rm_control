@@ -136,22 +136,22 @@ void DBus::getData(rm_msgs::DbusData *d_bus_data) {
     d_bus_data->p_l = d_bus_data_.l;
     d_bus_data->p_r = d_bus_data_.r;
 
-    d_bus_data->key_w = d_bus_data_.key & 0x0001;
-    d_bus_data->key_s = d_bus_data_.key & 0x0002;
-    d_bus_data->key_a = d_bus_data_.key & 0x0004;
-    d_bus_data->key_d = d_bus_data_.key & 0x0008;
-    d_bus_data->key_shift = d_bus_data_.key & 0x0010;
-    d_bus_data->key_ctrl = d_bus_data_.key & 0x0020;
-    d_bus_data->key_q = d_bus_data_.key & 0x0040;
-    d_bus_data->key_e = d_bus_data_.key & 0x0080;
-    d_bus_data->key_r = d_bus_data_.key & 0x0100;
-    d_bus_data->key_f = d_bus_data_.key & 0x0200;
-    d_bus_data->key_g = d_bus_data_.key & 0x0400;
-    d_bus_data->key_z = d_bus_data_.key & 0x0800;
-    d_bus_data->key_x = d_bus_data_.key & 0x1000;
-    d_bus_data->key_c = d_bus_data_.key & 0x2000;
-    d_bus_data->key_v = d_bus_data_.key & 0x4000;
-    d_bus_data->key_b = d_bus_data_.key & 0x8000;
+    d_bus_data->key_w = d_bus_data_.key & 0x01;
+    d_bus_data->key_s = d_bus_data_.key & 0x02;
+    d_bus_data->key_a = d_bus_data_.key & 0x04;
+    d_bus_data->key_d = d_bus_data_.key & 0x08;
+    d_bus_data->key_shift = d_bus_data_.key & 0x10;
+    d_bus_data->key_ctrl = d_bus_data_.key & 0x20;
+    d_bus_data->key_q = d_bus_data_.key & 0x40;
+    d_bus_data->key_e = d_bus_data_.key & 0x80;
+    d_bus_data->key_r = (d_bus_data_.key >> 8) & 0x01;
+    d_bus_data->key_f = (d_bus_data_.key >> 8) & 0x02;
+    d_bus_data->key_g = (d_bus_data_.key >> 8) & 0x04;
+    d_bus_data->key_z = (d_bus_data_.key >> 8) & 0x08;
+    d_bus_data->key_x = (d_bus_data_.key >> 8) & 0x10;
+    d_bus_data->key_c = (d_bus_data_.key >> 8) & 0x20;
+    d_bus_data->key_v = (d_bus_data_.key >> 8) & 0x40;
+    d_bus_data->key_b = (d_bus_data_.key >> 8) & 0x80;
 
     d_bus_data->stamp = ros::Time::now();
   }
