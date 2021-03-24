@@ -168,11 +168,11 @@ void CanBus::frameCallback(const can_frame &frame) {
           return;
         case 1:itr.second.angular_vel[1] = imu_frame_data[0] / 360. * 2. * M_PI;
           itr.second.angular_vel[2] = imu_frame_data[1] / 360. * 2. * M_PI;
-          itr.second.ori[1] = imu_frame_data[2]; // Note the quaternion order
-          itr.second.ori[2] = imu_frame_data[3];
+          itr.second.ori[3] = imu_frame_data[2]; // Note the quaternion order
+          itr.second.ori[0] = imu_frame_data[3];
           return;
-        case 2:itr.second.ori[3] = imu_frame_data[0];
-          itr.second.ori[0] = imu_frame_data[1];
+        case 2:itr.second.ori[1] = imu_frame_data[0];
+          itr.second.ori[2] = imu_frame_data[1];
           return;
         default:break;
       }
