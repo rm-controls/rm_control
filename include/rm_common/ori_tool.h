@@ -12,8 +12,9 @@
  * Convert a quaternion to RPY.  Uses ZYX order (yaw-pitch-roll), but returns
  * angles in (roll, pitch, yaw).
  */
-void quatToRPY(const geometry_msgs::Quaternion &q,
-               double &roll, double &pitch, double &yaw);
+void quatToRPY(const geometry_msgs::Quaternion &q, double &roll, double &pitch, double &yaw);
+
+double yawFromQuat(const geometry_msgs::Quaternion &q);
 
 tf::Quaternion getAverageQuaternion(
     const std::vector<tf::Quaternion> &quaternions,

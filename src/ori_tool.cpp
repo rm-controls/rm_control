@@ -6,19 +6,18 @@
 #include "rm_common/math_utilities.h"
 #include <eigen3/Eigen/Eigenvalues>
 
-void quatToRPY(const geometry_msgs::Quaternion &q,
-               double &roll, double &pitch, double &yaw) {
+void quatToRPY(const geometry_msgs::Quaternion &q, double &roll, double &pitch, double &yaw) {
 
   double as = std::min(-2. * (q.x * q.z - q.w * q.y), .99999);
-  yaw =
-      std::atan2(2 * (q.x * q.y + q.w * q.z),
-                 square(q.w) + square(q.x) - square(q.y)
-                     - square(q.z));
+  yaw = std::atan2(2 * (q.x * q.y + q.w * q.z), square(q.w) + square(q.x) - square(q.y) - square(q.z));
   pitch = std::asin(as);
-  roll =
-      std::atan2(2 * (q.y * q.z + q.w * q.x),
-                 square(q.w) - square(q.x) - square(q.y)
-                     + square(q.z));
+  roll = std::atan2(2 * (q.y * q.z + q.w * q.x), square(q.w) - square(q.x) - square(q.y) + square(q.z));
+}
+
+double yawFromQuat(const geometry_msgs::Quaternion &q) {
+  double roll, pitch, yaw;
+  quatToRPY(q, roll, pitch, yaw);
+  return yaw;
 }
 
 tf::Quaternion getAverageQuaternion(const std::vector<tf::Quaternion> &quaternions,
