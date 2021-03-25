@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
     FILES
+    BalanceState.msg
     Joint.msg
     DbusData.msg
     ChassisCmd.msg
