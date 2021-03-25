@@ -10,7 +10,7 @@ LowPassFilter::LowPassFilter(ros::NodeHandle &nh) {
   nh.param("lp_debug", is_debug_, false);
 
   if (is_debug_)
-    realtime_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray>(nh, "lp_filter", 100));
+    realtime_pub_.reset(new realtime_tools::RealtimePublisher<rm_msgs::LpData>(nh, "lp_filter", 100));
 }
 
 void LowPassFilter::input(double in) {
@@ -55,9 +55,9 @@ void LowPassFilter::input(double in) {
 
   if (is_debug_) {
     if (realtime_pub_->trylock()) {
-      realtime_pub_->msg_.data.clear();
-      realtime_pub_->msg_.data.push_back(in_[0]);
-      realtime_pub_->msg_.data.push_back(out_[0]);
+      realtime_pub_->msg_.header.stamp = ros::Time::now();
+      realtime_pub_->msg_.real = in_[0];
+      realtime_pub_->msg_.filtered = out_[0];
       realtime_pub_->unlockAndPublish();
     }
   }

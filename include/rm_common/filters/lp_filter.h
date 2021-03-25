@@ -6,7 +6,7 @@
 #define RM_COMMON_FILTERS_LP_FILTER_H
 #include <dynamic_reconfigure/server.h>
 #include <realtime_tools/realtime_publisher.h>
-#include <std_msgs/Float64MultiArray.h>
+#include <rm_msgs/LpData.h>
 
 class LowPassFilter {
  public:
@@ -30,7 +30,8 @@ class LowPassFilter {
   ros::Time prev_time_;
   ros::Duration delta_t_;
 
-  std::shared_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray>> realtime_pub_{};
+  std::shared_ptr<realtime_tools::RealtimePublisher<rm_msgs::LpData>> realtime_pub_{};
+
 };
 
 #endif //RM_COMMON_FILTERS_LP_FILTER_H
