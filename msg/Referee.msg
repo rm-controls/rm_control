@@ -5,3 +5,4 @@ uint16 chassis_power_buffer
 uint16 shooter_heat_cooling_limit
 uint16 shooter_heat
 uint16 robot_hp
+float32 bullet_speed

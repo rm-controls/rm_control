@@ -20,6 +20,7 @@ add_message_files(
     GimbalDesError.msg
     GimbalTrackCmd.msg
     Referee.msg
+        LpData.msg
 )
 
 add_service_files(
