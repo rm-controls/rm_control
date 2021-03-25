@@ -6,7 +6,7 @@
     <xacro:arg name="roller_type" default="realistic"/>
 
     <xacro:if value="$(arg load_chassis)">
-        <xacro:include filename="$(find rm_description)/urdf/hero/chassis.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/engineer/chassis.urdf.xacro"/>
         <xacro:chassis roller_type="$(arg roller_type)"/>
     </xacro:if>
 
@@ -21,8 +21,8 @@
             <xacro:arm connected_to="world"/>
         </xacro:unless>
         <xacro:arm_transmission simulation="$(arg use_simulation)"/>
-        <!--    <xacro:include filename="$(find rm_description)/urdf/engineer/hand.urdf.xacro"/>-->
-        <!--    <xacro:hand connected_to="link5" xyz="0.039 0 0"/>-->
+            <xacro:include filename="$(find rm_description)/urdf/engineer/hand.urdf.xacro"/>
+            <xacro:hand connected_to="link5" xyz="0.039 0 0"/>
     </xacro:if>
 
     <xacro:if value="$(arg use_simulation)">
