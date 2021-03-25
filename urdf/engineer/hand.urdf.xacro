@@ -15,9 +15,9 @@
         </geometry>
       </visual>
       <collision>
-        <origin xyz="0.020 0.02 0" rpy="0 0 0"/>
+        <origin xyz="0.0225 0.0 0" rpy="0 0 0"/>
         <geometry>
-          <box size="0.04 0.230 0.06"/>
+          <box size="0.045 0.2658 0.0675"/>
         </geometry>
       </collision>
     </link>
@@ -34,8 +34,27 @@
         </geometry>
       </visual>
       <collision>
+        <origin xyz="0.011 -0.04 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/right_finger_convex.stl" scale="0.001 0.001 0.001"/>
+          <box size="0.048 0.026 0.030"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.0235 -0.0832 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.022 0.1123 0.03"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.069 -0.1307 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.112 0.0173 0.03"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.105 -0.1232 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.04 0.0323 0.03"/>
         </geometry>
       </collision>
     </link>
@@ -52,8 +71,27 @@
         </geometry>
       </visual>
       <collision>
+        <origin xyz="0.011 0.04 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/left_finger_convex.stl" scale="0.001 0.001 0.001"/>
+          <box size="0.048 0.026 0.030"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.0235 0.0832 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.022 0.1123 0.03"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.069 0.1307 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.112 0.0173 0.03"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.105 0.1232 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.04 0.0323 0.03"/>
         </geometry>
       </collision>
     </link>
@@ -69,7 +107,7 @@
     <joint name="right_finger_joint" type="prismatic">
       <parent link="palm"/>
       <child link="right_finger"/>
-      <origin xyz="0.032 0 0" rpy="0 0 0"/>
+      <origin xyz="0.023 -0.045 0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit effort="588" lower="0.0" upper="0.02" velocity="3.772"/>
     </joint>
@@ -77,10 +115,10 @@
     <joint name="left_finger_joint" type="prismatic">
       <parent link="palm"/>
       <child link="left_finger"/>
-      <origin xyz="0.032 0 0" rpy="0 0 0"/>
+      <origin xyz="0.023 0.045 0" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
       <limit effort="588" lower="0.0" upper="0.02" velocity="3.772"/>
-      <mimic joint="right_finger_joint"/>
+<!--      <mimic joint="right_finger_joint"/>-->
     </joint>
 
     <transmission name="trans_right_finger_joint">
