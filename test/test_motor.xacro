@@ -1,8 +1,10 @@
 <robot name="test_robot">
   <link name="world"/>
   <link name="link_3508"/>
-  <link name="link_mit_cheetah"/>
-  <link name="link_end"/>
+  <link name="link_mit_cheetah0"/>
+  <link name="link_mit_cheetah1"/>
+  <link name="link_mit_cheetah2"/>
+<!--  <link name="link_end"/>-->
 
   <joint name="fixed" type="fixed">
     <parent link="world"/>
@@ -10,18 +12,36 @@
   </joint>
   <joint name="joint_3508" type="continuous">
     <parent link="link_3508"/>
-    <child link="link_mit_cheetah"/>
+    <child link="link_mit_cheetah0"/>
     <origin xyz="0 0 0.25"/>
   </joint>
 
-  <joint name="joint_mit_cheetah" type="revolute">
+  <joint name="joint_mit_cheetah0" type="revolute">
     <axis xyz="0 1 0"/>
     <origin xyz="0.250 0 0"/>
     <limit effort="30" velocity="10" lower="-2.268" upper="2.268"/>
     <dynamics damping="0.0" friction="0.5"/>
-    <parent link="link_mit_cheetah"/>
-    <child link="link_end"/>
+    <parent link="link_mit_cheetah0"/>
+    <child link="link_mit_cheetah1"/>
   </joint>
+
+  <joint name="joint_mit_cheetah1" type="revolute">
+    <axis xyz="0 1 0"/>
+    <origin xyz="0.250 0 0"/>
+    <limit effort="30" velocity="10" lower="-2.268" upper="2.268"/>
+    <dynamics damping="0.0" friction="0.5"/>
+    <parent link="link_mit_cheetah1"/>
+    <child link="link_mit_cheetah2"/>
+  </joint>
+
+<!--  <joint name="joint_mit_cheetah2" type="revolute">-->
+<!--    <axis xyz="0 1 0"/>-->
+<!--    <origin xyz="0.250 0 0"/>-->
+<!--    <limit effort="30" velocity="10" lower="-2.268" upper="2.268"/>-->
+<!--    <dynamics damping="0.0" friction="0.5"/>-->
+<!--    <parent link="link_mit_cheetah2"/>-->
+<!--    <child link="link_end"/>-->
+<!--  </joint>-->
 
   <transmission name="joint_3508_trans">
     <type>transmission_interface/SimpleTransmission</type>
@@ -29,20 +49,62 @@
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="act_3508">
-      <mechanicalReduction>1</mechanicalReduction>
+      <mechanicalReduction>4712.25</mechanicalReduction>
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </actuator>
   </transmission>
 
-  <transmission name="joint_mit_cheetah_trans">
+  <transmission name="joint_mit_cheetah_trans0">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint_mit_cheetah">
+    <joint name="joint_mit_cheetah0">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      <offset>0</offset>
+      <offset>1.759</offset>
     </joint>
-    <actuator name="act_mit_cheetah">
-      <mechanicalReduction>0.1666</mechanicalReduction>
+    <actuator name="act_mit_cheetah0">
+      <mechanicalReduction>-3</mechanicalReduction>
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </actuator>
   </transmission>
+
+  <transmission name="joint_mit_cheetah_trans1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_mit_cheetah1">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <offset>1.759</offset>
+    </joint>
+    <actuator name="act_mit_cheetah1">
+      <mechanicalReduction>-3</mechanicalReduction>
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+
+<!--  <transmission name="joint_mit_cheetah_trans2">-->
+<!--    <type>transmission_interface/SimpleTransmission</type>-->
+<!--    <joint name="joint_mit_cheetah2">-->
+<!--      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>-->
+<!--      <offset>1.759</offset>-->
+<!--    </joint>-->
+<!--    <actuator name="act_mit_cheetah2">-->
+<!--      <mechanicalReduction>-3</mechanicalReduction>-->
+<!--      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>-->
+<!--    </actuator>-->
+<!--  </transmission>-->
+
+
+  <!--  <transmission name="joint_mit_cheetah_trans1">-->
+<!--    <type>transmission_interface/DoubleActuatorTransmission</type>-->
+<!--    <joint name="joint_mit_cheetah1">-->
+<!--      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>-->
+<!--      <offset>0</offset>-->
+<!--    </joint>-->
+<!--    <actuator name="act_mit_cheetah2_1">-->
+<!--      <role>actuator1</role>-->
+<!--      <mechanicalReduction>-3</mechanicalReduction>-->
+<!--    </actuator>-->
+<!--    <actuator name="act_mit_cheetah2_2">-->
+<!--      <role>actuator2</role>-->
+<!--      <mechanicalReduction>-3</mechanicalReduction>-->
+<!--    </actuator>-->
+<!--  </transmission>-->
+
 </robot>
