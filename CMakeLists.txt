@@ -69,28 +69,22 @@ include_directories(
         ${catkin_INCLUDE_DIRS}
 )
 add_library(${PROJECT_NAME}_loader_plugins
-        src/rm_base/transmission/double_actuator_transmission_loader.cpp
+        src/transmission/double_actuator_transmission_loader.cpp
         )
 ## Declare cpp executables
 add_executable(${PROJECT_NAME}
-        src/rm_base/${PROJECT_NAME}.cpp
-        src/rm_base/hardware_interface/hardware_interface.cpp
-        src/rm_base/hardware_interface/socketcan.cpp
-        src/rm_base/hardware_interface/can_bus.cpp
-        src/rm_base/control_loop.cpp
+        src/${PROJECT_NAME}.cpp
+        src/hardware_interface/hardware_interface.cpp
+        src/hardware_interface/socketcan.cpp
+        src/hardware_interface/can_bus.cpp
+        src/control_loop.cpp
         )
-add_executable(dbus_node
-        src/dbus/dbus_node.cpp
-        src/dbus/dbus.cpp)
 
 ## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}_loader_plugins
         ${catkin_LIBRARIES}
         )
 target_link_libraries(${PROJECT_NAME}
-        ${catkin_LIBRARIES}
-        )
-target_link_libraries(dbus_node
         ${catkin_LIBRARIES}
         )
 
