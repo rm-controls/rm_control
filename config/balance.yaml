@@ -7,12 +7,12 @@ rm_base:
   actuators:
     left_wheel_actuator:
       bus: can0
-      id: 0x002
+      id: 0x001
       type: cheetah
       lp_cutoff_frequency: 100
     right_wheel_actuator:
       bus: can0
-      id: 0x001
+      id: 0x002
       type: cheetah
       lp_cutoff_frequency: 100
   imus:
