@@ -11,8 +11,8 @@ add_definitions(-Wall -Werror)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
-    COMPONENTS
-    )
+        COMPONENTS
+        )
 
 ###################################
 ## catkin specific configuration ##
@@ -24,11 +24,11 @@ find_package(catkin REQUIRED
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-    INCLUDE_DIRS
-    ## This is only necessary because Eigen3 sets a non-standard EIGEN3_INCLUDE_DIR variable
-    LIBRARIES
-    CATKIN_DEPENDS
-    DEPENDS
+        INCLUDE_DIRS
+        ## This is only necessary because Eigen3 sets a non-standard EIGEN3_INCLUDE_DIR variable
+        LIBRARIES
+        CATKIN_DEPENDS
+        DEPENDS
 )
 
 #############
@@ -36,7 +36,7 @@ catkin_package(
 #############
 
 # Mark other files for installation
-install(
-    DIRECTORY launch meshes urdf worlds
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+#install(
+#    DIRECTORY launch meshes urdf worlds
+#    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+#)
