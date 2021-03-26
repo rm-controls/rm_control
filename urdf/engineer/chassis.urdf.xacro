@@ -31,27 +31,27 @@
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="-0.0262 -0.097 0.267" rpy="0 0 0"/>
+                <origin xyz="-0.033 -0.1 0.267" rpy="0 0 0.7853982"/>
                 <geometry>
-                    <box size="0.03 0.03 0.334"/>
+                    <box size="0.0207 0.0207 0.334"/>
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="-0.0262 0.097 0.267" rpy="0 0 0"/>
+                <origin xyz="-0.033 0.10 0.267" rpy="0 0 0.7853982"/>
                 <geometry>
-                    <box size="0.03 0.03 0.334"/>
+                    <box size="0.0207 0.0207 0.334"/>
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="-0.23225 -0.097 0.267" rpy="0 0 0"/>
+                <origin xyz="-0.23225 -0.1 0.267" rpy="0 0 0.7853982"/>
                 <geometry>
-                    <box size="0.03 0.03 0.334"/>
+                    <box size="0.0207 0.0207 0.334"/>
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="-0.23225 0.097 0.267" rpy="0 0 0"/>
+                <origin xyz="-0.23225 0.1 0.267" rpy="0 0 0.7853982"/>
                 <geometry>
-                    <box size="0.03 0.03 0.334"/>
+                    <box size="0.0207 0.0207 0.334"/>
                 </geometry>
             </collision>
         </link>
