@@ -32,12 +32,21 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
   else if (!parseImuData(xml_rpc_value, robot_hw_nh))
     return false;
 
-  // Load urdf
-  load_urdf(root_nh);
+  if (!load_urdf(root_nh)) {
+    ROS_ERROR("Error occur when setup urdf");
+    return false;
+  }
   // Initialize transmission
-  setupTransmission(root_nh);
+  if (!setupTransmission(root_nh)) {
+    ROS_ERROR("Error occur when setup transmission");
+    return false;
+  }
   // Initialize joint limit
   setupJointLimit(root_nh);
+  if (!setupJointLimit(root_nh)) {
+    ROS_ERROR("Error occur when setup joint limit");
+    return false;
+  }
 
   // CAN Bus
   if (!robot_hw_nh.getParam("bus", xml_rpc_value))
