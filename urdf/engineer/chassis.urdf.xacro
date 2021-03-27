@@ -3,9 +3,9 @@
     <xacro:include filename="$(find rm_description)/urdf/common/mecanum_wheel.urdf.xacro"/>
 
     <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
-    <xacro:property name="wheel_track" value="0.500"/>
-    <xacro:property name="wheel_base" value="0.475"/>
-    <xacro:property name="wheel_offset_z" value="-0.036"/>
+    <xacro:property name="wheel_track" value="0.380"/>
+    <xacro:property name="wheel_base" value="0.420"/>
+    <xacro:property name="wheel_offset_z" value="-0.1090"/>
     <xacro:property name="wheel_joint_damping" value="1.0"/>
     <xacro:property name="wheel_joint_friction" value="1.0"/>
 
