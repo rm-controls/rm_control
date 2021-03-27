@@ -1,4 +1,4 @@
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="chassis">
 
     <xacro:include filename="$(find rm_description)/urdf/common/mecanum_wheel.urdf.xacro"/>
 
