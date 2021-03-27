@@ -40,12 +40,12 @@ rm_base:
       bus: can1
       id: 0x201
       type: rm_3508_dir
-      lp_cutoff_frequency: 60
+      lp_cutoff_frequency: 75
     right_friction_wheel_joint_motor:
       bus: can1
       id: 0x202
       type: rm_3508_dir
-      lp_cutoff_frequency: 60
+      lp_cutoff_frequency: 75
     trigger_joint_motor:
       bus: can1
       id: 0x203
