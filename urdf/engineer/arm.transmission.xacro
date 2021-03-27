@@ -22,7 +22,7 @@
             </actuator>
             <joint name="joint3">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <offset>0.48517</offset>
+                <offset>2.288</offset>
             </joint>
         </transmission>
 
@@ -39,7 +39,7 @@
                 </actuator>
                 <joint name="joint2">
                     <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                    <offset>0.49839</offset>
+                    <offset>-2.3386</offset>
                     <mechanicalReduction>1</mechanicalReduction>
                 </joint>
             </transmission>
