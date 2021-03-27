@@ -13,7 +13,7 @@ LowPassFilter::LowPassFilter(ros::NodeHandle &nh) {
     realtime_pub_.reset(new realtime_tools::RealtimePublisher<rm_msgs::LpData>(nh, "lp_filter", 100));
 }
 
-void LowPassFilter::input(double in) {
+void LowPassFilter::input(double in, ros::Time time) {
   // My filter reference was Julius O. Smith III, Intro. to Digital Filters
   // With Audio Applications.
   // See https://ccrma.stanford.edu/~jos/filters/Example_Second_Order_Butterworth_Lowpass.html
@@ -23,28 +23,25 @@ void LowPassFilter::input(double in) {
 
   if (!prev_time_.isZero())  // Not first time through the program
   {
-    delta_t_ = ros::Time::now() - prev_time_;
-    prev_time_ = ros::Time::now();
+    delta_t_ = time - prev_time_;
+    prev_time_ = time;
     if (0 == delta_t_.toSec()) {
-      ROS_ERROR("delta_t is 0, skipping this loop. Possible overloaded cpu ""at time: %f", ros::Time::now().toSec());
+      ROS_ERROR("delta_t is 0, skipping this loop. Possible overloaded cpu ""at time: %f", time.toSec());
       return;
     }
   } else {
-    prev_time_ = ros::Time::now();
+    prev_time_ = time;
     return;
   }
 
   if (cutoff_frequency_ != -1 && cutoff_frequency_ > 0) {
-
     // Check if tan(_) is really small, could cause c = NaN
     tan_filt_ = tan((cutoff_frequency_ * 6.2832) * delta_t_.toSec() / 2.);
-
     // Avoid tan(0) ==> NaN
     if ((tan_filt_ <= 0.) && (tan_filt_ > -0.01))
       tan_filt_ = -0.01;
     if ((tan_filt_ >= 0.) && (tan_filt_ < 0.01))
       tan_filt_ = 0.01;
-
     c_ = 1 / tan_filt_;
   }
 
@@ -55,7 +52,7 @@ void LowPassFilter::input(double in) {
 
   if (is_debug_) {
     if (realtime_pub_->trylock()) {
-      realtime_pub_->msg_.header.stamp = ros::Time::now();
+      realtime_pub_->msg_.header.stamp = time;
       realtime_pub_->msg_.real = in_[0];
       realtime_pub_->msg_.filtered = out_[0];
       realtime_pub_->unlockAndPublish();
@@ -63,7 +60,12 @@ void LowPassFilter::input(double in) {
   }
 }
 
+void LowPassFilter::input(double in) {
+  input(in, ros::Time::now());
+}
+
 double LowPassFilter::output() {
   return out_[0];
 }
+
 
