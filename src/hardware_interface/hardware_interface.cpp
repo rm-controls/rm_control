@@ -42,7 +42,6 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
     return false;
   }
   // Initialize joint limit
-  setupJointLimit(root_nh);
   if (!setupJointLimit(root_nh)) {
     ROS_ERROR("Error occur when setup joint limit");
     return false;
@@ -78,17 +77,18 @@ void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &p
   // NOTE: read all data before  propagate!
   if (is_actuator_specified_)
     act_to_jnt_state_->propagate();
-
-  // Set all cmd to zero to avoid crazy soft limit oscillation when not controller loaded
-  auto effort_joint_interface = this->get<hardware_interface::EffortJointInterface>();
-  if (is_actuator_specified_) {
-    std::vector<std::string> names = effort_joint_interface->getNames();
-    for (const auto &name:names)
-      effort_joint_interface->getHandle(name).setCommand(0);
-  }
 }
 
 void RmBaseHardWareInterface::write(const ros::Time &time, const ros::Duration &period) {
+  // Set all cmd to zero to avoid crazy soft limit oscillation when not controller loaded
+  for (auto id2act_data:bus_id2act_data_) {
+    for (auto act_data:id2act_data.second) {
+      act_data.second.cmd_pos = 0.;
+      act_data.second.cmd_vel = 0.;
+      act_data.second.cmd_effort = 0.;
+    }
+  }
+
   effort_jnt_saturation_interface_.enforceLimits(period);
   effort_jnt_soft_limits_interface_.enforceLimits(period);
   if (is_actuator_specified_)
