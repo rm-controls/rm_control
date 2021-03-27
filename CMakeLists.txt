@@ -21,7 +21,7 @@ find_package(catkin REQUIRED
         )
 
 # Depend on system install of Gazebo
-find_package(GAZEBO REQUIRED)
+find_package(gazebo REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 ###################################
@@ -37,7 +37,8 @@ catkin_package(
         INCLUDE_DIRS
         include
         LIBRARIES
-        ${PROJECT_NAME}
+        rm_robot_hw_sim
+        rm_mimic_joint_plugin
         CATKIN_DEPENDS
         roscpp
         rm_common
@@ -64,6 +65,8 @@ add_library(rm_robot_hw_sim
         src/rm_robot_hw_sim.cpp
         )
 
+add_library(rm_mimic_joint_plugin src/mimic_joint_plugin.cpp)
+
 add_dependencies(rm_robot_hw_sim
         ${catkin_EXPORTED_TARGETS}
         )
@@ -72,6 +75,10 @@ target_link_libraries(rm_robot_hw_sim
         ${catkin_LIBRARIES}
         ${GAZEBO_LIBRARIES}
         )
+target_link_libraries(rm_mimic_joint_plugin
+        ${catkin_LIBRARIES}
+        ${GAZEBO_LIBRARIES})
+
 
 #############
 ## Install ##
