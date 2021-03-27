@@ -1,146 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hand">
-  <!-- safety_distance: Minimum safety distance in [m] by which the collision volumes are expanded and which is enforced during robot motions -->
-  <xacro:macro name="hand" params="connected_to:='' xyz:='0 0 0' rpy:='0 0 0' ">
+    <!-- safety_distance: Minimum safety distance in [m] by which the collision volumes are expanded and which is enforced during robot motions -->
+    <xacro:macro name="hand" params="connected_to:='' xyz:='0 0 0' rpy:='0 0 0' ">
 
-    <link name="palm">
-      <inertial>
-        <origin xyz="0.01877 0.0475 -0.000028" rpy="0 0 0"/>
-        <mass value="0.406611"/>
-        <inertia ixx="2.719e-3" ixy="-3.243e-4" ixz="228.248e-9" iyy="2.564e-4" iyz="1515.727e-9" izz="2.9e-3"/>
-      </inertial>
-      <visual>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/palm.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0.0225 0.0 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.045 0.2658 0.0675"/>
-        </geometry>
-      </collision>
-    </link>
+        <link name="palm">
+            <inertial>
+                <origin xyz="0.01877 0.0475 -0.000028" rpy="0 0 0"/>
+                <mass value="0.406611"/>
+                <inertia ixx="2.719e-3" ixy="-3.243e-4" ixz="228.248e-9" iyy="2.564e-4" iyz="1515.727e-9" izz="2.9e-3"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/palm.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.0225 0.0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.045 0.2658 0.0675"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <link name="right_finger">
-      <inertial>
-        <origin xyz="0.01491 -0.06058 0" rpy="0 0 0"/>
-        <mass value="0.203967"/>
-        <inertia ixx="1.025e-3" ixy="3.865e-4" ixz="-1.144e-9" iyy="3.051e-4" iyz="4.649e-9" izz="1.295e-3"/>
-      </inertial>
-      <visual>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/right_finger.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0.011 -0.04 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.048 0.026 0.030"/>
-        </geometry>
-      </collision>
-      <collision>
-        <origin xyz="0.0235 -0.0832 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.022 0.1123 0.03"/>
-        </geometry>
-      </collision>
-      <collision>
-        <origin xyz="0.069 -0.13 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.112 0.0157 0.03"/>
-        </geometry>
-      </collision>
-      <collision>
-        <origin xyz="0.105 -0.1232 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.04 0.0323 0.03"/>
-        </geometry>
-      </collision>
-    </link>
+        <link name="right_finger">
+            <inertial>
+                <origin xyz="0.01491 -0.06058 0" rpy="0 0 0"/>
+                <mass value="0.203967"/>
+                <inertia ixx="1.025e-3" ixy="3.865e-4" ixz="-1.144e-9" iyy="3.051e-4" iyz="4.649e-9" izz="1.295e-3"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/right_finger.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.011 -0.04 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.048 0.026 0.030"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.0235 -0.0832 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.022 0.1123 0.03"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.069 -0.13 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.112 0.0157 0.03"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.105 -0.1232 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.04 0.0323 0.03"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <link name="left_finger">
-      <inertial>
-        <origin xyz="0.01491 0.061581 0" rpy="0 0 0"/>
-        <mass value="0.203967"/>
-        <inertia ixx="1.053e-3" ixy="-3.865e-4" ixz="-1.144e-9" iyy="3.051e-4" iyz="-4.733e-9" izz="1.323e-3"/>
-      </inertial>
-      <visual>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/left_finger.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0.011 0.04 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.048 0.026 0.030"/>
-        </geometry>
-      </collision>
-      <collision>
-        <origin xyz="0.0235 0.0832 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.022 0.1123 0.03"/>
-        </geometry>
-      </collision>
-      <collision>
-        <origin xyz="0.069 0.13 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.112 0.0157 0.03"/>
-        </geometry>
-      </collision>
-      <collision>
-        <origin xyz="0.105 0.1232 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.04 0.0323 0.03"/>
-        </geometry>
-      </collision>
-    </link>
+        <link name="left_finger">
+            <inertial>
+                <origin xyz="0.01491 0.061581 0" rpy="0 0 0"/>
+                <mass value="0.203967"/>
+                <inertia ixx="1.053e-3" ixy="-3.865e-4" ixz="-1.144e-9" iyy="3.051e-4" iyz="-4.733e-9" izz="1.323e-3"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/left_finger.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.011 0.04 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.048 0.026 0.030"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.0235 0.0832 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.022 0.1123 0.03"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.069 0.13 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.112 0.0157 0.03"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.105 0.1232 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.04 0.0323 0.03"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <xacro:unless value="${connected_to == ''}">
-      <joint name="palm_joint" type="fixed">
-        <parent link="${connected_to}"/>
-        <child link="palm"/>
-        <origin xyz="${xyz}" rpy="${rpy}"/>
-      </joint>
-    </xacro:unless>
+        <xacro:unless value="${connected_to == ''}">
+            <joint name="palm_joint" type="fixed">
+                <parent link="${connected_to}"/>
+                <child link="palm"/>
+                <origin xyz="${xyz}" rpy="${rpy}"/>
+            </joint>
+        </xacro:unless>
 
-    <joint name="right_finger_joint" type="prismatic">
-      <parent link="palm"/>
-      <child link="right_finger"/>
-      <origin xyz="0.032 0 0" rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
-      <limit effort="588" lower="0.0" upper="0.02" velocity="3.772"/>
-    </joint>
+        <joint name="right_finger_joint" type="prismatic">
+            <parent link="palm"/>
+            <child link="right_finger"/>
+            <origin xyz="0.032 0 0" rpy="0 0 0"/>
+            <axis xyz="0 1 0"/>
+            <limit effort="588" lower="0.0" upper="0.02" velocity="3.772"/>
+        </joint>
 
-    <joint name="left_finger_joint" type="prismatic">
-      <parent link="palm"/>
-      <child link="left_finger"/>
-      <origin xyz="0.032 0 0" rpy="0 0 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit effort="588" lower="0.0" upper="0.02" velocity="3.772"/>
-      <mimic joint="right_finger_joint"/>
-    </joint>
+        <joint name="left_finger_joint" type="prismatic">
+            <parent link="palm"/>
+            <child link="left_finger"/>
+            <origin xyz="0.032 0 0" rpy="0 0 0"/>
+            <axis xyz="0 -1 0"/>
+            <limit effort="588" lower="0.0" upper="0.02" velocity="3.772"/>
+            <mimic joint="right_finger_joint"/>
+        </joint>
 
-    <transmission name="trans_right_finger_joint">
-      <type>transmission_interface/SimpleTransmission</type>
-      <joint name="right_finger_joint">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
-      <actuator name="right_finger_motor">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
-    </transmission>
-    <transmission name="trans_left_finger_joint">
-      <type>transmission_interface/SimpleTransmission</type>
-      <joint name="left_finger_joint">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
-      <actuator name="left_finger_motor">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
-    </transmission>
+        <transmission name="trans_right_finger_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="right_finger_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="right_finger_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <transmission name="trans_left_finger_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="left_finger_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="left_finger_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
 
-  </xacro:macro>
+    </xacro:macro>
 </robot>
