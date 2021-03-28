@@ -34,6 +34,7 @@ add_message_files(
     TargetDetection.msg
     TargetDetectionArray.msg
     TrackData.msg
+        TrackDataArray.msg
 )
 
 add_action_files(
