@@ -127,6 +127,7 @@
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="right_finger_joint">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>-0.0640</offset>
             </joint>
             <actuator name="right_finger_motor">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -137,6 +138,7 @@
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="left_finger_joint">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>-0.0640</offset>
             </joint>
             <actuator name="left_finger_motor">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>

@@ -54,6 +54,18 @@
                     <box size="0.0207 0.0207 0.334"/>
                 </geometry>
             </collision>
+            <collision>
+                <origin xyz="-0.193 -0.189 0.235" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.186 0.1 0.3"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="-0.0623 -0.2405 0.242" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.08 0.003 0.06"/>
+                </geometry>
+            </collision>
         </link>
 
         <xacro:mecanum_wheel prefix="front_left" connected_to="base_link"
