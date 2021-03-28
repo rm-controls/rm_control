@@ -64,8 +64,11 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
   joint_limits_interface::EffortJointSaturationInterface effort_jnt_saturation_interface_;
   joint_limits_interface::EffortJointSoftLimitsInterface effort_jnt_soft_limits_interface_;
 
+  std::vector<hardware_interface::JointHandle> effort_joint_handles_;
+
   // URDF model of the robot
-  std::string urdf_string_;                   // for transmission
+  std::string
+      urdf_string_;                   // for transmission
   std::shared_ptr<urdf::Model> urdf_model_;   // for limit
 
   // Actuator

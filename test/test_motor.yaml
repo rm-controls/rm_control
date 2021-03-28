@@ -7,10 +7,19 @@ rm_base:
 
   # Configurations of the actuators
   actuators:
-    act_mit_cheetah:
-      bus: can0
+    act_mit_cheetah2_2:
+      bus: can1
       id: 0x001
       type: cheetah
+    act_mit_cheetah2_1:
+      bus: can1
+      id: 0x002
+      type: cheetah
+    act_mit_cheetah0:
+      bus: can1
+      id: 0x003
+      type: cheetah
+
 
     act_3508:
       bus: can0
@@ -27,7 +36,7 @@ controllers:
     publish_rate: 100
   joint_mit_cheetah_position_controller:
     type: effort_controllers/JointPositionController
-    joint: joint_mit_cheetah
+    joint: joint_mit_cheetah0
     pid: { p: 0.0, i: 0.0, d: 0.0 }
 
 joint_limits:
