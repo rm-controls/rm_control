@@ -30,18 +30,18 @@
                     <box size="0.5845 0.526 0.2"/>
                 </geometry>
             </collision>
-            <collision>
-                <origin xyz="-0.033 -0.1 0.267" rpy="0 0 0.7853982"/>
-                <geometry>
-                    <box size="0.0207 0.0207 0.334"/>
-                </geometry>
-            </collision>
-            <collision>
-                <origin xyz="-0.033 0.10 0.267" rpy="0 0 0.7853982"/>
-                <geometry>
-                    <box size="0.0207 0.0207 0.334"/>
-                </geometry>
-            </collision>
+            <!--            <collision>
+                            <origin xyz="-0.033 -0.1 0.267" rpy="0 0 0.7853982"/>
+                            <geometry>
+                                <box size="0.0207 0.0207 0.334"/>
+                            </geometry>
+                        </collision>
+                        <collision>
+                            <origin xyz="-0.033 0.10 0.267" rpy="0 0 0.7853982"/>
+                            <geometry>
+                                <box size="0.0207 0.0207 0.334"/>
+                            </geometry>
+                        </collision>-->
             <collision>
                 <origin xyz="-0.23225 -0.1 0.267" rpy="0 0 0.7853982"/>
                 <geometry>
