@@ -6,5 +6,7 @@ uint16 shooter_heat_cooling_limit
 uint16 shooter_heat
 uint16 robot_hp
 float32 bullet_speed
+uint16 hurt_armor_id
+uint16 hurt_type
 
 time stamp
