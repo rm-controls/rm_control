@@ -3,19 +3,28 @@
     <xacro:include filename="$(find rm_description)/urdf/common/friction.urdf.xacro"/>
 
 
-
     <xacro:property name="wheel_offset_x" value="0.082"/>
     <xacro:property name="wheel_offset_y" value="0.049"/>
     <xacro:property name="wheel_offset_z" value="0.0"/>
+    <xacro:property name="wheel_and_wheel_offset_x" value="0.08"/>
 
 
-    <xacro:friction_wheel prefixs="left" connected_to="pitch"
-                          wheel_x_offset="${wheel_offset_x}" wheel_y_offset="${wheel_offset_y}" wheel_z_offset="${wheel_offset_z}"/>
+    <xacro:friction_wheel prefixs="left_follow" connected_to="pitch"
+                          wheel_x_offset="${wheel_offset_x}" wheel_y_offset="${wheel_offset_y}"
+                          wheel_z_offset="${wheel_offset_z}"/>
 
-    <xacro:friction_wheel prefixs="right" connected_to="pitch"
-                          wheel_x_offset="${wheel_offset_x}" wheel_y_offset="${-wheel_offset_y}" wheel_z_offset="${wheel_offset_z}"/>
+    <xacro:friction_wheel prefixs="right_follow" connected_to="pitch"
+                          wheel_x_offset="${wheel_offset_x}" wheel_y_offset="${-wheel_offset_y}"
+                          wheel_z_offset="${wheel_offset_z}"/>
 
+    <xacro:friction_wheel prefixs="left_back" connected_to="pitch"
+                          wheel_x_offset="${wheel_offset_x+wheel_and_wheel_offset_x}" wheel_y_offset="${wheel_offset_y}"
+                          wheel_z_offset="${wheel_offset_z}"/>
 
+    <xacro:friction_wheel prefixs="right_back" connected_to="pitch"
+                          wheel_x_offset="${wheel_offset_x+wheel_and_wheel_offset_x}"
+                          wheel_y_offset="${-wheel_offset_y}"
+                          wheel_z_offset="${wheel_offset_z}"/>
 
     <link name="trigger">
         <inertial>
