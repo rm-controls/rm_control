@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="engineer">
-    <xacro:arg name="use_simulation" default="false"/>
+    <xacro:arg name="use_simulation" default="true"/>
     <xacro:arg name="roller_type" default="none"/>
 
     <xacro:include filename="$(find rm_description)/urdf/engineer/chassis.urdf.xacro"/>
