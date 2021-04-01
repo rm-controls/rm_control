@@ -11,7 +11,7 @@
     <xacro:arm connected_to="base_link"/>
     <xacro:arm_transmission simulation="$(arg use_simulation)"/>
     <xacro:include filename="$(find rm_description)/urdf/engineer/hand.urdf.xacro"/>
-    <xacro:hand connected_to="link5" xyz="0.039 0 0"/>
+    <xacro:hand connected_to="link5" xyz="0.039 0 0" simulation="$(arg use_simulation)"/>
 
     <xacro:if value="$(arg use_simulation)">
         <gazebo>
