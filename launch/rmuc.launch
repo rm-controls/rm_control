@@ -1,5 +1,5 @@
 <launch>
-    <arg name="robot_type" default="$(env ROBOT_TYPE)" doc="Robot type [standard, auto, hero, engineer]"/>
+    <arg name="robot_type" default="hero" doc="Robot type [standard, auto, hero, engineer]"/>
 
     <arg name="x_pos" default="2.0"/>
     <arg name="y_pos" default="-5.0"/>
