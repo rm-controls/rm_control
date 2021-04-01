@@ -29,7 +29,7 @@
                 <visual name='visual'>
                     <geometry>
                         <mesh>
-                            <uri>model://rm_description/urdf/stone/stone.dae</uri>
+                            <uri>model://rm_gazebo/worlds/stone/stone.dae</uri>
                             <scale>1 1 1</scale>
                         </mesh>
                     </geometry>
@@ -37,7 +37,7 @@
                 <collision name='collision'>
                     <geometry>
                         <mesh>
-                            <uri>model://rm_description/urdf/stone/stone.dae</uri>
+                            <uri>model://rm_gazebo/worlds/stone/stone.dae</uri>
                             <scale>1 1 1</scale>
                         </mesh>
                     </geometry>
