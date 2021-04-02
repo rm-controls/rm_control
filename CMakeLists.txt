@@ -65,8 +65,6 @@ add_library(rm_robot_hw_sim
         src/rm_robot_hw_sim.cpp
         )
 
-add_library(rm_mimic_joint_plugin src/mimic_joint_plugin.cpp)
-
 add_dependencies(rm_robot_hw_sim
         ${catkin_EXPORTED_TARGETS}
         )
@@ -75,9 +73,6 @@ target_link_libraries(rm_robot_hw_sim
         ${catkin_LIBRARIES}
         ${GAZEBO_LIBRARIES}
         )
-target_link_libraries(rm_mimic_joint_plugin
-        ${catkin_LIBRARIES}
-        ${GAZEBO_LIBRARIES})
 
 
 #############

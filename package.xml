@@ -18,6 +18,8 @@
     <depend>gazebo_ros</depend>
     <depend>gazebo_ros_control</depend>
 
+    <exec_depend>roboticsgroup_upatras_gazebo_plugins</exec_depend>
+
     <export>
         <gazebo_ros_control plugin="${prefix}/rm_robot_hw_sim_plugins.xml"/>
         <gazebo_ros gazebo_model_path="${prefix}/.."/>
