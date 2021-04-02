@@ -41,8 +41,7 @@ Or better, use `rosdep`:
 #### Dependencies
 
 - [Robot Operating System (ROS)](http://wiki.ros.org) (middleware for robotics),
-- [Eigen] (linear algebra library)
-- [libignition-rendering3](https://ignitionrobotics.org/api/rendering/4.1/installation.html)
+- [roboticsgroup_upatras_gazebo_plugins](https://github.com/roboticsgroup/roboticsgroup_upatras_gazebo_plugins)
 
   sudo rosdep install --from-paths src
 
