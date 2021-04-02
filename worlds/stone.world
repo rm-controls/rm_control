@@ -26,6 +26,7 @@
 
         <model name='stone'>
             <link name='stone_link'>
+            <pose>2 0 0 0 0 0</pose>
                 <visual name='visual'>
                     <geometry>
                         <mesh>
