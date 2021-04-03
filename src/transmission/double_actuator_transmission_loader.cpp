@@ -57,7 +57,10 @@ bool DoubleActuatorTransmissionLoader::getActuatorConfig(const TransmissionInfo 
 
     // Populate role string
     std::string &act_role = act_roles[i];
-    getActuatorRole(act_elements[i], act_names[i], transmission_info.name_, true, act_role);
+    getActuatorRole(act_elements[i], act_names[i],
+                                           transmission_info.name_, true, // Required
+                                           act_role);
+//    if (act_role_status != true) { return false; }
 
     // Validate role string
     if (ACTUATOR1_ROLE != act_role && ACTUATOR2_ROLE != act_role) {
@@ -93,7 +96,8 @@ bool DoubleActuatorTransmissionLoader::getActuatorConfig(const TransmissionInfo 
   actuator_reduction.resize(2);
   for (unsigned int i = 0; i < 2; ++i) {
     const unsigned int id = id_map[i];
-    getActuatorReduction(act_elements[id], act_names[id], transmission_info.name_, true, actuator_reduction[i]);
+    getActuatorReduction(act_elements[id], act_names[id], transmission_info.name_,
+                                                 true, actuator_reduction[i]);
   }
 
   return true;
