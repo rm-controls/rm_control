@@ -25,8 +25,19 @@
         </light>
 
         <model name='stone'>
+            <pose>1 0 0 0 0 0</pose>
             <link name='stone_link'>
-            <pose>2 0 0 0 0 0</pose>
+                <inertial>
+                    <mass>0.590</mass>
+                    <inertia>
+                        <ixx>0.004</ixx>
+                        <ixy>0.0</ixy>
+                        <ixz>0.0</ixz>
+                        <iyy>0.004</iyy>
+                        <iyz>0.0</iyz>
+                        <izz>0.004</izz>
+                    </inertia>
+                </inertial>
                 <visual name='visual'>
                     <geometry>
                         <mesh>
