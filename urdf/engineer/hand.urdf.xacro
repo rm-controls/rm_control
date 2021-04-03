@@ -55,15 +55,9 @@
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="0.069 -0.13 0" rpy="0 0 0"/>
+                <origin xyz="0.069 -0.12 0" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.112 0.0157 0.03"/>
-                </geometry>
-            </collision>
-            <collision>
-                <origin xyz="0.105 -0.1232 0" rpy="0 0 0"/>
-                <geometry>
-                    <box size="0.04 0.0323 0.03"/>
+                    <box size="0.112 0.03 0.03"/>
                 </geometry>
             </collision>
         </link>
@@ -93,15 +87,9 @@
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="0.069 0.13 0" rpy="0 0 0"/>
+                <origin xyz="0.069 0.12 0" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.112 0.0157 0.03"/>
-                </geometry>
-            </collision>
-            <collision>
-                <origin xyz="0.105 0.1232 0" rpy="0 0 0"/>
-                <geometry>
-                    <box size="0.04 0.0323 0.03"/>
+                    <box size="0.112 0.03 0.03"/>
                 </geometry>
             </collision>
         </link>
@@ -126,7 +114,6 @@
                 </geometry>
             </collision>
         </link>
-
 
         <joint name="camera_joint" type="fixed">
             <parent link="palm"/>
@@ -169,6 +156,22 @@
                     <hasPID/>
                     <maxEffort>588.0</maxEffort>
                 </plugin>
+            </gazebo>
+            <gazebo reference="right_finger">
+                <self_collide>1</self_collide>
+                <mu1 value="200000.0"/>
+                <mu2 value="200000.0"/>
+                <kp value="1000000.0"/>
+                <kd value="100.0"/>
+                <material>Gazebo/Black</material>
+            </gazebo>
+            <gazebo reference="left_finger">
+                <self_collide>1</self_collide>
+                <mu1 value="200000.0"/>
+                <mu2 value="200000.0"/>
+                <kp value="1000000.0"/>
+                <kd value="100.0"/>
+                <material>Gazebo/Black</material>
             </gazebo>
         </xacro:if>
 
