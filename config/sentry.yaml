@@ -37,4 +37,4 @@ rm_base:
       bus: can0
       id: 0x203
       type: rm_2006
-      lp_cutoff_frequency: 200
+      lp_cutoff_frequency: 100
