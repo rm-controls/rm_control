@@ -57,10 +57,10 @@ bool DoubleActuatorTransmissionLoader::getActuatorConfig(const TransmissionInfo 
 
     // Populate role string
     std::string &act_role = act_roles[i];
-    bool act_role_status = getActuatorRole(act_elements[i], act_names[i],
+    getActuatorRole(act_elements[i], act_names[i],
                                            transmission_info.name_, true, // Required
                                            act_role);
-    if (act_role_status != true) { return false; }
+//    if (act_role_status != true) { return false; }
 
     // Validate role string
     if (ACTUATOR1_ROLE != act_role && ACTUATOR2_ROLE != act_role) {
@@ -96,9 +96,8 @@ bool DoubleActuatorTransmissionLoader::getActuatorConfig(const TransmissionInfo 
   actuator_reduction.resize(2);
   for (unsigned int i = 0; i < 2; ++i) {
     const unsigned int id = id_map[i];
-    bool reduction_status = getActuatorReduction(act_elements[id], act_names[id], transmission_info.name_,
+    getActuatorReduction(act_elements[id], act_names[id], transmission_info.name_,
                                                  true, actuator_reduction[i]);
-    if (reduction_status != true) { return false; }
   }
 
   return true;
@@ -115,11 +114,9 @@ bool DoubleActuatorTransmissionLoader::getJointConfig(const TransmissionInfo &tr
 
   // Joint configuration
   // Parse optional mechanical reductions.
-  bool reduction_status = getJointReduction(jnt_elements, jnt_names, transmission_info.name_, false, joint_reduction);
-  if (reduction_status == false) { return false; }
+  getJointReduction(jnt_elements, jnt_names, transmission_info.name_, false, joint_reduction);
   // Parse optional joint offset.
-  bool offset_status = getJointOffset(jnt_elements, jnt_names, transmission_info.name_, false, joint_offset);
-  if (offset_status == false) { return false; }
+  getJointOffset(jnt_elements, jnt_names, transmission_info.name_, false, joint_offset);
   return true;
 }
 

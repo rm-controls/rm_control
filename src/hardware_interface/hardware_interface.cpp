@@ -32,12 +32,20 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
   else if (!parseImuData(xml_rpc_value, robot_hw_nh))
     return false;
 
-  // Load urdf
-  load_urdf(root_nh);
+  if (!load_urdf(root_nh)) {
+    ROS_ERROR("Error occur when setup urdf");
+    return false;
+  }
   // Initialize transmission
-  setupTransmission(root_nh);
+  if (!setupTransmission(root_nh)) {
+    ROS_ERROR("Error occur when setup transmission");
+    return false;
+  }
   // Initialize joint limit
-  setupJointLimit(root_nh);
+  if (!setupJointLimit(root_nh)) {
+    ROS_ERROR("Error occur when setup joint limit");
+    return false;
+  }
 
   // CAN Bus
   if (!robot_hw_nh.getParam("bus", xml_rpc_value))
@@ -71,15 +79,12 @@ void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &p
     act_to_jnt_state_->propagate();
 
   // Set all cmd to zero to avoid crazy soft limit oscillation when not controller loaded
-  auto effort_joint_interface = this->get<hardware_interface::EffortJointInterface>();
-  if (is_actuator_specified_) {
-    std::vector<std::string> names = effort_joint_interface->getNames();
-    for (const auto &name:names)
-      effort_joint_interface->getHandle(name).setCommand(0);
-  }
+  for (auto effort_joint_handle:effort_joint_handles_)
+    effort_joint_handle.setCommand(0.);
 }
 
 void RmBaseHardWareInterface::write(const ros::Time &time, const ros::Duration &period) {
+
   effort_jnt_saturation_interface_.enforceLimits(period);
   effort_jnt_soft_limits_interface_.enforceLimits(period);
   if (is_actuator_specified_)
@@ -351,22 +356,26 @@ bool RmBaseHardWareInterface::setupTransmission(ros::NodeHandle &root_nh) {
   if (!transmission_loader_->load(urdf_string_)) { return false; }
   act_to_jnt_state_ = robot_transmissions_.get<transmission_interface::ActuatorToJointStateInterface>();
   jnt_to_act_effort_ = robot_transmissions_.get<transmission_interface::JointToActuatorEffortInterface>();
+
+  auto effort_joint_interface = this->get<hardware_interface::EffortJointInterface>();
+  std::vector<std::string> names = effort_joint_interface->getNames();
+  for (const auto &name:names)
+    effort_joint_handles_.push_back(effort_joint_interface->getHandle(name));
+
   return true;
 }
 
 bool RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle &root_nh) {
   if (!is_actuator_specified_) return true;
-  auto effort_joint_interface = this->get<hardware_interface::EffortJointInterface>();
-  std::vector<std::string> names = effort_joint_interface->getNames();
+
   joint_limits_interface::JointLimits joint_limits; // Position
   joint_limits_interface::SoftJointLimits soft_limits; // Soft Position
 
-  for (const auto &name: names) {
+  for (const auto &joint_handle:effort_joint_handles_) {
     bool has_joint_limits{}, has_soft_limits{};
-
-    hardware_interface::JointHandle joint_handle = effort_joint_interface->getHandle(name);
+    std::string name = joint_handle.getName();
     // Get limits from URDF
-    urdf::JointConstSharedPtr urdf_joint = urdf_model_->getJoint(name);
+    urdf::JointConstSharedPtr urdf_joint = urdf_model_->getJoint(joint_handle.getName());
     if (urdf_joint == nullptr) {
       ROS_ERROR_STREAM("URDF joint not found " << name);
       return false;

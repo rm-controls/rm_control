@@ -50,32 +50,29 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
   bool setupJointLimit(ros::NodeHandle &root_nh);
 
   // Interface
+  std::vector<CanBus *> can_buses_{};
   hardware_interface::ActuatorStateInterface act_state_interface_;
   hardware_interface::EffortActuatorInterface effort_act_interface_;
   hardware_interface::RobotStateInterface robot_state_interface_;
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
-
   transmission_interface::RobotTransmissions robot_transmissions_;
-  std::unique_ptr<transmission_interface::TransmissionInterfaceLoader> transmission_loader_;
-
   transmission_interface::ActuatorToJointStateInterface *act_to_jnt_state_{};
   transmission_interface::JointToActuatorEffortInterface *jnt_to_act_effort_{};
-
+  std::unique_ptr<transmission_interface::TransmissionInterfaceLoader> transmission_loader_{};
   joint_limits_interface::EffortJointSaturationInterface effort_jnt_saturation_interface_;
   joint_limits_interface::EffortJointSoftLimitsInterface effort_jnt_soft_limits_interface_;
+  std::vector<hardware_interface::JointHandle> effort_joint_handles_{};
 
   // URDF model of the robot
   std::string urdf_string_;                   // for transmission
   std::shared_ptr<urdf::Model> urdf_model_;   // for limit
 
   // Actuator
-  std::unordered_map<std::string, ActCoeff> type2act_coeffs_;
-  std::unordered_map<std::string, std::unordered_map<int, ActData>> bus_id2act_data_;
+  std::unordered_map<std::string, ActCoeff> type2act_coeffs_{};
+  std::unordered_map<std::string, std::unordered_map<int, ActData>> bus_id2act_data_{};
 
   // Imu
-  std::unordered_map<std::string, std::unordered_map<int, ImuData>> bus_id2imu_data_;
-
-  std::vector<CanBus *> can_buses_;
+  std::unordered_map<std::string, std::unordered_map<int, ImuData>> bus_id2imu_data_{};
 };
 
 }
