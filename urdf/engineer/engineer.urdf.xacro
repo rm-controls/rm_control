@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="engineer">
     <xacro:arg name="use_simulation" default="true"/>
-    <xacro:arg name="roller_type" default="none"/>
+    <xacro:arg name="roller_type" default="simple"/>
 
     <xacro:include filename="$(find rm_description)/urdf/engineer/chassis.urdf.xacro"/>
     <xacro:chassis roller_type="$(arg roller_type)"/>
 
     <xacro:include filename="$(find rm_description)/urdf/engineer/arm.urdf.xacro"/>
-    <xacro:include filename="$(find rm_description)/urdf/engineer/arm.transmission.xacro"/>
     <xacro:arm connected_to="base_link"/>
+    <xacro:include filename="$(find rm_description)/urdf/engineer/arm.transmission.xacro"/>
     <xacro:arm_transmission simulation="$(arg use_simulation)"/>
     <xacro:include filename="$(find rm_description)/urdf/engineer/hand.urdf.xacro"/>
     <xacro:hand connected_to="link5" xyz="0.039 0 0" simulation="$(arg use_simulation)"/>

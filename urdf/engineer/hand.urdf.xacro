@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hand">
     <!-- safety_distance: Minimum safety distance in [m] by which the collision volumes are expanded and which is enforced during robot motions -->
-    <xacro:macro name="hand" params="connected_to:='' xyz:='0 0 0' rpy:='0 0 0' ">
+    <xacro:macro name="hand" params="connected_to:='' xyz:='0 0 0' rpy:='0 0 0' simulation ">
 
         <material name="Black">
             <color rgba="0 0 0 1"/>
@@ -108,9 +108,9 @@
 
         <link name="camera">
             <inertial>
-                <mass value="0.04"/>
+                <mass value="0.05"/>
                 <origin xyz="0 0 0"/>
-                <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+                <inertia ixx="1.271e-3" ixy="2.07e-7" ixz="8.854e-6" iyy="5.190e-4" iyz="1.001e-6" izz="9.976e-4"/>
             </inertial>
             <visual>
                 <origin xyz=" 0 0 0 " rpy="0 0 0"/>
@@ -127,15 +127,12 @@
             </collision>
         </link>
 
-        <!--        <gazebo reference="camera">-->
-        <!--            <masterial>Gazebo/White</masterial>-->
-        <!--        </gazebo>-->
 
         <joint name="camera_joint" type="fixed">
             <parent link="palm"/>
             <child link="camera"/>
             <origin xyz="0.055 -0.085 0.0962" rpy="0 0 0"/>
-            <axis xyz="0 1 0"/>
+            <axis xyz="0 0 1"/>
         </joint>
 
         <xacro:unless value="${connected_to == ''}">
@@ -163,6 +160,45 @@
             <mimic joint="right_finger_joint"/>
         </joint>
 
+        <xacro:if value="${simulation}">
+            <gazebo reference="camera">
+                <sensor type="camera" name="camera_node">
+                    <update_rate>30.0</update_rate>
+                    <camera name="head">
+                        <horizontal_fov>1.3962634</horizontal_fov>
+                        <image>
+                            <width>1920</width>
+                            <height>1080</height>
+                            <format>R8G8B8</format>
+                        </image>
+                        <clip>
+                            <near>0.02</near>
+                            <far>300</far>
+                        </clip>
+                        <noise>
+                            <type>gaussian</type>
+                            <mean>0.0</mean>
+                            <stddev>0.007</stddev>
+                        </noise>
+                    </camera>
+                    <plugin name="gazebo_camera" filename="libgazebo_ros_camera.so">
+                        <alwaysOn>true</alwaysOn>
+                        <updateRate>0.0</updateRate>
+                        <cameraName>/camera</cameraName>
+                        <imageTopicName>image_raw</imageTopicName>
+                        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                        <frameName>camera</frameName>
+                        <hackBaseline>0.07</hackBaseline>
+                        <distortionK1>0.0</distortionK1>
+                        <distortionK2>0.0</distortionK2>
+                        <distortionK3>0.0</distortionK3>
+                        <distortionT1>0.0</distortionT1>
+                        <distortionT2>0.0</distortionT2>
+                    </plugin>
+                </sensor>
+            </gazebo>
+        </xacro:if>
+
         <transmission name="trans_right_finger_joint">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="right_finger_joint">
@@ -185,47 +221,6 @@
                 <mechanicalReduction>1</mechanicalReduction>
             </actuator>
         </transmission>
-
-
-        <!--        <xacro:if value="${simulation}">-->
-        <gazebo reference="camera">
-            <sensor type="camera" name="camera_node">
-                <update_rate>30.0</update_rate>
-                <camera name="head">
-                    <horizontal_fov>1.3962634</horizontal_fov>
-                    <image>
-                        <width>1920</width>
-                        <height>1080</height>
-                        <format>R8G8B8</format>
-                    </image>
-                    <clip>
-                        <near>0.02</near>
-                        <far>300</far>
-                    </clip>
-                    <noise>
-                        <type>gaussian</type>
-                        <mean>0.0</mean>
-                        <stddev>0.007</stddev>
-                    </noise>
-                </camera>
-                <plugin name="gazebo_camera" filename="libgazebo_ros_camera.so">
-                    <alwaysOn>true</alwaysOn>
-                    <updateRate>0.0</updateRate>
-                    <cameraName>/camera</cameraName>
-                    <imageTopicName>image_raw</imageTopicName>
-                    <cameraInfoTopicName>camera_info</cameraInfoTopicName>
-                    <frameName>camera</frameName>
-                    <hackBaseline>0.07</hackBaseline>
-                    <distortionK1>0.0</distortionK1>
-                    <distortionK2>0.0</distortionK2>
-                    <distortionK3>0.0</distortionK3>
-                    <distortionT1>0.0</distortionT1>
-                    <distortionT2>0.0</distortionT2>
-                </plugin>
-            </sensor>
-        </gazebo>
-        <!--        </xacro:if>-->
-
 
     </xacro:macro>
 </robot>
