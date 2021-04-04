@@ -6,6 +6,26 @@ rm_base:
   cycle_time_error_threshold: 0.001
   # Configurations of the actuators
   actuators:
+    front_right_wheel_motor:
+      bus: can1
+      id: 0x201
+      type: rm_3508
+      lp_cutoff_frequency: 100
+    front_left_wheel_motor:
+      bus: can1
+      id: 0x202
+      type: rm_3508
+      lp_cutoff_frequency: 100
+    back_left_wheel_motor:
+      bus: can1
+      id: 0x203
+      type: rm_3508
+      lp_cutoff_frequency: 100
+    back_right_wheel_motor:
+      bus: can1
+      id: 0x204
+      type: rm_3508
+      lp_cutoff_frequency: 100
     joint1_motor:
       bus: can1
       id: 0x205
@@ -34,3 +54,13 @@ rm_base:
       bus: can1
       id: 0x208
       type: rm_2006
+
+
+
+controllers:
+  robot_state_controller:
+    type: robot_state_controller/RobotStateController
+    publish_rate: 100
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 100
