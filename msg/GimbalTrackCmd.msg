@@ -1,7 +1,0 @@
-float64 target_speed_x
-float64 target_speed_y
-float64 target_speed_z
-float64 target_position_x
-float64 target_position_y
-float64 target_position_z
-float64 bullet_speed

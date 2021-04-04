@@ -18,8 +18,8 @@ add_message_files(
     ShootCmd.msg
     GimbalCmd.msg
     GimbalDesError.msg
-    GimbalTrackCmd.msg
-    Referee.msg
+        GimbalTargetData.msg
+        Referee.msg
         LpData.msg
 )
 
