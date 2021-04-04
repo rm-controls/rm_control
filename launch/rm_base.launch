@@ -14,5 +14,23 @@
 
     <rosparam file="$(find rm_base)/config/actuator_coefficient.yaml" command="load" ns="rm_base"/>
     <rosparam file="$(find rm_base)/config/$(arg robot_type).yaml" command="load"/>
+
+    <!--    &lt;!&ndash; load the controllers &ndash;&gt;-->
+    <!--    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"-->
+    <!--          output="screen" args="-->
+    <!--               controllers/joint_state_controller-->
+    <!--               controllers/robot_state_controller"/>-->
+
+    <!--    <node name="rm_base" pkg="rm_base" type="rm_base" respawn="false" clear_params="true"/>-->
+
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+          output="screen" args="
+               controllers/joint_state_controller
+               controllers/robot_state_controller
+
+"/>
+
     <node name="rm_base" pkg="rm_base" type="rm_base" respawn="false" clear_params="true"/>
 </launch>
+        <!--        controllers/robot_state_controller-->
+        <!--            controllers/joint_state_controller-->

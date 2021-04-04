@@ -7,11 +7,11 @@ rm_base:
 
   # Configurations of the actuators
   actuators:
-#    act_mit_cheetah2:
-#      bus: can1
-#      id: 0x002
-#      type: cheetah
-    act_mit_cheetah1:
+    act_mit_cheetah2_2:
+      bus: can1
+      id: 0x001
+      type: cheetah
+    act_mit_cheetah2_1:
       bus: can1
       id: 0x002
       type: cheetah
@@ -24,7 +24,7 @@ rm_base:
     act_3508:
       bus: can0
       id: 0x201
-      type: rm_3508_dir
+      type: rm_3508
       lp_cutoff_frequency: 100
 
 controllers:
@@ -34,22 +34,10 @@ controllers:
   joint_state_controller:
     type: joint_state_controller/JointStateController
     publish_rate: 100
-#  joint_mit_cheetah_position_controller:
-#    type: effort_controllers/JointEffortController
-#    joint: joint_3508
-#    pid: { p: 0.0, i: 0.0, d: 0.0 }
-# Gripper controller
   joint_mit_cheetah_position_controller:
-    type: effort_controllers/GripperActionController
-    joint: joint_3508
-    action_monitor_rate: 20
-    goal_tolerance: 0.0001
-    max_effort: 10000
-    stall_velocity_threshold: 0.01
-    stall_timeout: 1.0
-    gains:
-      joint_3508: { p: 20000.0, d: 1000.0, i: 0, i_clamp: 0 }
-
+    type: effort_controllers/JointPositionController
+    joint: joint_mit_cheetah0
+    pid: { p: 0.0, i: 0.0, d: 0.0 }
 
 joint_limits:
   joint1:
@@ -64,3 +52,4 @@ joint_limits:
     #    max_acceleration: 5.0
     has_effort_limits: true
     max_effort: 3
+
