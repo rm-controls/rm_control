@@ -53,7 +53,7 @@ rm_base:
     right_finger_motor:
       bus: can1
       id: 0x208
-      type: rm_2006
+      type: rm_3508_dir
 
 
 

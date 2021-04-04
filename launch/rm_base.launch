@@ -26,9 +26,7 @@
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
           output="screen" args="
                controllers/joint_state_controller
-               controllers/robot_state_controller
-
-"/>
+               controllers/robot_state_controller"/>
 
     <node name="rm_base" pkg="rm_base" type="rm_base" respawn="false" clear_params="true"/>
 </launch>
