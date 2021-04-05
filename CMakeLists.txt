@@ -18,9 +18,9 @@ add_message_files(
     ShootCmd.msg
     GimbalCmd.msg
     GimbalDesError.msg
-        GimbalTargetData.msg
-        Referee.msg
-        LpData.msg
+    GimbalTargetData.msg
+    Referee.msg
+    LpData.msg
 )
 
 add_service_files(
@@ -34,7 +34,7 @@ add_message_files(
     TargetDetection.msg
     TargetDetectionArray.msg
     TrackData.msg
-        TrackDataArray.msg
+    TrackDataArray.msg
 )
 
 add_action_files(
