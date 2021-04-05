@@ -36,12 +36,12 @@ rm_base:
       id: 0x206
       type: rm_6020
       lp_cutoff_frequency: 100
-    left_follow_friction_wheel_joint_motor:
+    left_front_friction_wheel_joint_motor:
       bus: can1
       id: 0x201
       type: rm_3508_dir
       lp_cutoff_frequency: 60
-    right_follow_friction_wheel_joint_motor:
+    right_front_friction_wheel_joint_motor:
       bus: can1
       id: 0x204
       type: rm_3508_dir
