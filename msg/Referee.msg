@@ -9,4 +9,7 @@ float32 bullet_speed
 uint16 hurt_armor_id
 uint16 hurt_type
 
+float32 capacity
+float32 limit_power
+
 time stamp
