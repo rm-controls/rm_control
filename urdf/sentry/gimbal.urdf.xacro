@@ -4,8 +4,8 @@
   <xacro:macro name="gimbal">
 
     <xacro:property name="threshold" value="0.1"/>
-    <xacro:property name="pitch_lower_limit" value="0.192"/>
-    <xacro:property name="pitch_upper_limit" value="0.872"/>
+    <xacro:property name="pitch_lower_limit" value="0.241"/>
+    <xacro:property name="pitch_upper_limit" value="0.885"/>
 
     <link name="yaw">
       <visual>
@@ -38,39 +38,38 @@
       <limit effort="1.2" velocity="34" lower="-${2*pi}" upper="${2*pi}"/>
     </joint>
 
+    <link name="pitch">
+      <inertial>
+        <mass value="1.155968"/>
+        <origin xyz="0.019 -0.045 0.022"/>
+        <inertia ixx="5.918e-3" ixy="1.6863e-6" ixz="2.4143e-6" iyy="2.048e-3"
+                 iyz="-1.348e-4" izz="7.506e-3"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rm_description/meshes/sentry/pitch.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rm_description/meshes/sentry/pitch.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+    </link>
 
-      <link name="pitch">
-        <inertial>
-          <mass value="1.155968"/>
-          <origin xyz="0.019 -0.045 0.022"/>
-          <inertia ixx="5.918e-3" ixy="1.6863e-6" ixz="2.4143e-6" iyy="2.048e-3"
-                   iyz="-1.348e-4" izz="7.506e-3"/>
-        </inertial>
-        <visual>
-          <origin xyz="0 0 0" rpy="0 0 0"/>
-          <geometry>
-            <mesh filename="package://rm_description/meshes/sentry/pitch.stl" scale="0.001 0.001 0.001"/>
-          </geometry>
-        </visual>
-        <collision>
-          <origin xyz="0 0 0" rpy="0 0 0"/>
-          <geometry>
-            <mesh filename="package://rm_description/meshes/sentry/pitch.stl" scale="0.001 0.001 0.001"/>
-          </geometry>
-        </collision>
-      </link>
-
-      <joint name="pitch_joint" type="revolute">
-        <parent link="yaw"/>
-        <child link="pitch"/>
-        <axis xyz="0 1 0"/>
-        <origin xyz="0 0 -0.13"/>
-        <dynamics damping="0" friction="0.1"/>
-        <limit effort="1.2" velocity="13.82" lower="${pitch_lower_limit}" upper="${pitch_upper_limit}"/>
-<!--        <safety_controller k_position="100" k_velocity="0.1"
-                           soft_lower_limit="${pitch_lower_limit+threshold}"
-                           soft_upper_limit="${pitch_upper_limit-threshold}"/>-->
-      </joint>
+    <joint name="pitch_joint" type="revolute">
+      <parent link="yaw"/>
+      <child link="pitch"/>
+      <axis xyz="0 1 0"/>
+      <origin xyz="0 0 -0.13"/>
+      <dynamics damping="0" friction="0.1"/>
+      <limit effort="1.2" velocity="13.82" lower="${pitch_lower_limit}" upper="${pitch_upper_limit}"/>
+      <safety_controller k_position="100" k_velocity="0.1"
+                         soft_lower_limit="${pitch_lower_limit+threshold}"
+                         soft_upper_limit="${pitch_upper_limit-threshold}"/>
+    </joint>
 
   </xacro:macro>
 
