@@ -55,14 +55,14 @@
                 </actuator>
                 <joint name="joint4">
                     <role>joint1</role>
-                    <offset>1.215</offset>
+                    <offset>1.0621</offset>
                     <mechanicalReduction>1</mechanicalReduction>
                     <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
                     <ignoreTransmissionAbsoluteEncoder>1</ignoreTransmissionAbsoluteEncoder>
                 </joint>
                 <joint name="joint5">
                     <role>joint2</role>
-                    <offset>0.065</offset>
+                    <offset>0.1548</offset>
                     <mechanicalReduction>-1</mechanicalReduction>
                     <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
                     <ignoreTransmissionAbsoluteEncoder>1</ignoreTransmissionAbsoluteEncoder>
