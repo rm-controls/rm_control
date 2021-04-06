@@ -12,24 +12,24 @@
         </joint>
     </transmission>
 
-    <transmission name="trans_left_follow_friction_wheel_joint_joint">
+    <transmission name="trans_left_front_friction_wheel_joint_joint">
         <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="left_follow_friction_wheel_joint_motor">
+        <actuator name="left_front_friction_wheel_joint_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
-        <joint name="left_follow_friction_wheel_joint">
+        <joint name="left_front_friction_wheel_joint">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
 
-    <transmission name="trans_right_follow_friction_wheel_joint_joint">
+    <transmission name="trans_right_front_friction_wheel_joint_joint">
         <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="right_follow_friction_wheel_joint_motor">
+        <actuator name="right_front_friction_wheel_joint_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
-        <joint name="right_follow_friction_wheel_joint">
+        <joint name="right_front_friction_wheel_joint">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
