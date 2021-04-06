@@ -1,108 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hand">
-  <!-- safety_distance: Minimum safety distance in [m] by which the collision volumes are expanded and which is enforced during robot motions -->
-  <xacro:macro name="hand" params="connected_to:='' xyz:='0 0 0' rpy:='0 0 0' ">
+    <!-- safety_distance: Minimum safety distance in [m] by which the collision volumes are expanded and which is enforced during robot motions -->
+    <xacro:macro name="hand" params="connected_to:='' xyz:='0 0 0' rpy:='0 0 0' simulation ">
 
-    <link name="palm">
-      <inertial>
-        <origin xyz="0.01877 0.0475 -0.000028" rpy="0 0 0"/>
-        <mass value="0.406611"/>
-        <inertia ixx="2.719e-3" ixy="-3.243e-4" ixz="228.248e-9" iyy="2.564e-4" iyz="1515.727e-9" izz="2.9e-3"/>
-      </inertial>
-      <visual>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/palm.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0.020 0.02 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.04 0.230 0.06"/>
-        </geometry>
-      </collision>
-    </link>
+        <material name="Black">
+            <color rgba="0 0 0 1"/>
+        </material>
 
-    <link name="right_finger">
-      <inertial>
-        <origin xyz="0.01491 -0.06058 0" rpy="0 0 0"/>
-        <mass value="0.203967"/>
-        <inertia ixx="1.025e-3" ixy="3.865e-4" ixz="-1.144e-9" iyy="3.051e-4" iyz="4.649e-9" izz="1.295e-3"/>
-      </inertial>
-      <visual>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/right_finger.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/right_finger_convex.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </collision>
-    </link>
+        <material name="White">
+            <color rgba="1 1 1 1"/>
+        </material>
 
-    <link name="left_finger">
-      <inertial>
-        <origin xyz="0.01491 0.061581 0" rpy="0 0 0"/>
-        <mass value="0.203967"/>
-        <inertia ixx="1.053e-3" ixy="-3.865e-4" ixz="-1.144e-9" iyy="3.051e-4" iyz="-4.733e-9" izz="1.323e-3"/>
-      </inertial>
-      <visual>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/left_finger.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/left_finger_convex.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </collision>
-    </link>
+        <link name="palm">
+            <inertial>
+                <origin xyz="0.01877 0.0475 -0.000028" rpy="0 0 0"/>
+                <mass value="0.406611"/>
+                <inertia ixx="2.719e-3" ixy="-3.243e-4" ixz="228.248e-9" iyy="2.564e-4" iyz="1515.727e-9" izz="2.9e-3"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/palm.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.0225 0.0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.045 0.2658 0.0675"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <xacro:unless value="${connected_to == ''}">
-      <joint name="palm_joint" type="fixed">
-        <parent link="${connected_to}"/>
-        <child link="palm"/>
-        <origin xyz="${xyz}" rpy="${rpy}"/>
-      </joint>
-    </xacro:unless>
+        <link name="right_finger">
+            <inertial>
+                <origin xyz="0.01491 -0.06058 0" rpy="0 0 0"/>
+                <mass value="0.203967"/>
+                <inertia ixx="1.025e-3" ixy="3.865e-4" ixz="-1.144e-9" iyy="3.051e-4" iyz="4.649e-9" izz="1.295e-3"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/right_finger.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.011 -0.04 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.048 0.026 0.030"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.0235 -0.0832 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.022 0.1123 0.03"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.069 -0.13 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.112 0.0157 0.03"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.105 -0.1232 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.04 0.0323 0.03"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <joint name="right_finger_joint" type="prismatic">
-      <parent link="palm"/>
-      <child link="right_finger"/>
-      <origin xyz="0.032 0 0" rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
-      <limit effort="588" lower="0.0" upper="0.02" velocity="3.772"/>
-    </joint>
+        <link name="left_finger">
+            <inertial>
+                <origin xyz="0.01491 0.061581 0" rpy="0 0 0"/>
+                <mass value="0.203967"/>
+                <inertia ixx="1.053e-3" ixy="-3.865e-4" ixz="-1.144e-9" iyy="3.051e-4" iyz="-4.733e-9" izz="1.323e-3"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/left_finger.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.011 0.04 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.048 0.026 0.030"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.0235 0.0832 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.022 0.1123 0.03"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.069 0.12 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.112 0.03 0.03"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <joint name="left_finger_joint" type="prismatic">
-      <parent link="palm"/>
-      <child link="left_finger"/>
-      <origin xyz="0.032 0 0" rpy="0 0 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit effort="588" lower="0.0" upper="0.02" velocity="3.772"/>
-      <mimic joint="right_finger_joint"/>
-    </joint>
+        <link name="camera">
+            <inertial>
+                <mass value="0.05"/>
+                <origin xyz="0 0 0"/>
+                <inertia ixx="1.271e-3" ixy="2.07e-7" ixz="8.854e-6" iyy="5.190e-4" iyz="1.001e-6" izz="9.976e-4"/>
+            </inertial>
+            <visual>
+                <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.022 0.021 0.0226"/>
+                </geometry>
+                <material name="Black"/>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.01 0.04 0.04"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <transmission name="trans_right_finger_joint">
-      <type>transmission_interface/SimpleTransmission</type>
-      <joint name="right_finger_joint">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
-      <actuator name="right_finger_motor">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
-    </transmission>
-    <transmission name="trans_left_finger_joint">
-      <type>transmission_interface/SimpleTransmission</type>
-      <joint name="left_finger_joint">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
-      <actuator name="left_finger_motor">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
-    </transmission>
+        <joint name="camera_joint" type="fixed">
+            <parent link="palm"/>
+            <child link="camera"/>
+            <origin xyz="0.055 -0.085 0.0962" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+        </joint>
 
-  </xacro:macro>
+        <xacro:unless value="${connected_to == ''}">
+            <joint name="palm_joint" type="fixed">
+                <parent link="${connected_to}"/>
+                <child link="palm"/>
+                <origin xyz="${xyz}" rpy="${rpy}"/>
+            </joint>
+        </xacro:unless>
+
+        <joint name="right_finger_joint" type="prismatic">
+            <parent link="palm"/>
+            <child link="right_finger"/>
+            <origin xyz="0.032 0 0" rpy="0 0 0"/>
+            <axis xyz="0 1 0"/>
+            <limit effort="588" lower="0.0" upper="0.02" velocity="3.772"/>
+        </joint>
+
+        <joint name="left_finger_joint" type="prismatic">
+            <parent link="palm"/>
+            <child link="left_finger"/>
+            <origin xyz="0.032 0 0" rpy="0 0 0"/>
+            <axis xyz="0 -1 0"/>
+            <limit effort="588" lower="0.0" upper="0.02" velocity="3.772"/>
+            <mimic joint="right_finger_joint"/>
+        </joint>
+
+        <xacro:if value="${simulation}">
+            <gazebo>
+                <plugin name="left_finger_mimic_joint_plugin"
+                        filename="libroboticsgroup_upatras_gazebo_mimic_joint_plugin.so">
+                    <joint>right_finger_joint</joint>
+                    <mimicJoint>left_finger_joint</mimicJoint>
+                    <hasPID/>
+                    <maxEffort>588.0</maxEffort>
+                </plugin>
+            </gazebo>
+            <gazebo reference="right_finger">
+                <self_collide>1</self_collide>
+                <mu1 value="2000000000.0"/>
+                <mu2 value="2000000000.0"/>
+                <kp value="1000000.0"/>
+                <kd value="100.0"/>
+                <material>Gazebo/Black</material>
+            </gazebo>
+            <gazebo reference="left_finger">
+                <self_collide>1</self_collide>
+                <mu1 value="2000000000.0"/>
+                <mu2 value="2000000000.0"/>
+                <kp value="1000000.0"/>
+                <kd value="100.0"/>
+                <material>Gazebo/Black</material>
+            </gazebo>
+        </xacro:if>
+
+        <transmission name="trans_right_finger_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="right_finger_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>0.0</offset>
+            </joint>
+            <actuator name="right_finger_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>-4712.388</mechanicalReduction>
+            </actuator>
+        </transmission>
+
+    </xacro:macro>
 </robot>

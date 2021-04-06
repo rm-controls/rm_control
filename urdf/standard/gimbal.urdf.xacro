@@ -5,68 +5,140 @@
     <xacro:property name="pitch_lower_limit" value="-0.734"/>
     <xacro:property name="pitch_upper_limit" value="0.422"/>
 
-    <link name="yaw">
-        <inertial>
-            <mass value="0.592087"/>
-            <origin xyz="0 0 0.0127"/>
-            <inertia ixx="6.17e-4" ixy="0." ixz="0." iyy="6.182e-4"
-                     iyz="0." izz="1.07e-3"/>
-        </inertial>
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-        </collision>
-    </link>
+    <xacro:macro name="gimbal" params="simulation">
 
-    <joint name="yaw_joint" type="revolute">
-        <origin xyz="0 0 0.0696"
-                rpy="0 0 0"/>
-        <dynamics damping="0.0" friction="0.1"/>
-        <limit effort="1.2" velocity="31" lower="-1e10" upper="1e10"/>
-        <parent link="base_link"/>
-        <child link="yaw"/>
-        <axis xyz="0 0 1"/>
-    </joint>
+        <link name="yaw">
+            <inertial>
+                <mass value="0.592087"/>
+                <origin xyz="0 0 0.0127"/>
+                <inertia ixx="6.17e-4" ixy="0." ixz="0." iyy="6.182e-4"
+                         iyz="0." izz="1.07e-3"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <link name="pitch">
-        <inertial>
-            <mass value="1.538674"/>
-            <origin xyz="0.009047 -0.00307 0.019014"/>
-            <inertia ixx="1.148e-2" ixy="1.569e-3" ixz="2.374e-3" iyy="2.472e-2"
-                     iyz="-8.276e-4" izz="2.189e-2"/>
-        </inertial>
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/standard/pitch.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/standard/pitch.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-        </collision>
-    </link>
+        <joint name="yaw_joint" type="revolute">
+            <origin xyz="0 0 0.0696"
+                    rpy="0 0 0"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <limit effort="1.2" velocity="31" lower="-1e10" upper="1e10"/>
+            <parent link="base_link"/>
+            <child link="yaw"/>
+            <axis xyz="0 0 1"/>
+        </joint>
 
-    <joint name="pitch_joint" type="revolute">
-        <origin xyz="0 0 0.189" rpy="0 0 0"/>
-        <dynamics damping="0.0" friction="0.1"/>
-        <limit effort="1.2" velocity="13.82" lower="${pitch_lower_limit}" upper="${pitch_upper_limit}"/>
-        <safety_controller k_position="100" k_velocity="0.1"
-                           soft_lower_limit="${pitch_lower_limit+threshold}"
-                           soft_upper_limit="${pitch_upper_limit-threshold}"/>
-        <parent link="yaw"/>
-        <child link="pitch"/>
-        <axis xyz="0 1 0 "/>
-    </joint>
+        <link name="pitch">
+            <inertial>
+                <mass value="1.475"/>
+                <origin xyz="0.0168 -0.0028 0.0225"/>
+                <inertia ixx="5.619e-3" ixy="1.192e-4" ixz="-1.795e-4" iyy="6.577e-3"
+                         iyz="8.931e-5" izz="6.867e-3"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/standard/pitch.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/standard/pitch.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="pitch_joint" type="revolute">
+            <origin xyz="0 0 0.189" rpy="0 0 0"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <limit effort="1.2" velocity="13.82" lower="${pitch_lower_limit}" upper="${pitch_upper_limit}"/>
+            <safety_controller k_position="100" k_velocity="0.1"
+                               soft_lower_limit="${pitch_lower_limit+threshold}"
+                               soft_upper_limit="${pitch_upper_limit-threshold}"/>
+            <parent link="yaw"/>
+            <child link="pitch"/>
+            <axis xyz="0 1 0 "/>
+        </joint>
+
+
+        <link name="camera">
+            <inertial>
+                <mass value="0.17671"/>
+                <origin xyz="0.022 0.0 0.0"/>
+                <inertia ixx="2.129e-5" ixy="7.329e-8" ixz="-1.11e-7" iyy="2.198e-4" iyz="-8.04e-7" izz="2.197e-4"/>
+            </inertial>
+            <visual>
+                <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="Black"/>
+            </visual>
+            <collision>
+                <origin xyz="0.02 0.0 0.0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="camera_joint" type="fixed">
+            <parent link="pitch"/>
+            <child link="camera"/>
+            <origin xyz="0.064 0.0 -0.043" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+        </joint>
+
+        <xacro:if value="${simulation}">
+            <!--            <gazebo reference="camera">-->
+            <!--                <sensor type="camera" name="camera_node">-->
+            <!--                    <update_rate>30.0</update_rate>-->
+            <!--                    <camera name="head">-->
+            <!--                        <horizontal_fov>1.3962634</horizontal_fov>-->
+            <!--                        <image>-->
+            <!--                            <width>1920</width>-->
+            <!--                            <height>1080</height>-->
+            <!--                            <format>R8G8B8</format>-->
+            <!--                        </image>-->
+            <!--                        <clip>-->
+            <!--                            <near>0.02</near>-->
+            <!--                            <far>300</far>-->
+            <!--                        </clip>-->
+            <!--                        <noise>-->
+            <!--                            <type>gaussian</type>-->
+            <!--                            <mean>0.0</mean>-->
+            <!--                            <stddev>0.007</stddev>-->
+            <!--                        </noise>-->
+            <!--                    </camera>-->
+            <!--                    <plugin name="gazebo_camera" filename="libgazebo_ros_camera.so">-->
+            <!--                        <alwaysOn>true</alwaysOn>-->
+            <!--                        <updateRate>0.0</updateRate>-->
+            <!--                        <cameraName>/camera</cameraName>-->
+            <!--                        <imageTopicName>image_raw</imageTopicName>-->
+            <!--                        <cameraInfoTopicName>camera_info</cameraInfoTopicName>-->
+            <!--                        <frameName>camera</frameName>-->
+            <!--                        <hackBaseline>0.07</hackBaseline>-->
+            <!--                        <distortionK1>0.0</distortionK1>-->
+            <!--                        <distortionK2>0.0</distortionK2>-->
+            <!--                        <distortionK3>0.0</distortionK3>-->
+            <!--                        <distortionT1>0.0</distortionT1>-->
+            <!--                        <distortionT2>0.0</distortionT2>-->
+            <!--                    </plugin>-->
+            <!--                </sensor>-->
+            <!--            </gazebo>-->
+        </xacro:if>
+
+    </xacro:macro>
 
 </robot>

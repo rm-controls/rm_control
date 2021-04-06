@@ -1,0 +1,94 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="chassis">
+
+    <xacro:include filename="$(find rm_description)/urdf/common/mecanum_wheel.urdf.xacro"/>
+
+    <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
+    <xacro:property name="wheel_track" value="0.380"/>
+    <xacro:property name="wheel_base" value="0.420"/>
+    <xacro:property name="wheel_offset_z" value="-0.1090"/>
+    <xacro:property name="wheel_joint_damping" value="1.0"/>
+    <xacro:property name="wheel_joint_friction" value="1.0"/>
+
+    <xacro:macro name="chassis" params="roller_type">
+
+        <link name="base_link">
+            <inertial>
+                <mass value="28.19"/>
+                <origin xyz="-0.0206 -0.00126 -0.0164"/>
+                <inertia ixx="1.32e+0" ixy="-8.378e-2" ixz="6.28e-2" iyy=" 1.549e+0"
+                         iyz="5.948e-2" izz="2.024e+0"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/base.stl" scale="0.001 .001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.5845 0.526 0.2"/>
+                </geometry>
+            </collision>
+            <!--            <collision>
+                            <origin xyz="-0.033 -0.1 0.267" rpy="0 0 0.7853982"/>
+                            <geometry>
+                                <box size="0.0207 0.0207 0.334"/>
+                            </geometry>
+                        </collision>
+                        <collision>
+                            <origin xyz="-0.033 0.10 0.267" rpy="0 0 0.7853982"/>
+                            <geometry>
+                                <box size="0.0207 0.0207 0.334"/>
+                            </geometry>
+                        </collision>-->
+            <collision>
+                <origin xyz="-0.23225 -0.1 0.267" rpy="0 0 0.7853982"/>
+                <geometry>
+                    <box size="0.0207 0.0207 0.334"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="-0.23225 0.1 0.267" rpy="0 0 0.7853982"/>
+                <geometry>
+                    <box size="0.0207 0.0207 0.334"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="-0.193 -0.189 0.235" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.186 0.1 0.3"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="-0.0623 -0.2405 0.242" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.08 0.003 0.06"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <xacro:mecanum_wheel prefix="front_left" connected_to="base_link"
+                             wheel_x_offset="${wheel_track/2}" wheel_y_offset="${wheel_base/2}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="1" roller_type="${roller_type}"/>
+        <xacro:mecanum_wheel prefix="front_right" connected_to="base_link"
+                             wheel_x_offset="${wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="-1" roller_type="${roller_type}"/>
+        <xacro:mecanum_wheel prefix="back_left" connected_to="base_link"
+                             wheel_x_offset="${-wheel_track/2}" wheel_y_offset="${wheel_base/2}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="-1" roller_type="${roller_type}"/>
+        <xacro:mecanum_wheel prefix="back_right" connected_to="base_link"
+                             wheel_x_offset="${-wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="1" roller_type="${roller_type}"/>
+        <xacro:wheel_transmission prefix="front_left" mechanical_reduction="1"/>
+        <xacro:wheel_transmission prefix="front_right" mechanical_reduction="-1"/>
+        <xacro:wheel_transmission prefix="back_left" mechanical_reduction="1"/>
+        <xacro:wheel_transmission prefix="back_right" mechanical_reduction="-1"/>
+
+    </xacro:macro>
+
+</robot>

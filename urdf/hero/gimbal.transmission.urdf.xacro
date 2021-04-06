@@ -4,7 +4,6 @@
     <transmission name="trans_yaw_joint">
         <type>transmission_interface/SimpleTransmission</type>
         <actuator name="yaw_joint_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
         <joint name="yaw_joint">
@@ -18,6 +17,7 @@
         <actuator name="pitch_joint_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>-1</mechanicalReduction>
+            <mechanicalReduction>1</mechanicalReduction>
         </actuator>
         <joint name="pitch_joint">
             <offset>0.902</offset>

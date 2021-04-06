@@ -1,181 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="arm">
 
-  <xacro:macro name="arm" params="connected_to">
+    <xacro:macro name="arm" params="connected_to">
 
-    <!--  link  -->
-    <link name="link0">
-      <inertial>
-        <mass value="0.293"/>
-        <origin xyz="0 0 0.00608"/>
-        <inertia ixx="2.916e-4" ixy="0" ixz="869.776e-9" iyy="2.9134e-4" iyz="0." izz="5.507e-4"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/link0.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0.008"/>
-        <geometry>
-          <box size="0.12 0.12 0.016"/>
-        </geometry>
-      </collision>
-    </link>
+        <!--  link  -->
+        <link name="link1">
+            <inertial>
+                <mass value="1.7056"/>
+                <origin xyz="0.004 0 0.0571"/>
+                <inertia ixx="1.542e-2" ixy="0" ixz="-1.332e-3" iyy="1.028e-2" iyz="0" izz="1.017e-2"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/link1.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="-0.045 0 0.035" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.15 0.106 0.07"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.040 0 0.1" rpy="0 -0.95993 0"/>
+                <geometry>
+                    <box size="0.17 0.106 0.095"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0 0 0.05" rpy="1.5707963 0 0"/>
+                <geometry>
+                    <cylinder length="0.188" radius="0.047"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <link name="link1">
-      <inertial>
-        <mass value="2.775151"/>
-        <origin xyz="0.00286 0.00018 0.05209"/>
-        <inertia ixx="1.962e-2" ixy="4573.477e-9" ixz="-3.727e-3" iyy="2.223e-2" iyz="-2536.137e-9" izz="1.949e-2"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/link1.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="-0.02 0 0.05" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.200 0.182 0.100"/>
-        </geometry>
-      </collision>
-    </link>
+        <link name="link2">
+            <inertial>
+                <mass value="1.4763"/>
+                <origin xyz="0.05652 0 0"/>
+                <inertia ixx="1.976e-3" ixy="5.791e-5" ixz="-2.47366e-7" iyy="8.418e-3" iyz="1.0e-7" izz="8.946e-3"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/link2.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.062 0 0"/>
+                <geometry>
+                    <box size="0.225 0.096 0.070"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <link name="link2">
-      <inertial>
-        <mass value="1.372"/>
-        <origin xyz="0.07668 -0.001679 0"/>
-        <inertia ixx="2.04e-3" ixy="1.959e-4" ixz="-235.828e-9" iyy="1.496e-2" iyz="0." izz="1.564e-2"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/link2.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0.115 0 0"/>
-        <geometry>
-          <box size="0.335 0.100 0.094"/>
-        </geometry>
-      </collision>
-    </link>
+        <link name="link3">
+            <inertial>
+                <mass value="0.5946"/>
+                <origin xyz="0.0471 -0.0094 0.0003"/>
+                <inertia ixx="6.49e-4" ixy="5.036e-5" ixz="-2.372e-5" iyy="2.739e-3" iyz="1.795e-6" izz="3.077e-3"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/link3.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.063 0 0"/>
+                <geometry>
+                    <box size="0.191 0.084 0.053"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0 0 0" rpy="1.5707963 0 0"/>
+                <geometry>
+                    <cylinder length="0.082" radius="0.047"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <link name="link3">
-      <inertial>
-        <mass value="0.697"/>
-        <origin xyz="0.079837 -0.00581 0.000299"/>
-        <inertia ixx="8.905e-4" ixy="6.123e-5" ixz="-3.193e-5" iyy="6.036e-3" iyz="1936.328e-9" izz="6.588e-3"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/link3.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0.060 0 0"/>
-        <geometry>
-          <box size="0.200 0.08 0.07"/>
-        </geometry>
-      </collision>
-    </link>
+        <link name="link4">
+            <inertial>
+                <mass value="0.361"/>
+                <origin xyz="0 0 0"/>
+                <inertia ixx="2.593e-4" ixy="5.907e-3" ixz="2.629e-2" iyy="8.662e-5" iyz="0." izz="2.589e-4"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/link4.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.0513 0.074 0.0513"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <link name="link4">
-      <inertial>
-        <mass value="0.367"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="2.803e-4" ixy="0.15e-9" ixz="0" iyy="19.296e-5" iyz="0." izz="2.798e-4"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/link4.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.0513 0.0882 0.0513"/>
-        </geometry>
-      </collision>
-    </link>
+        <link name="link5">
+            <inertial>
+                <mass value="0.249"/>
+                <origin xyz="0.02737 0.0 0.0"/>
+                <inertia ixx="6.090e-5" ixy="7.70024e-7" ixz="7.35489e-7" iyy="2.293e-4" iyz="0." izz=" 2.293e-4"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/link5.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.015 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.056 0.0513 0.0513"/>
+                </geometry>
+            </collision>
+        </link>
 
-    <link name="link5">
-      <inertial>
-        <mass value="0.257"/>
-        <origin xyz="0.02803 0.00084 -0.00089"/>
-        <inertia ixx="6.485e-5" ixy="-754.967e-9" ixz="-793.024e-9" iyy="2.477e-4" iyz="0." izz="2.477e-4"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://rm_description/meshes/engineer/link5.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0.015 0 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.057 0.0513 0.0513"/>
-        </geometry>
-      </collision>
-    </link>
+        <!--  joint  -->
+        <joint name="joint1" type="revolute">
+            <axis xyz="0 0 1"/>
+            <origin xyz="0.133 0 0.1"/>
+            <!--      limit not work while type="continuous"-->
+            <limit effort="20" velocity="25" lower="-${pi}" upper="${pi}"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <parent link="${connected_to}"/>
+            <child link="link1"/>
+        </joint>
 
-    <!--  joint  -->
-    <joint name="joint0" type="fixed">
-      <origin xyz="0 0 0.35"/>
-      <parent link="${connected_to}"/>
-      <child link="link0"/>
-    </joint>
+        <joint name="joint2" type="revolute">
+            <axis xyz="0 1 0"/>
+            <origin xyz="0.05909 0 0.1280"/>
+            <limit effort="30" velocity="10" lower="-2.231" upper="0.407"/>
+            <dynamics damping="0.0" friction="0.8"/>
+            <parent link="link1"/>
+            <child link="link2"/>
+        </joint>
 
-    <joint name="joint1" type="revolute">
-      <axis xyz="0 0 1"/>
-      <origin xyz="0 0 0.019"/>
-      <!--      limit not work while type="continuous"-->
-      <limit effort="20" velocity="25" lower="-${pi}" upper="${pi}"/>
-      <dynamics damping="0.0" friction="0.1"/>
-      <parent link="link0"/>
-      <child link="link1"/>
-    </joint>
+        <joint name="joint3" type="revolute">
+            <axis xyz="0 1 0"/>
+            <origin xyz="0.16 0 0"/>
+            <limit effort="30" velocity="10" lower="-2.1645" upper="2.4078"/>
+            <dynamics damping="0.0" friction="0.5"/>
+            <parent link="link2"/>
+            <child link="link3"/>
+        </joint>
 
-    <joint name="joint2" type="revolute">
-      <axis xyz="0 1 0"/>
-      <origin xyz="0.11341 0 0.1380"/>
-      <limit effort="30" velocity="10" lower="-${pi}" upper="${0.44*pi}"/>
-      <dynamics damping="0.0" friction="0.8"/>
-      <parent link="link1"/>
-      <child link="link2"/>
-    </joint>
+        <joint name="joint4" type="revolute">
+            <axis xyz="0 1 0"/>
+            <origin xyz="0.145 0 0"/>
+            <limit effort="2.4" velocity="34" lower="-${0.55*pi}" upper="${0.55*pi}"/>
+            <dynamics damping="0.0" friction="0.05"/>
+            <parent link="link3"/>
+            <child link="link4"/>
+        </joint>
 
-    <joint name="joint3" type="revolute">
-      <axis xyz="0 1 0"/>
-      <origin xyz="0.250 0 0"/>
-      <limit effort="30" velocity="10" lower="-${0.722*pi}" upper="${0.722*pi}"/>
-      <dynamics damping="0.0" friction="0.5"/>
-      <parent link="link2"/>
-      <child link="link3"/>
-    </joint>
+        <joint name="joint5" type="revolute">
+            <axis xyz="1 0 0"/>
+            <origin xyz="0 0 0"/>
+            <limit effort="1.2" velocity="34" lower="-${pi}" upper="${pi}"/>
+            <dynamics damping="0.0" friction="0.05"/>
+            <parent link="link4"/>
+            <child link="link5"/>
+        </joint>
 
-    <joint name="joint4" type="revolute">
-      <axis xyz="0 1 0"/>
-      <origin xyz="0.180 0 0"/>
-      <limit effort="1.2" velocity="34" lower="-${0.55*pi}" upper="${0.55*pi}"/>
-      <dynamics damping="0.0" friction="0.05"/>
-      <parent link="link3"/>
-      <child link="link4"/>
-    </joint>
-
-    <joint name="joint5" type="revolute">
-      <axis xyz="1 0 0"/>
-      <origin xyz="0 0 0"/>
-      <limit effort="1.2" velocity="34" lower="-${2*pi}" upper="${2*pi}"/>
-      <dynamics damping="0.0" friction="0.05"/>
-      <parent link="link4"/>
-      <child link="link5"/>
-    </joint>
-
-  </xacro:macro>
+    </xacro:macro>
 </robot>
