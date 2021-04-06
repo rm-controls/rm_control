@@ -4,7 +4,6 @@
     <transmission name="trans_trigger_joint">
         <type>transmission_interface/SimpleTransmission</type>
         <actuator name="trigger_joint_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
         <joint name="trigger_joint">
@@ -13,11 +12,9 @@
     </transmission>
 
 
-
     <transmission name="trans_left_friction_wheel_joint_joint">
         <type>transmission_interface/SimpleTransmission</type>
         <actuator name="left_friction_wheel_joint_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>-1</mechanicalReduction>
         </actuator>
         <joint name="left_friction_wheel_joint">
@@ -28,7 +25,6 @@
     <transmission name="trans_right_friction_wheel_joint_joint">
         <type>transmission_interface/SimpleTransmission</type>
         <actuator name="right_friction_wheel_joint_motor">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>-1</mechanicalReduction>
         </actuator>
         <joint name="right_friction_wheel_joint">
