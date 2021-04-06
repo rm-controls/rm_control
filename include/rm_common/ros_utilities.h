@@ -15,7 +15,7 @@ T getParam(ros::NodeHandle &pnh,
   return param_val;
 }
 
-inline double xmlRpcGetDouble(XmlRpc::XmlRpcValue &value, const std::string &field, double default_value) {
+inline double xmlRpcGetDouble(const XmlRpc::XmlRpcValue &value, const std::string &field, double default_value) {
   if (value.hasMember(field)) {
     ROS_ASSERT((value[field].getType() == XmlRpc::XmlRpcValue::TypeDouble) ||
         (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt));
@@ -30,7 +30,7 @@ inline double xmlRpcGetDouble(XmlRpc::XmlRpcValue &value, const std::string &fie
   }
 }
 
-inline double xmlRpcGetDouble(XmlRpc::XmlRpcValue &value, int field, double default_value) {
+inline double xmlRpcGetDouble(const XmlRpc::XmlRpcValue &value, int field, double default_value) {
   ROS_ASSERT((value[field].getType() == XmlRpc::XmlRpcValue::TypeDouble) ||
       (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt));
   if (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt) {
