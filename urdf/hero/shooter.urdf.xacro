@@ -9,14 +9,14 @@
     <xacro:property name="wheel_and_wheel_offset_x" value="0.07"/>
 
 
-    <xacro:friction_wheel prefixs="left_front" connected_to="pitch"
-                          wheel_x_offset="${wheel_offset_x+wheel_and_wheel_offset_x}" wheel_y_offset="${wheel_offset_y}"
-                          wheel_z_offset="${wheel_offset_z}"/>
+    <!--    <xacro:friction_wheel prefixs="left_front" connected_to="pitch"-->
+    <!--                          wheel_x_offset="${wheel_offset_x+wheel_and_wheel_offset_x}" wheel_y_offset="${wheel_offset_y}"-->
+    <!--                          wheel_z_offset="${wheel_offset_z}"/>-->
 
-    <xacro:friction_wheel prefixs="right_front" connected_to="pitch"
-                          wheel_x_offset="${wheel_offset_x+wheel_and_wheel_offset_x}"
-                          wheel_y_offset="${-wheel_offset_y}"
-                          wheel_z_offset="${wheel_offset_z}"/>
+    <!--    <xacro:friction_wheel prefixs="right_front" connected_to="pitch"-->
+    <!--                          wheel_x_offset="${wheel_offset_x+wheel_and_wheel_offset_x}"-->
+    <!--                          wheel_y_offset="${-wheel_offset_y}"-->
+    <!--                          wheel_z_offset="${wheel_offset_z}"/>-->
 
     <xacro:friction_wheel prefixs="left_back" connected_to="pitch"
                           wheel_x_offset="${wheel_offset_x}" wheel_y_offset="${wheel_offset_y}"
