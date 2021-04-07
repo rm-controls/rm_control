@@ -86,7 +86,7 @@
                 <material name="Black"/>
             </visual>
             <collision>
-                <origin xyz="0.02 0.0 0.0" rpy="0 -1.57 0"/>
+                <origin xyz="0 0 0" rpy="0 -1.57 0"/>
                 <geometry>
                     <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
