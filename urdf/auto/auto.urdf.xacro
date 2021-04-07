@@ -22,6 +22,7 @@
     <xacro:if value="$(arg load_gimbal)">
         <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.urdf.xacro"/>
         <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.transmission.urdf.xacro"/>
+        <xacro:gimbal simulation="$(arg use_simulation)"/>
     </xacro:if>
 
     <xacro:if value="$(arg load_shooter)">
