@@ -11,6 +11,7 @@
 class LowPassFilter {
  public:
   explicit LowPassFilter(ros::NodeHandle &nh);
+  explicit LowPassFilter(double cutoff_freq);
   void input(double in);
   void input(double in, ros::Time time);
   double output();

@@ -13,6 +13,11 @@ LowPassFilter::LowPassFilter(ros::NodeHandle &nh) {
     realtime_pub_.reset(new realtime_tools::RealtimePublisher<rm_msgs::LpData>(nh, "lp_filter", 100));
 }
 
+LowPassFilter::LowPassFilter(double cutoff_freq) {
+  is_debug_ = false;
+  cutoff_frequency_ = cutoff_freq;
+}
+
 void LowPassFilter::input(double in, ros::Time time) {
   // My filter reference was Julius O. Smith III, Intro. to Digital Filters
   // With Audio Applications.
