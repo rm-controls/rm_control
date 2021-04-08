@@ -15,6 +15,7 @@ class LowPassFilter {
   void input(double in);
   void input(double in, ros::Time time);
   double output();
+  void reset();
  private:
   double in_[3]{};
   double out_[3]{};

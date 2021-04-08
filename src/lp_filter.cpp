@@ -73,4 +73,9 @@ double LowPassFilter::output() {
   return out_[0];
 }
 
-
+void LowPassFilter::reset() {
+  for (int i = 0; i < 3; ++i) {
+    in_[i] = 0;
+    out_[i] = 0;
+  }
+}
