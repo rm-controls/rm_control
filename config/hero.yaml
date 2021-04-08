@@ -28,7 +28,7 @@ rm_base:
       lp_cutoff_frequency: 150
     yaw_joint_motor:
       bus: can0
-      id: 0x208
+      id: 0x205
       type: rm_6020
       lp_cutoff_frequency: 100
     pitch_joint_motor:
@@ -58,6 +58,6 @@ rm_base:
       lp_cutoff_frequency: 60
     trigger_joint_motor:
       bus: can0
-      id: 0x205
+      id: 0x206
       type: rm_3508
       lp_cutoff_frequency: 150
