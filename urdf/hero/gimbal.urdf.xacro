@@ -94,7 +94,7 @@
     <joint name="camera_joint" type="fixed">
         <parent link="pitch"/>
         <child link="camera"/>
-        <origin xyz="0.12 0.0 -0.05" rpy="-1.57 0 -1.57"/>
+        <origin xyz="0.153 0.0 -0.052" rpy="-1.57 0 -1.57"/>
         <axis xyz="0 0 1"/>
     </joint>
 
