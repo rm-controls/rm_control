@@ -2,7 +2,7 @@
 
   <xacro:include filename="$(find rm_description)/urdf/sentry/driven_wheel.urdf.xacro"/>
 
-  <xacro:macro name="chassis">
+  <xacro:macro name="chassis" params="use_simulation">
 
     <link name="base_link">
       <inertial>
@@ -46,9 +46,6 @@
       </collision>
     </link>
 
-
-
-
     <joint name="drive_joint" type="continuous">
       <axis xyz="0 1 0"/>
       <limit effort="1.2" velocity="34" lower="-${2*pi}" upper="${2*pi}"/>
@@ -57,35 +54,37 @@
       <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
 
-    <xacro:driven_wheel num="1">
-      <origin rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
-      <origin xyz="-0.1 0.118 -0.015" rpy="0 0 0"/>
-    </xacro:driven_wheel>
+    <xacro:if value="$(arg use_simulation)">
+      <xacro:driven_wheel num="1">
+        <origin rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <origin xyz="-0.1 0.118 -0.015" rpy="0 0 0"/>
+      </xacro:driven_wheel>
 
-    <xacro:driven_wheel num="2">
-      <origin rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
-      <origin xyz="0.1 0.118 -0.015" rpy="0 0 0"/>
-    </xacro:driven_wheel>
+      <xacro:driven_wheel num="2">
+        <origin rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <origin xyz="0.1 0.118 -0.015" rpy="0 0 0"/>
+      </xacro:driven_wheel>
 
-    <xacro:driven_wheel num="3">
-      <origin rpy="${pi/2} 0 0"/>
-      <axis xyz="0 0 1"/>
-      <origin xyz="-0.1 0.158 -0.0635" rpy="0 0 0"/>
-    </xacro:driven_wheel>
+      <xacro:driven_wheel num="3">
+        <origin rpy="${pi/2} 0 0"/>
+        <axis xyz="0 0 1"/>
+        <origin xyz="-0.1 0.158 -0.0635" rpy="0 0 0"/>
+      </xacro:driven_wheel>
 
-    <xacro:driven_wheel num="4">
-      <origin rpy="${pi/2} 0 0"/>
-      <axis xyz="0 0 1"/>
-      <origin xyz="0.1 0.158 -0.0635" rpy="0 0 0"/>
-    </xacro:driven_wheel>
+      <xacro:driven_wheel num="4">
+        <origin rpy="${pi/2} 0 0"/>
+        <axis xyz="0 0 1"/>
+        <origin xyz="0.1 0.158 -0.0635" rpy="0 0 0"/>
+      </xacro:driven_wheel>
 
-    <xacro:driven_wheel num="5">
-      <origin rpy="${pi/2} 0 0"/>
-      <axis xyz="0 0 1"/>
-      <origin xyz="0 -0.052 -0.0635" rpy="0 0 0"/>
-    </xacro:driven_wheel>
+      <xacro:driven_wheel num="5">
+        <origin rpy="${pi/2} 0 0"/>
+        <axis xyz="0 0 1"/>
+        <origin xyz="0 -0.052 -0.0635" rpy="0 0 0"/>
+      </xacro:driven_wheel>
+    </xacro:if>
 
   </xacro:macro>
 

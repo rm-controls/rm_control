@@ -9,7 +9,7 @@
     <xacro:if value="$(arg load_chassis)">
         <xacro:include filename="$(find rm_description)/urdf/sentry/chassis.urdf.xacro"/>
         <xacro:include filename="$(find rm_description)/urdf/sentry/chassis.transmission.urdf.xacro"/>
-        <xacro:chassis/>
+        <xacro:chassis use_simulation="$(arg use_simulation)"/>
     </xacro:if>
 
     <xacro:if value="$(arg load_gimbal)">
