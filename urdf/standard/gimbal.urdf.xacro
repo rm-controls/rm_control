@@ -3,7 +3,7 @@
 
     <xacro:property name="threshold" value="0.1"/>
     <xacro:property name="pitch_lower_limit" value="-0.7"/>
-    <xacro:property name="pitch_upper_limit" value="0.2"/>
+    <xacro:property name="pitch_upper_limit" value="0.4"/>
 
     <xacro:macro name="gimbal" params="simulation">
 
