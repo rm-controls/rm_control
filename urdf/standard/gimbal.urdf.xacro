@@ -2,8 +2,8 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:property name="threshold" value="0.1"/>
-    <xacro:property name="pitch_lower_limit" value="-0.734"/>
-    <xacro:property name="pitch_upper_limit" value="0.422"/>
+    <xacro:property name="pitch_lower_limit" value="-0.7"/>
+    <xacro:property name="pitch_upper_limit" value="0.2"/>
 
     <xacro:macro name="gimbal" params="simulation">
 
