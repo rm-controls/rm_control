@@ -1,0 +1,5 @@
+std_msgs/Header header
+geometry_msgs/Pose real_detection_pose
+geometry_msgs/Pose filtered_detection_pose
+geometry_msgs/Twist real_detection_twist
+geometry_msgs/Twist filtered_detection_twist

@@ -21,7 +21,8 @@ add_message_files(
     GimbalTargetData.msg
     Referee.msg
     LpData.msg
-        PowerManagerData.msg
+    KalmanData.msg
+    PowerManagerData.msg
 )
 
 add_service_files(
