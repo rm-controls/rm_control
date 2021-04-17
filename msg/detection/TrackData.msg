@@ -1,4 +1,3 @@
 uint8 id
-geometry_msgs/Pose pose2camera
-geometry_msgs/Pose pose2map
-geometry_msgs/Twist speed2map
+geometry_msgs/Pose camera2detection
+geometry_msgs/Pose map2detection
