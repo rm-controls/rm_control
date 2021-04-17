@@ -6,10 +6,10 @@
 
     <link name="base_link">
       <inertial>
-        <mass value="7.41"/>
-        <origin xyz="0 0.055 -0.1747"/>
-        <inertia ixx="4.024e-1" ixy="7.617e-3" ixz="-1.318e-2" iyy="3.33e-1"
-                 iyz="7.959e-2" izz="1.802e-1"/>
+        <mass value="8.250"/>
+        <origin xyz="0.0 0.051 -0.148"/>
+        <inertia ixx="3.838e-1" ixy="1.075e-2" ixz="1.397e-5" iyy="2.601e-1"
+                 iyz="7.528e-2" izz="2.369e-1"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -28,8 +28,8 @@
     <link name="link_drive_wheel">
       <inertial>
         <mass value="0.0839"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="3.345e-5" ixy="0" ixz="0" iyy="4.185e-5"
+        <origin xyz="0 0.01 0"/>
+        <inertia ixx="3.345e-5" ixy="0" ixz="0" iyy="-8.387e-5"
                  iyz="-2.8558e-8" izz="3.347e-5"/>
       </inertial>
       <visual>
@@ -51,7 +51,7 @@
       <limit effort="1.2" velocity="34" lower="-${2*pi}" upper="${2*pi}"/>
       <parent link="base_link"/>
       <child link="link_drive_wheel"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 -0.0185 0" rpy="0 0 0"/>
     </joint>
 
     <xacro:if value="$(arg use_simulation)">
