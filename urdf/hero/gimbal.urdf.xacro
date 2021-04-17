@@ -38,10 +38,10 @@
 
     <link name="pitch">
         <inertial>
-            <mass value="1.65"/>
-            <origin xyz="0.080137 -0.002734 0.011093"/>
-            <inertia ixx="3.355e-3" ixy="2.3e-5" ixz="-1.069e-3" iyy="2.153e-2"
-                     iyz="-6.373e-5" izz="1.995e-2"/>
+            <mass value="1.63"/>
+            <origin xyz="0.102 -0.0 0.015"/>
+            <inertia ixx="3.980e-3" ixy="4.110e-6" ixz="-2.651e-3" iyy="2.723e-2"
+                     iyz="6.616e-6" izz=" 2.635e-2"/>
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -70,32 +70,32 @@
         <axis xyz="0 1 0 "/>
     </joint>
 
-    <link name="camera">
-        <inertial>
-            <mass value="0.17671"/>
-            <origin xyz="0.022 0.0 0.0"/>
-            <inertia ixx="2.129e-5" ixy="7.329e-8" ixz="-1.11e-7" iyy="2.198e-4" iyz="-8.04e-7" izz="2.197e-4"/>
-        </inertial>
-        <visual>
-            <origin xyz=" 0 0 0 " rpy="0 -1.57 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-            <material name="Black"/>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 -1.57 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-        </collision>
-    </link>
+    <!--    <link name="camera">-->
+    <!--        <inertial>-->
+    <!--            <mass value="0.17671"/>-->
+    <!--            <origin xyz="0.022 0.0 0.0"/>-->
+    <!--            <inertia ixx="2.129e-5" ixy="7.329e-8" ixz="-1.11e-7" iyy="2.198e-4" iyz="-8.04e-7" izz="2.197e-4"/>-->
+    <!--        </inertial>-->
+    <!--        <visual>-->
+    <!--            <origin xyz=" 0 0 0 " rpy="0 -1.57 0"/>-->
+    <!--            <geometry>-->
+    <!--                <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>-->
+    <!--            </geometry>-->
+    <!--            <material name="Black"/>-->
+    <!--        </visual>-->
+    <!--        <collision>-->
+    <!--            <origin xyz="0 0 0" rpy="0 -1.57 0"/>-->
+    <!--            <geometry>-->
+    <!--                <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>-->
+    <!--            </geometry>-->
+    <!--        </collision>-->
+    <!--    </link>-->
 
-    <joint name="camera_joint" type="fixed">
-        <parent link="pitch"/>
-        <child link="camera"/>
-        <origin xyz="0.153 0.0 -0.052" rpy="1.57 0 1.57"/>
-        <axis xyz="0 0 1"/>
-    </joint>
+    <!--    <joint name="camera_joint" type="fixed">-->
+    <!--        <parent link="pitch"/>-->
+    <!--        <child link="camera"/>-->
+    <!--        <origin xyz="0.153 0.0 -0.052" rpy="1.57 0 1.57"/>-->
+    <!--        <axis xyz="0 0 1"/>-->
+    <!--    </joint>-->
 
 </robot>
