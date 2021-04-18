@@ -52,8 +52,16 @@ class KalmanFilter {
 
   template<typename T1>
   void update(const Eigen::MatrixBase<T1> &z) {
+    update(z, R_);
+  };
+
+  template<typename T1, typename T2>
+  void update(const Eigen::MatrixBase<T1> &z, const Eigen::MatrixBase<T2> &R) {
     if (!inited)
       return; //TODO: add assert
+    //update R_
+    R_ = R;
+    //update
     K_ = P_new_ * H_.transpose()
         * ((H_ * P_new_ * H_.transpose() + R_).inverse());
     x_ = x_ + K_ * (z - H_ * x_);
@@ -62,8 +70,15 @@ class KalmanFilter {
 
   template<typename T1>
   void predict(const Eigen::MatrixBase<T1> &u) {
+    predict(u, Q_);
+  }
+
+  template<typename T1, typename T2>
+  void predict(const Eigen::MatrixBase<T1> &u, const Eigen::MatrixBase<T2> &Q) {
     if (!inited)
       return; //TODO: add assert
+    //update Q_
+    Q_ = Q;
     //predict
     x_ = A_ * x_ + B_ * u;
     P_new_ = A_ * P_ * A_.transpose() + Q_;
