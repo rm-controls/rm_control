@@ -56,33 +56,33 @@
 
     <xacro:if value="$(arg use_simulation)">
       <xacro:driven_wheel num="1">
-        <origin rpy="0 0 0"/>
+        <origin rpy="${-pi/2} 0 0"/>
         <axis xyz="0 1 0"/>
-        <origin xyz="-0.1 0.118 -0.015" rpy="0 0 0"/>
+        <origin xyz="-0.0977 0.0839 -0.013" rpy="0 0 0"/>
       </xacro:driven_wheel>
 
       <xacro:driven_wheel num="2">
-        <origin rpy="0 0 0"/>
+        <origin rpy="${-pi/2} 0 0"/>
         <axis xyz="0 1 0"/>
-        <origin xyz="0.1 0.118 -0.015" rpy="0 0 0"/>
+        <origin xyz="0.0977 0.0839 -0.013" rpy="0 0 0"/>
       </xacro:driven_wheel>
 
       <xacro:driven_wheel num="3">
-        <origin rpy="${pi/2} 0 0"/>
+        <origin rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
-        <origin xyz="-0.1 0.158 -0.0635" rpy="0 0 0"/>
+        <origin xyz="-0.0982 0.135 -0.0571" rpy="0 0 0"/>
       </xacro:driven_wheel>
 
       <xacro:driven_wheel num="4">
-        <origin rpy="${pi/2} 0 0"/>
+        <origin rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
-        <origin xyz="0.1 0.158 -0.0635" rpy="0 0 0"/>
+        <origin xyz="0.0982 0.135 -0.0571" rpy="0 0 0"/>
       </xacro:driven_wheel>
 
       <xacro:driven_wheel num="5">
-        <origin rpy="${pi/2} 0 0"/>
+        <origin rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
-        <origin xyz="0 -0.052 -0.0635" rpy="0 0 0"/>
+        <origin xyz="0 -0.073 -0.0572" rpy="0 0 0"/>
       </xacro:driven_wheel>
     </xacro:if>
 
