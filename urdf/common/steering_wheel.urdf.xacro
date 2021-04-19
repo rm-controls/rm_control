@@ -1,0 +1,66 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="steering_wheel" params="xyz rpy parent">
+
+        <link name="steering_gear">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/common/steering_gear.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <inertial>
+                <mass value="0.546"/>
+                <origin xyz="0. 0.011 0.064" rpy="0 0 0"/>
+                <inertia ixx="3.439e-3" ixy="-5.22e-7" ixz="-7.726e-6" iyy="3.243e-3" iyz="-3.817e-4" izz="6.506e-4"/>
+            </inertial>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/common/steering_gear.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="steering_gear_joint" type="continuous">
+            <axis xyz="0 0 1"/>
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+            <parent link="${parent}"/>
+            <child link="steering_gear"/>
+        </joint>
+
+
+        <link name="steering_wheel">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/common/steering_wheel.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <inertial>
+                <mass value="0.213"/>
+                <origin xyz="0 -0.014 0.0" rpy="0 0 0"/>
+                <inertia ixx="2.318e-4" ixy="0" ixz="0" iyy="2.618e-4" iyz="0" izz="2.308e-4"/>
+            </inertial>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/common/steering_wheel.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="steering_wheel_joint" type="continuous">
+            <axis xyz="0 1 0"/>
+            <origin xyz="0 0 -0.1" rpy="0 0 0"/>
+            <parent link="steering_gear"/>
+            <child link="steering_wheel"/>
+        </joint>
+
+    </xacro:macro>
+
+</robot>
