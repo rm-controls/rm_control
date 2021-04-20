@@ -10,8 +10,6 @@
         <xacro:include filename="$(find rm_description)/urdf/sentry/chassis.urdf.xacro"/>
         <xacro:include filename="$(find rm_description)/urdf/sentry/chassis.transmission.urdf.xacro"/>
         <xacro:chassis use_simulation="$(arg use_simulation)"/>
-        <xacro:include filename="$(find rm_description)/urdf/common/steering_wheel.urdf.xacro"/>
-        <xacro:steering_wheel xyz="-0.5 -0.5 -0.5" rpy="0 0 0" parent="base_link"></xacro:steering_wheel>
     </xacro:if>
 
     <xacro:if value="$(arg load_gimbal)">
