@@ -12,12 +12,6 @@
     <xacro:chassis roller_type="$(arg roller_type)"/>
   </xacro:if>
 
-  <xacro:if value="$(arg load_shooter)">
-    <xacro:include filename="$(find rm_description)/urdf/hero/shooter.urdf.xacro"/>
-    <xacro:include filename="$(find rm_description)/urdf/hero/shooter.transmission.urdf.xacro"/>
-  </xacro:if>
-
-
   <!--  <xacro:if value="$(arg load_shooter)">-->
   <!--    <xacro:include filename="$(find rm_description)/urdf/sentry/shooter.urdf.xacro"/>-->
   <!--    <xacro:include filename="$(find rm_description)/urdf/sentry/shooter.transmission.urdf.xacro"/>-->
@@ -29,6 +23,11 @@
     <xacro:include filename="$(find rm_description)/urdf/common/camera.urdf.xacro"/>
     <xacro:camera_sensor xyz="0.127 0 -0.047" rpy="0 0 0" parent="pitch"
                          camera_sim="$(arg use_simulation)"></xacro:camera_sensor>
+  </xacro:if>
+
+  <xacro:if value="$(arg load_shooter)">
+    <xacro:include filename="$(find rm_description)/urdf/hero/shooter.urdf.xacro"/>
+    <!--    <xacro:include filename="$(find rm_description)/urdf/hero/shooter.transmission.urdf.xacro"/>-->
   </xacro:if>
 
 
