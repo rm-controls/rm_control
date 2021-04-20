@@ -6,19 +6,19 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://rm_description/meshes/common/steering_gear.stl"
+                    <mesh filename="package://rm_description/meshes/common/steering.stl"
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
             <inertial>
-                <mass value="0.546"/>
-                <origin xyz="0. 0.011 0.064" rpy="0 0 0"/>
-                <inertia ixx="3.439e-3" ixy="-5.22e-7" ixz="-7.726e-6" iyy="3.243e-3" iyz="-3.817e-4" izz="6.506e-4"/>
+                <mass value="2.819"/>
+                <origin xyz="0. 0.0 0.004" rpy="0 0 0"/>
+                <inertia ixx="3.904e-3" ixy="3.689e-6" ixz="-9.096e-6" iyy="3.847e-3" iyz="-9.129e-5" izz="1.952e-3"/>
             </inertial>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://rm_description/meshes/common/steering_gear.stl"
+                    <mesh filename="package://rm_description/meshes/common/steering.stl"
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </collision>
@@ -42,8 +42,8 @@
             </visual>
             <inertial>
                 <mass value="0.213"/>
-                <origin xyz="0 -0.014 0.0" rpy="0 0 0"/>
-                <inertia ixx="2.318e-4" ixy="0" ixz="0" iyy="2.618e-4" iyz="0" izz="2.308e-4"/>
+                <origin xyz="0 -0.007 0.0" rpy="0 0 0"/>
+                <inertia ixx="2.012e-4" ixy="0" ixz="0" iyy="2.618e-4" iyz="8.07e-7" izz="2.002e-4"/>
             </inertial>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -56,7 +56,7 @@
 
         <joint name="steering_wheel_joint" type="continuous">
             <axis xyz="0 1 0"/>
-            <origin xyz="0 -0.01 -0.0" rpy="0 0 3.14"/>
+            <origin xyz="0 -0.001 -0.094" rpy="0 0 0"/>
             <parent link="steering_gear"/>
             <child link="steering_wheel"/>
         </joint>
