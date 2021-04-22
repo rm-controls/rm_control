@@ -15,7 +15,9 @@
     <xacro:if value="$(arg load_gimbal)">
         <xacro:include filename="$(find rm_description)/urdf/sentry/gimbal.urdf.xacro"/>
         <xacro:include filename="$(find rm_description)/urdf/sentry/gimbal.transmission.urdf.xacro"/>
-        <xacro:gimbal/>
+        <xacro:include filename="$(find rm_description)/urdf/common/camera.urdf.xacro"/>
+        <xacro:camera_sensor xyz="0.127 0 -0.047" rpy="0 0 0" parent="pitch"
+                             camera_sim="$(arg use_simulation)"></xacro:camera_sensor>
     </xacro:if>
 
     <xacro:if value="$(arg load_shooter)">
