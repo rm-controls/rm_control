@@ -1,8 +1,8 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:macro name="steering_wheel" params="xyz rpy parent">
+    <xacro:macro name="swerve_drive" params="xyz rpy parent">
 
-        <link name="steering_gear">
+        <link name="steering">
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
@@ -24,15 +24,15 @@
             </collision>
         </link>
 
-        <joint name="steering_gear_joint" type="continuous">
+        <joint name="steering_joint" type="continuous">
             <axis xyz="0 0 1"/>
             <origin xyz="${xyz}" rpy="${rpy}"/>
             <parent link="${parent}"/>
-            <child link="steering_gear"/>
+            <child link="steering"/>
         </joint>
 
 
-        <link name="steering_wheel">
+        <link name="wheel">
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
@@ -54,11 +54,11 @@
             </collision>
         </link>
 
-        <joint name="steering_wheel_joint" type="continuous">
+        <joint name="wheel_joint" type="continuous">
             <axis xyz="0 1 0"/>
             <origin xyz="0 -0.001 -0.094" rpy="0 0 0"/>
-            <parent link="steering_gear"/>
-            <child link="steering_wheel"/>
+            <parent link="steering"/>
+            <child link="wheel"/>
         </joint>
 
     </xacro:macro>
