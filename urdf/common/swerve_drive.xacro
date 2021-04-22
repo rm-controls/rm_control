@@ -2,11 +2,11 @@
 
     <xacro:macro name="swerve_drive" params="xyz rpy parent">
 
-        <link name="steering">
+        <link name="pivot">
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://rm_description/meshes/common/steering.stl"
+                    <mesh filename="package://rm_description/meshes/common/swerve_pivot.stl"
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
@@ -18,17 +18,17 @@
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://rm_description/meshes/common/steering.stl"
+                    <mesh filename="package://rm_description/meshes/common/swerve_pivot.stl"
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </collision>
         </link>
 
-        <joint name="steering_joint" type="continuous">
+        <joint name="pivot_joint" type="continuous">
             <axis xyz="0 0 1"/>
             <origin xyz="${xyz}" rpy="${rpy}"/>
             <parent link="${parent}"/>
-            <child link="steering"/>
+            <child link="pivot"/>
         </joint>
 
 
@@ -36,7 +36,7 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://rm_description/meshes/common/steering_wheel.stl"
+                    <mesh filename="package://rm_description/meshes/common/swerve_wheel.stl"
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
@@ -48,7 +48,7 @@
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://rm_description/meshes/common/steering_wheel.stl"
+                    <mesh filename="package://rm_description/meshes/common/swerve_wheel.stl"
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </collision>
@@ -57,7 +57,7 @@
         <joint name="wheel_joint" type="continuous">
             <axis xyz="0 1 0"/>
             <origin xyz="0 -0.001 -0.094" rpy="0 0 0"/>
-            <parent link="steering"/>
+            <parent link="pivot"/>
             <child link="wheel"/>
         </joint>
 
