@@ -5,8 +5,6 @@
     <xacro:property name="wheel_track" value="0.500"/>
     <xacro:property name="wheel_base" value="0.475"/>
     <xacro:property name="wheel_offset_z" value="-0.036"/>
-    <xacro:property name="wheel_joint_damping" value="1.0"/>
-    <xacro:property name="wheel_joint_friction" value="1.0"/>
 
     <xacro:macro name="chassis">
 
