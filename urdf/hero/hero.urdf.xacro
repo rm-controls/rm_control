@@ -12,11 +12,6 @@
     <xacro:chassis roller_type="$(arg roller_type)"/>
   </xacro:if>
 
-  <!--  <xacro:if value="$(arg load_shooter)">-->
-  <!--    <xacro:include filename="$(find rm_description)/urdf/sentry/shooter.urdf.xacro"/>-->
-  <!--    <xacro:include filename="$(find rm_description)/urdf/sentry/shooter.transmission.urdf.xacro"/>-->
-  <!--  </xacro:if>-->
-
   <xacro:if value="$(arg load_gimbal)">
     <xacro:include filename="$(find rm_description)/urdf/hero/gimbal.urdf.xacro"/>
     <xacro:include filename="$(find rm_description)/urdf/hero/gimbal.transmission.urdf.xacro"/>
