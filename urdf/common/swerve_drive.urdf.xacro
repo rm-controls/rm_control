@@ -29,6 +29,8 @@
             <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_z_offset}" rpy="0 0 0"/>
             <parent link="${connected_to}"/>
             <child link="${prefix}_pivot"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <limit effort="1.2" velocity="31" lower="-1e10" upper="1e10"/>
         </joint>
 
 
@@ -59,8 +61,17 @@
             <origin xyz="0 -0.001 -0.094" rpy="0 0 0"/>
             <parent link="${prefix}_pivot"/>
             <child link="${prefix}_wheel"/>
+            <limit effort="3.0" velocity="50.0" lower="-1e10" upper="1e10"/>
+            <dynamics damping="0.0" friction="0.05"/>
         </joint>
 
+        <gazebo reference="${prefix}_wheel">
+            <mu1 value="2000.0"/>
+            <mu2 value="2000.0"/>
+            <kp value="1000000.0"/>
+            <kd value="100.0"/>
+            <material>Gazebo/Black</material>
+        </gazebo>
     </xacro:macro>
 
     <xacro:macro name="swerve_transmission" params="prefix wheel_reduction">
