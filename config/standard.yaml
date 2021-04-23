@@ -6,22 +6,22 @@ rm_base:
   cycle_time_error_threshold: 0.001
   # Configurations of the actuators
   actuators:
-    front_right_wheel_motor:
+    right_front_wheel_motor:
       bus: can0
       id: 0x201
       type: rm_3508
       lp_cutoff_frequency: 150
-    front_left_wheel_motor:
+    left_front_wheel_motor:
       bus: can0
       id: 0x202
       type: rm_3508
       lp_cutoff_frequency: 150
-    back_left_wheel_motor:
+    left_back_wheel_motor:
       bus: can0
       id: 0x203
       type: rm_3508
       lp_cutoff_frequency: 150
-    back_right_wheel_motor:
+    right_back_wheel_motor:
       bus: can0
       id: 0x204
       type: rm_3508
