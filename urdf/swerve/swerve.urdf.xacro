@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="swerve">
+
+    <xacro:arg name="load_chassis" default="true"/>
+    <!--    <xacro:arg name="load_gimbal" default="true"/>-->
+    <!--    <xacro:arg name="load_shooter" default="true"/>-->
+    <xacro:arg name="use_simulation" default="true"/>
+    <xacro:arg name="roller_type" default="realistic"/>
+
+    <xacro:if value="$(arg load_chassis)">
+        <xacro:include filename="$(find rm_description)/urdf/swerve/chassis.urdf.xacro"/>
+        <xacro:chassis roller_type="$(arg roller_type)"/>
+    </xacro:if>
+
+    <!--    <xacro:if value="$(arg load_gimbal)">-->
+    <!--        <xacro:include filename="$(find rm_description)/urdf/swerve/gimbal.urdf.xacro"/>-->
+    <!--        <xacro:include filename="$(find rm_description)/urdf/swerve/gimbal.transmission.urdf.xacro"/>-->
+    <!--        <xacro:include filename="$(find rm_description)/urdf/common/camera.urdf.xacro"/>-->
+    <!--        <xacro:camera_sensor xyz="0.127 0 -0.047" rpy="0 0 0" parent="pitch"-->
+    <!--                             camera_sim="$(arg use_simulation)"></xacro:camera_sensor>-->
+    <!--    </xacro:if>-->
+
+    <!--    <xacro:if value="$(arg load_shooter)">-->
+    <!--        <xacro:include filename="$(find rm_description)/urdf/hero/shooter.urdf.xacro"/>-->
+    <!--        &lt;!&ndash;    <xacro:include filename="$(find rm_description)/urdf/hero/shooter.transmission.urdf.xacro"/>&ndash;&gt;-->
+    <!--    </xacro:if>-->
+
+
+    <xacro:if value="$(arg use_simulation)">
+        <gazebo>
+            <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
+                <robotNamespace>/</robotNamespace>
+                <robotSimType>rm_gazebo/RmRobotHWSim</robotSimType>
+            </plugin>
+        </gazebo>
+    </xacro:if>
+
+</robot>

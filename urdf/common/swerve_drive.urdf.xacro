@@ -63,4 +63,17 @@
 
     </xacro:macro>
 
+    <xacro:macro name="wheel_transmission" params="prefix swerve_reduction">
+        <transmission name="${prefix}_wheel_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${prefix}_wheel_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>${mechanical_reduction}</mechanicalReduction>
+            </actuator>
+            <joint name="${prefix}_wheel_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+    </xacro:macro>
+
 </robot>
