@@ -72,7 +72,7 @@
         </joint>
 
 
-        <link name="camera">
+        <link name="camera_link">
             <inertial>
                 <mass value="0.17671"/>
                 <origin xyz="0.022 0.0 0.0"/>
@@ -95,7 +95,7 @@
 
         <joint name="camera_joint" type="fixed">
             <parent link="pitch"/>
-            <child link="camera"/>
+            <child link="camera_link"/>
             <origin xyz="0.12 0.0 -0.055" rpy="-1.57 0 -1.57"/>
             <axis xyz="0 0 1"/>
         </joint>
