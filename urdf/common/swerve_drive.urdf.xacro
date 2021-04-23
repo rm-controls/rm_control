@@ -1,8 +1,8 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:macro name="swerve_drive" params="xyz rpy parent">
+    <xacro:macro name="swerve_drive" params="prefix wheel_x_offset wheel_y_offset wheel_z_offset  connected_to">
 
-        <link name="pivot">
+        <link name="${prefix}_pivot">
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
@@ -24,15 +24,15 @@
             </collision>
         </link>
 
-        <joint name="pivot_joint" type="continuous">
+        <joint name="${prefix}_pivot_joint" type="continuous">
             <axis xyz="0 0 1"/>
-            <origin xyz="${xyz}" rpy="${rpy}"/>
-            <parent link="${parent}"/>
-            <child link="pivot"/>
+            <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_z_offset}" rpy="0 0 0"/>
+            <parent link="${connected_to}"/>
+            <child link="${prefix}_pivot"/>
         </joint>
 
 
-        <link name="wheel">
+        <link name="${prefix}_wheel">
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
@@ -54,11 +54,11 @@
             </collision>
         </link>
 
-        <joint name="wheel_joint" type="continuous">
+        <joint name="${prefix}_wheel_joint" type="continuous">
             <axis xyz="0 1 0"/>
             <origin xyz="0 -0.001 -0.094" rpy="0 0 0"/>
-            <parent link="pivot"/>
-            <child link="wheel"/>
+            <parent link="${prefix}_pivot"/>
+            <child link="${prefix}_wheel"/>
         </joint>
 
     </xacro:macro>
