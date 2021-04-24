@@ -2,8 +2,8 @@
 
     <xacro:include filename="$(find rm_description)/urdf/common/swerve_drive.urdf.xacro"/>
     <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
-    <xacro:property name="wheel_track" value="0.500"/>
-    <xacro:property name="wheel_base" value="0.475"/>
+    <xacro:property name="wheel_track" value="0.4"/>
+    <xacro:property name="wheel_base" value="0.4"/>
     <xacro:property name="wheel_offset_z" value="-0.036"/>
 
     <xacro:macro name="chassis">

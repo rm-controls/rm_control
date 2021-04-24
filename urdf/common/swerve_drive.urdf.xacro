@@ -48,10 +48,9 @@
                 <inertia ixx="2.012e-4" ixy="0" ixz="0" iyy="2.618e-4" iyz="8.07e-7" izz="2.002e-4"/>
             </inertial>
             <collision>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="${pi/2.} 0 0"/>
                 <geometry>
-                    <mesh filename="package://rm_description/meshes/common/swerve_wheel.stl"
-                          scale="0.001 0.001 0.001"/>
+                    <cylinder radius="0.055" length="0.04"/>
                 </geometry>
             </collision>
         </link>
