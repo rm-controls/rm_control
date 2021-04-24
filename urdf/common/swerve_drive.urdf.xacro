@@ -50,7 +50,7 @@
             <collision>
                 <origin xyz="0 0 0" rpy="${pi/2.} 0 0"/>
                 <geometry>
-                    <cylinder radius="0.055" length="0.04"/>
+                    <cylinder radius="0.055" length="0.001"/>
                 </geometry>
             </collision>
         </link>
@@ -65,8 +65,8 @@
         </joint>
 
         <gazebo reference="${prefix}_wheel">
-            <mu1 value="2000.0"/>
-            <mu2 value="2000.0"/>
+            <mu1 value="20"/>
+            <mu2 value="20"/>
             <kp value="1000000.0"/>
             <kd value="100.0"/>
             <material>Gazebo/Black</material>
