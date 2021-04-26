@@ -83,7 +83,6 @@
             <transmission name="trans_joint4">
                 <type>transmission_interface/SimpleTransmission</type>
                 <actuator name="joint4_motor">
-                    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
                     <mechanicalReduction>1</mechanicalReduction>
                 </actuator>
                 <joint name="joint4">
@@ -93,7 +92,6 @@
             <transmission name="trans_joint5">
                 <type>transmission_interface/SimpleTransmission</type>
                 <actuator name="joint5_motor">
-                    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
                     <mechanicalReduction>1</mechanicalReduction>
                 </actuator>
                 <joint name="joint5">
