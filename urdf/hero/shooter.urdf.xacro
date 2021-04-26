@@ -4,8 +4,8 @@
     <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.urdf.xacro"/>
 
 
-    <xacro:property name="wheel_offset_x" value="0.00884"/>
-    <xacro:property name="wheel_offset_y" value="0.036564"/>
+    <xacro:property name="wheel_offset_x" value="0.084"/>
+    <xacro:property name="wheel_offset_y" value="0.049"/>
     <xacro:property name="wheel_offset_z" value="0.0"/>
 
 
