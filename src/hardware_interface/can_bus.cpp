@@ -96,8 +96,13 @@ void CanBus::frameCallback(const can_frame &frame) {
       int16_t cur = (frame.data[4] << 8u) | frame.data[5];
       uint8_t temp = frame.data[6];
 
+      // TODO: Check the code blew
+//      if (act_data.type.find("6020") != std::string::npos)
+//        if (std::abs(q - act_data.q_last) < 3)
+//          q = act_data.q_last;
+
       // Multiple cycle
-      if (act_data.seq != 0) {
+      if (act_data.seq != 0) { // first receive
         if (q - act_data.q_last > 4096)
           act_data.q_circle--;
         else if (q - act_data.q_last < -4096)
