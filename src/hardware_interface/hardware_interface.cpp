@@ -33,17 +33,17 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
     return false;
 
   if (!load_urdf(root_nh)) {
-    ROS_ERROR("Error occur when setup urdf");
+    ROS_ERROR("Error occurred while setting up urdf");
     return false;
   }
   // Initialize transmission
   if (!setupTransmission(root_nh)) {
-    ROS_ERROR("Error occur when setup transmission");
+    ROS_ERROR("Error occurred while setting up transmission");
     return false;
   }
   // Initialize joint limit
   if (!setupJointLimit(root_nh)) {
-    ROS_ERROR("Error occur when setup joint limit");
+    ROS_ERROR("Error occurred while setting up joint limit");
     return false;
   }
 
