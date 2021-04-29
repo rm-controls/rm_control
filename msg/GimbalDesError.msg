@@ -1,4 +1,3 @@
-float64 error_yaw
-float64 error_pitch
+float64 error
 
 time stamp

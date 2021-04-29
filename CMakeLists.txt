@@ -39,10 +39,6 @@ add_message_files(
     TrackDataArray.msg
 )
 
-add_action_files(
-    FILES
-    Shoot.action
-)
 
 # Generate added messages and services with any dependencies listed here
 generate_messages(
