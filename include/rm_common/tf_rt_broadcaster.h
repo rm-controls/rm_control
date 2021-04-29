@@ -9,7 +9,7 @@
 #include <geometry_msgs/TransformStamped.h>
 #include <realtime_tools/realtime_publisher.h>
 
-namespace robot_state_controller {
+namespace rm_common {
 class TfRtBroadcaster {
  public:
   TfRtBroadcaster() = default;

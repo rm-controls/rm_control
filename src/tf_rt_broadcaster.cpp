@@ -6,7 +6,8 @@
 #include <vector>
 #include <tf2_msgs/TFMessage.h>
 
-namespace robot_state_controller {
+namespace rm_common {
+
 void TfRtBroadcaster::init(ros::NodeHandle &root_nh) {
   realtime_pub_.reset(new realtime_tools::RealtimePublisher<tf2_msgs::TFMessage>(root_nh, "/tf", 100));
 }
@@ -57,5 +58,5 @@ void StaticTfRtBroadcaster::sendTransform(const std::vector<geometry_msgs::Trans
   }
 }
 
-}// namespace robot_state_controller
+}// namespace rm_common
 
