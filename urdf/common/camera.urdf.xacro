@@ -37,7 +37,7 @@
         <link name="camera_link"/>
 
         <xacro:if value="${camera_sim}">
-            <gazebo reference="camera_link">
+            <gazebo reference="camera_mount">
                 <sensor type="camera" name="camera">
                     <update_rate>30.0</update_rate>
                     <camera name="head">
