@@ -73,14 +73,15 @@
         </gazebo>
     </xacro:macro>
 
-    <xacro:macro name="swerve_transmission" params="prefix wheel_reduction">
+    <xacro:macro name="swerve_transmission" params="prefix wheel_reduction  pivot_offset">
 
         <transmission name="${prefix}_pivot_trans">
             <type>transmission_interface/SimpleTransmission</type>
             <actuator name="${prefix}_pivot_motor">
-                <mechanicalReduction>1</mechanicalReduction>
+                <mechanicalReduction>-1</mechanicalReduction>
             </actuator>
             <joint name="${prefix}_pivot_joint">
+                <offset>${pivot_offset}</offset>
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             </joint>
         </transmission>
