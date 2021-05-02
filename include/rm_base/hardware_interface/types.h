@@ -16,13 +16,20 @@ struct ActCoeff {
 };
 
 struct ActData {
+  std::string name{};
   std::string type{};
-  double pos{}, vel{}, effort{}, cmd_pos{}, cmd_vel{}, cmd_effort{};
-  uint64_t seq{};
-  // For multiple cycle under absolute encoder (RoboMaster motor)
+  ros::Time stamp{};
+  uint16_t q_raw{};
+  int16_t qd_raw{};
+  uint8_t temp{};
   int64_t q_circle{};
   uint16_t q_last{};
-  uint8_t temp{};
+  double pos{}, vel{}, effort{};
+  double cmd_pos{}, cmd_vel{}, cmd_effort{}, exe_effort{};
+  double offset{};
+  uint64_t seq{};
+  bool is_calibrating = false, calibration_reading = false, halted = false;
+  // For multiple cycle under absolute encoder (RoboMaster motor)
   LowPassFilter *lp_filter{};
 };
 
