@@ -5,6 +5,9 @@
 # The name of the actuator
 string name
 
+# The type of the actuator
+string type
+
 # The CAN bus
 string bus
 
@@ -12,13 +15,13 @@ string bus
 int32 id
 
 # The time at which this actuator state was measured
-time timestamp
+time stamp
 
 # The encoder raw position, represented by the number of encoder ticks
 uint16 position_raw
 
 # The encoder velocity, represented by rpm
-uint16 velocity_raw
+int16 velocity_raw
 
 # The temperature of the motor, represented by c1elsius
 uint8 temperature
