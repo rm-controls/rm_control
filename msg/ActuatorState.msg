@@ -29,8 +29,6 @@ int64  circle
 # The last encoder raw position, represented by the number of encoder ticks
 uint16 last_position_raw
 
-
-
 # The encoder position in radians
 float64 position
 
@@ -39,6 +37,12 @@ float64 velocity
 
 # The last effort that was measured by the actuator
 float64 effort
+
+# The last effort command that was requested without limit
+float64 commanded_effort
+
+# The last effort command that was requested with limit
+float64 executed_effort
 
 # The angular offset (in radians) that is added to the encoder reading,
 # to get to the position of the actuator. This number is computed when the referece
