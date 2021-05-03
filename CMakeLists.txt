@@ -47,7 +47,7 @@ add_executable(test_traj test/test_traj.cpp)
 add_executable(test_kalman test/test_kalman_filter.cpp)
 
 target_link_libraries(rm_common ${catkin_LIBRARIES})
-target_link_libraries(test_traj rm_common ${catkin_LIBRARIES})
+#target_link_libraries(test_traj rm_common ${catkin_LIBRARIES})
 target_link_libraries(test_kalman rm_common ${catkin_LIBRARIES})
 
 #############

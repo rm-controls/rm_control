@@ -4,7 +4,7 @@
 
 #include "rm_common/traj_gen.h"
 #include <ros/ros.h>
-#include <rm_msgs/Joint.h>
+//#include <rm_msgs/Joint.h>
 
 int main(int argc, char **argv) {
   ros::init(argc, argv, "traj_test");
