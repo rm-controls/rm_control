@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
         rm_msgs
         geometry_msgs
         realtime_tools
+        dynamic_reconfigure
         )
 
 catkin_package(
@@ -27,6 +28,7 @@ catkin_package(
         CATKIN_DEPENDS
         rm_msgs
         roscpp
+        dynamic_reconfigure
         DEPENDS
         LIBRARIES
         rm_common
