@@ -1,0 +1,18 @@
+image: docker:git
+services:
+  - docker:dind
+variables:
+  AFTER_SETUP_ROSDEP: 'apt install -y curl > /dev/null && curl ${PACKAGE_SCRIPT_URL}/gitlab-ci-init.sh | bash -s stable'
+  AFTER_SCRIPT: 'apt install -y curl > /dev/null && curl ${PACKAGE_SCRIPT_URL}/gitlab-ci-package.sh | bash'
+before_script:
+  - apk add --update bash coreutils tar
+  - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci .industrial_ci -b master
+after_script:
+  - eval `ssh-agent -s`
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  - scp -P $REPO_SSH_PORT ./ros-${ROS_DISTRO}* root@$REPO_SSH_HOST:/repo/incoming/stable
+  - ssh -p $REPO_SSH_PORT root@$REPO_SSH_HOST "repo-process-include noetic stable"
+build:
+  script:
+    - sed -i 's/ici_forward_mount TARGET_REPO_PATH ro/ici_forward_mount TARGET_REPO_PATH rw/g' .industrial_ci/industrial_ci/src/isolation/docker.sh
+    - .industrial_ci/gitlab.sh ROS_DISTRO=noetic
