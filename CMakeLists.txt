@@ -92,11 +92,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
         )
 
 # Mark other files for installation
-install(DIRECTORY config
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-        )
-
-install(DIRECTORY launch
+install(DIRECTORY config launch
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         )
 
