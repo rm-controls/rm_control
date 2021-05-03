@@ -95,6 +95,9 @@ install(DIRECTORY include/${PROJECT_NAME}/
 install(DIRECTORY config launch
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         )
+install(FILES rm_robot_hw_sim_plugins.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        )
 
 #############
 ## Testing ##
