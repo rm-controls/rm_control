@@ -6,4 +6,4 @@ uint8 GYRO = 4
 
 uint8 mode
 geometry_msgs/Accel accel
-float64 effort_limit
+float64 power_limit
