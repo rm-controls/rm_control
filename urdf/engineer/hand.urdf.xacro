@@ -188,7 +188,7 @@
                 <offset>0.0</offset>
             </joint>
             <actuator name="right_finger_motor">
-                <mechanicalReduction>-4712.388</mechanicalReduction>
+                <mechanicalReduction>2356.194</mechanicalReduction>
             </actuator>
         </transmission>
 
