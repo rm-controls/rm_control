@@ -65,7 +65,7 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
   registerInterface(&imu_sensor_interface_);
 
   actuator_state_pub_.reset(
-      new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_state", 100));
+      new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_states", 100));
   return true;
 }
 
