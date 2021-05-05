@@ -1,7 +1,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:include filename="$(find rm_description)/urdf/common/friction.urdf.xacro"/>
-    <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.urdf.xacro"/>
+<!--    <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.urdf.xacro"/>-->
 
 
     <xacro:property name="wheel_offset_x" value="0.00884"/>
