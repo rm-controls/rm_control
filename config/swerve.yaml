@@ -1,0 +1,49 @@
+rm_base:
+  bus:
+    - can0
+    - can1
+  loop_frequency: 1000
+  cycle_time_error_threshold: 0.001
+  # Configurations of the actuators
+  actuators:
+    right_front_wheel_motor:
+      bus: can0
+      id: 0x201
+      type: rm_3508
+      lp_cutoff_frequency: 150
+    left_front_wheel_motor:
+      bus: can0
+      id: 0x202
+      type: rm_3508
+      lp_cutoff_frequency: 150
+    left_back_wheel_motor:
+      bus: can0
+      id: 0x203
+      type: rm_3508
+      lp_cutoff_frequency: 150
+    right_back_wheel_motor:
+      bus: can0
+      id: 0x204
+      type: rm_3508
+      lp_cutoff_frequency: 150
+    right_front_pivot_motor:
+      bus: can1
+      id: 0x205
+      type: rm_6020
+      lp_cutoff_frequency: 100
+    left_front_pivot_motor:
+      bus: can1
+      id: 0x206
+      type: rm_6020
+      lp_cutoff_frequency: 100
+    left_back_pivot_motor:
+      bus: can1
+      id: 0x207
+      type: rm_6020
+      lp_cutoff_frequency: 100
+    right_back_pivot_motor:
+      bus: can1
+      id: 0x208
+      type: rm_6020
+      lp_cutoff_frequency: 100
+
