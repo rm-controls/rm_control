@@ -67,7 +67,7 @@ void DBus::read() {
       timeout++;
     } else if (n == 1) {
       // Shift the buffer //
-      for (int i = 0; i < 18; i++) {
+      for (int i = 0; i < 17; i++) {
         buff_[i] = buff_[i + 1];
       }
       buff_[17] = read_byte;
