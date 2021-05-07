@@ -2,12 +2,12 @@
 <robot>
 
 
-    <transmission name="trans_drive_joint">
+    <transmission name="trans_drive_wheel_joint">
         <type>transmission_interface/SimpleTransmission</type>
         <actuator name="drive_joint_motor">
             <mechanicalReduction>19.2032</mechanicalReduction>
         </actuator>
-        <joint name="drive_joint">
+        <joint name="drive_wheel_joint">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
