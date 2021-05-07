@@ -92,7 +92,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
         )
 
 # Mark other files for installation
-install(DIRECTORY config launch
+install(DIRECTORY config launch worlds
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         )
 install(FILES rm_robot_hw_sim_plugins.xml
