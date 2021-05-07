@@ -5,8 +5,6 @@
     <xacro:property name="pitch_lower_limit" value="-0.7"/>
     <xacro:property name="pitch_upper_limit" value="0.4"/>
 
-    <xacro:macro name="gimbal" params="simulation">
-
         <link name="yaw">
             <inertial>
                 <mass value="0.592087"/>
@@ -70,75 +68,5 @@
             <child link="pitch"/>
             <axis xyz="0 1 0 "/>
         </joint>
-
-
-        <link name="camera_link">
-            <inertial>
-                <mass value="0.17671"/>
-                <origin xyz="0.022 0.0 0.0"/>
-                <inertia ixx="2.129e-5" ixy="7.329e-8" ixz="-1.11e-7" iyy="2.198e-4" iyz="-8.04e-7" izz="2.197e-4"/>
-            </inertial>
-            <visual>
-                <origin xyz=" 0 0 0 " rpy="0 -1.57 0"/>
-                <geometry>
-                    <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-                <material name="Black"/>
-            </visual>
-            <collision>
-                <origin xyz="0 0 0" rpy="0 -1.57 0"/>
-                <geometry>
-                    <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-            </collision>
-        </link>
-
-        <joint name="camera_joint" type="fixed">
-            <parent link="pitch"/>
-            <child link="camera_link"/>
-            <origin xyz="0.15 0.0 -0.03" rpy="-1.57 0 -1.57"/>
-            <axis xyz="0 0 1"/>
-        </joint>
-
-        <xacro:if value="${simulation}">
-            <!--            <gazebo reference="camera">-->
-            <!--                <sensor type="camera" name="camera_node">-->
-            <!--                    <update_rate>30.0</update_rate>-->
-            <!--                    <camera name="head">-->
-            <!--                        <horizontal_fov>1.3962634</horizontal_fov>-->
-            <!--                        <image>-->
-            <!--                            <width>1920</width>-->
-            <!--                            <height>1080</height>-->
-            <!--                            <format>R8G8B8</format>-->
-            <!--                        </image>-->
-            <!--                        <clip>-->
-            <!--                            <near>0.02</near>-->
-            <!--                            <far>300</far>-->
-            <!--                        </clip>-->
-            <!--                        <noise>-->
-            <!--                            <type>gaussian</type>-->
-            <!--                            <mean>0.0</mean>-->
-            <!--                            <stddev>0.007</stddev>-->
-            <!--                        </noise>-->
-            <!--                    </camera>-->
-            <!--                    <plugin name="gazebo_camera" filename="libgazebo_ros_camera.so">-->
-            <!--                        <alwaysOn>true</alwaysOn>-->
-            <!--                        <updateRate>0.0</updateRate>-->
-            <!--                        <cameraName>/camera</cameraName>-->
-            <!--                        <imageTopicName>image_raw</imageTopicName>-->
-            <!--                        <cameraInfoTopicName>camera_info</cameraInfoTopicName>-->
-            <!--                        <frameName>camera</frameName>-->
-            <!--                        <hackBaseline>0.07</hackBaseline>-->
-            <!--                        <distortionK1>0.0</distortionK1>-->
-            <!--                        <distortionK2>0.0</distortionK2>-->
-            <!--                        <distortionK3>0.0</distortionK3>-->
-            <!--                        <distortionT1>0.0</distortionT1>-->
-            <!--                        <distortionT2>0.0</distortionT2>-->
-            <!--                    </plugin>-->
-            <!--                </sensor>-->
-            <!--            </gazebo>-->
-        </xacro:if>
-
-    </xacro:macro>
 
 </robot>
