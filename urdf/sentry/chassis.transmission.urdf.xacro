@@ -5,7 +5,7 @@
     <transmission name="trans_drive_joint">
         <type>transmission_interface/SimpleTransmission</type>
         <actuator name="drive_joint_motor">
-            <mechanicalReduction>1</mechanicalReduction>
+            <mechanicalReduction>19.2032</mechanicalReduction>
         </actuator>
         <joint name="drive_joint">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
