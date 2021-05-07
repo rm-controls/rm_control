@@ -42,10 +42,10 @@
                             wheel_x_offset="${-wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
                             wheel_z_offset="${wheel_offset_z}"/>
 
-        <xacro:swerve_transmission prefix="left_front" wheel_reduction="1" pivot_offset="2.3585"/>
-        <xacro:swerve_transmission prefix="right_front" wheel_reduction="-1" pivot_offset="2.332"/>
-        <xacro:swerve_transmission prefix="left_back" wheel_reduction="1" pivot_offset="3.911"/>
-        <xacro:swerve_transmission prefix="right_back" wheel_reduction="-1" pivot_offset="6.272"/>
+        <xacro:swerve_transmission prefix="left_front" wheel_reduction="19.2032" pivot_offset="2.3585"/>
+        <xacro:swerve_transmission prefix="right_front" wheel_reduction="-19.2032" pivot_offset="2.332"/>
+        <xacro:swerve_transmission prefix="left_back" wheel_reduction="19.2032" pivot_offset="3.911"/>
+        <xacro:swerve_transmission prefix="right_back" wheel_reduction="-19.2032" pivot_offset="6.272"/>
     </xacro:macro>
 
 </robot>
