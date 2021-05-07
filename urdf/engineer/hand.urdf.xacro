@@ -13,9 +13,9 @@
 
         <link name="palm">
             <inertial>
-                <origin xyz="0.01877 0.0475 -0.000028" rpy="0 0 0"/>
-                <mass value="0.406611"/>
-                <inertia ixx="2.719e-3" ixy="-3.243e-4" ixz="228.248e-9" iyy="2.564e-4" iyz="1515.727e-9" izz="2.9e-3"/>
+                <mass value="0.695"/>
+                <origin xyz="0.0 0.0 0.024" rpy="0 0 0"/>
+                <inertia ixx="5.042e-4" ixy="1.20e-7" ixz="-3.142e-6" iyy="2.444e-4" iyz="1.18e-7" izz="4.945e-4"/>
             </inertial>
             <visual>
                 <geometry>
@@ -32,9 +32,9 @@
 
         <link name="right_finger">
             <inertial>
-                <origin xyz="0.01491 -0.06058 0" rpy="0 0 0"/>
-                <mass value="0.203967"/>
-                <inertia ixx="1.025e-3" ixy="3.865e-4" ixz="-1.144e-9" iyy="3.051e-4" iyz="4.649e-9" izz="1.295e-3"/>
+                <origin xyz="0.0 0.075 0.021" rpy="0 0 0"/>
+                <mass value="0.284"/>
+                <inertia ixx="7.653e-4" ixy="1.922e-5" ixz="1.589e-5" iyy="3.805e-4" iyz="-3.052e-4" izz="4.364e-4"/>
             </inertial>
             <visual>
                 <geometry>
@@ -70,9 +70,9 @@
 
         <link name="left_finger">
             <inertial>
-                <origin xyz="0.01491 0.061581 0" rpy="0 0 0"/>
-                <mass value="0.203967"/>
-                <inertia ixx="1.053e-3" ixy="-3.865e-4" ixz="-1.144e-9" iyy="3.051e-4" iyz="-4.733e-9" izz="1.323e-3"/>
+                <origin xyz="0.0 -0.075 0.021" rpy="0 0 0"/>
+                <mass value="0.284"/>
+                <inertia ixx="7.653e-4" ixy="1.922e-5" ixz="-1.589e-5" iyy="3.805e-4" iyz="3.052e-4" izz="4.364e-4"/>
             </inertial>
             <visual>
                 <geometry>
@@ -139,7 +139,7 @@
         <joint name="right_finger_joint" type="prismatic">
             <parent link="palm"/>
             <child link="right_finger"/>
-            <origin xyz="0.032 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0.045" rpy="0 0 0"/>
             <axis xyz="0 1 0"/>
             <limit effort="588" lower="0.0" upper="0.03" velocity="3.772"/>
         </joint>
@@ -147,7 +147,7 @@
         <joint name="left_finger_joint" type="prismatic">
             <parent link="palm"/>
             <child link="left_finger"/>
-            <origin xyz="0.032 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0.045" rpy="0 0 0"/>
             <axis xyz="0 -1 0"/>
             <limit effort="588" lower="0.0" upper="0.03" velocity="3.772"/>
             <mimic joint="right_finger_joint"/>
