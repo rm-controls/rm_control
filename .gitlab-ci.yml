@@ -1,0 +1,46 @@
+image: docker:git
+services:
+  - docker:dind
+variables:
+  AFTER_SETUP_ROSDEP: 'apt install -y curl > /dev/null && curl ${PACKAGE_SCRIPT_URL}/gitlab-ci-init.sh | bash -s stable'
+  AFTER_SCRIPT:       'apt install -y curl > /dev/null && curl ${PACKAGE_SCRIPT_URL}/gitlab-ci-package.sh | bash'
+stages:
+  - prepare
+  - build
+  - publish
+
+prepare:
+  stage: prepare
+  script:
+    - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci .industrial_ci -b master
+    - sed -i 's/ici_forward_mount TARGET_REPO_PATH ro/ici_forward_mount TARGET_REPO_PATH rw/g' .industrial_ci/industrial_ci/src/isolation/docker.sh
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - .industrial_ci
+
+melodic:
+  stage: build
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - ros-*deb
+  script:
+    - apk add --update bash coreutils tar
+    - .industrial_ci/gitlab.sh ROS_DISTRO=melodic
+
+noetic:
+  stage: build
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - ros-*deb
+  script:
+    - apk add --update bash coreutils tar
+    - .industrial_ci/gitlab.sh ROS_DISTRO=noetic
+
+publish:
+  stage: publish
+  script:
+    - apk add --update curl
+    - curl ${PACKAGE_SCRIPT_URL}/gitlab-ci-publish.sh | sh
