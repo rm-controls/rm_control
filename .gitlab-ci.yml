@@ -4,6 +4,7 @@ services:
 variables:
   AFTER_SETUP_ROSDEP: 'apt install -y curl > /dev/null && curl ${PACKAGE_SCRIPT_URL}/gitlab-ci-init.sh | bash -s stable'
   AFTER_SCRIPT:       'apt install -y curl > /dev/null && curl ${PACKAGE_SCRIPT_URL}/gitlab-ci-package.sh | bash'
+  VERBOSE_OUTPUT:     'true'
 stages:
   - prepare
   - build
