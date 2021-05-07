@@ -18,6 +18,7 @@ find_package(catkin REQUIRED
         roslint
 
         rm_common
+        rm_msgs
         hardware_interface
         controller_interface
         transmission_interface
@@ -49,6 +50,7 @@ catkin_package(
         roslint
 
         rm_common
+        rm_msgs
         hardware_interface
         controller_interface
         transmission_interface

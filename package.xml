@@ -16,6 +16,7 @@
     <depend>roslint</depend>
 
     <depend>rm_common</depend>
+    <depend>rm_msgs</depend>
     <depend>hardware_interface</depend>
     <depend>controller_interface</depend>
     <depend>transmission_interface</depend>

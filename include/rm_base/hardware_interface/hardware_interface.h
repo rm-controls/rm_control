@@ -24,6 +24,7 @@
 #include <hardware_interface/imu_sensor_interface.h>
 
 #include <rm_common/hardware_interface/robot_state_interface.h>
+#include <rm_msgs/ActuatorState.h>
 
 #include "can_bus.h"
 
@@ -48,6 +49,7 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
   bool load_urdf(ros::NodeHandle &root_nh);
   bool setupTransmission(ros::NodeHandle &root_nh);
   bool setupJointLimit(ros::NodeHandle &root_nh);
+  void publishActuatorState(const ros::Time &time);
 
   // Interface
   std::vector<CanBus *> can_buses_{};
@@ -73,6 +75,10 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
 
   // Imu
   std::unordered_map<std::string, std::unordered_map<int, ImuData>> bus_id2imu_data_{};
+
+  ros::Time last_publish_time_;
+  std::shared_ptr<realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>> actuator_state_pub_;
+
 };
 
 }
