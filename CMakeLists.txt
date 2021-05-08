@@ -18,6 +18,7 @@ find_package(catkin REQUIRED
         roslint
 
         rm_common
+        rm_msgs
         hardware_interface
         controller_interface
         transmission_interface
@@ -49,6 +50,7 @@ catkin_package(
         roslint
 
         rm_common
+        rm_msgs
         hardware_interface
         controller_interface
         transmission_interface
@@ -93,25 +95,25 @@ target_link_libraries(${PROJECT_NAME}
 #############
 
 # Mark executables and/or libraries for installation
-install(
-        TARGETS ${PROJECT_NAME} ${PROJECT_NAME}
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_loader_plugins
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+        )
 
 # Mark cpp header files for installation
-install(
-        DIRECTORY include/${PROJECT_NAME}/
+install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
         FILES_MATCHING PATTERN "*.h"
-)
+        )
 
 # Mark other files for installation
-install(
-        DIRECTORY doc
+install(DIRECTORY config
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+        )
+install(DIRECTORY launch
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        )
 
 #############
 ## Testing ##

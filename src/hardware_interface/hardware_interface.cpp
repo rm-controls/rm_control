@@ -19,19 +19,16 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
     ROS_WARN("No actuator coefficient specified");
   else if (!parseActCoeffs(xml_rpc_value))
     return false;
-
   // Parse actuator specified by user (stored on ROS parameter server)
   if (!robot_hw_nh.getParam("actuators", xml_rpc_value))
     ROS_WARN("No actuator specified");
   else if (!parseActData(xml_rpc_value, robot_hw_nh))
     return false;
-
   // Parse actuator specified by user (stored on ROS parameter server)
   if (!robot_hw_nh.getParam("imus", xml_rpc_value))
     ROS_WARN("No imu specified");
   else if (!parseImuData(xml_rpc_value, robot_hw_nh))
     return false;
-
   if (!load_urdf(root_nh)) {
     ROS_ERROR("Error occurred while setting up urdf");
     return false;
@@ -46,7 +43,6 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
     ROS_ERROR("Error occurred while setting up joint limit");
     return false;
   }
-
   // CAN Bus
   if (!robot_hw_nh.getParam("bus", xml_rpc_value))
     ROS_WARN("No bus specified");
@@ -56,11 +52,9 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
       std::string bus_name = xml_rpc_value[i];
       if (bus_name.find("can") != std::string::npos)
         can_buses_.push_back(
-            new CanBus(bus_name,
-                       CanDataPtr{
-                           .type2act_coeffs_=&type2act_coeffs_,
-                           .id2act_data_ = &bus_id2act_data_[bus_name],
-                           .id2imu_data_ = &bus_id2imu_data_[bus_name]}));
+            new CanBus(bus_name, CanDataPtr{.type2act_coeffs_=&type2act_coeffs_,
+                .id2act_data_ = &bus_id2act_data_[bus_name],
+                .id2imu_data_ = &bus_id2imu_data_[bus_name]}));
       else
         ROS_ERROR_STREAM("Unknown bus: " << bus_name);
     }
@@ -70,11 +64,22 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
   registerInterface(&robot_state_interface_);
   registerInterface(&imu_sensor_interface_);
 
+  actuator_state_pub_.reset(
+      new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_states", 100));
   return true;
 }
 
 void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &period) {
-  // NOTE: read all data before  propagate!
+  for (auto &id2act_datas:bus_id2act_data_)
+    for (auto &act_data:id2act_datas.second) {
+      act_data.second.halted = (time - act_data.second.stamp).toSec() > 0.01 || act_data.second.temp > 99;
+      if (act_data.second.halted) {
+        act_data.second.qd_raw = 0;
+        act_data.second.effort = 0;
+      }
+    }
+
+  // NOTE: read all data before propagate!
   if (is_actuator_specified_)
     act_to_jnt_state_->propagate();
 
@@ -84,13 +89,53 @@ void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &p
 }
 
 void RmBaseHardWareInterface::write(const ros::Time &time, const ros::Duration &period) {
+  // Save commanded effort before enforceLimits
+  for (const auto &id2act_datas:bus_id2act_data_)
+    for (auto act_data:id2act_datas.second)
+      act_data.second.cmd_effort = act_data.second.exe_effort;
 
+  // enforceLimits will limit cmd_effort into suitable value https://github.com/ros-controls/ros_control/wiki/joint_limits_interface
   effort_jnt_saturation_interface_.enforceLimits(period);
   effort_jnt_soft_limits_interface_.enforceLimits(period);
+
   if (is_actuator_specified_)
     jnt_to_act_effort_->propagate();
   for (auto &item:can_buses_)
     item->write();
+  publishActuatorState(time);
+}
+
+void RmBaseHardWareInterface::publishActuatorState(const ros::Time &time) {
+  if (last_publish_time_ + ros::Duration(1.0 / 100.0) < time) {
+    if (actuator_state_pub_->trylock()) {
+      rm_msgs::ActuatorState actuator_state;
+      for (const auto &id2act_datas:bus_id2act_data_)
+        for (const auto &act_data:id2act_datas.second) {
+          actuator_state.name.push_back(act_data.second.name);
+          actuator_state.type.push_back(act_data.second.type);
+          actuator_state.bus.push_back(id2act_datas.first);
+          actuator_state.id.push_back(act_data.first);
+          actuator_state.stamp.push_back(act_data.second.stamp);
+          actuator_state.position_raw.push_back(act_data.second.q_raw);
+          actuator_state.velocity_raw.push_back(act_data.second.qd_raw);
+          actuator_state.temperature.push_back(act_data.second.temp);
+          actuator_state.circle.push_back(act_data.second.q_circle);
+          actuator_state.last_position_raw.push_back(act_data.second.q_last);
+          actuator_state.position.push_back(act_data.second.pos);
+          actuator_state.velocity.push_back(act_data.second.vel);
+          actuator_state.effort.push_back(act_data.second.effort);
+          actuator_state.commanded_effort.push_back(act_data.second.cmd_effort);
+          actuator_state.executed_effort.push_back(act_data.second.exe_effort);
+          actuator_state.offset.push_back(act_data.second.offset);
+          actuator_state.is_calibrating.push_back(act_data.second.is_calibrating);
+          actuator_state.calibration_reading.push_back(act_data.second.calibration_reading);
+          actuator_state.halted.push_back(act_data.second.halted);
+        }
+      actuator_state_pub_->msg_ = actuator_state;
+      actuator_state_pub_->unlockAndPublish();
+      last_publish_time_ = time;
+    }
+  }
 }
 
 bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs) {
@@ -201,13 +246,16 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
       } else {
         ros::NodeHandle nh = ros::NodeHandle(robot_hw_nh, "actuators/" + it->first);
         bus_id2act_data_[bus].insert(
-            std::make_pair(id, ActData{.type =  type, .pos = 0, .vel = 0, .effort = 0, .cmd_pos = 0,
-                .cmd_vel = 0, .cmd_effort = 0, .seq = 0, .q_circle = 0, .q_last = 0, .temp = 0,
-                .lp_filter=new LowPassFilter(nh)}));
+            std::make_pair(
+                id,
+                ActData{.name = it->first, .type = type, .stamp=ros::Time::now(), .q_raw = 0, .qd_raw = 0, .temp= 0,
+                    .q_circle = 0, .q_last = 0, .pos = 0, .vel = 0, .effort = 0, .cmd_pos = 0, .cmd_vel = 0, .cmd_effort = 0,
+                    .exe_effort=0, .offset = 0, .seq = 0, .is_calibrating = false, .calibration_reading = false, .halted = false,
+                    .lp_filter=new LowPassFilter(nh)}));
       }
 
       // for ros_control interface
-      hardware_interface::ActuatorStateHandle act_state(it->first,
+      hardware_interface::ActuatorStateHandle act_state(bus_id2act_data_[bus][id].name,
                                                         &bus_id2act_data_[bus][id].pos,
                                                         &bus_id2act_data_[bus][id].vel,
                                                         &bus_id2act_data_[bus][id].effort);
@@ -215,7 +263,7 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
       if (type.find("rm") != std::string::npos
           || type.find("cheetah") != std::string::npos) { // RoboMaster motors are effect actuator
         effort_act_interface_.registerHandle(
-            hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].cmd_effort));
+            hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].exe_effort));
       } else {
         ROS_ERROR_STREAM("Actuator " << it->first <<
                                      "'s type neither RoboMaster(rm_xxx) nor Cheetah(cheetah_xxx)");
