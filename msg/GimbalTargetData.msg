@@ -1,9 +1,0 @@
-float64 target_position_x
-float64 target_position_y
-float64 target_position_z
-float64 target_angular_vel
-float64 target_linear_vel
-float64 target_radius
-float64 roll
-float64 pitch
-float64 yaw
