@@ -17,21 +17,27 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="-0.045 0 0.035" rpy="0 0 0"/>
+                <origin xyz="0.004 0.071 0" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.15 0.106 0.07"/>
+                    <box size="0.088 0.142 0.106"/>
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="0.040 0 0.1" rpy="0 -0.95993 0"/>
+                <origin xyz="-0.032 0.068 0" rpy="0 0 -0.593"/>
                 <geometry>
-                    <box size="0.17 0.106 0.095"/>
+                    <box size="0.097 0.14 0.106"/>
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="0 0 0.05" rpy="1.5707963 0 0"/>
+                <origin xyz="-0.002 0.04 0 " rpy="0 0 0"/>
                 <geometry>
                     <cylinder length="0.188" radius="0.047"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.005 0.128 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="0.106" radius="0.047"/>
                 </geometry>
             </collision>
         </link>
@@ -49,9 +55,15 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="0.062 0 0"/>
+                <origin xyz="0.072 0 0"/>
                 <geometry>
-                    <box size="0.225 0.096 0.070"/>
+                    <box size="0.215 0.096 0.075"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.165 0 0" rpy="1.5707963 0 0"/>
+                <geometry>
+                    <cylinder length="0.096" radius="0.047"/>
                 </geometry>
             </collision>
         </link>
@@ -69,15 +81,15 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="0.063 0 0"/>
+                <origin xyz="0.006 0 0.007" rpy="0 0.8726 0"/>
                 <geometry>
-                    <box size="0.191 0.084 0.053"/>
+                    <box size="0.072 0.066 0.072"/>
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="0 0 0" rpy="1.5707963 0 0"/>
+                <origin xyz="0.066 0 0.027"/>
                 <geometry>
-                    <cylinder length="0.082" radius="0.047"/>
+                    <box size="0.135 0.066 0.062"/>
                 </geometry>
             </collision>
         </link>
@@ -95,9 +107,15 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0.02 -0.015 0.017" rpy="0 0.8028 0"/>
                 <geometry>
-                    <box size="0.0513 0.074 0.0513"/>
+                    <box size="0.0582 0.092 0.099"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.0347 -0.015 0.071"/>
+                <geometry>
+                    <box size="0.08 0.094 0.083"/>
                 </geometry>
             </collision>
         </link>
@@ -115,16 +133,16 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="0.015 0 0" rpy="0 0 0"/>
+                <origin xyz="-0.054 0 0" rpy="0 1.57 0"/>
                 <geometry>
-                    <box size="0.056 0.0513 0.0513"/>
+                    <cylinder length="0.108" radius="0.021"/>
                 </geometry>
             </collision>
         </link>
 
         <!--  joint  -->
         <joint name="joint1" type="revolute">
-            <axis xyz="0 0 1"/>
+            <axis xyz="0 1 0"/>
             <origin xyz="0.133 0 1" rpy="1.57 0 0"/>
             <!--      limit not work while type="continuous"-->
             <limit effort="20" velocity="25" lower="-${pi}" upper="${pi}"/>
