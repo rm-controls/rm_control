@@ -48,8 +48,8 @@
                             <format>R8G8B8</format>
                         </image>
                         <clip>
-                            <near>0.02</near>
-                            <far>300</far>
+                            <near>0.05</near>
+                            <far>5</far>
                         </clip>
                         <noise>
                             <type>gaussian</type>
