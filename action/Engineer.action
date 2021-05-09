@@ -1,0 +1,8 @@
+# goal
+int64 mode
+---
+# result
+bool finish
+---
+# feedback
+int64 current
