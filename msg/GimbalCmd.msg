@@ -7,3 +7,5 @@ uint8 target_id
 float64 rate_yaw
 float64 rate_pitch
 float64 bullet_speed
+
+time stamp
