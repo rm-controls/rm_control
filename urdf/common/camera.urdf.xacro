@@ -30,7 +30,7 @@
 
 
         <joint name="camera_optical_frame_joint" type="fixed">
-            <origin xyz="0.026 0 -0.0145" rpy="1.57 0 1.57"/>
+            <origin xyz="0.026 0 -0.0145" rpy="-1.57 0 -1.57"/>
             <parent link="camera_link"/>
             <child link="camera_optical_frame"/>
         </joint>
@@ -63,7 +63,7 @@
                         <cameraName>galaxy_camera</cameraName>
                         <imageTopicName>image_raw</imageTopicName>
                         <cameraInfoTopicName>camera_info</cameraInfoTopicName>
-                        <frameName>camera_link</frameName>
+                        <frameName>camera_optical_frame</frameName>
                         <hackBaseline>0.07</hackBaseline>
                         <distortionK1>0.0</distortionK1>
                         <distortionK2>0.0</distortionK2>
