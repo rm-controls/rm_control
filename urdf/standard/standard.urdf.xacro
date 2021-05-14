@@ -19,7 +19,7 @@
         <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.urdf.xacro"/>
         <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.transmission.urdf.xacro"/>
         <xacro:include filename="$(find rm_description)/urdf/common/camera.urdf.xacro"/>
-        <xacro:camera_sensor xyz="0.127 0 -0.038" rpy="-1.57 0 -1.57" parent="pitch"
+        <xacro:camera_sensor xyz="0.127 0 -0.038" rpy="0 0 0" parent="pitch"
                              camera_sim="$(arg use_simulation)"/>
     </xacro:if>
 
