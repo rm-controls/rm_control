@@ -83,110 +83,121 @@ void CanBus::write() {
     socket_can_.wirte(&rm_frame1_);
 }
 
-void CanBus::frameCallback(const can_frame &frame) {
-  // Check if robomaster motor
-  if (data_prt_.id2act_data_->find(frame.can_id) != data_prt_.id2act_data_->end()) {
-    ActData &act_data = data_prt_.id2act_data_->find(frame.can_id)->second;
-    const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
+void CanBus::read(ros::Time time) {
+  std::unique_lock<std::mutex> guard(mutex_, std::try_to_lock);
 
-    if (act_data.type.find("rm") != std::string::npos) {
-      act_data.q_raw = (frame.data[0] << 8u) | frame.data[1];
-      act_data.qd_raw = (frame.data[2] << 8u) | frame.data[3];
-      int16_t cur = (frame.data[4] << 8u) | frame.data[5];
-      act_data.temp = frame.data[6];
+  if (guard.owns_lock()) {
+    for (const auto &frame:read_buffer_) {
+      // Check if robomaster motor
+      if (data_prt_.id2act_data_->find(frame.can_id) != data_prt_.id2act_data_->end()) {
+        ActData &act_data = data_prt_.id2act_data_->find(frame.can_id)->second;
+        const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
+        if (act_data.type.find("rm") != std::string::npos) {
+          act_data.q_raw = (frame.data[0] << 8u) | frame.data[1];
+          act_data.qd_raw = (frame.data[2] << 8u) | frame.data[3];
+          int16_t cur = (frame.data[4] << 8u) | frame.data[5];
+          act_data.temp = frame.data[6];
 
-      // TODO: Check the code blew
+          // TODO: Check the code blew
 //      if (act_data.type.find("6020") != std::string::npos)
 //        if (std::abs(q - act_data.q_last) < 3)
 //          q = act_data.q_last;
 
-      // Multiple circle
-      if (act_data.seq != 0) { // first receive
-        if (act_data.q_raw - act_data.q_last > 4096)
-          act_data.q_circle--;
-        else if (act_data.q_raw - act_data.q_last < -4096)
-          act_data.q_circle++;
-      }
-      act_data.stamp = ros::Time::now();
-      act_data.seq++;
-      act_data.q_last = act_data.q_raw;
-      // Converter raw CAN data to position velocity and effort.
-      act_data.pos =
-          act_coeff.act2pos * static_cast<double> (act_data.q_raw + 8191 * act_data.q_circle) + act_data.offset;
-      act_data.vel = act_coeff.act2vel * static_cast<double> (act_data.qd_raw);
-      act_data.effort = act_coeff.act2effort * static_cast<double> (cur);
-      // Low pass filter
-      act_data.lp_filter->input(act_data.vel);
-      act_data.vel = act_data.lp_filter->output();
-      return;
-    }
-  }
-    // Check MIT Cheetah motor
-  else if (frame.can_id == static_cast<unsigned int>(0x000)) {
-    if (data_prt_.id2act_data_->find(frame.data[0]) != data_prt_.id2act_data_->end()) {
-      ActData &act_data = data_prt_.id2act_data_->find(frame.data[0])->second;
-      const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
-      if (act_data.type.find("cheetah") != std::string::npos) { // MIT Cheetah Motor
-        act_data.q_raw = (frame.data[1] << 8) | frame.data[2];
-        uint16_t qd = (frame.data[3] << 4) | (frame.data[4] >> 4);
-        uint16_t cur = ((frame.data[4] & 0xF) << 8) | frame.data[5];
-        // Multiple cycle
-        // NOTE: Raw data range is -4pi~4pi
-        if (act_data.seq != 0) {
-          double pos_new =
-              act_coeff.act2pos * static_cast<double> (act_data.q_raw) + act_coeff.act2pos_offset
-                  + static_cast<double>(act_data.q_circle) * 8 * M_PI;
-          if (pos_new - act_data.pos > 4 * M_PI)
-            act_data.q_circle--;
-          else if (pos_new - act_data.pos < -4 * M_PI)
-            act_data.q_circle++;
+          // Multiple circle
+          if (act_data.seq != 0) { // first receive
+            if (act_data.q_raw - act_data.q_last > 4096)
+              act_data.q_circle--;
+            else if (act_data.q_raw - act_data.q_last < -4096)
+              act_data.q_circle++;
+          }
+          act_data.stamp = ros::Time::now();
+          act_data.seq++;
+          act_data.q_last = act_data.q_raw;
+          // Converter raw CAN data to position velocity and effort.
+          act_data.pos =
+              act_coeff.act2pos * static_cast<double> (act_data.q_raw + 8191 * act_data.q_circle) + act_data.offset;
+          act_data.vel = act_coeff.act2vel * static_cast<double> (act_data.qd_raw);
+          act_data.effort = act_coeff.act2effort * static_cast<double> (cur);
+          // Low pass filter
+          act_data.lp_filter->input(act_data.vel);
+          act_data.vel = act_data.lp_filter->output();
+          continue;
         }
-        act_data.stamp = ros::Time::now();
-        act_data.seq++;
-        act_data.pos = act_coeff.act2pos * static_cast<double> (act_data.q_raw) + act_coeff.act2pos_offset
-            + static_cast<double>(act_data.q_circle) * 8 * M_PI;
-        // Converter raw CAN data to position velocity and effort.
-        act_data.vel = act_coeff.act2vel * static_cast<double> (qd) + act_coeff.act2vel_offset;
-        act_data.effort = act_coeff.act2effort * static_cast<double> (cur) + act_coeff.act2effort_offset;
-        // Low pass filter
-        act_data.lp_filter->input(act_data.vel);
-        act_data.vel = act_data.lp_filter->output();
       }
-    }
-  }
-  // Check if IMU
-  float imu_frame_data[4] = {0};
-  bool is_too_big = false; // int16ToFloat failed sometime
-  for (int i = 0; i < 4; ++i) {
-    float value = int16ToFloat((frame.data[i * 2] << 8) | frame.data[i * 2 + 1]);
-    if (value > 1e3 || value < -1e3)
-      is_too_big = true;
-    else
-      imu_frame_data[i] = value;
-  }
-  if (!is_too_big) {  // TODO remove this ugly statement
-    for (auto &itr :*data_prt_.id2imu_data_) { // imu data are consisted of three frames
-      switch (frame.can_id - static_cast<unsigned int>(itr.first)) {
-        case 0:itr.second.linear_acc[0] = imu_frame_data[0] * 9.81;
-          itr.second.linear_acc[1] = imu_frame_data[1] * 9.81;
-          itr.second.linear_acc[2] = imu_frame_data[2] * 9.81;
-          itr.second.angular_vel[0] = imu_frame_data[3] / 360. * 2. * M_PI;
-          return;
-        case 1:itr.second.angular_vel[1] = imu_frame_data[0] / 360. * 2. * M_PI;
-          itr.second.angular_vel[2] = imu_frame_data[1] / 360. * 2. * M_PI;
-          itr.second.ori[3] = imu_frame_data[2]; // Note the quaternion order
-          itr.second.ori[0] = imu_frame_data[3];
-          return;
-        case 2:itr.second.ori[1] = imu_frame_data[0];
-          itr.second.ori[2] = imu_frame_data[1];
-          return;
-        default:break;
+        // Check MIT Cheetah motor
+      else if (frame.can_id == static_cast<unsigned int>(0x000)) {
+        if (data_prt_.id2act_data_->find(frame.data[0]) != data_prt_.id2act_data_->end()) {
+          ActData &act_data = data_prt_.id2act_data_->find(frame.data[0])->second;
+          const ActCoeff &act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
+          if (act_data.type.find("cheetah") != std::string::npos) { // MIT Cheetah Motor
+            act_data.q_raw = (frame.data[1] << 8) | frame.data[2];
+            uint16_t qd = (frame.data[3] << 4) | (frame.data[4] >> 4);
+            uint16_t cur = ((frame.data[4] & 0xF) << 8) | frame.data[5];
+            // Multiple cycle
+            // NOTE: Raw data range is -4pi~4pi
+            if (act_data.seq != 0) {
+              double pos_new =
+                  act_coeff.act2pos * static_cast<double> (act_data.q_raw) + act_coeff.act2pos_offset
+                      + static_cast<double>(act_data.q_circle) * 8 * M_PI;
+              if (pos_new - act_data.pos > 4 * M_PI)
+                act_data.q_circle--;
+              else if (pos_new - act_data.pos < -4 * M_PI)
+                act_data.q_circle++;
+            }
+            act_data.stamp = time;
+            act_data.seq++;
+            act_data.pos = act_coeff.act2pos * static_cast<double> (act_data.q_raw) + act_coeff.act2pos_offset
+                + static_cast<double>(act_data.q_circle) * 8 * M_PI;
+            // Converter raw CAN data to position velocity and effort.
+            act_data.vel = act_coeff.act2vel * static_cast<double> (qd) + act_coeff.act2vel_offset;
+            act_data.effort = act_coeff.act2effort * static_cast<double> (cur) + act_coeff.act2effort_offset;
+            // Low pass filter
+            act_data.lp_filter->input(act_data.vel);
+            act_data.vel = act_data.lp_filter->output();
+          }
+        }
       }
+      // Check if IMU
+      float imu_frame_data[4] = {0};
+      bool is_too_big = false; // int16ToFloat failed sometime
+      for (int i = 0; i < 4; ++i) {
+        float value = int16ToFloat((frame.data[i * 2] << 8) | frame.data[i * 2 + 1]);
+        if (value > 1e3 || value < -1e3)
+          is_too_big = true;
+        else
+          imu_frame_data[i] = value;
+      }
+      if (!is_too_big) {  // TODO remove this ugly statement
+        for (auto &itr :*data_prt_.id2imu_data_) { // imu data are consisted of three frames
+          switch (frame.can_id - static_cast<unsigned int>(itr.first)) {
+            case 0:itr.second.linear_acc[0] = imu_frame_data[0] * 9.81;
+              itr.second.linear_acc[1] = imu_frame_data[1] * 9.81;
+              itr.second.linear_acc[2] = imu_frame_data[2] * 9.81;
+              itr.second.angular_vel[0] = imu_frame_data[3] / 360. * 2. * M_PI;
+              continue;
+            case 1:itr.second.angular_vel[1] = imu_frame_data[0] / 360. * 2. * M_PI;
+              itr.second.angular_vel[2] = imu_frame_data[1] / 360. * 2. * M_PI;
+              itr.second.ori[3] = imu_frame_data[2]; // Note the quaternion order
+              itr.second.ori[0] = imu_frame_data[3];
+              continue;
+            case 2:itr.second.ori[1] = imu_frame_data[0];
+              itr.second.ori[2] = imu_frame_data[1];
+              continue;
+            default:break;
+          }
+        }
+      }
+      if (!is_too_big)
+        ROS_ERROR_STREAM_ONCE(
+            "Can not find defined device, id: 0x" << std::hex << frame.can_id << " on bus: " << bus_name_);
     }
+    read_buffer_.clear();
   }
-  if (!is_too_big)
-    ROS_ERROR_STREAM_ONCE(
-        "Can not find defined device, id: 0x" << std::hex << frame.can_id << " on bus: " << bus_name_);
+}
+
+void CanBus::frameCallback(const can_frame &frame) {
+  std::lock_guard<std::mutex> guard(mutex_);
+  read_buffer_.push_back(frame);
 }
 
 }

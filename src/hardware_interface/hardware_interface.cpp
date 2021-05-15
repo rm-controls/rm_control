@@ -69,6 +69,8 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &ro
 }
 
 void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &period) {
+  for (auto bus:can_buses_)
+    bus->read(time);
   for (auto &id2act_datas:bus_id2act_data_)
     for (auto &act_data:id2act_datas.second) {
       act_data.second.halted = (time - act_data.second.stamp).toSec() > 0.01 || act_data.second.temp > 99;
@@ -78,11 +80,8 @@ void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &p
         act_data.second.calibrated = false;
       }
     }
-
-  // NOTE: read all data before propagate!
   if (is_actuator_specified_)
     act_to_jnt_state_->propagate();
-
   // Set all cmd to zero to avoid crazy soft limit oscillation when not controller loaded
   for (auto effort_joint_handle:effort_joint_handles_)
     effort_joint_handle.setCommand(0.);
