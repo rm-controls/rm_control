@@ -75,6 +75,7 @@ void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &p
     for (auto &act_data:id2act_datas.second) {
       act_data.second.halted = (time - act_data.second.stamp).toSec() > 0.01 || act_data.second.temp > 99;
       if (act_data.second.halted) {
+        act_data.second.seq = 0;
         act_data.second.qd_raw = 0;
         act_data.second.effort = 0;
         act_data.second.calibrated = false;
