@@ -22,7 +22,7 @@
             </actuator>
             <joint name="joint3">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <offset>0.3592</offset>
+                <offset>2.4659</offset>
             </joint>
         </transmission>
 
@@ -61,35 +61,11 @@
                 </actuator>
                 <joint name="joint2">
                     <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                    <offset>0.0979</offset>
+                    <offset>-2.3884</offset>
                     <mechanicalReduction>1</mechanicalReduction>
                 </joint>
             </transmission>
-<!--            <transmission name="trans_wrist">-->
-<!--                <type>transmission_interface/DifferentialTransmission</type>-->
-<!--                <actuator name="left_wrist_motor">-->
-<!--                    <role>actuator1</role>-->
-<!--                    <mechanicalReduction>1.2</mechanicalReduction>-->
-<!--                </actuator>-->
-<!--                <actuator name="right_wrist_motor">-->
-<!--                    <role>actuator2</role>-->
-<!--                    <mechanicalReduction>-1.2</mechanicalReduction>-->
-<!--                </actuator>-->
-<!--                <joint name="joint4">-->
-<!--                    <role>joint1</role>-->
-<!--                    <offset>1.192744</offset>-->
-<!--                    <mechanicalReduction>1</mechanicalReduction>-->
-<!--                    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>-->
-<!--                    <ignoreTransmissionAbsoluteEncoder>1</ignoreTransmissionAbsoluteEncoder>-->
-<!--                </joint>-->
-<!--                <joint name="joint5">-->
-<!--                    <role>joint2</role>-->
-<!--                    <offset>0.04641</offset>-->
-<!--                    <mechanicalReduction>-1</mechanicalReduction>-->
-<!--                    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>-->
-<!--                    <ignoreTransmissionAbsoluteEncoder>1</ignoreTransmissionAbsoluteEncoder>-->
-<!--                </joint>-->
-<!--            </transmission>-->
+
         </xacro:unless>
         <xacro:if value="${simulation}">
             <transmission name="trans_joint2">
