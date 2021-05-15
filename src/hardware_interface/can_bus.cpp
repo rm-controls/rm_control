@@ -109,6 +109,7 @@ void CanBus::read(ros::Time time) {
           else if (act_data.q_raw - act_data.q_last < -4096)
             act_data.q_circle++;
         }
+        act_data.frequency = 1. / (time - act_data.stamp).toSec();
         act_data.stamp = time;
         act_data.seq++;
         act_data.q_last = act_data.q_raw;

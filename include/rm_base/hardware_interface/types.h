@@ -26,6 +26,7 @@ struct ActData {
   uint8_t temp{};
   int64_t q_circle{};
   uint16_t q_last{};
+  double frequency{};
   double pos{}, vel{}, effort{};
   double cmd_pos{}, cmd_vel{}, cmd_effort{}, exe_effort{};
   double offset{};

@@ -118,20 +118,21 @@ void RmBaseHardWareInterface::publishActuatorState(const ros::Time &time) {
       rm_msgs::ActuatorState actuator_state;
       for (const auto &id2act_datas:bus_id2act_data_)
         for (const auto &act_data:id2act_datas.second) {
+          actuator_state.stamp.push_back(act_data.second.stamp);
           actuator_state.name.push_back(act_data.second.name);
           actuator_state.type.push_back(act_data.second.type);
           actuator_state.bus.push_back(id2act_datas.first);
           actuator_state.id.push_back(act_data.first);
-          actuator_state.stamp.push_back(act_data.second.stamp);
+          actuator_state.halted.push_back(act_data.second.halted);
           actuator_state.need_calibration.push_back(act_data.second.need_calibration);
           actuator_state.calibrated.push_back(act_data.second.calibrated);
           actuator_state.calibration_reading.push_back(act_data.second.calibration_reading);
-          actuator_state.halted.push_back(act_data.second.halted);
           actuator_state.position_raw.push_back(act_data.second.q_raw);
           actuator_state.velocity_raw.push_back(act_data.second.qd_raw);
           actuator_state.temperature.push_back(act_data.second.temp);
           actuator_state.circle.push_back(act_data.second.q_circle);
           actuator_state.last_position_raw.push_back(act_data.second.q_last);
+          actuator_state.frequency.push_back(act_data.second.frequency);
           actuator_state.position.push_back(act_data.second.pos);
           actuator_state.velocity.push_back(act_data.second.vel);
           actuator_state.effort.push_back(act_data.second.effort);
