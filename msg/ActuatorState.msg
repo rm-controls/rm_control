@@ -2,6 +2,9 @@
 # An actuator contains a motor and an encoder, and is connected
 # to a joint by a transmission
 
+# The time at which this actuator state was measured
+time[] stamp
+
 # The name of the actuator
 string[] name
 
@@ -16,9 +19,6 @@ int32[] id
 
 # Indicates if the motor is halted. A motor can be halted because of a voltage or temperature problem
 bool[] halted
-
-# The time at which this actuator state was measured
-time[] stamp
 
 # Need calibration
 bool[] need_calibration
