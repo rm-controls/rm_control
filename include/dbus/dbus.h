@@ -41,6 +41,7 @@ class DBus {
   int port_{};
   int16_t buff_[18]{};
   bool is_success{};
+  bool is_updata_ = false;
   void unpack();
 };
 

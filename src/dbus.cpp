@@ -77,6 +77,9 @@ void DBus::read() {
   unpack();
   if (count < 17) {
     memset(&d_bus_data_, 0, sizeof(d_bus_data_));
+    is_updata_ = false;
+  } else {
+    is_updata_ = true;
   }
 }
 
@@ -152,7 +155,7 @@ void DBus::getData(rm_msgs::DbusData *d_bus_data) {
     d_bus_data->key_c = (d_bus_data_.key >> 8) & 0x20;
     d_bus_data->key_v = (d_bus_data_.key >> 8) & 0x40;
     d_bus_data->key_b = (d_bus_data_.key >> 8) & 0x80;
-
-    d_bus_data->stamp = ros::Time::now();
+    if (is_updata_)
+      d_bus_data->stamp = ros::Time::now();
   }
 }
