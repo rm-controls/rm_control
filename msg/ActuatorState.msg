@@ -44,6 +44,8 @@ int64[]  circle
 # The last encoder raw position, represented by the number of encoder ticks
 uint16[] last_position_raw
 
+float64[]  frequency
+
 # The encoder position in radians
 float64[] position
 
