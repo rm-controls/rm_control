@@ -14,8 +14,20 @@ string[] bus
 # The CAN id
 int32[] id
 
+# Indicates if the motor is halted. A motor can be halted because of a voltage or temperature problem
+bool[] halted
+
 # The time at which this actuator state was measured
 time[] stamp
+
+# Need calibration
+bool[] need_calibration
+
+# Is calibrated
+bool[] calibrated
+
+# The value of the calibration reading: low (false) or high (true)
+bool[] calibration_reading
 
 # The encoder raw position, represented by the number of encoder ticks
 uint16[] position_raw
@@ -52,11 +64,3 @@ float64[] executed_effort
 # sensor is triggered during the calibration phase
 float64[] offset
 
-# Is calibrating
-bool[] is_calibrating
-
-# The value of the calibration reading: low (false) or high (true)
-bool[] calibration_reading
-
-# Indicates if the motor is halted. A motor can be halted because of a voltage or temperature problem
-bool[] halted
