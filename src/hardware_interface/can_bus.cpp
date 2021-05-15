@@ -111,7 +111,8 @@ void CanBus::frameCallback(const can_frame &frame) {
       act_data.seq++;
       act_data.q_last = act_data.q_raw;
       // Converter raw CAN data to position velocity and effort.
-      act_data.pos = act_coeff.act2pos * static_cast<double> (act_data.q_raw + 8191 * act_data.q_circle);
+      act_data.pos =
+          act_coeff.act2pos * static_cast<double> (act_data.q_raw + 8191 * act_data.q_circle) + act_data.offset;
       act_data.vel = act_coeff.act2vel * static_cast<double> (act_data.qd_raw);
       act_data.effort = act_coeff.act2effort * static_cast<double> (cur);
       // Low pass filter

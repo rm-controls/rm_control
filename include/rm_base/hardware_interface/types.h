@@ -19,6 +19,8 @@ struct ActData {
   std::string name{};
   std::string type{};
   ros::Time stamp{};
+  uint64_t seq{};
+  bool halted = false, need_calibration = false, calibrated = false, calibration_reading = false;
   uint16_t q_raw{};
   int16_t qd_raw{};
   uint8_t temp{};
@@ -27,8 +29,6 @@ struct ActData {
   double pos{}, vel{}, effort{};
   double cmd_pos{}, cmd_vel{}, cmd_effort{}, exe_effort{};
   double offset{};
-  uint64_t seq{};
-  bool is_calibrating = false, calibration_reading = false, halted = false;
   // For multiple cycle under absolute encoder (RoboMaster motor)
   LowPassFilter *lp_filter{};
 };

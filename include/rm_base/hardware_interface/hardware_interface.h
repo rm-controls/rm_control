@@ -16,14 +16,15 @@
 #include <XmlRpcValue.h>
 
 // ROS control
+#include <hardware_interface/robot_hw.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
-#include <hardware_interface/robot_hw.h>
+#include <hardware_interface/imu_sensor_interface.h>
 #include <transmission_interface/transmission_interface_loader.h>
 #include <joint_limits_interface/joint_limits_interface.h>
-#include <hardware_interface/imu_sensor_interface.h>
 
 #include <rm_common/hardware_interface/robot_state_interface.h>
+#include <rm_common/hardware_interface/actuator_extra_interface.h>
 #include <rm_msgs/ActuatorState.h>
 
 #include "can_bus.h"
@@ -54,13 +55,13 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
   // Interface
   std::vector<CanBus *> can_buses_{};
   hardware_interface::ActuatorStateInterface act_state_interface_;
+  hardware_interface::ActuatorExtraInterface act_extra_interface_;
   hardware_interface::EffortActuatorInterface effort_act_interface_;
   hardware_interface::RobotStateInterface robot_state_interface_;
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
   transmission_interface::RobotTransmissions robot_transmissions_;
   transmission_interface::ActuatorToJointStateInterface *act_to_jnt_state_{};
   transmission_interface::JointToActuatorEffortInterface *jnt_to_act_effort_{};
-  std::unique_ptr<transmission_interface::TransmissionInterfaceLoader> transmission_loader_{};
   joint_limits_interface::EffortJointSaturationInterface effort_jnt_saturation_interface_;
   joint_limits_interface::EffortJointSoftLimitsInterface effort_jnt_soft_limits_interface_;
   std::vector<hardware_interface::JointHandle> effort_joint_handles_{};
