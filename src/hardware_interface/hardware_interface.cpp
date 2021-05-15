@@ -75,6 +75,7 @@ void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &p
       if (act_data.second.halted) {
         act_data.second.qd_raw = 0;
         act_data.second.effort = 0;
+        act_data.second.calibrated = false;
       }
     }
 
@@ -88,19 +89,26 @@ void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &p
 }
 
 void RmBaseHardWareInterface::write(const ros::Time &time, const ros::Duration &period) {
-  // Save commanded effort before enforceLimits
-  for (const auto &id2act_datas:bus_id2act_data_)
-    for (auto act_data:id2act_datas.second)
-      act_data.second.cmd_effort = act_data.second.exe_effort;
-
-  // enforceLimits will limit cmd_effort into suitable value https://github.com/ros-controls/ros_control/wiki/joint_limits_interface
-  effort_jnt_saturation_interface_.enforceLimits(period);
-  effort_jnt_soft_limits_interface_.enforceLimits(period);
-
-  if (is_actuator_specified_)
+  if (is_actuator_specified_) {
+    // Propagate without joint limits
     jnt_to_act_effort_->propagate();
-  for (auto &item:can_buses_)
-    item->write();
+    // Save commanded effort before enforceLimits
+    for (auto &id2act_datas:bus_id2act_data_)
+      for (auto &act_data:id2act_datas.second)
+        act_data.second.cmd_effort = act_data.second.exe_effort;
+    // enforceLimits will limit cmd_effort into suitable value https://github.com/ros-controls/ros_control/wiki/joint_limits_interface
+    effort_jnt_saturation_interface_.enforceLimits(period);
+    effort_jnt_soft_limits_interface_.enforceLimits(period);
+    // Propagate with joint limits
+    jnt_to_act_effort_->propagate();
+    // Restore the cmd_effort for the calibrating joint
+    for (auto &id2act_datas:bus_id2act_data_)
+      for (auto &act_data:id2act_datas.second)
+        if (act_data.second.need_calibration && !act_data.second.calibrated)
+          act_data.second.exe_effort = act_data.second.cmd_effort;
+  }
+  for (auto &bus:can_buses_)
+    bus->write();
   publishActuatorState(time);
 }
 
@@ -115,6 +123,10 @@ void RmBaseHardWareInterface::publishActuatorState(const ros::Time &time) {
           actuator_state.bus.push_back(id2act_datas.first);
           actuator_state.id.push_back(act_data.first);
           actuator_state.stamp.push_back(act_data.second.stamp);
+          actuator_state.need_calibration.push_back(act_data.second.need_calibration);
+          actuator_state.calibrated.push_back(act_data.second.calibrated);
+          actuator_state.calibration_reading.push_back(act_data.second.calibration_reading);
+          actuator_state.halted.push_back(act_data.second.halted);
           actuator_state.position_raw.push_back(act_data.second.q_raw);
           actuator_state.velocity_raw.push_back(act_data.second.qd_raw);
           actuator_state.temperature.push_back(act_data.second.temp);
@@ -126,9 +138,6 @@ void RmBaseHardWareInterface::publishActuatorState(const ros::Time &time) {
           actuator_state.commanded_effort.push_back(act_data.second.cmd_effort);
           actuator_state.executed_effort.push_back(act_data.second.exe_effort);
           actuator_state.offset.push_back(act_data.second.offset);
-          actuator_state.is_calibrating.push_back(act_data.second.is_calibrating);
-          actuator_state.calibration_reading.push_back(act_data.second.calibration_reading);
-          actuator_state.halted.push_back(act_data.second.halted);
         }
       actuator_state_pub_->msg_ = actuator_state;
       actuator_state_pub_->unlockAndPublish();
@@ -226,15 +235,18 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
         ROS_ERROR_STREAM("Actuator " << it->first << " has no associated ID.");
         continue;
       }
+      bool need_calibration = false;
+      if (!it->second.hasMember("need_calibration"))
+        ROS_DEBUG_STREAM("Actuator " << it->first << " set no need calibration by default.");
+      else
+        need_calibration = it->second["need_calibration"];
       std::string bus = act_datas[it->first]["bus"], type = act_datas[it->first]["type"];
       int id = static_cast<int>(act_datas[it->first]["id"]);
-
       // check define of act_coeffs
       if (type2act_coeffs_.find(type) == type2act_coeffs_.end()) {
         ROS_ERROR_STREAM("Type " << type << " has no associated coefficient.");
         return false;
       }
-
       // for bus interface
       if (bus_id2act_data_.find(bus) == bus_id2act_data_.end())
         bus_id2act_data_.insert(std::make_pair(bus, std::unordered_map<int, ActData>()));
@@ -247,9 +259,10 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
         bus_id2act_data_[bus].insert(
             std::make_pair(
                 id,
-                ActData{.name = it->first, .type = type, .stamp=ros::Time::now(), .q_raw = 0, .qd_raw = 0, .temp= 0,
+                ActData{.name = it->first, .type = type, .stamp=ros::Time::now(), .seq = 0, .halted = false,
+                    .need_calibration = need_calibration, .calibrated = false, .calibration_reading = false, .q_raw = 0, .qd_raw = 0, .temp= 0,
                     .q_circle = 0, .q_last = 0, .pos = 0, .vel = 0, .effort = 0, .cmd_pos = 0, .cmd_vel = 0, .cmd_effort = 0,
-                    .exe_effort=0, .offset = 0, .seq = 0, .is_calibrating = false, .calibration_reading = false, .halted = false,
+                    .exe_effort=0, .offset = 0,
                     .lp_filter=new LowPassFilter(nh)}));
       }
 
@@ -258,9 +271,17 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
                                                         &bus_id2act_data_[bus][id].pos,
                                                         &bus_id2act_data_[bus][id].vel,
                                                         &bus_id2act_data_[bus][id].effort);
+      hardware_interface::ActuatorExtraHandle act_extra_(bus_id2act_data_[bus][id].name,
+                                                         &bus_id2act_data_[bus][id].halted,
+                                                         &bus_id2act_data_[bus][id].need_calibration,
+                                                         &bus_id2act_data_[bus][id].calibrated,
+                                                         &bus_id2act_data_[bus][id].calibration_reading,
+                                                         &bus_id2act_data_[bus][id].pos,
+                                                         &bus_id2act_data_[bus][id].offset);
       act_state_interface_.registerHandle(act_state);
-      if (type.find("rm") != std::string::npos
-          || type.find("cheetah") != std::string::npos) { // RoboMaster motors are effect actuator
+      act_extra_interface_.registerHandle(act_extra_);
+      // RoboMaster motors are effect actuator
+      if (type.find("rm") != std::string::npos || type.find("cheetah") != std::string::npos) {
         effort_act_interface_.registerHandle(
             hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].exe_effort));
       } else {
@@ -268,9 +289,9 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
                                      "'s type neither RoboMaster(rm_xxx) nor Cheetah(cheetah_xxx)");
         return false;
       }
-
     }
     registerInterface(&act_state_interface_);
+    registerInterface(&act_extra_interface_);
     registerInterface(&effort_act_interface_);
     is_actuator_specified_ = true;
   }
@@ -335,18 +356,15 @@ bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue &imu_dat
         return false;
       } else
         bus_id2imu_data_[bus].insert(
-            std::make_pair(id, ImuData{
-                .ori={},
+            std::make_pair(id, ImuData{.ori={},
                 .ori_cov={
                     static_cast<double>(ori_cov[0]), 0., 0.,
                     0., static_cast<double>(ori_cov[1]), 0.,
-                    0., 0., static_cast<double>(ori_cov[2])},
-                .angular_vel={},
+                    0., 0., static_cast<double>(ori_cov[2])}, .angular_vel={},
                 .angular_vel_cov={
                     static_cast<double>(angular_cov[0]), 0., 0.,
                     0., static_cast<double>(angular_cov[1]), 0.,
-                    0., 0., static_cast<double>(angular_cov[2])},
-                .linear_acc ={},
+                    0., 0., static_cast<double>(angular_cov[2])}, .linear_acc ={},
                 .linear_acc_cov={
                     static_cast<double>(linear_cov[0]), 0., 0.,
                     0., static_cast<double>(linear_cov[1]), 0.,
