@@ -94,8 +94,8 @@ void RmBaseHardWareInterface::write(const ros::Time &time, const ros::Duration &
     // Propagate without joint limits
     jnt_to_act_effort_->propagate();
     // Save commanded effort before enforceLimits
-    for (const auto &id2act_datas:bus_id2act_data_)
-      for (auto act_data:id2act_datas.second)
+    for (auto &id2act_datas:bus_id2act_data_)
+      for (auto &act_data:id2act_datas.second)
         act_data.second.cmd_effort = act_data.second.exe_effort;
     // enforceLimits will limit cmd_effort into suitable value https://github.com/ros-controls/ros_control/wiki/joint_limits_interface
     effort_jnt_saturation_interface_.enforceLimits(period);
@@ -103,8 +103,8 @@ void RmBaseHardWareInterface::write(const ros::Time &time, const ros::Duration &
     // Propagate with joint limits
     jnt_to_act_effort_->propagate();
     // Restore the cmd_effort for the calibrating joint
-    for (const auto &id2act_datas:bus_id2act_data_)
-      for (auto act_data:id2act_datas.second)
+    for (auto &id2act_datas:bus_id2act_data_)
+      for (auto &act_data:id2act_datas.second)
         if (act_data.second.need_calibration && !act_data.second.calibrated)
           act_data.second.exe_effort = act_data.second.cmd_effort;
   }
@@ -240,7 +240,7 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
       if (!it->second.hasMember("need_calibration"))
         ROS_DEBUG_STREAM("Actuator " << it->first << " set no need calibration by default.");
       else
-        need_calibration = true;
+        need_calibration = it->second["need_calibration"];
       std::string bus = act_datas[it->first]["bus"], type = act_datas[it->first]["type"];
       int id = static_cast<int>(act_datas[it->first]["id"]);
       // check define of act_coeffs
