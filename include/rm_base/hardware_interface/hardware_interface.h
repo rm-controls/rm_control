@@ -59,6 +59,7 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
   hardware_interface::EffortActuatorInterface effort_act_interface_;
   hardware_interface::RobotStateInterface robot_state_interface_;
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
+  std::unique_ptr<transmission_interface::TransmissionInterfaceLoader> transmission_loader_{};
   transmission_interface::RobotTransmissions robot_transmissions_;
   transmission_interface::ActuatorToJointStateInterface *act_to_jnt_state_{};
   transmission_interface::JointToActuatorEffortInterface *jnt_to_act_effort_{};

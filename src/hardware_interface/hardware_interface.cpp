@@ -281,8 +281,8 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
                                                          &bus_id2act_data_[bus][id].offset);
       act_state_interface_.registerHandle(act_state);
       act_extra_interface_.registerHandle(act_extra_);
-      if (type.find("rm") != std::string::npos
-          || type.find("cheetah") != std::string::npos) { // RoboMaster motors are effect actuator
+      // RoboMaster motors are effect actuator
+      if (type.find("rm") != std::string::npos || type.find("cheetah") != std::string::npos) {
         effort_act_interface_.registerHandle(
             hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].exe_effort));
       } else {
@@ -400,10 +400,9 @@ bool RmBaseHardWareInterface::load_urdf(ros::NodeHandle &root_nh) {
 }
 
 bool RmBaseHardWareInterface::setupTransmission(ros::NodeHandle &root_nh) {
-  std::unique_ptr<transmission_interface::TransmissionInterfaceLoader> transmission_loader;
   if (!is_actuator_specified_) return true;
   try {
-    transmission_loader = std::make_unique<transmission_interface::TransmissionInterfaceLoader>(
+    transmission_loader_ = std::make_unique<transmission_interface::TransmissionInterfaceLoader>(
         this, &robot_transmissions_);
   }
   catch (const std::invalid_argument &ex) {
@@ -420,7 +419,7 @@ bool RmBaseHardWareInterface::setupTransmission(ros::NodeHandle &root_nh) {
   }
 
   // Perform transmission loading
-  if (!transmission_loader->load(urdf_string_)) { return false; }
+  if (!transmission_loader_->load(urdf_string_)) { return false; }
   act_to_jnt_state_ = robot_transmissions_.get<transmission_interface::ActuatorToJointStateInterface>();
   jnt_to_act_effort_ = robot_transmissions_.get<transmission_interface::JointToActuatorEffortInterface>();
 
