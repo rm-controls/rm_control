@@ -30,7 +30,29 @@ class ActuatorExtraHandle {
       throw HardwareInterfaceException("Cannot create handle '" + name + "'. calibrated pointer is null.");
   }
   std::string getName() const { return name_; }
-
+  bool getHalted_() const {
+    assert(halted_);
+    return *halted_;
+  }
+  bool getNeedCalibration_() const {
+    assert(need_calibration_);
+    return *need_calibration_;
+  }
+  bool getCalibrationReading() const {
+    assert(calibration_reading_);
+    return *calibration_reading_;
+  }
+  double getPosition() const {
+    assert(pos_);
+    return *pos_;
+  }
+  double getOffset() const {
+    assert(offset_);
+    return *offset_;
+  }
+  void setOffset(double offset) {
+    *offset_ = offset;
+  }
  private:
   std::string name_;
   bool *halted_ = {nullptr};
