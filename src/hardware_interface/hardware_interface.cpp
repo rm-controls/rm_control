@@ -74,7 +74,7 @@ void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &p
         act_data.second.seq = 0;
         act_data.second.qd_raw = 0;
         act_data.second.effort = 0;
-        act_data.second.calibrated = false;
+        act_data.second.offset = 0; // set the actuator no calibrated
       }
     }
   if (is_actuator_specified_)
@@ -100,7 +100,7 @@ void RmBaseHardWareInterface::write(const ros::Time &time, const ros::Duration &
     // Restore the cmd_effort for the calibrating joint
     for (auto &id2act_datas:bus_id2act_data_)
       for (auto &act_data:id2act_datas.second)
-        if (act_data.second.need_calibration && !act_data.second.calibrated)
+        if (act_data.second.need_calibration && act_data.second.offset == 0)
           act_data.second.exe_effort = act_data.second.cmd_effort;
   }
   for (auto &bus:can_buses_)
@@ -121,7 +121,6 @@ void RmBaseHardWareInterface::publishActuatorState(const ros::Time &time) {
           actuator_state.id.push_back(act_data.first);
           actuator_state.halted.push_back(act_data.second.halted);
           actuator_state.need_calibration.push_back(act_data.second.need_calibration);
-          actuator_state.calibrated.push_back(act_data.second.calibrated);
           actuator_state.calibration_reading.push_back(act_data.second.calibration_reading);
           actuator_state.position_raw.push_back(act_data.second.q_raw);
           actuator_state.velocity_raw.push_back(act_data.second.qd_raw);
