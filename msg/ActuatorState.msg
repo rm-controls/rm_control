@@ -23,9 +23,6 @@ bool[] halted
 # Need calibration
 bool[] need_calibration
 
-# Is calibrated
-bool[] calibrated
-
 # The value of the calibration reading: low (false) or high (true)
 bool[] calibration_reading
 
