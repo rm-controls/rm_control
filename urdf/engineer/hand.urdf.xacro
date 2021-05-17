@@ -135,7 +135,7 @@
             <child link="right_finger"/>
             <origin xyz="0 0 0.045" rpy="0 0 0"/>
             <axis xyz="0 1 0"/>
-            <limit effort="588" lower="0.0" upper="0.03" velocity="3.772"/>
+            <limit effort="588" lower="-0.025" upper="0.0" velocity="3.772"/>
         </joint>
 
         <joint name="left_finger_joint" type="prismatic">
@@ -143,7 +143,7 @@
             <child link="left_finger"/>
             <origin xyz="0 0 0.045" rpy="0 0 0"/>
             <axis xyz="0 -1 0"/>
-            <limit effort="588" lower="0.0" upper="0.03" velocity="3.772"/>
+            <limit effort="588" lower="-0.025" upper="0.0" velocity="3.772"/>
             <mimic joint="right_finger_joint"/>
         </joint>
 
@@ -182,7 +182,7 @@
                 <offset>0.0</offset>
             </joint>
             <actuator name="right_finger_motor">
-                <mechanicalReduction>2356.194</mechanicalReduction>
+                <mechanicalReduction>-2356.194</mechanicalReduction>
             </actuator>
         </transmission>
 

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="mast">
+    <!-- safety_distance: Minimum safety distance in [m] by which the collision volumes are expanded and which is enforced during robot motions -->
+    <xacro:macro name="mast" params="connected_to:='' xyz:='0 0 0' rpy:='0 0 0' simulation">
+
+
+        <link name="mast">
+            <inertial>
+                <mass value="0.517"/>
+                <origin xyz="0.009 -0.002 -0.190" rpy="0 0 0"/>
+                <inertia ixx="1.221e-2" ixy="1.727e-5" ixz="6.890e-4" iyy="1.237e-2" iyz="-7.284e-5" izz="3.043e-4"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/mast.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.055 0.267 0.06"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="yaw">
+            <inertial>
+                <origin xyz="0.0 0.029 0.035" rpy="0 0 0"/>
+                <mass value="0.175"/>
+                <inertia ixx="3.583e-4" ixy="-4.2e-7" ixz="2.42e-7" iyy="1.473e-4" iyz="-4.618e-5" izz="2.568e-4"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/yaw.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.030 0.027 0.063"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="pitch">
+            <inertial>
+                <origin xyz="0.0 -0.04 0.002" rpy="0 0 0"/>
+                <mass value="0.246"/>
+                <inertia ixx="1.883e-4" ixy="1.22e-7" ixz="-7.56e-6" iyy="2.304e-4" iyz="-2.18e-7" izz="2.662e-4"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/pitch.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.030 0.027 0.063"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="camera1"/>
+        <link name="camera2"/>
+
+
+        <xacro:unless value="${connected_to == ''}">
+            <joint name="mast_joint" type="prismatic">
+                <origin xyz="${xyz}" rpy="${rpy}"/>
+                <parent link="${connected_to}"/>
+                <child link="mast"/>
+                <axis xyz="0 0 1"/>
+                <limit effort="1.2" velocity="13.82" lower="-1e10" upper="1e10"/>
+            </joint>
+        </xacro:unless>
+
+        <joint name="yaw_joint" type="revolute">
+            <origin xyz="0 0 0"
+                    rpy="0 0 0"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <limit effort="1.2" velocity="13.82" lower="-1e10" upper="1e10"/>
+            <parent link="mast"/>
+            <child link="yaw"/>
+            <axis xyz="0 0 1"/>
+        </joint>
+
+        <joint name="pitch_joint" type="revolute">
+            <origin xyz="0.0  0.029 0.059 " rpy="0 0 0"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <limit effort="1.2" velocity="13.82" lower="-1e10" upper="1e10"/>
+            <parent link="yaw"/>
+            <child link="pitch"/>
+            <axis xyz="0 1 0 "/>
+        </joint>
+
+        <joint name="camera1_joint" type="fixed">
+            <parent link="pitch"/>
+            <child link="camera1"/>
+            <origin xyz="0.006 0.028 0.021" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+        </joint>
+
+        <joint name="camera2_joint" type="fixed">
+            <parent link="pitch"/>
+            <child link="camera2"/>
+            <origin xyz="0.006 0.052 0.021" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+        </joint>
+
+
+        <transmission name="trans_yaw_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="yaw_joint_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+            <joint name="yaw_joint">
+                <offset>-2.160</offset>
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+
+        <transmission name="trans_pitch_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="pitch_joint_motor">
+                <mechanicalReduction>-1</mechanicalReduction>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+            <joint name="pitch_joint">
+                <offset>0.902</offset>
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+
+        <transmission name="trans_mast_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="mast_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>0.0</offset>
+            </joint>
+            <actuator name="mast_motor">
+                <mechanicalReduction>30</mechanicalReduction>
+            </actuator>
+        </transmission>
+
+        <xacro:if value="${simulation}">
+            <gazebo reference="camera1_link">
+                <sensor type="camera" name="camera1">
+                    <update_rate>30.0</update_rate>
+                    <camera name="head">
+                        <horizontal_fov>1.3962634</horizontal_fov>
+                        <image>
+                            <width>1920</width>
+                            <height>1080</height>
+                            <format>R8G8B8</format>
+                        </image>
+                        <clip>
+                            <near>0.05</near>
+                            <far>5</far>
+                        </clip>
+                        <noise>
+                            <type>gaussian</type>
+                            <mean>0.0</mean>
+                            <stddev>0.007</stddev>
+                        </noise>
+                    </camera>
+                    <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                        <alwaysOn>true</alwaysOn>
+                        <updateRate>0.0</updateRate>
+                        <cameraName>galaxy_camera</cameraName>
+                        <imageTopicName>image_raw</imageTopicName>
+                        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                        <frameName>camera_link</frameName>
+                        <hackBaseline>0.07</hackBaseline>
+                        <distortionK1>0.0</distortionK1>
+                        <distortionK2>0.0</distortionK2>
+                        <distortionK3>0.0</distortionK3>
+                        <distortionT1>0.0</distortionT1>
+                        <distortionT2>0.0</distortionT2>
+                    </plugin>
+                </sensor>
+            </gazebo>
+        </xacro:if>
+
+    </xacro:macro>
+</robot>
