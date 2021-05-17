@@ -77,6 +77,7 @@ add_library(${PROJECT_NAME}_loader_plugins
 add_executable(${PROJECT_NAME}
         src/${PROJECT_NAME}.cpp
         src/hardware_interface/hardware_interface.cpp
+        src/hardware_interface/parse.cpp
         src/hardware_interface/socketcan.cpp
         src/hardware_interface/can_bus.cpp
         src/control_loop.cpp
