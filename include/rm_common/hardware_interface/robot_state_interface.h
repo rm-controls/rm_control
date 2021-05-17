@@ -20,7 +20,10 @@ class RobotStateHandle {
  public:
   RobotStateHandle() = default;
   RobotStateHandle(std::string name, tf2_ros::Buffer *buffer)
-      : name_(std::move(name)), buffer_(buffer) {};
+      : name_(std::move(name)), buffer_(buffer) {
+    if (!buffer)
+      throw HardwareInterfaceException("Cannot create handle '" + name + "'. Tf Buffer data pointer is null.");
+  };
 
   geometry_msgs::TransformStamped lookupTransform(const std::string &target_frame, const std::string &source_frame,
                                                   const ros::Time &time) {
