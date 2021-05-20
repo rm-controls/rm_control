@@ -1,30 +1,29 @@
 rm_base:
   bus:
     - can0
-    - can1
   loop_frequency: 1000
   cycle_time_error_threshold: 0.001
 
   # Configurations of the actuators
   actuators:
-    act_mit_cheetah2_2:
-      bus: can1
-      id: 0x001
-      type: cheetah
-    act_mit_cheetah2_1:
-      bus: can1
-      id: 0x002
-      type: cheetah
-    act_mit_cheetah0:
-      bus: can1
-      id: 0x003
-      type: cheetah
+#    act_mit_cheetah2_2:
+#      bus: can1
+#      id: 0x001
+#      type: cheetah
+#    act_mit_cheetah2_1:
+#      bus: can1
+#      id: 0x002
+#      type: cheetah
+#    act_mit_cheetah0:
+#      bus: can1
+#      id: 0x003
+#      type: cheetah
 
 
     act_3508:
       bus: can0
-      id: 0x201
-      type: rm_3508
+      id: 0x203
+      type: rm_2006
       lp_cutoff_frequency: 100
 
 controllers:
@@ -35,21 +34,21 @@ controllers:
     type: joint_state_controller/JointStateController
     publish_rate: 100
   joint_mit_cheetah_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: joint_mit_cheetah0
-    pid: { p: 0.0, i: 0.0, d: 0.0 }
+    type: effort_controllers/JointEffortController
+    joint: joint_3508
+    pid: { p: 100.0, i: 5.0, d: 5.0 }
 
-joint_limits:
-  joint1:
-    has_soft_limits: true
-    k_position: 100
-    k_velocity: 1.5
-    soft_lower_limit: 0.0
-    soft_upper_limit: 2.0
-    has_velocity_limits: true
-    max_velocity: 100.0
-    #    has_acceleration_limits: true
-    #    max_acceleration: 5.0
-    has_effort_limits: true
-    max_effort: 3
+#joint_limits:
+#  joint1:
+#    has_soft_limits: true
+#    k_position: 100
+#    k_velocity: 1.5
+#    soft_lower_limit: 0.0
+#    soft_upper_limit: 2.0
+#    has_velocity_limits: true
+#    max_velocity: 100.0
+#    #    has_acceleration_limits: true
+#    #    max_acceleration: 5.0
+#    has_effort_limits: true
+#    max_effort: 3
 
