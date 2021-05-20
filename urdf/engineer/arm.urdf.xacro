@@ -143,7 +143,7 @@
         <!--  joint  -->
         <joint name="joint1" type="revolute">
             <axis xyz="0 1 0"/>
-            <origin xyz="0.133 0 1" rpy="1.57 0 0"/>
+            <origin xyz="0.122 0 0.124" rpy="1.57 0 0"/>
             <!--      limit not work while type="continuous"-->
             <limit effort="20" velocity="10" lower="-${pi}" upper="${pi}"/>
             <dynamics damping="0.0" friction="0.1"/>
