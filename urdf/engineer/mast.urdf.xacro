@@ -77,7 +77,8 @@
                 <parent link="${connected_to}"/>
                 <child link="mast"/>
                 <axis xyz="0 0 1"/>
-                <limit effort="1.2" velocity="13.82" lower="-1e10" upper="1e10"/>
+                <dynamics damping="0.0" friction="0.8"/>
+                <limit effort="1.2" velocity="13.82" lower="-0.175" upper="0"/>
             </joint>
         </xacro:unless>
 
