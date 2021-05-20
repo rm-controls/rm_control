@@ -16,10 +16,9 @@
         <type>transmission_interface/SimpleTransmission</type>
         <actuator name="pitch_joint_motor">
             <mechanicalReduction>-1</mechanicalReduction>
-            <mechanicalReduction>1</mechanicalReduction>
         </actuator>
         <joint name="pitch_joint">
-            <offset>0.902</offset>
+            <offset>0.876</offset>
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
