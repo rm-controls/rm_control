@@ -51,3 +51,8 @@ rm_base:
       id: 0x206
       type: rm_3508
       lp_cutoff_frequency: 150
+    magazine_joint_motor:
+      bus: can0
+      id: 0x207
+      type: rm_2006
+      lp_cutoff_frequency: 100
