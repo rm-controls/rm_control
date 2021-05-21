@@ -67,45 +67,8 @@
             </collision>
         </link>
 
-        <link name="camera_wideangle">
-            <visual>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <geometry>
-                    <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-            </visual>
-            <inertial>
-                <mass value="0.17671"/>
-                <origin xyz="0.022 0.0 0.0"/>
-                <inertia ixx="2.129e-5" ixy="7.329e-8" ixz="-1.11e-7" iyy="2.198e-4" iyz="-8.04e-7" izz="2.197e-4"/>
-            </inertial>
-            <collision>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <geometry>
-                    <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-            </collision>
-        </link>
-
-        <link name="camera_telephoto">
-            <visual>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <geometry>
-                    <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-            </visual>
-            <inertial>
-                <mass value="0.17671"/>
-                <origin xyz="0.022 0.0 0.0"/>
-                <inertia ixx="2.129e-5" ixy="7.329e-8" ixz="-1.11e-7" iyy="2.198e-4" iyz="-8.04e-7" izz="2.197e-4"/>
-            </inertial>
-            <collision>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <geometry>
-                    <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-            </collision>
-        </link>
+        <link name="camera_telephoto"/>
+        <link name="camera_wideangle"/>
 
         <link name="camera_wideangle_optical_frame"/>
 
