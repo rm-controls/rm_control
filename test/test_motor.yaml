@@ -36,7 +36,7 @@ controllers:
   joint_mit_cheetah_position_controller:
     type: effort_controllers/JointEffortController
     joint: joint_3508
-    pid: { p: 100.0, i: 5.0, d: 5.0 }
+#    pid: { p: 100.0, i: 5.0, d: 5.0 }
 
 #joint_limits:
 #  joint1:
