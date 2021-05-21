@@ -206,8 +206,8 @@
             <gazebo reference="camera_wideangle">
                 <sensor type="camera" name="camera_wideangle">
                     <update_rate>100.0</update_rate>
-                    <camera name="head">
-                        <horizontal_fov>1.3962634</horizontal_fov>
+                    <camera name="wideangle">
+                        <horizontal_fov>2.0934</horizontal_fov>
                         <image>
                             <width>1920</width>
                             <height>1080</height>
@@ -226,7 +226,7 @@
                     <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
                         <alwaysOn>true</alwaysOn>
                         <updateRate>0.0</updateRate>
-                        <cameraName>galaxy_camera/camera_wideangle</cameraName>
+                        <cameraName>usb_camera/camera_wideangle</cameraName>
                         <imageTopicName>image_raw</imageTopicName>
                         <cameraInfoTopicName>camera_info</cameraInfoTopicName>
                         <frameName>camera_wideangle_optical_frame</frameName>
@@ -243,8 +243,8 @@
             <gazebo reference="camera_telephoto">
                 <sensor type="camera" name="camera_telephoto">
                     <update_rate>100.0</update_rate>
-                    <camera name="head">
-                        <horizontal_fov>1.3962634</horizontal_fov>
+                    <camera name="telephoto">
+                        <horizontal_fov>1.919</horizontal_fov>
                         <image>
                             <width>1920</width>
                             <height>1080</height>
@@ -263,7 +263,7 @@
                     <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
                         <alwaysOn>true</alwaysOn>
                         <updateRate>0.0</updateRate>
-                        <cameraName>galaxy_camera/camera_telephoto</cameraName>
+                        <cameraName>usb_camera/camera_telephoto</cameraName>
                         <imageTopicName>image_raw</imageTopicName>
                         <cameraInfoTopicName>camera_info</cameraInfoTopicName>
                         <frameName>camera_telephoto_optical_frame</frameName>
