@@ -45,6 +45,10 @@
                             <scale>1 1 1</scale>
                         </mesh>
                     </geometry>
+                    <material>
+                        <lighting>0</lighting>
+                    </material>
+
                 </visual>
                 <collision name='collision'>
                     <geometry>
