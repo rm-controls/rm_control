@@ -18,7 +18,7 @@
         <xacro:include filename="$(find rm_description)/urdf/engineer/hand.urdf.xacro"/>
         <xacro:hand connected_to="link5" xyz="-0.014 0 0" rpy="0 1.57 0" simulation="$(arg use_simulation)"/>
         <xacro:include filename="$(find rm_description)/urdf/engineer/mast.urdf.xacro"/>
-        <xacro:mast connected_to="link1" xyz="0.076 0.484 0.108 " rpy="-1.57 0 0" simulation="$(arg use_simulation)"/>
+        <xacro:mast connected_to="link1" xyz="-0.076 0.582 0.108 " rpy="-1.57 0 0" simulation="$(arg use_simulation)"/>
     </xacro:if>
 
     <xacro:if value="$(arg use_simulation)">
