@@ -14,4 +14,5 @@ float64 filtered_vel_z
 float64 filtered_center_x
 float64 filtered_center_y
 float64 filtered_center_z
-float64 gyro_vel
+float64 real_gyro_vel
+float64 filtered_gyro_vel
