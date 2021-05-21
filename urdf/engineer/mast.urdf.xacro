@@ -22,9 +22,9 @@
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="-0.013 0 -0.021" rpy="0 0 0"/>
+                <origin xyz="0. 0.004 0.03" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.075 0.059 0.043"/>
+                    <cylinder length="0.14" radius="0.07"/>
                 </geometry>
             </collision>
         </link>
@@ -40,12 +40,12 @@
                     <mesh filename="package://rm_description/meshes/engineer/yaw.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
-            <collision>
-                <origin xyz="0. 0.004 0.04" rpy="0 0 0"/>
-                <geometry>
-                    <box size="0.054 0.120 0.081"/>
-                </geometry>
-            </collision>
+<!--            <collision>-->
+<!--                <origin xyz="0.0 0.004 0.03" rpy="0 0 0"/>-->
+<!--                <geometry>-->
+<!--                    <cylinder length="0.14" radius="0.01"/>-->
+<!--                </geometry>-->
+<!--            </collision>-->
         </link>
 
         <link name="pitch">
@@ -59,20 +59,20 @@
                     <mesh filename="package://rm_description/meshes/engineer/pitch.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
-            <collision>
-                <origin xyz="-0.005 -0.04 0.014" rpy="0 0 0"/>
-                <geometry>
-                    <box size="0.1 0.048 0.036"/>
-                </geometry>
-            </collision>
+<!--            <collision>-->
+<!--                <origin xyz="-0.005 -0.04 0.014" rpy="0 0 0"/>-->
+<!--                <geometry>-->
+<!--                    <box size="0.1 0.048 0.036"/>-->
+<!--                </geometry>-->
+<!--            </collision>-->
         </link>
 
-        <link name="camera_telephoto"/>
-        <link name="camera_wideangle"/>
+<!--        <link name="camera_telephoto"/>-->
+<!--        <link name="camera_wideangle"/>-->
 
-        <link name="camera_wideangle_optical_frame"/>
+<!--        <link name="camera_wideangle_optical_frame"/>-->
 
-        <link name="camera_telephoto_optical_frame"/>
+<!--        <link name="camera_telephoto_optical_frame"/>-->
 
 
         <xacro:unless value="${connected_to == ''}">
@@ -90,7 +90,7 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <dynamics damping="0.0" friction="0.1"/>
-            <limit effort="1.2" velocity="13.82" lower="-1e10" upper="1e10"/>
+            <limit effort="1.2" velocity="13.82" lower="-3.14" upper="3.14"/>
             <parent link="mast"/>
             <child link="yaw"/>
             <axis xyz="0 0 1"/>
@@ -105,31 +105,31 @@
             <axis xyz="0 1 0 "/>
         </joint>
 
-        <joint name="camera_wideangle_joint" type="fixed">
-            <parent link="pitch"/>
-            <child link="camera_wideangle"/>
-            <origin xyz="0.006 0.028 0.021" rpy="0 0 0"/>
-            <axis xyz="0 0 1"/>
-        </joint>
+<!--        <joint name="camera_wideangle_joint" type="fixed">-->
+<!--            <parent link="pitch"/>-->
+<!--            <child link="camera_wideangle"/>-->
+<!--            <origin xyz="0.006 0.028 0.021" rpy="0 0 0"/>-->
+<!--            <axis xyz="0 0 1"/>-->
+<!--        </joint>-->
 
-        <joint name="camera_telephoto_joint" type="fixed">
-            <parent link="pitch"/>
-            <child link="camera_telephoto"/>
-            <origin xyz="0.006 0.052 0.021" rpy="0 0 0"/>
-            <axis xyz="0 0 1"/>
-        </joint>
+<!--        <joint name="camera_telephoto_joint" type="fixed">-->
+<!--            <parent link="pitch"/>-->
+<!--            <child link="camera_telephoto"/>-->
+<!--            <origin xyz="0.006 0.052 0.021" rpy="0 0 0"/>-->
+<!--            <axis xyz="0 0 1"/>-->
+<!--        </joint>-->
 
-        <joint name="camera_wideangle_optical_frame_joint" type="fixed">
-            <origin xyz="0.026 0 -0.0145" rpy="-1.57 0 -1.57"/>
-            <parent link="camera_wideangle"/>
-            <child link="camera_wideangle_optical_frame"/>
-        </joint>
+<!--        <joint name="camera_wideangle_optical_frame_joint" type="fixed">-->
+<!--            <origin xyz="0.026 0 -0.0145" rpy="-1.57 0 -1.57"/>-->
+<!--            <parent link="camera_wideangle"/>-->
+<!--            <child link="camera_wideangle_optical_frame"/>-->
+<!--        </joint>-->
 
-        <joint name="camera_telephoto_optical_frame_joint" type="fixed">
-            <origin xyz="0.026 0 -0.0145" rpy="-1.57 0 -1.57"/>
-            <parent link="camera_telephoto"/>
-            <child link="camera_telephoto_optical_frame"/>
-        </joint>
+<!--        <joint name="camera_telephoto_optical_frame_joint" type="fixed">-->
+<!--            <origin xyz="0.026 0 -0.0145" rpy="-1.57 0 -1.57"/>-->
+<!--            <parent link="camera_telephoto"/>-->
+<!--            <child link="camera_telephoto_optical_frame"/>-->
+<!--        </joint>-->
 
 
         <transmission name="trans_yaw_joint">
@@ -166,79 +166,79 @@
         </transmission>
 
         <xacro:if value="${simulation}">
-            <gazebo reference="camera_wideangle">
-                <sensor type="camera" name="camera_wideangle">
-                    <update_rate>100.0</update_rate>
-                    <camera name="wideangle">
-                        <horizontal_fov>2.0934</horizontal_fov>
-                        <image>
-                            <width>1920</width>
-                            <height>1080</height>
-                            <format>R8G8B8</format>
-                        </image>
-                        <clip>
-                            <near>0.05</near>
-                            <far>5</far>
-                        </clip>
-                        <noise>
-                            <type>gaussian</type>
-                            <mean>0.0</mean>
-                            <stddev>0.007</stddev>
-                        </noise>
-                    </camera>
-                    <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
-                        <alwaysOn>true</alwaysOn>
-                        <updateRate>0.0</updateRate>
-                        <cameraName>usb_camera/camera_wideangle</cameraName>
-                        <imageTopicName>image_raw</imageTopicName>
-                        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
-                        <frameName>camera_wideangle_optical_frame</frameName>
-                        <hackBaseline>0.07</hackBaseline>
-                        <distortionK1>0.0</distortionK1>
-                        <distortionK2>0.0</distortionK2>
-                        <distortionK3>0.0</distortionK3>
-                        <distortionT1>0.0</distortionT1>
-                        <distortionT2>0.0</distortionT2>
-                    </plugin>
-                </sensor>
-            </gazebo>
+<!--            <gazebo reference="camera_wideangle">-->
+<!--                <sensor type="camera" name="camera_wideangle">-->
+<!--                    <update_rate>100.0</update_rate>-->
+<!--                    <camera name="wideangle">-->
+<!--                        <horizontal_fov>2.0934</horizontal_fov>-->
+<!--                        <image>-->
+<!--                            <width>1920</width>-->
+<!--                            <height>1080</height>-->
+<!--                            <format>R8G8B8</format>-->
+<!--                        </image>-->
+<!--                        <clip>-->
+<!--                            <near>0.05</near>-->
+<!--                            <far>5</far>-->
+<!--                        </clip>-->
+<!--                        <noise>-->
+<!--                            <type>gaussian</type>-->
+<!--                            <mean>0.0</mean>-->
+<!--                            <stddev>0.007</stddev>-->
+<!--                        </noise>-->
+<!--                    </camera>-->
+<!--                    <plugin name="camera_controller" filename="libgazebo_ros_camera.so">-->
+<!--                        <alwaysOn>true</alwaysOn>-->
+<!--                        <updateRate>0.0</updateRate>-->
+<!--                        <cameraName>usb_camera/camera_wideangle</cameraName>-->
+<!--                        <imageTopicName>image_raw</imageTopicName>-->
+<!--                        <cameraInfoTopicName>camera_info</cameraInfoTopicName>-->
+<!--                        <frameName>camera_wideangle_optical_frame</frameName>-->
+<!--                        <hackBaseline>0.07</hackBaseline>-->
+<!--                        <distortionK1>0.0</distortionK1>-->
+<!--                        <distortionK2>0.0</distortionK2>-->
+<!--                        <distortionK3>0.0</distortionK3>-->
+<!--                        <distortionT1>0.0</distortionT1>-->
+<!--                        <distortionT2>0.0</distortionT2>-->
+<!--                    </plugin>-->
+<!--                </sensor>-->
+<!--            </gazebo>-->
 
-            <gazebo reference="camera_telephoto">
-                <sensor type="camera" name="camera_telephoto">
-                    <update_rate>100.0</update_rate>
-                    <camera name="telephoto">
-                        <horizontal_fov>1.919</horizontal_fov>
-                        <image>
-                            <width>1920</width>
-                            <height>1080</height>
-                            <format>R8G8B8</format>
-                        </image>
-                        <clip>
-                            <near>0.05</near>
-                            <far>5</far>
-                        </clip>
-                        <noise>
-                            <type>gaussian</type>
-                            <mean>0.0</mean>
-                            <stddev>0.007</stddev>
-                        </noise>
-                    </camera>
-                    <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
-                        <alwaysOn>true</alwaysOn>
-                        <updateRate>0.0</updateRate>
-                        <cameraName>usb_camera/camera_telephoto</cameraName>
-                        <imageTopicName>image_raw</imageTopicName>
-                        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
-                        <frameName>camera_telephoto_optical_frame</frameName>
-                        <hackBaseline>0.07</hackBaseline>
-                        <distortionK1>0.0</distortionK1>
-                        <distortionK2>0.0</distortionK2>
-                        <distortionK3>0.0</distortionK3>
-                        <distortionT1>0.0</distortionT1>
-                        <distortionT2>0.0</distortionT2>
-                    </plugin>
-                </sensor>
-            </gazebo>
+<!--            <gazebo reference="camera_telephoto">-->
+<!--                <sensor type="camera" name="camera_telephoto">-->
+<!--                    <update_rate>100.0</update_rate>-->
+<!--                    <camera name="telephoto">-->
+<!--                        <horizontal_fov>1.919</horizontal_fov>-->
+<!--                        <image>-->
+<!--                            <width>1920</width>-->
+<!--                            <height>1080</height>-->
+<!--                            <format>R8G8B8</format>-->
+<!--                        </image>-->
+<!--                        <clip>-->
+<!--                            <near>0.05</near>-->
+<!--                            <far>5</far>-->
+<!--                        </clip>-->
+<!--                        <noise>-->
+<!--                            <type>gaussian</type>-->
+<!--                            <mean>0.0</mean>-->
+<!--                            <stddev>0.007</stddev>-->
+<!--                        </noise>-->
+<!--                    </camera>-->
+<!--                    <plugin name="camera_controller" filename="libgazebo_ros_camera.so">-->
+<!--                        <alwaysOn>true</alwaysOn>-->
+<!--                        <updateRate>0.0</updateRate>-->
+<!--                        <cameraName>usb_camera/camera_telephoto</cameraName>-->
+<!--                        <imageTopicName>image_raw</imageTopicName>-->
+<!--                        <cameraInfoTopicName>camera_info</cameraInfoTopicName>-->
+<!--                        <frameName>camera_telephoto_optical_frame</frameName>-->
+<!--                        <hackBaseline>0.07</hackBaseline>-->
+<!--                        <distortionK1>0.0</distortionK1>-->
+<!--                        <distortionK2>0.0</distortionK2>-->
+<!--                        <distortionK3>0.0</distortionK3>-->
+<!--                        <distortionT1>0.0</distortionT1>-->
+<!--                        <distortionT2>0.0</distortionT2>-->
+<!--                    </plugin>-->
+<!--                </sensor>-->
+<!--            </gazebo>-->
         </xacro:if>
 
     </xacro:macro>
