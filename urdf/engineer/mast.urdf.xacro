@@ -16,9 +16,15 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0.004 0 -0.259" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.055 0.267 0.06"/>
+                    <box size="0.053 0.035 0.45"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="-0.013 0 -0.021" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.075 0.059 0.043"/>
                 </geometry>
             </collision>
         </link>
@@ -35,9 +41,9 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0. 0.004 0.04" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.030 0.027 0.063"/>
+                    <box size="0.054 0.120 0.081"/>
                 </geometry>
             </collision>
         </link>
@@ -54,9 +60,9 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="-0.005 -0.04 0.014" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.030 0.027 0.063"/>
+                    <box size="0.1 0.048 0.036"/>
                 </geometry>
             </collision>
         </link>
@@ -112,7 +118,8 @@
                 <parent link="${connected_to}"/>
                 <child link="mast"/>
                 <axis xyz="0 0 1"/>
-                <limit effort="1.2" velocity="13.82" lower="-1e10" upper="1e10"/>
+                <dynamics damping="0.0" friction="0.8"/>
+                <limit effort="1.2" velocity="13.82" lower="-0.175" upper="0"/>
             </joint>
         </xacro:unless>
 
@@ -177,7 +184,6 @@
             <type>transmission_interface/SimpleTransmission</type>
             <actuator name="pitch_joint_motor">
                 <mechanicalReduction>-1</mechanicalReduction>
-                <mechanicalReduction>1</mechanicalReduction>
             </actuator>
             <joint name="pitch_joint">
                 <offset>0.902</offset>
@@ -192,7 +198,7 @@
                 <offset>0.0</offset>
             </joint>
             <actuator name="mast_motor">
-                <mechanicalReduction>30</mechanicalReduction>
+                <mechanicalReduction>71.44</mechanicalReduction>
             </actuator>
         </transmission>
 
