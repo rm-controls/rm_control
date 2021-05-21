@@ -89,6 +89,47 @@
             </collision>
         </link>
 
+        <link name="platform">
+            <inertial>
+                <mass value="0.073"/>
+                <origin xyz="-0.037 -0.005 0.009"/>
+                <inertia ixx="5.874e-4" ixy="-2.845e-4" ixz="1.882e-5" iyy=" 2.133e-4" iyz="2.682e-5" izz="7.780e-4"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/platform.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="-0.113 0.134 0.114" rpy="0 0.0 0"/>
+                <geometry>
+                    <box size="0.106 0.105 0.002"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="platform_joint" type="prismatic">
+            <axis xyz="0 1 0"/>
+            <origin xyz="-0.113 0.134 0.114"/>
+            <limit effort="7" velocity="30" lower="0" upper="2.6459"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <parent link="base_link"/>
+            <child link="platform"/>
+        </joint>
+
+        <transmission name="trans_platform_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="platform_joint_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+            <joint name="platform_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>0</offset>
+            </joint>
+        </transmission>
+
+
         <xacro:mecanum_wheel prefix="left_front" connected_to="base_link"
                              wheel_x_offset="${wheel_front}" wheel_y_offset="${wheel_left}"
                              wheel_z_offset="${wheel_offset_z}"
