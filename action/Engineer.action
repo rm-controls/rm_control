@@ -1,5 +1,5 @@
 # goal
-int64 mode
+string step
 ---
 # result
 bool finish
