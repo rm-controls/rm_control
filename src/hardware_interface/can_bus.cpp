@@ -73,14 +73,14 @@ void CanBus::write() {
       frame.data[5] = kd >> 4;
       frame.data[6] = ((kd & 0xF) << 4) | (tau >> 8);
       frame.data[7] = tau & 0xff;
-      socket_can_.wirte(&frame);
+      socket_can_.write(&frame);
     }
   }
 
   if (has_write_frame0)
-    socket_can_.wirte(&rm_frame0_);
+    socket_can_.write(&rm_frame0_);
   if (has_write_frame1)
-    socket_can_.wirte(&rm_frame1_);
+    socket_can_.write(&rm_frame1_);
 }
 
 void CanBus::read(ros::Time time) {
