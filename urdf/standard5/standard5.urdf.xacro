@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="standard5">
+
+    <xacro:arg name="load_chassis" default="true"/>
+    <xacro:arg name="load_gimbal" default="true"/>
+    <xacro:arg name="load_shooter" default="true"/>
+    <xacro:arg name="use_simulation" default="true"/>
+    <xacro:arg name="roller_type" default="realistic"/>
+
+    <xacro:include filename="$(find rm_description)/urdf/standard/standard.urdf.xacro">
+        <xacro:arg name="load_chassis" value="$(arg load_chassis)"/>
+        <xacro:arg name="load_gimbal" value="$(arg load_gimbal)"/>
+        <xacro:arg name="load_shooter" value="$(arg load_shooter)"/>
+        <xacro:arg name="use_simulation" value="$(arg use_simulation)"/>
+        <xacro:arg name="roller_type" value="$(arg roller_type)"/>
+    </xacro:include>
+
+</robot>
