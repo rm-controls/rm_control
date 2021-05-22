@@ -1,4 +1,5 @@
 uint8 id
+time stamp
 geometry_msgs/Pose camera2detection
 geometry_msgs/Pose map2detection
 geometry_msgs/Vector3 detection_vel
