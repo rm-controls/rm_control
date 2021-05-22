@@ -89,7 +89,7 @@
             </collision>
         </link>
 
-        <link name="platform">
+        <link name="stone_platform">
             <inertial>
                 <mass value="0.073"/>
                 <origin xyz="-0.037 -0.005 0.009"/>
@@ -98,7 +98,7 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://rm_description/meshes/engineer/platform.stl" scale="0.001 0.001 0.001"/>
+                    <mesh filename="package://rm_description/meshes/engineer/stone_platform.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
             <collision>
@@ -109,21 +109,21 @@
             </collision>
         </link>
 
-        <joint name="platform_joint" type="prismatic">
+        <joint name="stone_platform_joint" type="prismatic">
             <axis xyz="0 1 0"/>
             <origin xyz="-0.113 0.134 0.114"/>
             <limit effort="7" velocity="30" lower="0" upper="2.6459"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="base_link"/>
-            <child link="platform"/>
+            <child link="stone_platform"/>
         </joint>
 
-        <transmission name="trans_platform_joint">
+        <transmission name="trans_stone_platform_joint">
             <type>transmission_interface/SimpleTransmission</type>
-            <actuator name="platform_joint_motor">
+            <actuator name="stone_platform_joint_motor">
                 <mechanicalReduction>1</mechanicalReduction>
             </actuator>
-            <joint name="platform_joint">
+            <joint name="stone_platform_joint">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
                 <offset>0</offset>
             </joint>
