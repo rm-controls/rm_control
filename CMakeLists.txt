@@ -22,7 +22,7 @@ add_message_files(
         LpData.msg
         KalmanData.msg
         MovingAverageData.msg
-        PowerManagerData.msg
+        SuperCapacitor.msg
 )
 
 add_service_files(
