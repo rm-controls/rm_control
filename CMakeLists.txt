@@ -109,12 +109,13 @@ install(DIRECTORY include/${PROJECT_NAME}/
         )
 
 # Mark other files for installation
-install(DIRECTORY config
+install(DIRECTORY config launch
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         )
-install(DIRECTORY launch
+install(
+        FILES rm_base_loader_plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-        )
+)
 
 #############
 ## Testing ##
