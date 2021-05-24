@@ -23,12 +23,6 @@
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="-0.002 0.04 0 " rpy="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.188" radius="0.047"/>
-                </geometry>
-            </collision>
-            <collision>
                 <origin xyz="0.005 0.128 0" rpy="0 0 0"/>
                 <geometry>
                     <cylinder length="0.106" radius="0.047"/>
