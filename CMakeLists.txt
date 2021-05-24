@@ -28,6 +28,7 @@ add_message_files(
 add_service_files(
         FILES
         ContinousDetectorSwitch.srv
+        ColorSwitch.srv
 )
 
 add_message_files(
