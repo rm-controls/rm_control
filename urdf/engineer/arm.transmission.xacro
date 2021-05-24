@@ -75,7 +75,7 @@
                 </actuator>
                 <joint name="joint2">
                     <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                    <offset>0</offset>
+                    <offset>-2.3764</offset>
                 </joint>
             </transmission>
         </xacro:if>

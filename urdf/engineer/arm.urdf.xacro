@@ -23,12 +23,6 @@
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="-0.032 0.068 0" rpy="0 0 -0.593"/>
-                <geometry>
-                    <box size="0.097 0.14 0.106"/>
-                </geometry>
-            </collision>
-            <collision>
                 <origin xyz="-0.002 0.04 0 " rpy="0 0 0"/>
                 <geometry>
                     <cylinder length="0.188" radius="0.047"/>
@@ -132,12 +126,12 @@
                     <mesh filename="package://rm_description/meshes/engineer/link5.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
-            <collision>
-                <origin xyz="-0.054 0 0" rpy="0 1.57 0"/>
-                <geometry>
-                    <cylinder length="0.108" radius="0.021"/>
-                </geometry>
-            </collision>
+<!--            <collision>-->
+<!--                <origin xyz="-0.054 0 0" rpy="0 1.57 0"/>-->
+<!--                <geometry>-->
+<!--                    <cylinder length="0.108" radius="0.021"/>-->
+<!--                </geometry>-->
+<!--            </collision>-->
         </link>
 
         <!--  joint  -->

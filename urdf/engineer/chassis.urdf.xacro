@@ -82,7 +82,7 @@
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="0.0 0 0" rpy="0 0 1.0646508"/>
+                <origin xyz="-0.0239 0.084 0.228" rpy="0 0 1.0646508"/>
                 <geometry>
                     <box size="0.080 0.003 0.250"/>
                 </geometry>
@@ -109,10 +109,40 @@
             </collision>
         </link>
 
+        <link name="card">
+            <inertial>
+                <mass value="0.26"/>
+                <origin xyz="-0.071 -0.006 0.003"/>
+                <inertia ixx="1.078e-3" ixy="6.486e-5" ixz="1.454e-5" iyy="1.142e-4" iyz="5.143e-6" izz="2.215e-3"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/card.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="-0.113 0.134 0.0" rpy="0 0.0 0"/>
+                <geometry>
+                    <box size="0.253 0.151 0.011"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="card_joint" type="prismatic">
+            <axis xyz="1 0 0"/>
+            <origin xyz="0.109 0.001 -0.11"/>
+            <limit effort="0.1" velocity="30" lower="0" upper="0.05"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <parent link="base_link"/>
+            <child link="card"/>
+        </joint>
+
+
         <joint name="stone_platform_joint" type="prismatic">
             <axis xyz="0 0 1"/>
             <origin xyz="-0.113 0.134 0.114"/>
-            <limit effort="7" velocity="30" lower="0" upper="2.6459"/>
+            <limit effort="1" velocity="30" lower="0" upper="0.024"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="base_link"/>
             <child link="stone_platform"/>
@@ -124,6 +154,17 @@
                 <mechanicalReduction>49.97</mechanicalReduction>
             </actuator>
             <joint name="stone_platform_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>0</offset>
+            </joint>
+        </transmission>
+
+        <transmission name="trans_card_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="card_joint_motor">
+                <mechanicalReduction>49.97</mechanicalReduction>
+            </actuator>
+            <joint name="card_joint">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
                 <offset>0</offset>
             </joint>
