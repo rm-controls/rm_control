@@ -28,25 +28,23 @@
             <direction>-0.5 0.1 -0.9</direction>
         </light>
 
-        <model name='rmuc'>
-<!--            <static>1</static>-->
-<!--            <static>1</static>-->
-            <pose>0.2 0 0 0 0 0</pose>
-            <link name='rmuc_link'>
+        <model name='exchange_station'>
+            <static>1</static>
+            <static>1</static>
+            <link name='exchange_station_link'>
+                <pose>-2 0 0 0 0 0</pose>
                 <visual name='visual'>
-                    <pose>0 0 5 0 0 0</pose>
                     <geometry>
                         <mesh>
-                            <uri>model://rm_gazebo/worlds/place/SmallResource.stl</uri>
+                            <uri>model://rm_gazebo/worlds/place/exchange_station.stl</uri>
                             <scale>0.001 0.001 0.001</scale>
                         </mesh>
                     </geometry>
                 </visual>
                 <collision name='collision'>
-                    <pose>0 0 5 0 0 0</pose>
                     <geometry>
                         <mesh>
-                            <uri>model://rm_gazebo/worlds/place/SmallResource.stl</uri>
+                            <uri>model://rm_gazebo/worlds/place/big_resource.stl</uri>
                             <scale>0.001 0.001 0.001</scale>
                         </mesh>
                     </geometry>

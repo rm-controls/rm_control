@@ -18,7 +18,7 @@
 "/>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find rm_gazebo)/worlds/rmuc.world"/>
+        <arg name="world_name" value="$(find rm_gazebo)/worlds/engineer/exchange_station.world"/>
         <arg name="paused" value="false"/>
         <arg name="use_sim_time" value="true"/>r
         <arg name="gui" value="true"/>
