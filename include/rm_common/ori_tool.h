@@ -2,8 +2,8 @@
 // Created by qiayuan on 8/13/20.
 //
 
-#ifndef SRC_RM_COMMON_INCLUDE_ORI_TOOL_H_
-#define SRC_RM_COMMON_INCLUDE_ORI_TOOL_H_
+#ifndef RM_COMMON_ORI_TOOL_H_
+#define RM_COMMON_ORI_TOOL_H_
 #include <geometry_msgs/Quaternion.h>
 #include <tf/transform_datatypes.h>
 #include <eigen3/Eigen/Core>
@@ -22,4 +22,4 @@ tf::Quaternion getAverageQuaternion(
 
 tf::Quaternion rotationMatrixToQuaternion(const Eigen::Map<Eigen::Matrix3d> &rot);
 
-#endif //SRC_RM_COMMON_INCLUDE_ORI_TOOL_H_
+#endif // RM_COMMON_ORI_TOOL_H_
