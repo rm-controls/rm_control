@@ -30,6 +30,47 @@
             </collision>
         </link>
 
+
+        <link name="cover">
+            <inertial>
+                <mass value="0.118"/>
+                <origin xyz="-0.037 -0.003 0.0"/>
+                <inertia ixx="6.240e-4" ixy="7.325e-4" ixz="1.839e-5" iyy="1.083e-3" iyz="-1.166e-5" izz="1.602e-3"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/hero/cover.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.033 0.0 -0.0" rpy="0 0.0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/hero/cover.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="cover_joint" type="revolute">
+            <axis xyz="1 0 0"/>
+            <origin xyz="-0.27 0.201 0.125"/>
+            <limit effort="1" velocity="30" lower="-3.14" upper="3.14"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <parent link="pitch"/>
+            <child link="cover"/>
+        </joint>
+
+        <transmission name="trans_cover_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="cover_joint_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+            <joint name="cover_joint">
+                <offset>0</offset>
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+
         <xacro:mecanum_wheel prefix="left_front" connected_to="base_link"
                              wheel_x_offset="${wheel_track/2}" wheel_y_offset="${wheel_base/2}"
                              wheel_z_offset="${wheel_offset_z}"

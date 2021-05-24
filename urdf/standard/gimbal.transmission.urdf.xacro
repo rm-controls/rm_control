@@ -23,4 +23,15 @@
         </joint>
     </transmission>
 
+    <transmission name="trans_cover_joint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="cover_joint_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="cover_joint">
+            <offset>0</offset>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
 </robot>
