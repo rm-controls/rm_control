@@ -110,7 +110,7 @@
         </link>
 
         <joint name="stone_platform_joint" type="prismatic">
-            <axis xyz="0 1 0"/>
+            <axis xyz="0 0 1"/>
             <origin xyz="-0.113 0.134 0.114"/>
             <limit effort="7" velocity="30" lower="0" upper="2.6459"/>
             <dynamics damping="0.0" friction="0.1"/>
@@ -121,7 +121,7 @@
         <transmission name="trans_stone_platform_joint">
             <type>transmission_interface/SimpleTransmission</type>
             <actuator name="stone_platform_joint_motor">
-                <mechanicalReduction>1</mechanicalReduction>
+                <mechanicalReduction>49.97</mechanicalReduction>
             </actuator>
             <joint name="stone_platform_joint">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
