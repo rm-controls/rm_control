@@ -18,7 +18,7 @@
             <collision>
                 <origin xyz="0.004 0 -0.259" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.053 0.035 0.45"/>
+                    <box size="0.035 0.035 0.4"/>
                 </geometry>
             </collision>
             <collision>
@@ -40,12 +40,6 @@
                     <mesh filename="package://rm_description/meshes/engineer/yaw.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
-<!--            <collision>-->
-<!--                <origin xyz="0.0 0.004 0.03" rpy="0 0 0"/>-->
-<!--                <geometry>-->
-<!--                    <cylinder length="0.14" radius="0.01"/>-->
-<!--                </geometry>-->
-<!--            </collision>-->
         </link>
 
         <link name="pitch">
@@ -59,12 +53,6 @@
                     <mesh filename="package://rm_description/meshes/engineer/pitch.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
-<!--            <collision>-->
-<!--                <origin xyz="-0.005 -0.04 0.014" rpy="0 0 0"/>-->
-<!--                <geometry>-->
-<!--                    <box size="0.1 0.048 0.036"/>-->
-<!--                </geometry>-->
-<!--            </collision>-->
         </link>
 
 <!--        <link name="camera_telephoto"/>-->
@@ -105,6 +93,10 @@
             <axis xyz="0 1 0 "/>
         </joint>
 
+        <gazebo reference="mast">
+            <self_collide>1</self_collide>
+        </gazebo>
+
 <!--        <joint name="camera_wideangle_joint" type="fixed">-->
 <!--            <parent link="pitch"/>-->
 <!--            <child link="camera_wideangle"/>-->
@@ -130,7 +122,6 @@
 <!--            <parent link="camera_telephoto"/>-->
 <!--            <child link="camera_telephoto_optical_frame"/>-->
 <!--        </joint>-->
-
 
         <transmission name="trans_yaw_joint">
             <type>transmission_interface/SimpleTransmission</type>

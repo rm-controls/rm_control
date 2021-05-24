@@ -25,10 +25,13 @@
             <collision>
                 <origin xyz="0 0 0.027" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.055 0.267 0.06"/>
+                    <box size="0.055 0.267 0.055"/>
                 </geometry>
             </collision>
         </link>
+        <gazebo reference="palm">
+            <self_collide>1</self_collide>
+        </gazebo>
 
         <link name="right_finger">
             <inertial>
@@ -42,16 +45,16 @@
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
+<!--            <collision>-->
+<!--                <origin xyz="0.0 0.046 0.005" rpy="0 0 0"/>-->
+<!--                <geometry>-->
+<!--                    <box size="0.030 0.027 0.063"/>-->
+<!--                </geometry>-->
+<!--            </collision>-->
             <collision>
-                <origin xyz="0.0 0.046 0.005" rpy="0 0 0"/>
+                <origin xyz="0.0 0.088 0.025" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.030 0.027 0.063"/>
-                </geometry>
-            </collision>
-            <collision>
-                <origin xyz="0.0 0.091 0.025" rpy="0 0 0"/>
-                <geometry>
-                    <box size="0.03 0.109 0.022"/>
+                    <box size="0.03 0.112 0.022"/>
                 </geometry>
             </collision>
             <collision>
@@ -74,16 +77,16 @@
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
-            <collision>
-                <origin xyz="0.0 -0.043 0.005" rpy="0 0 0"/>
-                <geometry>
-                    <box size="0.030 0.027 0.063"/>
-                </geometry>
-            </collision>
+<!--            <collision>-->
+<!--                <origin xyz="0.0 -0.043 0.005" rpy="0 0 0"/>-->
+<!--                <geometry>-->
+<!--                    <box size="0.030 0.027 0.063"/>-->
+<!--                </geometry>-->
+<!--            </collision>-->
             <collision>
                 <origin xyz="0.0 -0.088 0.025" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.03 0.109 0.022"/>
+                    <box size="0.03 0.112 0.022"/>
                 </geometry>
             </collision>
             <collision>
