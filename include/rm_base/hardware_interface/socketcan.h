@@ -50,7 +50,7 @@ class SocketCAN {
   /**
    * Sends the referenced frame to the bus
    */
-  void wirte(can_frame *frame) const;
+  void write(can_frame *frame) const;
   /**
    * Starts a new thread, that will wait for socket events
    */
