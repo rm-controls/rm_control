@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
   ros::AsyncSpinner spinner(2);
   spinner.start();
 
-  struct sched_param params{.sched_priority = 98};
+  struct sched_param params{.sched_priority = 95};
   if (sched_setscheduler(0, SCHED_FIFO, &params) == -1)
     ROS_ERROR("Set scheduler failed, RUN THIS NODE AS SUPER USER.\n");
 
