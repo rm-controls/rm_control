@@ -12,5 +12,5 @@ uint8 SPEED_30M_PER_SECOND = 4
 uint8 mode
 uint8 speed
 float64 hz
-bool magazine
+bool cover
 time stamp
