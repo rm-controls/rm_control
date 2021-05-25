@@ -99,7 +99,7 @@ static void *socketcan_receiver_thread(void *argv) {
     FD_SET(sock->sock_fd_, &descriptors);
     // Wait until timeout or activity on any descriptor
     if (select(maxfd + 1, &descriptors, nullptr, nullptr, &timeout)) {
-      int len = read(sock->sock_fd_, &rx_frame, CAN_MTU);
+      size_t len = read(sock->sock_fd_, &rx_frame, CAN_MTU);
       if (len < 0)
         continue;
       if (sock->reception_handler != nullptr)
