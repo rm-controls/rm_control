@@ -8,27 +8,27 @@ rm_base:
   actuators:
     right_front_wheel_motor:
       bus: can1
-      id: 0x201
+      id: 0x208
       type: rm_3508
       lp_cutoff_frequency: 100
     left_front_wheel_motor:
       bus: can1
-      id: 0x202
+      id: 0x207
       type: rm_3508
       lp_cutoff_frequency: 100
     left_back_wheel_motor:
       bus: can1
-      id: 0x203
+      id: 0x206
       type: rm_3508
       lp_cutoff_frequency: 100
     right_back_wheel_motor:
       bus: can1
-      id: 0x204
+      id: 0x205
       type: rm_3508
       lp_cutoff_frequency: 100
     joint1_motor:
       bus: can1
-      id: 0x205
+      id: 0x201
       type: rm_3508
     joint2_left_motor:
       bus: can0
@@ -42,18 +42,34 @@ rm_base:
       bus: can0
       id: 0x001
       type: cheetah
-    left_wrist_motor:
+    joint4_motor:
       bus: can1
-      id: 0x206
-      type: rm_2006
-    right_wrist_motor:
+      id: 0x202
+      type: rm_3508
+    joint5_motor:
       bus: can1
-      id: 0x207
-      type: rm_2006
+      id: 0x203
+      type: rm_3508
     right_finger_motor:
       bus: can1
-      id: 0x208
+      id: 0x204
       type: rm_3508
+    yaw_joint_motor:
+      bus: can0
+      id: 0x201
+      type: rm_3508
+    pitch_joint_motor:
+      bus: can0
+      id: 0x204
+      type: rm_3508
+    mast_joint_motor:
+      bus: can0
+      id: 0x203
+      type: rm_2006
+    stone_platform_joint_motor:
+      bus: can0
+      id: 0x205
+      type: rm_2006
 
 
 
