@@ -45,12 +45,6 @@
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
-<!--            <collision>-->
-<!--                <origin xyz="0.0 0.046 0.005" rpy="0 0 0"/>-->
-<!--                <geometry>-->
-<!--                    <box size="0.030 0.027 0.063"/>-->
-<!--                </geometry>-->
-<!--            </collision>-->
             <collision>
                 <origin xyz="0.0 0.088 0.025" rpy="0 0 0"/>
                 <geometry>
@@ -77,12 +71,6 @@
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
-<!--            <collision>-->
-<!--                <origin xyz="0.0 -0.043 0.005" rpy="0 0 0"/>-->
-<!--                <geometry>-->
-<!--                    <box size="0.030 0.027 0.063"/>-->
-<!--                </geometry>-->
-<!--            </collision>-->
             <collision>
                 <origin xyz="0.0 -0.088 0.025" rpy="0 0 0"/>
                 <geometry>
