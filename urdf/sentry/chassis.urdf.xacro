@@ -88,4 +88,32 @@
 
     </xacro:macro>
 
+    <link name="cover">
+    <inertial>
+        <mass value="0.118"/>
+        <origin xyz="-0.037 -0.003 0.0"/>
+        <inertia ixx="6.240e-4" ixy="7.325e-4" ixz="1.839e-5" iyy="1.083e-3" iyz="-1.166e-5" izz="1.602e-3"/>
+    </inertial>
+    </link>
+
+    <joint name="cover_joint" type="revolute">
+        <axis xyz="1 0 0"/>
+        <origin xyz="-0.27 0.201 0.125"/>
+        <limit effort="1" velocity="30" lower="-3.14" upper="3.14"/>
+        <dynamics damping="0.0" friction="0.1"/>
+        <parent link="pitch"/>
+        <child link="cover"/>
+    </joint>
+
+    <transmission name="trans_cover_joint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="cover_joint_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="cover_joint">
+            <offset>0</offset>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
 </robot>
