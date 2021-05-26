@@ -31,14 +31,4 @@
         </joint>
     </transmission>
 
-    <transmission name="trans_magazine_joint">
-        <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="magazine_joint_motor">
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-        <joint name="magazine_joint">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-    </transmission>
-
 </robot>
