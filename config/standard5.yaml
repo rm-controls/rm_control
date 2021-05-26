@@ -57,9 +57,14 @@ rm_base:
       id: 0x204
       type: rm_2006
       lp_cutoff_frequency: 100
+    cover_joint_motor:
+      bus: can1
+      id: 0x208
+      type: rm_2006
+      lp_cutoff_frequency: 100
   imus:
-    base_imu:
-      frame_id: base_link
+    gimbal_imu:
+      frame_id: gimbal_imu
       bus: can0
       id: 0x300
       orientation_covariance_diagonal: [ 0.0012, 0.0012, 0.0012 ]
