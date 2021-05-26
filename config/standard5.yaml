@@ -51,6 +51,7 @@ rm_base:
       id: 0x203
       type: rm_2006
       lp_cutoff_frequency: 100
+      need_calibration: true
     cover_joint_motor:
       bus: can1
       id: 0x204
