@@ -56,7 +56,7 @@
             <origin xyz="-0.27 0.201 0.125"/>
             <limit effort="1" velocity="30" lower="-3.14" upper="3.14"/>
             <dynamics damping="0.0" friction="0.1"/>
-            <parent link="pitch"/>
+            <parent link="base_link"/>
             <child link="cover"/>
         </joint>
 
