@@ -28,10 +28,169 @@
             <direction>-0.5 0.1 -0.9</direction>
         </light>
 
+        <model name='stone2'>
+            <pose>1.17798 -0.350676 0.618368 0 0 0</pose>
+            <link name='stone_link2'>
+                <inertial>
+                    <mass>0.590</mass>
+                    <inertia>
+                        <ixx>0.004</ixx>
+                        <ixy>0.0</ixy>
+                        <ixz>0.0</ixz>
+                        <iyy>0.004</iyy>
+                        <iyz>0.0</iyz>
+                        <izz>0.004</izz>
+                    </inertia>
+                </inertial>
+                <visual name='visual'>
+                    <geometry>
+                        <mesh>
+                            <uri>model://rm_gazebo/worlds/stone/stone.dae</uri>
+                            <scale>1 1 1</scale>
+                        </mesh>
+                    </geometry>
+                    <material>
+                        <lighting>0</lighting>
+                    </material>
+                </visual>
+                <collision name='collision'>
+                    <geometry>
+                        <mesh>
+                            <uri>model://rm_gazebo/worlds/stone/stone.dae</uri>
+                            <scale>1 1 1</scale>
+                        </mesh>
+                    </geometry>
+                    <max_contacts>10</max_contacts>
+                    <surface>
+                        <bounce/>
+                        <friction>
+                            <ode/>
+                        </friction>
+                        <contact>
+                            <ode/>
+                        </contact>
+                    </surface>
+                </collision>
+                <velocity_decay>
+                    <linear>0</linear>
+                    <angular>0</angular>
+                </velocity_decay>
+                <self_collide>0</self_collide>
+                <kinematic>0</kinematic>
+                <gravity>1</gravity>
+            </link>
+        </model>
+
+        <model name='stone3'>
+            <pose>1.17798 -0.086676 0.618368 0 0 0</pose>
+            <link name='stone_link3'>
+                <inertial>
+                    <mass>0.590</mass>
+                    <inertia>
+                        <ixx>0.004</ixx>
+                        <ixy>0.0</ixy>
+                        <ixz>0.0</ixz>
+                        <iyy>0.004</iyy>
+                        <iyz>0.0</iyz>
+                        <izz>0.004</izz>
+                    </inertia>
+                </inertial>
+                <visual name='visual'>
+                    <geometry>
+                        <mesh>
+                            <uri>model://rm_gazebo/worlds/stone/stone.dae</uri>
+                            <scale>1 1 1</scale>
+                        </mesh>
+                    </geometry>
+                    <material>
+                        <lighting>0</lighting>
+                    </material>
+                </visual>
+                <collision name='collision'>
+                    <geometry>
+                        <mesh>
+                            <uri>model://rm_gazebo/worlds/stone/stone.dae</uri>
+                            <scale>1 1 1</scale>
+                        </mesh>
+                    </geometry>
+                    <max_contacts>10</max_contacts>
+                    <surface>
+                        <bounce/>
+                        <friction>
+                            <ode/>
+                        </friction>
+                        <contact>
+                            <ode/>
+                        </contact>
+                    </surface>
+                </collision>
+                <velocity_decay>
+                    <linear>0</linear>
+                    <angular>0</angular>
+                </velocity_decay>
+                <self_collide>0</self_collide>
+                <kinematic>0</kinematic>
+                <gravity>1</gravity>
+            </link>
+        </model>
+
+        <model name='stone1'>
+            <pose>1.17798 -0.626676 0.618368 0 0 0</pose>
+            <link name='stone_link1'>
+                <inertial>
+                    <mass>0.590</mass>
+                    <inertia>
+                        <ixx>0.004</ixx>
+                        <ixy>0.0</ixy>
+                        <ixz>0.0</ixz>
+                        <iyy>0.004</iyy>
+                        <iyz>0.0</iyz>
+                        <izz>0.004</izz>
+                    </inertia>
+                </inertial>
+                <visual name='visual'>
+                    <geometry>
+                        <mesh>
+                            <uri>model://rm_gazebo/worlds/stone/stone.dae</uri>
+                            <scale>1 1 1</scale>
+                        </mesh>
+                    </geometry>
+                    <material>
+                        <lighting>0</lighting>
+                    </material>
+                </visual>
+                <collision name='collision'>
+                    <geometry>
+                        <mesh>
+                            <uri>model://rm_gazebo/worlds/stone/stone.dae</uri>
+                            <scale>1 1 1</scale>
+                        </mesh>
+                    </geometry>
+                    <max_contacts>10</max_contacts>
+                    <surface>
+                        <bounce/>
+                        <friction>
+                            <ode/>
+                        </friction>
+                        <contact>
+                            <ode/>
+                        </contact>
+                    </surface>
+                </collision>
+                <velocity_decay>
+                    <linear>0</linear>
+                    <angular>0</angular>
+                </velocity_decay>
+                <self_collide>0</self_collide>
+                <kinematic>0</kinematic>
+                <gravity>1</gravity>
+            </link>
+        </model>
+
         <model name='small_resource'>
             <static>1</static>
             <static>1</static>
-            <pose>2 0 0 0 0 0</pose>
+            <pose>1 0 0 0 0 3.14</pose>
             <link name='small_resource_link'>
                 <visual name='visual'>
                     <geometry>
