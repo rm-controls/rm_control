@@ -11,7 +11,7 @@
             </actuator>
             <joint name="joint1">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <offset>-0.004</offset>
+                <offset>0</offset>
             </joint>
         </transmission>
 
@@ -22,7 +22,7 @@
             </actuator>
             <joint name="joint3">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <offset>2.3713</offset>
+                <offset>-0.82513</offset>
             </joint>
         </transmission>
 
@@ -33,7 +33,7 @@
             </actuator>
             <joint name="joint4">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <offset>1.454</offset>
+                <offset>-0.28587</offset>
             </joint>
         </transmission>
 
@@ -44,7 +44,7 @@
             </actuator>
             <joint name="joint5">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <offset>-0.1264</offset>
+                <offset>0.886556</offset>
             </joint>
         </transmission>
 
@@ -61,12 +61,12 @@
                 </actuator>
                 <joint name="joint2">
                     <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                    <offset>-2.3764</offset>
+                    <offset>-2.45428</offset>
                     <mechanicalReduction>1</mechanicalReduction>
                 </joint>
             </transmission>
-
         </xacro:unless>
+
         <xacro:if value="${simulation}">
             <transmission name="trans_joint2">
                 <type>transmission_interface/SimpleTransmission</type>
