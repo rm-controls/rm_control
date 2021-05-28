@@ -138,7 +138,7 @@ void CanBus::read(ros::Time time) {
           if (act_data.seq != 0) {
             double pos_new =
                 act_coeff.act2pos * static_cast<double> (act_data.q_raw) + act_coeff.act2pos_offset
-                    + static_cast<double>(act_data.q_circle) * 8 * M_PI;
+                    + static_cast<double>(act_data.q_circle) * 8 * M_PI + act_data.offset;
             if (pos_new - act_data.pos > 4 * M_PI)
               act_data.q_circle--;
             else if (pos_new - act_data.pos < -4 * M_PI)
@@ -147,7 +147,7 @@ void CanBus::read(ros::Time time) {
           act_data.stamp = time;
           act_data.seq++;
           act_data.pos = act_coeff.act2pos * static_cast<double> (act_data.q_raw) + act_coeff.act2pos_offset
-              + static_cast<double>(act_data.q_circle) * 8 * M_PI;
+              + static_cast<double>(act_data.q_circle) * 8 * M_PI + act_data.offset;
           // Converter raw CAN data to position velocity and effort.
           act_data.vel = act_coeff.act2vel * static_cast<double> (qd) + act_coeff.act2vel_offset;
           act_data.effort = act_coeff.act2effort * static_cast<double> (cur) + act_coeff.act2effort_offset;
