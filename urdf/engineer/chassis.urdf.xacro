@@ -5,8 +5,8 @@
     <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
     <xacro:property name="wheel_front" value="0.1"/>
     <xacro:property name="wheel_back" value="-0.18"/>
-    <xacro:property name="wheel_left" value="-0.24"/>
-    <xacro:property name="wheel_right" value="0.24"/>
+    <xacro:property name="wheel_right" value="-0.24"/>
+    <xacro:property name="wheel_left" value="0.24"/>
     <xacro:property name="wheel_offset_z" value="-0.06"/>
     <xacro:property name="wheel_joint_damping" value="1.0"/>
     <xacro:property name="wheel_joint_friction" value="1.0"/>
