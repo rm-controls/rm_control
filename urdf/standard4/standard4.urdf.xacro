@@ -24,7 +24,7 @@
 
     <xacro:if value="$(arg load_shooter)">
         <xacro:include filename="$(find rm_description)/urdf/standard/shooter.urdf.xacro"/>
-        <xacro:include filename="$(find rm_description)/urdf/standard/shooter.transmission.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/standard4/shooter.transmission.urdf.xacro"/>
     </xacro:if>
 
     <xacro:if value="$(arg use_simulation)">
