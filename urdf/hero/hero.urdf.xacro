@@ -19,7 +19,7 @@
     <xacro:IMU connected_to="yaw" imu_name="gimbal_imu" simulation="true"
                xyz="0.024 -0.014 0.088" rpy="${pi} ${-pi/2} 0"/>
     <xacro:include filename="$(find rm_description)/urdf/common/camera.urdf.xacro"/>
-    <xacro:camera_sensor xyz="0.127 0 -0.038" rpy="3.14 0 0" parent="pitch"
+    <xacro:camera_sensor xyz="0.127 0 -0.038" rpy="${pi} 0 -0.01" parent="pitch"
                          camera_sim="$(arg use_simulation)"/>
   </xacro:if>
 
