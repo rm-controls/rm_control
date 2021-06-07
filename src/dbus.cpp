@@ -77,9 +77,9 @@ void DBus::read() {
   unpack();
   if (count < 17) {
     memset(&d_bus_data_, 0, sizeof(d_bus_data_));
-    is_updata_ = false;
+    is_update_ = false;
   } else {
-    is_updata_ = true;
+    is_update_ = true;
   }
 }
 
@@ -129,9 +129,9 @@ void DBus::getData(rm_msgs::DbusData *d_bus_data) {
     d_bus_data->ch_r_y = static_cast<double> (d_bus_data_.ch1 / 660.0);
     d_bus_data->ch_l_x = static_cast<double> (d_bus_data_.ch2 / 660.0);
     d_bus_data->ch_l_y = static_cast<double> (d_bus_data_.ch3 / 660.0);
-    d_bus_data->m_x = static_cast<double> (d_bus_data_.x / 32767.0);
-    d_bus_data->m_y = static_cast<double> (d_bus_data_.y / 32767.0);
-    d_bus_data->m_z = static_cast<double> (d_bus_data_.z / 32767.0);
+    d_bus_data->m_x = static_cast<double> (d_bus_data_.x / 1600.0);
+    d_bus_data->m_y = static_cast<double> (d_bus_data_.y / 1600.0);
+    d_bus_data->m_z = static_cast<double> (d_bus_data_.z / 1600.0);
     d_bus_data->wheel = static_cast<double> (d_bus_data_.wheel / 660.0);
 
     d_bus_data->s_l = d_bus_data_.s1;
@@ -155,7 +155,7 @@ void DBus::getData(rm_msgs::DbusData *d_bus_data) {
     d_bus_data->key_c = (d_bus_data_.key >> 8) & 0x20;
     d_bus_data->key_v = (d_bus_data_.key >> 8) & 0x40;
     d_bus_data->key_b = (d_bus_data_.key >> 8) & 0x80;
-    if (is_updata_)
+    if (is_update_)
       d_bus_data->stamp = ros::Time::now();
   }
 }
