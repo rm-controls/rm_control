@@ -122,16 +122,16 @@
             </gazebo>
             <gazebo reference="right_finger">
                 <self_collide>1</self_collide>
-                <mu1 value="2000000000.0"/>
-                <mu2 value="2000000000.0"/>
+                <mu1 value="8000000000.0"/>
+                <mu2 value="8000000000.0"/>
                 <kp value="1000000.0"/>
                 <kd value="100.0"/>
                 <material>Gazebo/Black</material>
             </gazebo>
             <gazebo reference="left_finger">
                 <self_collide>1</self_collide>
-                <mu1 value="2000000000.0"/>
-                <mu2 value="2000000000.0"/>
+                <mu1 value="8000000000.0"/>
+                <mu2 value="8000000000.0"/>
                 <kp value="1000000.0"/>
                 <kd value="100.0"/>
                 <material>Gazebo/Black</material>
