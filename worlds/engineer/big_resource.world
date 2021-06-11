@@ -65,16 +65,10 @@
                     <surface>
                         <bounce/>
                         <friction>
-                            <ode>
-                                <mu>100.0</mu>
-                                <mu2>100.0</mu2>
-                            </ode>
+                            <ode/>
                         </friction>
                         <contact>
-                            <ode>
-                                <mu>100.0</mu>
-                                <mu2>100.0</mu2>
-                            </ode>
+                            <ode/>
                         </contact>
                     </surface>
                 </collision>
@@ -112,16 +106,10 @@
                     <surface>
                         <bounce/>
                         <friction>
-                            <ode>
-                                <mu1>1000000.0</mu1>
-                                <mu2>1000000.0</mu2>
-                            </ode>
+                            <ode/>
                         </friction>
                         <contact>
-                            <ode>
-                                <mu1>1000000.0</mu1>
-                                <mu2>1000000.0</mu2>
-                            </ode>
+                            <ode/>
                         </contact>
                     </surface>
                 </collision>
