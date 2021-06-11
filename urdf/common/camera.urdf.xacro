@@ -27,11 +27,12 @@
                 </geometry>
             </collision>
         </link>
+    </xacro:macro>
 
-
+    <xacro:macro name="camera_optical_frame" params="xyz rpy parent camera_sim">
         <joint name="camera_optical_frame_joint" type="fixed">
-            <origin xyz="0.026 0 -0.0145" rpy="-1.57 0 -1.57"/>
-            <parent link="camera_link"/>
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+            <parent link="${parent}"/>
             <child link="camera_optical_frame"/>
         </joint>
         <link name="camera_optical_frame"/>
