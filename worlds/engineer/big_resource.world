@@ -5,7 +5,7 @@
         <!-- Target real time factor is the product of max_step_size and real_time_update_rate -->
         <!-- Negative real_time_update_rate means that Gazebo will run as fast as possible -->
         <physics type="ode">
-            <!--      <type>world</type>-->
+            <type>world</type>
             <max_step_size>0.001</max_step_size>
             <real_time_update_rate>1000</real_time_update_rate>
         </physics>
