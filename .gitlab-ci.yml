@@ -21,6 +21,7 @@ prepare:
 
 melodic:
   stage: build
+  allow_failure: true
   artifacts:
     expire_in: 1 day
     paths:
@@ -31,6 +32,7 @@ melodic:
 
 noetic:
   stage: build
+  allow_failure: true
   artifacts:
     expire_in: 1 day
     paths:
