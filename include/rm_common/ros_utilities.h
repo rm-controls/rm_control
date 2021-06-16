@@ -32,11 +32,12 @@ inline double xmlRpcGetDouble(const XmlRpc::XmlRpcValue &value, const std::strin
 inline double xmlRpcGetDouble(const XmlRpc::XmlRpcValue &value, int field, double default_value) {
   ROS_ASSERT((value[field].getType() == XmlRpc::XmlRpcValue::TypeDouble) ||
       (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt));
+  XmlRpc::XmlRpcValue value_xml = value[field];
   if (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt) {
-    int tmp = value[field];
+    const int tmp = value_xml;
     return (double) tmp;
   } else {
-    return value[field];
+    return value_xml[field];
   }
 }
 #endif // RM_COMMON_ROS_UTILITIES_H
