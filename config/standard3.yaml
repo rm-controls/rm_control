@@ -57,6 +57,7 @@ rm_base:
       id: 0x204
       type: rm_2006
       lp_cutoff_frequency: 100
+      need_calibration: true
   imus:
     base_imu:
       frame_id: base_link
