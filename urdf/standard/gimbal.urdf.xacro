@@ -69,33 +69,4 @@
             <axis xyz="0 1 0 "/>
         </joint>
 
-    <link name="cover">
-        <inertial>
-            <mass value="0.149"/>
-            <origin xyz="-0.008 -0.005 0.019"/>
-            <inertia ixx="2.366e-3" ixy="-2.372e-4" ixz="-7.983e-4" iyy="2.959e-3" iyz="-2.826e-4" izz="9.090e-4"/>
-        </inertial>
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/standard/cover.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-        </visual>
-        <collision>
-            <origin xyz="0.033 0.0 -0.0" rpy="0 0.0 0"/>
-            <geometry>
-                <mesh filename="package://rm_description/meshes/standard/cover.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-        </collision>
-    </link>
-
-    <joint name="cover_joint" type="revolute">
-        <axis xyz="0 0 1"/>
-        <origin xyz="0.037 0.042 0.122"/>
-        <limit effort="1.0" velocity="30" lower="-3.14" upper="3.14"/>
-        <dynamics damping="0.0" friction="0.1"/>
-        <parent link="pitch"/>
-        <child link="cover"/>
-    </joint>
-
 </robot>
