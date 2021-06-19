@@ -1,6 +1,3 @@
-#裁判msgs!
-
-#地盘的
 uint16 chassis_volt
 uint16 chassis_current
 float32 chassis_power

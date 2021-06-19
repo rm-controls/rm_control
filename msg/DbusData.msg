@@ -1,17 +1,12 @@
-# 这个msgs中储存这 关于遥控器操作的各种数据  可以问罗庭凯
-
-#操控要并的状态？前 中 后
 uint8 UP = 1
 uint8 DOWN = 2
 uint8 MID = 3
 
-#猜测是另外一个手柄的控制
 float64 ch_l_x
 float64 ch_l_y
 float64 ch_r_x
 float64 ch_r_y
 
-#switch
 uint8 s_l
 uint8 s_r
 float64 wheel
