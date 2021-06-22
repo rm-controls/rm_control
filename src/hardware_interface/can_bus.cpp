@@ -144,6 +144,7 @@ void CanBus::read(ros::Time time) {
             else if (pos_new - act_data.pos < -4 * M_PI)
               act_data.q_circle++;
           }
+          act_data.frequency = 1. / (time - act_data.stamp).toSec();
           act_data.stamp = time;
           act_data.seq++;
           act_data.pos = act_coeff.act2pos * static_cast<double> (act_data.q_raw) + act_coeff.act2pos_offset
