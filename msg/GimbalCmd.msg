@@ -1,7 +1,6 @@
-uint8 PASSIVE = 0
-uint8 RATE = 1
-uint8 TRACK = 2
-uint8 DIRECT = 3
+uint8 RATE = 0
+uint8 TRACK = 1
+uint8 DIRECT = 2
 
 time stamp
 uint8 mode
