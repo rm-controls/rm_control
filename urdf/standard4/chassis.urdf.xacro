@@ -44,7 +44,7 @@
 
         <xacro:swerve_transmission prefix="left_front" wheel_reduction="13.733" pivot_offset="0"/>
         <xacro:swerve_transmission prefix="right_front" wheel_reduction="-13.733" pivot_offset="1.861"/>
-        <xacro:swerve_transmission prefix="left_back" wheel_reduction="13.733" pivot_offset="3.656"/>
+        <xacro:swerve_transmission prefix="left_back" wheel_reduction="13.733" pivot_offset="1.585"/>
         <xacro:swerve_transmission prefix="right_back" wheel_reduction="-13.733" pivot_offset="6.283"/>
     </xacro:macro>
 
