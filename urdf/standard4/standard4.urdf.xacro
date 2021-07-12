@@ -10,8 +10,8 @@
         <xacro:include filename="$(find rm_description)/urdf/standard4/chassis.urdf.xacro"/>
         <xacro:chassis/>
         <xacro:include filename="$(find rm_description)/urdf/common/imu.urdf.xacro"/>
-        <xacro:IMU connected_to="base_link" imu_name="base_imu" simulation="$(arg use_simulation)"
-                   xyz="-0.1 -0.1 0.0" rpy="0 0 ${pi/2}"/>
+        <xacro:IMU connected_to="base_link" imu_name="base_imu" simulation="true"
+                   xyz="0.0 -0.165 0.0" rpy="0 0 ${pi}"/>
     </xacro:if>
 
     <xacro:if value="$(arg load_gimbal)">
