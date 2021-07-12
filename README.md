@@ -94,7 +94,7 @@ using
 
 ### msgs
 #### ActuatorState.msgs
- This message contains the state of an actuator An actuator contains a motor and an encoder, and is connected
+ This message contains the state of An actuator contains a motor and an encoder, and is connected
  to a joint by a transmission.
 
 - time[] stamp
@@ -180,29 +180,184 @@ to get to the position of the actuator. This number is computed when the referec
 sensor is triggered during the calibration phase
 
 #### BalanceState.msg
-
+  This message contains the state of balance robot.
 
 - std_msgs/Header header
-
-
-- float64 alpha
+    Standard metadata for higher-level stamped data types.
+ This is generally used to communicate timestamped data
+ in a particular coordinate frame.
   
+- float64 alpha
+    
+    the angle alpha of robot.
 
 - float64 alpha_dot
-  
+    
+    the angle alpha speed of robot. 
 
 - float64 vel
   
+    the velocity of robot
 
 - float64 theta_dot
-  
+
+    the angle theta speed of robot. 
 
 - float64 control_1
   
+    left joint control
 
 - float64 control_2
 
+   right joint control
 
+#### ChassisCmd.msg
+  This message contains various state parameter settings for basic chassis control
+
+- uint8 RAW = 0
+  
+   the mode RAW:the Initial state.
+
+- uint8 FOLLOW = 1
+  
+  the mode FOLLOW
+
+- uint8 GYRO = 2
+  
+  the mode GYRO
+
+- uint8 TWIST = 3
+  
+  the mod TWIST: 
+
+- uint8 mode 
+
+  The current mode of the chassis.
+
+- geometry_msgs/Accel accel
+
+  This expresses acceleration in free space broken into its linear and angular parts.
+
+- float64 power_limit
+
+  The Current power limit on the chassis
+
+- string follow_source_frame
+
+  The source coordinate system tracked by the current chassis  
+
+- time stamp
+
+  The time at which this actuator state was measured
+
+#### DbusData.msgs
+  This message contains the information needed for remote control operation
+  
+- UP DOWN MID
+
+    Set various operating modes of the robot from the trackwheel
+
+- ch_l/r-x/y
+
+    Operation of the left and right joysticks
+
+- s_l/r
+
+    Operation of the left and right impellers
+
+- wheel
+
+   The wave wheel that controls the small top
+
+- m/p_xyz/lr
+
+    Various mouse operations
+
+- key_
+
+    Various operations of the keyboard
+  
+- time stamp
+
+    The time at which this actuator state was measured
+
+####GimbalCmd.msg
+  
+  This message includes various commands received by the gimbal 
+
+- uint8 RATE
+  
+Bullet launch
+
+- uint8 TRACK
+
+   Self-aim
+  
+- uint8 DIRECT
+
+  Manual control
+
+- time stamp
+
+   The time at which this actuator state was measured
+
+- uint8 mode
+
+   The current mode of the chassis.
+
+- uint8 target_id
+
+
+
+- float64 rate_yaw
+
+- float64 rate_pitch
+
+
+- float64 bullet_speed
+
+   Bullet firing speed
+
+- geometry_msgs/PointStamped
+
+    This represents a Point with reference coordinate frame and timestamp
+  
+
+#### GimbalDesError.msg
+
+#### KalmanData.msg
+  This message contains various kinematics data
+
+- std_msgs/Header header
+
+    Standard metadata for higher-level stamped data types.
+  This is generally used to communicate timestamped data
+  in a particular coordinate frame.
+
+- geometry_msgs/Pose real_detection_pose
+  
+   A representation of pose in free space, composed of position and orientation
+
+- geometry_msgs/Pose filtered_detection_pose
+ 
+   A representation of pose in free space, composed of position and orientation
+
+- geometry_msgs/Twist real_detection_twist
+
+    This expresses velocity in free space broken into its linear and angular parts.
+  
+- geometry_msgs/Twist filtered_detection_twist
+
+   This expresses velocity in free space broken into its linear and angular parts.
+#### LpData.msg
+
+#### MovingAverageData.msg
+
+#### Referee.msg
+
+#### shootCmd.msg
+
+#### superCapacitor.msg
 
 ### srv
 
