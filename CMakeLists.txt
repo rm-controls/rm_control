@@ -9,14 +9,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ## enforcing cleaner code.
 add_definitions(-Wall -Werror -Wno-enum-compare)
 
-find_package(Eigen3 REQUIRED)
+find_package(serial REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
         roscpp
         roslint
-
+        serial
         tf
         rm_msgs
         geometry_msgs
+        control_msgs
+        controller_manager_msgs
         realtime_tools
         dynamic_reconfigure
         )
@@ -27,6 +29,8 @@ catkin_package(
         ${EIGEN3_INCLUDE_DIR}
         CATKIN_DEPENDS
         rm_msgs
+        control_msgs
+        controller_manager_msgs
         roscpp
         dynamic_reconfigure
         DEPENDS

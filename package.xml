@@ -18,6 +18,8 @@
     <depend>rm_msgs</depend>
     <depend>dynamic_reconfigure</depend>
     <depend>eigen</depend>
+    <depend>control_msgs</depend>
+    <depend>controller_manager_msgs</depend>
 
     <!-- The export tag contains other, unspecified, tags -->
     <export>
