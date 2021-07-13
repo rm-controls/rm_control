@@ -174,8 +174,9 @@ class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd
     msg_.bullet_speed = bullet_speed;
   }
   void updateCost(const rm_msgs::TrackDataArray &track_data_array) {
-    msg_.target_id = cost_function_->costFunction(track_data_array, base_only_);
-    if (msg_.target_id == 0) {
+    double cost = cost_function_->costFunction(track_data_array, base_only_);
+    msg_.target_id = cost_function_->getId();
+    if (cost == 1e9) {
       if ((ros::Time::now() - last_track_).toSec() > track_timeout_) setMode(rm_msgs::GimbalCmd::RATE);
     } else last_track_ = ros::Time::now();
   }

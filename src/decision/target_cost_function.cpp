@@ -20,7 +20,7 @@ TargetCostFunction::TargetCostFunction(ros::NodeHandle &nh, const Referee &refer
     ROS_ERROR("Timeout no defined (namespace: %s)", cost_nh.getNamespace().c_str());
 }
 
-int TargetCostFunction::costFunction(const rm_msgs::TrackDataArray &track_data_array, bool only_attack_base) {
+double TargetCostFunction::costFunction(const rm_msgs::TrackDataArray &track_data_array, bool only_attack_base) {
   double optimal_cost = 1e9;
   for (const auto &track:track_data_array.tracks) {
     if (id2target_states_.find(track.id) == id2target_states_.end())
@@ -45,7 +45,7 @@ int TargetCostFunction::costFunction(const rm_msgs::TrackDataArray &track_data_a
       optimal_id_ = target_state.first;
     }
   }
-  return optimal_cost == 1e9 ? 0 : optimal_id_;
+  return optimal_cost;
 }
 
 double TargetCostFunction::costFunction(const TargetState &target_state, bool only_attack_base) {
