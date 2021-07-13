@@ -145,9 +145,12 @@ class SwitchEnemyColorService : public ServiceCallerBase<rm_msgs::ColorSwitch> {
         is_set_ = true;
     }
   }
-  void SwitchEnemyColor() {
+  void switchEnemyColor() {
     if (is_set_)
       service_.request.color = service_.request.color == "blue" ? "red" : "blue";
+  }
+  std::string getColor() {
+    return service_.request.color;
   }
   bool getIsSwitch() {
     if (isCalling()) return false;
