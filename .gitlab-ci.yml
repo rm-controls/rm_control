@@ -28,7 +28,7 @@ melodic:
     paths:
       - ros-*deb
   variables:
-    AFTER_INSTALL_TARGET_DEPENDENCIES: 'apt install -y -qq ros-noetic-serial'
+    AFTER_INSTALL_TARGET_DEPENDENCIES: 'apt install -y -qq ros-melodic-serial'
   script:
     - apk add --update bash coreutils tar
     - .industrial_ci/gitlab.sh ROS_DISTRO=melodic
