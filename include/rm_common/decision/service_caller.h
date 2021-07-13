@@ -93,7 +93,7 @@ class SwitchControllersService : public ServiceCallerBase<controller_manager_msg
       for (int i = 0; i < controllers.size(); ++i)
         stop_controllers_.push_back(controllers["stop_controllers"][i]);
     if (start_controllers_.empty() && stop_controllers_.empty())
-      ROS_ERROR("No start/stop controllers specified (namespace: /rm_manual/calibration_manager)");
+      ROS_ERROR("No start/stop controllers specified (namespace: %s)", nh.getNamespace().c_str());
     service_.request.strictness = service_.request.BEST_EFFORT;
     service_.request.start_asap = true;
   }
