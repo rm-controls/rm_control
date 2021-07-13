@@ -9,8 +9,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ## enforcing cleaner code.
 add_definitions(-Wall -Werror -Wno-enum-compare)
 
+find_package(Eigen3 REQUIRED)
 find_package(serial REQUIRED)
-find_package(catkin REQUIRED COMPONENTS
+
+find_package(catkin REQUIRED
+        COMPONENTS
         roscpp
         roslint
         serial
@@ -44,7 +47,7 @@ include_directories(
         ${EIGEN3_INCLUDE_DIR}
 )
 
-file(GLOB_RECURSE sources "src/*.cpp")
+file(GLOB_RECURSE sources "src/*.cpp" "src/decision/*.cpp" "src/referee/*.cpp")
 
 add_library(rm_common SHARED ${sources})
 #add_executable(test_traj test/test_traj.cpp)
