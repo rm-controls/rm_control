@@ -12,6 +12,8 @@
 #include <ros/service.h>
 #include <controller_manager_msgs/SwitchController.h>
 #include <control_msgs/QueryCalibrationState.h>
+#include <rm_msgs/ColorSwitch.h>
+#include <rm_msgs/TargetSwitch.h>
 
 namespace rm_common {
 template<class ServiceType>
@@ -26,8 +28,8 @@ class ServiceCallerBase {
       }
     client_ = nh.serviceClient<ServiceType>(service_name_);
   }
-  explicit ServiceCallerBase(const XmlRpc::XmlRpcValue &controllers, const std::string &service_name = "") {
-    ros::NodeHandle nh("/rm_manual/calibration_manager");
+  ServiceCallerBase(const XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh,
+                    const std::string &service_name = "") {
     if (controllers.hasMember("service_name"))
       service_name_ = static_cast<std::string>(controllers["service_name"]);
     else {
@@ -81,9 +83,9 @@ class SwitchControllersService : public ServiceCallerBase<controller_manager_msg
     service_.request.strictness = service_.request.BEST_EFFORT;
     service_.request.start_asap = true;
   }
-  explicit SwitchControllersService(const XmlRpc::XmlRpcValue &controllers)
+  SwitchControllersService(const XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
       : ServiceCallerBase<controller_manager_msgs::SwitchController>(
-      controllers, "/controller_manager/switch_controller") {
+      controllers, nh, "/controller_manager/switch_controller") {
     if (controllers.hasMember("start_controllers"))
       for (int i = 0; i < controllers.size(); ++i)
         start_controllers_.push_back(controllers["start_controllers"][i]);
@@ -122,11 +124,55 @@ class SwitchControllersService : public ServiceCallerBase<controller_manager_msg
 class QueryCalibrationService : public ServiceCallerBase<control_msgs::QueryCalibrationState> {
  public:
   explicit QueryCalibrationService(ros::NodeHandle &nh) : ServiceCallerBase<control_msgs::QueryCalibrationState>(nh) {}
-  explicit QueryCalibrationService(const XmlRpc::XmlRpcValue &controllers)
-      : ServiceCallerBase<control_msgs::QueryCalibrationState>(controllers) {}
+  QueryCalibrationService(const XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
+      : ServiceCallerBase<control_msgs::QueryCalibrationState>(controllers, nh) {}
   bool getIsCalibrated() {
     if (isCalling()) return false;
     return service_.response.is_calibrated;
+  }
+};
+
+class SwitchEnemyColorService : public ServiceCallerBase<rm_msgs::ColorSwitch> {
+ public:
+  explicit SwitchEnemyColorService(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::ColorSwitch>(
+      nh, "/detection/enemy_color_change") {}
+  void setEnemyColor(const Referee &referee) {
+    if (referee.robot_id_ != 0 && !is_set_) {
+      //RED:1~9  BLUE:101~109
+      service_.request.color = referee.robot_id_ < 50 ? "blue" : "red";
+      callService();
+      if (getIsSwitch())
+        is_set_ = true;
+    }
+  }
+  void SwitchEnemyColor() {
+    if (is_set_)
+      service_.request.color = service_.request.color == "blue" ? "red" : "blue";
+  }
+  bool getIsSwitch() {
+    if (isCalling()) return false;
+    return service_.response.is_success;
+  }
+
+ private:
+  bool is_set_{};
+};
+
+class SwitchTargetTypeService : public ServiceCallerBase<rm_msgs::TargetSwitch> {
+ public:
+  explicit SwitchTargetTypeService(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::TargetSwitch>(
+      nh, "/detection/target_change") {
+    service_.request.target = "armor";
+  }
+  void switchTargetType() {
+    service_.request.target = service_.request.target == "armor" ? "buff" : "armor";
+  }
+  std::string getTarget() {
+    return service_.request.target;
+  }
+  bool getIsSwitch() {
+    if (isCalling()) return false;
+    return service_.response.target_switch_is_success;
   }
 };
 

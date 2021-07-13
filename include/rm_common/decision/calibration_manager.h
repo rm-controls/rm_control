@@ -26,12 +26,13 @@ class CalibrationManager {
       ROS_INFO("No calibration controllers defined");
       return;
     }
+    ros::NodeHandle calibration_nh(nh, "calibration_manager");
     for (int i = 0; i < rpc_value.size(); ++i) {
       ROS_ASSERT(rpc_value[i].hasMember("switch"));
       ROS_ASSERT(rpc_value[i].hasMember("query"));
       calibration_services_.push_back(CalibrationService{
-          .switch_services_ = new SwitchControllersService(rpc_value[i]["switch"]),
-          .query_services_ = new QueryCalibrationService(rpc_value[i]["query"])});
+          .switch_services_ = new SwitchControllersService(rpc_value[i]["switch"], calibration_nh),
+          .query_services_ = new QueryCalibrationService(rpc_value[i]["query"], calibration_nh)});
     }
     last_query_ = ros::Time::now();
     // Start with calibrated, you should use reset() to start calibration.
