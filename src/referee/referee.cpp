@@ -166,9 +166,9 @@ int Referee::unpack(uint8_t *rx_data) {
           memcpy(&referee_data_.dart_client_cmd_, rx_data + 7, sizeof(DartClientCmd));
           break;
         }
-        case STUDENT_INTERACTIVE_DATA_CMD: {
-          last_referee_data_.student_interactive_data_ = referee_data_.student_interactive_data_;
-          memcpy(&referee_data_.student_interactive_data_, rx_data + 7, sizeof(InteractiveData));
+        case INTERACTIVE_DATA_CMD: {
+          last_referee_data_.interactive_data = referee_data_.interactive_data;
+          memcpy(&referee_data_.interactive_data, rx_data + 7, sizeof(InteractiveData));
           break;
         }
         default:ROS_WARN("Referee command ID not found.");
@@ -190,21 +190,21 @@ void Referee::getRobotId() {
         break;
       case BLUE_ENGINEER:client_id_ = BLUE_ENGINEER_CLIENT;
         break;
-      case BLUE_STANDARD_1:client_id_ = BLUE_STANDARD_1_CLIENT;
-        break;
-      case BLUE_STANDARD_2:client_id_ = BLUE_STANDARD_2_CLIENT;
-        break;
       case BLUE_STANDARD_3:client_id_ = BLUE_STANDARD_3_CLIENT;
+        break;
+      case BLUE_STANDARD_4:client_id_ = BLUE_STANDARD_4_CLIENT;
+        break;
+      case BLUE_STANDARD_5:client_id_ = BLUE_STANDARD_5_CLIENT;
         break;
       case RED_HERO:client_id_ = RED_HERO_CLIENT;
         break;
       case RED_ENGINEER:client_id_ = RED_ENGINEER_CLIENT;
         break;
-      case RED_STANDARD_1:client_id_ = RED_STANDARD_1_CLIENT;
-        break;
-      case RED_STANDARD_2:client_id_ = RED_STANDARD_2_CLIENT;
-        break;
       case RED_STANDARD_3:client_id_ = RED_STANDARD_3_CLIENT;
+        break;
+      case RED_STANDARD_4:client_id_ = RED_STANDARD_4_CLIENT;
+        break;
+      case RED_STANDARD_5:client_id_ = RED_STANDARD_5_CLIENT;
         break;
     }
   }
@@ -259,7 +259,7 @@ void Referee::drawCircle(int center_x, int center_y, int radius, int picture_id,
   client_graph_data->graphic_data_struct_.layer_ = 0;
   client_graph_data->graphic_data_struct_.color_ = color;
   client_graph_data->graphic_data_struct_.width_ = 3;
-  pack(tx_buffer, tx_data, STUDENT_INTERACTIVE_DATA_CMD, sizeof(ClientGraphicData));
+  pack(tx_buffer, tx_data, INTERACTIVE_DATA_CMD, sizeof(ClientGraphicData));
 
   try {
     serial_.write(tx_buffer, tx_len);
@@ -296,7 +296,7 @@ void Referee::drawString(int x, int y, int picture_id, std::string data,
     else
       client_char_data->data_[kI] = ' ';
   }
-  pack(tx_buffer, tx_data, STUDENT_INTERACTIVE_DATA_CMD, sizeof(ClientCharData));
+  pack(tx_buffer, tx_data, INTERACTIVE_DATA_CMD, sizeof(ClientCharData));
 
   try {
     serial_.write(tx_buffer, tx_len);
@@ -311,11 +311,11 @@ void Referee::sendInteractiveData(int data_cmd_id, int receiver_id, uint8_t data
   auto student_interactive_data = (InteractiveData *) tx_data;
   int tx_len = k_header_length_ + k_cmd_id_length_ + sizeof(InteractiveData) + k_tail_length_;
 
-  student_interactive_data->student_interactive_header_data_.data_cmd_id_ = data_cmd_id;
-  student_interactive_data->student_interactive_header_data_.sender_id_ = robot_id_;
-  student_interactive_data->student_interactive_header_data_.receiver_id_ = receiver_id;
+  student_interactive_data->header_data_.data_cmd_id_ = data_cmd_id;
+  student_interactive_data->header_data_.sender_id_ = robot_id_;
+  student_interactive_data->header_data_.receiver_id_ = receiver_id;
   student_interactive_data->data_ = data;
-  pack(tx_buffer, tx_data, STUDENT_INTERACTIVE_DATA_CMD, sizeof(InteractiveData));
+  pack(tx_buffer, tx_data, INTERACTIVE_DATA_CMD, sizeof(InteractiveData));
 
   try {
     serial_.write(tx_buffer, tx_len);

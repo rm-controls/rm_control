@@ -57,7 +57,7 @@ struct RefereeData {
   BulletRemaining bullet_remaining_;
   RfidStatus rfid_status_;
   DartClientCmd dart_client_cmd_;
-  InteractiveData student_interactive_data_;
+  InteractiveData interactive_data;
   GraphicDataStruct graphic_data_struct_;
 };
 
