@@ -83,6 +83,7 @@ class Referee {
   bool is_online_ = false;
   int robot_id_ = 0;
   int client_id_ = 0;
+  std::string robot_color_;
  private:
   int unpack(uint8_t *rx_data);
   void pack(uint8_t *tx_buffer, uint8_t *data, int cmd_id, int len);
