@@ -37,7 +37,7 @@ inline double xmlRpcGetDouble(const XmlRpc::XmlRpcValue &value, int field, doubl
     const int tmp = value_xml;
     return (double) tmp;
   } else {
-    return value_xml[field];
+    return value_xml;
   }
 }
 #endif // RM_COMMON_ROS_UTILITIES_H

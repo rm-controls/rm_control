@@ -21,6 +21,7 @@ class ServiceCallerBase {
  public:
   ServiceCallerBase() = default;
   explicit ServiceCallerBase(ros::NodeHandle &nh, const std::string &service_name = "") {
+    nh.param("error_amount_limit", error_amount_limit_, 0);
     if (!nh.param("service_name", service_name_, service_name))
       if (service_name.empty()) {
         ROS_ERROR("Service name no defined (namespace: %s)", nh.getNamespace().c_str());
@@ -56,8 +57,18 @@ class ServiceCallerBase {
  protected:
   void callingThread() {
     std::lock_guard<std::mutex> guard(mutex_);
-    if (!client_.call(service_))
-      ROS_ERROR("Failed to call service %s on %s", typeid(ServiceType).name(), service_name_.c_str());
+    if (!client_.call(service_)) {
+      ROS_INFO_ONCE("Failed to call service %s on %s. Retrying now ...",
+                    typeid(ServiceType).name(),
+                    service_name_.c_str());
+      if (error_amount_limit_ != 0) {
+        error_amount_++;
+        if (error_amount_ >= error_amount_limit_) {
+          ROS_ERROR_ONCE("Failed to call service %s on %s", typeid(ServiceType).name(), service_name_.c_str());
+          error_amount_ = 0;
+        }
+      }
+    }
   }
 
   std::string service_name_;
@@ -65,6 +76,8 @@ class ServiceCallerBase {
   ServiceType service_;
   std::thread *thread_{};
   std::mutex mutex_;
+  int error_amount_{};
+  int error_amount_limit_{};
 };
 
 class SwitchControllersService : public ServiceCallerBase<controller_manager_msgs::SwitchController> {
