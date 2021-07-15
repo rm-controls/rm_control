@@ -173,6 +173,9 @@ class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd
   void setBulletSpeed(double bullet_speed) {
     msg_.bullet_speed = bullet_speed;
   }
+  void setAimPoint(geometry_msgs::PointStamped aim_point) {
+    msg_.aim_point = aim_point;
+  }
   void updateCost(const rm_msgs::TrackDataArray &track_data_array) {
     double cost = cost_function_->costFunction(track_data_array, base_only_);
     msg_.target_id = cost_function_->getId();
@@ -276,14 +279,22 @@ class CoverCommandSender : public CommandSenderBase<std_msgs::Float64> {
     if (nh.getParam("close_pos", close_pos_) && nh.getParam("open_pos", open_pos_))
       has_cover_ = true;
   }
-  void open() { msg_.data = open_pos_; }
-  void close() { msg_.data = close_pos_; }
+  void open() {
+    msg_.data = open_pos_;
+    is_close_ = false;
+  }
+  void close() {
+    msg_.data = close_pos_;
+    is_close_ = true;
+  }
+  bool isClose() const { return is_close_; }
   void sendCommand(const ros::Time &time) override {
     if (has_cover_) CommandSenderBase<std_msgs::Float64>::sendCommand(time);
   }
   void setZero() override {};
  private:
   bool has_cover_;
+  bool is_close_{};
   double close_pos_{}, open_pos_{};
 };
 
