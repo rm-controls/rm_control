@@ -8,4 +8,6 @@ uint8 step_queue_id
 bool finish
 ---
 # feedback
-uint8 current_step
+uint8 total_steps
+uint8 finished_step
+string current_step
