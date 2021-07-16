@@ -133,7 +133,7 @@
             <axis xyz="0 1 0"/>
             <origin xyz="0.122 0 0.124" rpy="1.57 0 0"/>
             <!--      limit not work while type="continuous"-->
-            <limit effort="20" velocity="10" lower="-${pi}" upper="${pi}"/>
+            <limit effort="20" velocity="10" lower="-0.80" upper="5.20"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="${connected_to}"/>
             <child link="link1"/>
@@ -142,7 +142,7 @@
         <joint name="joint2" type="revolute">
             <axis xyz="0 1 0"/>
             <origin xyz="0.005 0.128 0" rpy="-1.57 0 0"/>
-            <limit effort="60" velocity="10" lower="-2.5249" upper="0.042903"/>
+            <limit effort="60" velocity="10" lower="-1.87" upper="-0.12"/>
             <dynamics damping="0.0" friction="0.8"/>
             <parent link="link1"/>
             <child link="link2"/>
@@ -160,7 +160,7 @@
         <joint name="joint4" type="revolute">
             <axis xyz="0 1 0"/>
             <origin xyz="0.106 0 0.028"/>
-            <limit effort="7" velocity="30" lower="-0.21556" upper="2.6459"/>
+            <limit effort="7" velocity="30" lower="-0.2252557429" upper="0.108979611"/>
             <dynamics damping="0.0" friction="0.5"/>
             <parent link="link3"/>
             <child link="link4"/>
