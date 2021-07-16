@@ -160,7 +160,7 @@
         <joint name="joint4" type="revolute">
             <axis xyz="0 1 0"/>
             <origin xyz="0.106 0 0.028"/>
-            <limit effort="7" velocity="30" lower="-0.2252557429" upper="0.108979611"/>
+            <limit effort="7" velocity="30" lower="-0.24430838" upper="2.65452132"/>
             <dynamics damping="0.0" friction="0.5"/>
             <parent link="link3"/>
             <child link="link4"/>
