@@ -32,36 +32,6 @@
                     <box size="0.486 0.596 0.169"/>
                 </geometry>
             </collision>
-                        <collision>
-                            <origin xyz="-0.130 -0.132 0.255" rpy="0 0 0.8377580"/>
-                            <geometry>
-                                <box size="0.106 0.186 0.3"/>
-                            </geometry>
-                        </collision>
-                        <collision>
-                            <origin xyz="-0.0336 -0.27 0.262" rpy="0 0 -0.7853982"/>
-                            <geometry>
-                                <box size="0.01 0.033 0.06"/>
-                            </geometry>
-                        </collision>
-            <collision>
-                <origin xyz="-0.083 -0.225 0.262" rpy="0 0 -0.7853982"/>
-                <geometry>
-                    <box size="0.01 0.033 0.06"/>
-                </geometry>
-            </collision>
-            <collision>
-                <origin xyz="-0.0685 -0.259 0.287" rpy="0 0 0.8377580"/>
-                <geometry>
-                    <box size="0.003 0.057 0.01"/>
-                </geometry>
-            </collision>
-            <collision>
-                <origin xyz="-0.0685 -0.259 0.237" rpy="0 0 0.8377580"/>
-                <geometry>
-                    <box size="0.003 0.057 0.01"/>
-                </geometry>
-            </collision>
 
             <collision>
                 <origin xyz="-0.08 0.243 0.258" rpy="0 0 -0.5061455"/>
@@ -98,7 +68,8 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://rm_description/meshes/engineer/stone_platform.stl" scale="0.001 0.001 0.001"/>
+                    <mesh filename="package://rm_description/meshes/engineer/stone_platform.stl"
+                          scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
             <collision>
