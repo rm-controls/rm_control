@@ -16,7 +16,7 @@ namespace rm_base {
 bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs) {
   ROS_ASSERT(act_coeffs.getType() == XmlRpc::XmlRpcValue::TypeStruct);
   try {
-    for (XmlRpc::XmlRpcValue::ValueStruct::const_iterator it = act_coeffs.begin(); it != act_coeffs.end(); ++it) {
+    for (auto it = act_coeffs.begin(); it != act_coeffs.end(); ++it) {
       ActCoeff act_coeff{};
 
       // All motor
@@ -91,7 +91,7 @@ bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs) {
 bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::NodeHandle &robot_hw_nh) {
   ROS_ASSERT(act_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
   try {
-    for (XmlRpc::XmlRpcValue::ValueStruct::const_iterator it = act_datas.begin(); it != act_datas.end(); ++it) {
+    for (auto it = act_datas.begin(); it != act_datas.end(); ++it) {
       if (!it->second.hasMember("bus")) {
         ROS_ERROR_STREAM("Actuator " << it->first << " has no associated bus.");
         continue;
@@ -173,7 +173,7 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
 bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue &imu_datas, ros::NodeHandle &robot_hw_nh) {
   ROS_ASSERT(imu_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
   try {
-    for (XmlRpc::XmlRpcValue::ValueStruct::const_iterator it = imu_datas.begin(); it != imu_datas.end(); ++it) {
+    for (auto it = imu_datas.begin(); it != imu_datas.end(); ++it) {
       if (!it->second.hasMember("frame_id")) {
         ROS_ERROR_STREAM("Imu " << it->first << " has no associated frame id.");
         continue;
