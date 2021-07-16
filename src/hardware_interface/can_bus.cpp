@@ -20,7 +20,7 @@ float int16ToFloat(unsigned short data) {
 
 CanBus::CanBus(const std::string &bus_name, CanDataPtr data_prt) : data_prt_(data_prt), bus_name_(bus_name) {
   // Initialize device at can_device, false for no loop back.
-  while (!socket_can_.open(bus_name, [this](auto &&PH1) { frameCallback(std::forward<decltype(PH1)>(PH1)); })
+  while (!socket_can_.open(bus_name, boost::bind(&CanBus::frameCallback, this, _1))
       && ros::ok())
     ros::Duration(.5).sleep();
 
