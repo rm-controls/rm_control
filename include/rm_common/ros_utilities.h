@@ -15,29 +15,28 @@ T getParam(ros::NodeHandle &pnh,
   return param_val;
 }
 
-inline double xmlRpcGetDouble(const XmlRpc::XmlRpcValue &value, const std::string &field, double default_value) {
-  if (value.hasMember(field)) {
-    ROS_ASSERT((value[field].getType() == XmlRpc::XmlRpcValue::TypeDouble) ||
-        (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt));
-    if (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt) {
-      int tmp = value[field];
-      return (double) tmp;
-    } else {
-      return value[field];
-    }
-  } else {
-    return default_value;
-  }
+inline double xmlRpcGetDouble(XmlRpc::XmlRpcValue &value) {
+  if (value.getType() == XmlRpc::XmlRpcValue::TypeInt) {
+    const int tmp = value;
+    return (double) tmp;
+  } else
+    return value;
 }
-inline double xmlRpcGetDouble(const XmlRpc::XmlRpcValue &value, int field, double default_value) {
+
+inline double xmlRpcGetDouble(XmlRpc::XmlRpcValue &value, int field) {
   ROS_ASSERT((value[field].getType() == XmlRpc::XmlRpcValue::TypeDouble) ||
       (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt));
   XmlRpc::XmlRpcValue value_xml = value[field];
-  if (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt) {
-    const int tmp = value_xml;
-    return (double) tmp;
-  } else {
-    return value_xml;
-  }
+  return xmlRpcGetDouble(value[field]);
 }
+
+inline double xmlRpcGetDouble(XmlRpc::XmlRpcValue &value, const std::string &field, double default_value) {
+  if (value.hasMember(field)) {
+    ROS_ASSERT((value[field].getType() == XmlRpc::XmlRpcValue::TypeDouble) ||
+        (value[field].getType() == XmlRpc::XmlRpcValue::TypeInt));
+    return xmlRpcGetDouble(value[field]);
+  } else
+    return default_value;
+}
+
 #endif // RM_COMMON_ROS_UTILITIES_H
