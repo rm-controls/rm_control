@@ -152,7 +152,7 @@ class SwitchEnemyColorService : public ServiceCallerBase<rm_msgs::ColorSwitch> {
   void setEnemyColor(const Referee &referee) {
     if (referee.robot_id_ != 0 && !is_set_) {
       //RED:1~9  BLUE:101~109
-      service_.request.color = referee.robot_color_;
+      service_.request.color = referee.robot_color_ == "blue" ? "red" : "blue";
       callService();
       if (getIsSwitch())
         is_set_ = true;
