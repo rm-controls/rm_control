@@ -63,7 +63,7 @@ struct RefereeData {
 
 class Referee {
  public:
-  Referee() = default;
+  Referee() { referee_data_.robot_hurt_.hurt_type_ = 0x09; };
   void init();
   void read();
   void drawCircle(int center_x, int center_y, int radius, int picture_id,

@@ -286,9 +286,9 @@ void Referee::drawString(int x, int y, int picture_id, std::string data,
   client_char_data->graphic_data_struct_.start_y_ = y;
   client_char_data->graphic_data_struct_.graphic_type_ = 7; // char
   client_char_data->graphic_data_struct_.operate_type_ = operate_type;
-  client_char_data->graphic_data_struct_.start_angle_ = 20; // char size
+  client_char_data->graphic_data_struct_.start_angle_ = 15; // char size
   client_char_data->graphic_data_struct_.end_angle_ = (int) data.size(); // string length
-  client_char_data->graphic_data_struct_.width_ = 5; // line width
+  client_char_data->graphic_data_struct_.width_ = 3; // line width
   client_char_data->graphic_data_struct_.layer_ = 0;
   client_char_data->graphic_data_struct_.color_ = color;
   for (int kI = 0; kI < 30; ++kI) {
