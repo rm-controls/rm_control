@@ -176,9 +176,11 @@ class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd
   void updateCost(const RefereeData &referee_data, const rm_msgs::TrackDataArray &track_data_array) {
     double cost = cost_function_->costFunction(referee_data, track_data_array, base_only_);
     msg_.target_id = cost_function_->getId();
-    if (cost == 1e9) {
-      if ((ros::Time::now() - last_track_).toSec() > track_timeout_) setMode(rm_msgs::GimbalCmd::RATE);
-    } else last_track_ = ros::Time::now();
+    if (msg_.mode == rm_msgs::GimbalCmd::TRACK) {
+      if (cost == 1e9 && (ros::Time::now() - last_track_).toSec() > track_timeout_)
+        setMode(rm_msgs::GimbalCmd::RATE);
+      else last_track_ = ros::Time::now();
+    }
   }
   void setZero() override {
     msg_.rate_yaw = 0.;
