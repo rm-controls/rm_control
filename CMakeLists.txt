@@ -30,6 +30,7 @@ add_service_files(
     ContinousDetectorSwitch.srv
     ColorSwitch.srv
     TargetSwitch.srv
+    ExposureSet.srv
 )
 
 add_message_files(
