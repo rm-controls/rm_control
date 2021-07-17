@@ -58,7 +58,7 @@ struct RefereeData {
   RfidStatus rfid_status_;
   DartClientCmd dart_client_cmd_;
   InteractiveData interactive_data;
-  GraphicDataStruct graphic_data_struct_;
+  GraphicConfigData graphic_data_struct_;
 };
 
 class Referee {
@@ -66,10 +66,12 @@ class Referee {
   Referee() { referee_data_.robot_hurt_.hurt_type_ = 0x09; };
   void init();
   void read();
-  void drawCircle(int center_x, int center_y, int radius, int picture_id,
+  void drawString(int picture_id, int x, int y, std::string data,
                   GraphicColorType color, GraphicOperateType operate_type);
-  void drawString(int x, int y, int picture_id, std::string data,
+  void drawCircle(int picture_id, int center_x, int center_y, int radius,
                   GraphicColorType color, GraphicOperateType operate_type);
+  void drawRectangle(int picture_id, int start_x, int start_y, int end_x, int end_y,
+                     GraphicColorType color, GraphicOperateType operate_type);
   void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);
 
   ros::Publisher referee_pub_;
@@ -87,6 +89,8 @@ class Referee {
  private:
   int unpack(uint8_t *rx_data);
   void pack(uint8_t *tx_buffer, uint8_t *data, int cmd_id, int len);
+  void sendUi(int picture_id, int x, int y, GraphicConfigData *config_data, GraphicColorType color,
+              GraphicType graph_type, GraphicOperateType operate_type, std::string string_data = "");
   void getRobotId();
   void publishData();
 

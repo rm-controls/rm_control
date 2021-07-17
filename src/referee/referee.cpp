@@ -239,71 +239,30 @@ void Referee::publishData() {
   super_capacitor_pub_.publish(super_capacitor_pub_data_);
 }
 
-void Referee::drawCircle(int center_x, int center_y, int radius, int picture_id,
+void Referee::drawString(int picture_id, int x, int y, std::string data,
                          GraphicColorType color, GraphicOperateType operate_type) {
-  uint8_t tx_buffer[128] = {0};
-  uint8_t tx_data[sizeof(ClientGraphicData)] = {0};
-  auto client_graph_data = (ClientGraphicData *) tx_data;
-  int tx_len = k_header_length_ + k_cmd_id_length_ + sizeof(ClientGraphicData) + k_tail_length_;
-
-  client_graph_data->student_interactive_header_data_.data_cmd_id_ = CLIENT_GRAPH_SINGLE_CMD;
-  client_graph_data->student_interactive_header_data_.sender_id_ = robot_id_;
-  client_graph_data->student_interactive_header_data_.receiver_id_ = client_id_;
-  client_graph_data->graphic_data_struct_.graphic_name_[0] = (uint8_t) (picture_id & 0xff);
-  client_graph_data->graphic_data_struct_.graphic_name_[1] = (uint8_t) ((picture_id >> 8) & 0xff);
-  client_graph_data->graphic_data_struct_.graphic_name_[2] = (uint8_t) ((picture_id >> 16) & 0xff);
-  client_graph_data->graphic_data_struct_.start_x_ = center_x;
-  client_graph_data->graphic_data_struct_.start_y_ = center_y;
-  client_graph_data->graphic_data_struct_.radius_ = radius;
-  client_graph_data->graphic_data_struct_.operate_type_ = operate_type;
-  client_graph_data->graphic_data_struct_.graphic_type_ = 2; // circle
-  client_graph_data->graphic_data_struct_.layer_ = 0;
-  client_graph_data->graphic_data_struct_.color_ = color;
-  client_graph_data->graphic_data_struct_.width_ = 3;
-  pack(tx_buffer, tx_data, INTERACTIVE_DATA_CMD, sizeof(ClientGraphicData));
-
-  try {
-    serial_.write(tx_buffer, tx_len);
-  } catch (serial::PortNotOpenedException &e) {
-    ROS_ERROR("Cannot open referee port, fail to draw UI");
-  }
+  GraphicConfigData config_data;
+  config_data.start_angle_ = 15;
+  config_data.end_angle_ = (int) data.size();
+  config_data.width_ = 3;
+  sendUi(picture_id, x, y, &config_data, color, CHARACTER, operate_type, data);
 }
 
-void Referee::drawString(int x, int y, int picture_id, std::string data,
+void Referee::drawCircle(int picture_id, int center_x, int center_y, int radius,
                          GraphicColorType color, GraphicOperateType operate_type) {
-  uint8_t tx_buffer[128] = {0};
-  uint8_t tx_data[sizeof(ClientCharData)] = {0};
-  auto client_char_data = (ClientCharData *) tx_data;
-  int tx_len = k_header_length_ + k_cmd_id_length_ + sizeof(ClientCharData) + k_tail_length_;
+  GraphicConfigData config_data;
+  config_data.radius_ = radius;
+  config_data.width_ = 4;
+  sendUi(picture_id, center_x, center_y, &config_data, color, CIRCLE, operate_type);
+}
 
-  client_char_data->student_interactive_header_data_.data_cmd_id_ = CLIENT_CHARACTER_CMD;
-  client_char_data->student_interactive_header_data_.sender_id_ = robot_id_;
-  client_char_data->student_interactive_header_data_.receiver_id_ = client_id_;
-  client_char_data->graphic_data_struct_.graphic_name_[0] = (uint8_t) (picture_id & 0xff);
-  client_char_data->graphic_data_struct_.graphic_name_[1] = (uint8_t) ((picture_id >> 8) & 0xff);
-  client_char_data->graphic_data_struct_.graphic_name_[2] = (uint8_t) ((picture_id >> 16) & 0xff);
-  client_char_data->graphic_data_struct_.start_x_ = x;
-  client_char_data->graphic_data_struct_.start_y_ = y;
-  client_char_data->graphic_data_struct_.graphic_type_ = 7; // char
-  client_char_data->graphic_data_struct_.operate_type_ = operate_type;
-  client_char_data->graphic_data_struct_.start_angle_ = 15; // char size
-  client_char_data->graphic_data_struct_.end_angle_ = (int) data.size(); // string length
-  client_char_data->graphic_data_struct_.width_ = 3; // line width
-  client_char_data->graphic_data_struct_.layer_ = 0;
-  client_char_data->graphic_data_struct_.color_ = color;
-  for (int kI = 0; kI < 30; ++kI) {
-    if (kI < (int) data.size())
-      client_char_data->data_[kI] = data[kI];
-    else
-      client_char_data->data_[kI] = ' ';
-  }
-  pack(tx_buffer, tx_data, INTERACTIVE_DATA_CMD, sizeof(ClientCharData));
-
-  try {
-    serial_.write(tx_buffer, tx_len);
-  } catch (serial::PortNotOpenedException &e) {
-    ROS_ERROR("Cannot open referee port, fail to draw UI");
-  }
+void Referee::drawRectangle(int picture_id, int start_x, int start_y, int end_x, int end_y,
+                            GraphicColorType color, GraphicOperateType operate_type) {
+  GraphicConfigData config_data;
+  config_data.end_x_ = end_x;
+  config_data.end_y_ = end_y;
+  config_data.width_ = 4;
+  sendUi(picture_id, start_x, start_y, &config_data, color, RECTANGLE, operate_type);
 }
 
 void Referee::sendInteractiveData(int data_cmd_id, int receiver_id, uint8_t data) {
@@ -322,6 +281,48 @@ void Referee::sendInteractiveData(int data_cmd_id, int receiver_id, uint8_t data
     serial_.write(tx_buffer, tx_len);
   } catch (serial::PortNotOpenedException &e) {
     ROS_ERROR("Cannot open referee port, fail to send command to sentry");
+  }
+}
+
+void Referee::sendUi(int picture_id, int x, int y, GraphicConfigData *config_data, GraphicColorType color,
+                     GraphicType graph_type, GraphicOperateType operate_type, std::string string_data) {
+  uint8_t tx_buffer[128] = {0}, tx_data[sizeof(ClientGraphicData)] = {0};
+  auto ui_data = (ClientGraphicData *) tx_data;
+  int tx_len = k_header_length_ + k_cmd_id_length_ + sizeof(ClientGraphicData) + k_tail_length_;
+
+  ui_data->student_interactive_header_data_.sender_id_ = robot_id_;
+  ui_data->student_interactive_header_data_.receiver_id_ = client_id_;
+  ui_data->config_data_.graphic_name_[0] = (uint8_t) (picture_id & 0xff);
+  ui_data->config_data_.graphic_name_[1] = (uint8_t) ((picture_id >> 8) & 0xff);
+  ui_data->config_data_.graphic_name_[2] = (uint8_t) ((picture_id >> 16) & 0xff);
+  ui_data->config_data_.start_x_ = x;
+  ui_data->config_data_.start_y_ = y;
+  ui_data->config_data_.operate_type_ = operate_type;
+  ui_data->config_data_.graphic_type_ = graph_type;
+  ui_data->config_data_.color_ = color;
+  ui_data->config_data_.layer_ = 0;
+  ui_data->config_data_.start_angle_ = config_data->start_angle_;
+  ui_data->config_data_.end_angle_ = config_data->end_angle_;
+  ui_data->config_data_.end_x_ = config_data->end_x_;
+  ui_data->config_data_.end_y_ = config_data->end_y_;
+  ui_data->config_data_.radius_ = config_data->radius_;
+  ui_data->config_data_.width_ = config_data->width_;
+  if (string_data != "") {
+    ui_data->student_interactive_header_data_.data_cmd_id_ = CLIENT_CHARACTER_CMD;
+    for (int kI = 0; kI < 30; ++kI) {
+      if (kI < (int) string_data.size()) ui_data->string_data_[kI] = string_data[kI];
+      else ui_data->string_data_[kI] = ' ';
+    }
+    pack(tx_buffer, tx_data, INTERACTIVE_DATA_CMD, sizeof(ClientGraphicData));
+  } else {
+    ui_data->student_interactive_header_data_.data_cmd_id_ = CLIENT_GRAPH_SINGLE_CMD;
+    pack(tx_buffer, tx_data, INTERACTIVE_DATA_CMD, sizeof(ClientGraphicData) - 30);
+    tx_len -= 30;
+  }
+  try {
+    serial_.write(tx_buffer, tx_len);
+  } catch (serial::PortNotOpenedException &e) {
+    ROS_ERROR("Cannot open referee port, fail to draw UI");
   }
 }
 

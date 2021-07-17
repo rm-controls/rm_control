@@ -93,6 +93,15 @@ typedef enum {
   WHITE = 8
 } GraphicColorType;
 
+typedef enum {
+  LINE = 0,
+  RECTANGLE = 1,
+  CIRCLE = 2,
+  ELLIPSE = 3,
+  ARC = 4,
+  CHARACTER = 7
+} GraphicType;
+
 typedef struct {
   uint8_t sof_;
   uint16_t data_length_;
@@ -258,7 +267,7 @@ typedef struct {
   uint16_t data_cmd_id_;
   uint16_t sender_id_;
   uint16_t receiver_id_;
-}__packed StudentInteractiveHeaderData;
+}__packed InteractiveHeaderData;
 
 typedef struct {
   uint8_t graphic_name_[3];
@@ -274,21 +283,16 @@ typedef struct {
   uint32_t radius_: 10;
   uint32_t end_x_: 11;
   uint32_t end_y_: 11;
-}__packed GraphicDataStruct;
+}__packed GraphicConfigData;
 
 typedef struct {
-  StudentInteractiveHeaderData student_interactive_header_data_;
-  GraphicDataStruct graphic_data_struct_;
+  InteractiveHeaderData student_interactive_header_data_;
+  GraphicConfigData config_data_;
+  uint8_t string_data_[30];
 }__packed ClientGraphicData;
 
 typedef struct {
-  StudentInteractiveHeaderData student_interactive_header_data_;
-  GraphicDataStruct graphic_data_struct_;
-  uint8_t data_[30];
-}__packed ClientCharData;
-
-typedef struct {
-  StudentInteractiveHeaderData header_data_;
+  InteractiveHeaderData header_data_;
   uint8_t data_;
 }__packed InteractiveData;
 
