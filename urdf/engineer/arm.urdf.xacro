@@ -171,7 +171,7 @@
             <axis xyz="0 1 0"/>
             <origin xyz="0.165 0 0" rpy="0 0 0"/>
             <limit effort="30" velocity="10" lower="${joint3_lower_limit}" upper="${joint3_upper_limit}"/>
-            <safety_controller k_position="500" k_velocity="6"
+            <safety_controller k_position="350" k_velocity="6"
                                soft_lower_limit="${joint3_lower_limit+threshold}"
                                soft_upper_limit="${joint3_upper_limit-threshold}"/>
             <dynamics damping="0.0" friction="0.5"/>
