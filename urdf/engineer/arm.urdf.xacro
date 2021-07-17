@@ -133,7 +133,7 @@
             <axis xyz="0 1 0"/>
             <origin xyz="0.122 0 0.124" rpy="1.57 0 0"/>
             <!--      limit not work while type="continuous"-->
-            <limit effort="20" velocity="10" lower="-3.93996572" upper="1.805202294"/>
+            <limit effort="20" velocity="10" lower="-4.0492335499" upper="2.066574686023"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="${connected_to}"/>
             <child link="link1"/>
@@ -142,7 +142,7 @@
         <joint name="joint2" type="revolute">
             <axis xyz="0 1 0"/>
             <origin xyz="0.005 0.128 0" rpy="-1.57 0 0"/>
-            <limit effort="60" velocity="10" lower="-2.4451245" upper="-0.171148851"/>
+            <limit effort="60" velocity="10" lower="-2.378679831401" upper="-0.0989819625299"/>
             <dynamics damping="0.0" friction="0.8"/>
             <parent link="link1"/>
             <child link="link2"/>
@@ -151,7 +151,7 @@
         <joint name="joint3" type="revolute">
             <axis xyz="0 1 0"/>
             <origin xyz="0.165 0 0" rpy="0 0 0"/>
-            <limit effort="30" velocity="10" lower="-0.7518866" upper="2.6334277"/>
+            <limit effort="30" velocity="10" lower="-0.88921949" upper="2.535032168"/>
             <dynamics damping="0.0" friction="0.5"/>
             <parent link="link2"/>
             <child link="link3"/>
@@ -160,7 +160,7 @@
         <joint name="joint4" type="revolute">
             <axis xyz="0 1 0"/>
             <origin xyz="0.106 0 0.028"/>
-            <limit effort="7" velocity="30" lower="-0.251792" upper="2.67008"/>
+            <limit effort="7" velocity="30" lower="-0.2989008" upper="2.614725376878"/>
             <dynamics damping="0.0" friction="0.5"/>
             <parent link="link3"/>
             <child link="link4"/>
@@ -169,9 +169,9 @@
         <joint name="joint5" type="revolute">
             <axis xyz="1 0 0"/>
             <origin xyz="0.097 0 0.055"/>
-            <limit effort="13" velocity="18" lower="-4.31220" upper="1.3749148"/>
+            <limit effort="13" velocity="18" lower="-4.27171178" upper="1.40800999"/>
             <dynamics damping="0.0" friction="0.5"/>
-            <parent link="link4"/>
+            <parent link="link4"/>z
             <child link="link5"/>
         </joint>
 
