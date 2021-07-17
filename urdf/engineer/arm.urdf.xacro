@@ -133,7 +133,7 @@
             <axis xyz="0 1 0"/>
             <origin xyz="0.122 0 0.124" rpy="1.57 0 0"/>
             <!--      limit not work while type="continuous"-->
-            <limit effort="20" velocity="10" lower="-0.8507492" upper="5.2558426"/>
+            <limit effort="20" velocity="10" lower="-3.93996572" upper="1.805202294"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="${connected_to}"/>
             <child link="link1"/>
