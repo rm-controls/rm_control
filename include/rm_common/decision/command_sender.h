@@ -48,14 +48,12 @@ class CommandSenderBase {
 template<class MsgType>
 class TimeStampCommandSenderBase : public CommandSenderBase<MsgType> {
  public:
-  explicit TimeStampCommandSenderBase(ros::NodeHandle &nh, const Referee &referee) :
-      CommandSenderBase<MsgType>(nh), referee_(referee) {}
+  explicit TimeStampCommandSenderBase(ros::NodeHandle &nh) :
+      CommandSenderBase<MsgType>(nh) {}
   void sendCommand(const ros::Time &time) override {
     CommandSenderBase<MsgType>::msg_.stamp = time;
     CommandSenderBase<MsgType>::sendCommand(time);
   }
- protected:
-  const Referee &referee_;
 };
 
 template<class MsgType>
@@ -99,8 +97,8 @@ class Vel2DCommandSender : public CommandSenderBase<geometry_msgs::Twist> {
 
 class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisCmd> {
  public:
-  explicit ChassisCommandSender(ros::NodeHandle &nh, const Referee &referee)
-      : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh, referee) {
+  explicit ChassisCommandSender(ros::NodeHandle &nh)
+      : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh) {
     double accel_x, accel_y, accel_z;
     if (!nh.getParam("accel_x", accel_x))
       ROS_ERROR("Accel X no defined (namespace: %s)", nh.getNamespace().c_str());
@@ -123,23 +121,22 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
     msg_.accel.angular.z = accel_z;
     burst_flag_ = false;
   }
-  void sendCommand(const ros::Time &time) override {
-    if (referee_.is_online_) {
-      if (referee_.referee_data_.game_robot_status_.chassis_power_limit_ > 120)
+  void updateLimit(const RefereeData &referee_data) {
+    if (referee_data.is_online_) {
+      if (referee_data.game_robot_status_.chassis_power_limit_ > 120)
         msg_.power_limit = 200;
       else {
-        if (referee_.super_capacitor_.getCapPower() < capacitor_threshold_)
-          msg_.power_limit = referee_.referee_data_.game_robot_status_.chassis_power_limit_ - charge_power_;
+        if (referee_data.capacity_data.cap_power_ < capacitor_threshold_)
+          msg_.power_limit = referee_data.game_robot_status_.chassis_power_limit_ - charge_power_;
         else {
           if (getBurstMode())
             msg_.power_limit = burst_power_;
           else
-            msg_.power_limit = referee_.referee_data_.game_robot_status_.chassis_power_limit_ + extra_power_;
+            msg_.power_limit = referee_data.game_robot_status_.chassis_power_limit_ + extra_power_;
         }
       }
     } else
       msg_.power_limit = safety_power_;
-    TimeStampCommandSenderBase<rm_msgs::ChassisCmd>::sendCommand(time);
   }
   void setZero() override {};
   void setBurstMode(bool burst_flag) { burst_flag_ = burst_flag; }
@@ -155,15 +152,15 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
 
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd> {
  public:
-  explicit GimbalCommandSender(ros::NodeHandle &nh, const Referee &referee) :
-      TimeStampCommandSenderBase<rm_msgs::GimbalCmd>(nh, referee) {
+  explicit GimbalCommandSender(ros::NodeHandle &nh) :
+      TimeStampCommandSenderBase<rm_msgs::GimbalCmd>(nh) {
     if (!nh.getParam("max_yaw_vel", max_yaw_rate_))
       ROS_ERROR("Max yaw velocity no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("max_pitch_vel", max_pitch_vel_))
       ROS_ERROR("Max pitch velocity no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("track_timeout", track_timeout_))
       ROS_ERROR("Track timeout no defined (namespace: %s)", nh.getNamespace().c_str());
-    cost_function_ = new TargetCostFunction(nh, referee);
+    cost_function_ = new TargetCostFunction(nh);
   }
   ~GimbalCommandSender() { delete cost_function_; };
   void setRate(double scale_yaw, double scale_pitch) {
@@ -176,8 +173,8 @@ class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd
   void setAimPoint(geometry_msgs::PointStamped aim_point) {
     msg_.aim_point = aim_point;
   }
-  void updateCost(const rm_msgs::TrackDataArray &track_data_array) {
-    double cost = cost_function_->costFunction(track_data_array, base_only_);
+  void updateCost(const RefereeData &referee_data, const rm_msgs::TrackDataArray &track_data_array) {
+    double cost = cost_function_->costFunction(referee_data, track_data_array, base_only_);
     msg_.target_id = cost_function_->getId();
     if (cost == 1e9) {
       if ((ros::Time::now() - last_track_).toSec() > track_timeout_) setMode(rm_msgs::GimbalCmd::RATE);
@@ -198,10 +195,10 @@ class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd
 
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd> {
  public:
-  explicit ShooterCommandSender(ros::NodeHandle &nh, const Referee &referee)
-      : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh, referee) {
+  explicit ShooterCommandSender(ros::NodeHandle &nh)
+      : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh) {
     ros::NodeHandle limit_nh(nh, "heat_limit");
-    heat_limit_ = new HeatLimit(limit_nh, referee_);
+    heat_limit_ = new HeatLimit(limit_nh);
     if (!nh.getParam("gimbal_error_limit", gimbal_error_limit_))
       ROS_ERROR("gimbal error limit no defined (namespace: %s)", nh.getNamespace().c_str());
   }
@@ -211,9 +208,9 @@ class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd
     if (gimbal_des_error.error > gimbal_error_limit_ && time - gimbal_des_error.stamp < ros::Duration(0.1))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH) setMode(rm_msgs::ShootCmd::READY);
   }
+  void updateLimit(const RefereeData &referee_data) { heat_limit_->updateData(referee_data); }
   void sendCommand(const ros::Time &time) override {
     msg_.speed = heat_limit_->getSpeedLimit();
-    heat_limit_->updateExpectShootFrequency();
     msg_.hz = heat_limit_->getHz();
     TimeStampCommandSenderBase<rm_msgs::ShootCmd>::sendCommand(time);
   }

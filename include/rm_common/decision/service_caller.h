@@ -149,10 +149,10 @@ class SwitchEnemyColorService : public ServiceCallerBase<rm_msgs::ColorSwitch> {
  public:
   explicit SwitchEnemyColorService(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::ColorSwitch>(
       nh, "/detection/enemy_color_change") {}
-  void setEnemyColor(const Referee &referee) {
-    if (referee.robot_id_ != 0 && !is_set_) {
+  void setEnemyColor(const RefereeData &referee_data) {
+    if (referee_data.robot_id_ != 0 && !is_set_) {
       //RED:1~9  BLUE:101~109
-      service_.request.color = referee.robot_color_ == "blue" ? "red" : "blue";
+      service_.request.color = referee_data.robot_color_ == "blue" ? "red" : "blue";
       callService();
       if (getIsSwitch())
         is_set_ = true;

@@ -27,8 +27,6 @@ melodic:
     expire_in: 1 day
     paths:
       - ros-*deb
-  variables:
-    AFTER_INSTALL_TARGET_DEPENDENCIES: 'apt install -y -qq ros-melodic-serial'
   script:
     - apk add --update bash coreutils tar
     - .industrial_ci/gitlab.sh ROS_DISTRO=melodic
@@ -40,8 +38,6 @@ noetic:
     expire_in: 1 day
     paths:
       - ros-*deb
-  variables:
-    AFTER_INSTALL_TARGET_DEPENDENCIES: 'apt install -y -qq ros-noetic-serial'
   script:
     - apk add --update bash coreutils tar
     - .industrial_ci/gitlab.sh ROS_DISTRO=noetic

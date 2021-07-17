@@ -10,13 +10,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_definitions(-Wall -Werror -Wno-enum-compare)
 
 find_package(Eigen3 REQUIRED)
-find_package(serial REQUIRED)
 
 find_package(catkin REQUIRED
         COMPONENTS
         roscpp
         roslint
-        serial
         tf
         rm_msgs
         geometry_msgs
@@ -47,9 +45,9 @@ include_directories(
         ${EIGEN3_INCLUDE_DIR}
 )
 
-file(GLOB_RECURSE sources "src/*.cpp" "src/decision/*.cpp" "src/referee/*.cpp")
+file(GLOB_RECURSE sources "src/*.cpp" "src/decision/*.cpp")
 
-add_library(rm_common SHARED ${sources})
+add_library(rm_common SHARED ${sources} include/rm_common/referee/data.h)
 #add_executable(test_traj test/test_traj.cpp)
 add_executable(test_kalman test/test_kalman_filter.cpp)
 
