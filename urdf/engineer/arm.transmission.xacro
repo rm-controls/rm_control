@@ -11,7 +11,7 @@
             </actuator>
             <joint name="joint1">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <offset>-0.9260763</offset>
+                <offset>-4.0653796</offset>
             </joint>
         </transmission>
 
@@ -22,7 +22,7 @@
             </actuator>
             <joint name="joint3">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <offset>-0.82513</offset>
+                <offset>-0.9671676701</offset>
             </joint>
         </transmission>
 
@@ -33,7 +33,7 @@
             </actuator>
             <joint name="joint4">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <offset>-0.28587</offset>
+                <offset>-0.334978036</offset>
             </joint>
         </transmission>
 
@@ -44,7 +44,7 @@
             </actuator>
             <joint name="joint5">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <offset>2.099906</offset>
+                <offset>1.4378487</offset>
             </joint>
         </transmission>
 
@@ -61,7 +61,7 @@
                 </actuator>
                 <joint name="joint2">
                     <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                    <offset>-2.45428</offset>
+                    <offset>-2.391650</offset>
                     <mechanicalReduction>1</mechanicalReduction>
                 </joint>
             </transmission>
