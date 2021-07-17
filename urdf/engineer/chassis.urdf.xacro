@@ -103,7 +103,7 @@
         <joint name="card_joint" type="prismatic">
             <axis xyz="1 0 0"/>
             <origin xyz="0.109 0.001 -0.11"/>
-            <limit effort="0.1" velocity="30" lower="0" upper="0.05"/>
+            <limit effort="15" velocity="0.8708" lower="0" upper="0.15899"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="base_link"/>
             <child link="card"/>
@@ -113,7 +113,7 @@
         <joint name="stone_platform_joint" type="prismatic">
             <axis xyz="0 0 1"/>
             <origin xyz="-0.113 0.134 0.114"/>
-            <limit effort="1" velocity="30" lower="0" upper="0.024"/>
+            <limit effort="30" velocity="0.8708" lower="0" upper="0.024"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="base_link"/>
             <child link="stone_platform"/>
@@ -122,7 +122,7 @@
         <transmission name="trans_stone_platform_joint">
             <type>transmission_interface/SimpleTransmission</type>
             <actuator name="stone_platform_joint_motor">
-                <mechanicalReduction>49.97</mechanicalReduction>
+                <mechanicalReduction>50</mechanicalReduction>
             </actuator>
             <joint name="stone_platform_joint">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -133,7 +133,7 @@
         <transmission name="trans_card_joint">
             <type>transmission_interface/SimpleTransmission</type>
             <actuator name="card_joint_motor">
-                <mechanicalReduction>49.97</mechanicalReduction>
+                <mechanicalReduction>50</mechanicalReduction>
             </actuator>
             <joint name="card_joint">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
