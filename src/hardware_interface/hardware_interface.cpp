@@ -102,7 +102,7 @@ void RmBaseHardWareInterface::write(const ros::Time &time, const ros::Duration &
     // Restore the cmd_effort for the calibrating joint
     for (auto &id2act_datas:bus_id2act_data_)
       for (auto &act_data:id2act_datas.second)
-        if (act_data.second.need_calibration && act_data.second.calibrated)
+        if (act_data.second.need_calibration && !act_data.second.calibrated)
           act_data.second.exe_effort = act_data.second.cmd_effort;
   }
   for (auto &bus:can_buses_)
