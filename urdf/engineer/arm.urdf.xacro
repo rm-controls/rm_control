@@ -3,8 +3,8 @@
 
     <xacro:macro name="arm" params="connected_to">
     <xacro:property name="threshold" value="0.1"/>
-    <xacro:property name="joint1_lower_limit" value="-4.0492335499"/>
-    <xacro:property name="joint1_upper_limit" value="2.066574686023"/>
+    <xacro:property name="joint1_lower_limit" value="-0.88190193"/>
+    <xacro:property name="joint1_upper_limit" value="5.233317170108"/>
     <xacro:property name="joint2_lower_limit" value="-2.378679831401"/>
     <xacro:property name="joint2_upper_limit" value="-0.0989819625299"/>
     <xacro:property name="joint3_lower_limit" value="-0.88921949"/>
