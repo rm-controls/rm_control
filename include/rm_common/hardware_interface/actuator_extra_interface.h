@@ -59,6 +59,9 @@ class ActuatorExtraHandle {
   void setOffset(double offset) {
     *offset_ = offset;
   }
+  void setCalibrated(bool calibrated) {
+    *calibrated_ = calibrated;
+  }
  private:
   std::string name_;
   bool *halted_ = {nullptr};
