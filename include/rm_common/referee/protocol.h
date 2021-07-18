@@ -287,8 +287,7 @@ typedef struct {
 
 typedef struct {
   InteractiveHeaderData student_interactive_header_data_;
-  GraphicConfigData config_data_;
-  uint8_t string_data_[30];
+  GraphicConfigData config_data_[7];
 }__packed ClientGraphicData;
 
 typedef struct {
