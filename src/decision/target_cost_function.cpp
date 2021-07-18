@@ -5,7 +5,8 @@
 #include "rm_common/decision/target_cost_function.h"
 namespace rm_common {
 
-TargetCostFunction::TargetCostFunction(ros::NodeHandle &nh) : optimal_id_(0) {
+TargetCostFunction::TargetCostFunction(ros::NodeHandle &nh, const RefereeData &referee_data)
+    : referee_data_(referee_data), optimal_id_(0) {
   ros::NodeHandle cost_nh = ros::NodeHandle(nh, "target_cost_function");
   if (!cost_nh.getParam("k_pos", k_pos_))
     ROS_ERROR("K position no defined (namespace: %s)", cost_nh.getNamespace().c_str());
@@ -19,9 +20,7 @@ TargetCostFunction::TargetCostFunction(ros::NodeHandle &nh) : optimal_id_(0) {
     ROS_ERROR("Timeout no defined (namespace: %s)", cost_nh.getNamespace().c_str());
 }
 
-double TargetCostFunction::costFunction(const RefereeData &referee_data,
-                                        const rm_msgs::TrackDataArray &track_data_array,
-                                        bool only_attack_base) {
+double TargetCostFunction::costFunction(const rm_msgs::TrackDataArray &track_data_array, bool only_attack_base) {
   double optimal_cost = 1e9;
   for (const auto &track:track_data_array.tracks) {
     if (id2target_states_.find(track.id) == id2target_states_.end())
@@ -39,7 +38,7 @@ double TargetCostFunction::costFunction(const RefereeData &referee_data,
   for (const auto &target_state: id2target_states_) {
     if ((ros::Time::now() - target_state.second.last_receive_).toSec() > timeout_)
       continue;
-    double cost = costFunction(referee_data, target_state.second, only_attack_base);
+    double cost = costFunction(target_state.second, only_attack_base);
     if (cost < optimal_cost) {
       optimal_cost = cost;
       if (optimal_id_ != target_state.first) last_switch_target_ = ros::Time::now();
@@ -49,29 +48,27 @@ double TargetCostFunction::costFunction(const RefereeData &referee_data,
   return optimal_cost;
 }
 
-double TargetCostFunction::costFunction(const RefereeData &referee_data,
-                                        const TargetState &target_state,
-                                        bool only_attack_base) {
+double TargetCostFunction::costFunction(const TargetState &target_state, bool only_attack_base) {
   if (only_attack_base) return 0.;
   double distance = sqrt(pow(target_state.pos_x, 2) + pow(target_state.pos_y, 2) + pow(target_state.pos_z, 2));
   // TODO Finish Vel cost
   double velocity = 0.;
   double hp_cost = 0.;
-  if (referee_data.is_online_) {
-    if (referee_data.game_robot_status_.robot_id_ <= RED_RADAR) {  // The enemy color is blue
-      if (target_state.id == 1) hp_cost = referee_data.game_robot_hp_.blue_1_robot_hp_;
-      else if (target_state.id == 2) hp_cost = referee_data.game_robot_hp_.blue_2_robot_hp_;
-      else if (target_state.id == 3) hp_cost = referee_data.game_robot_hp_.blue_3_robot_hp_;
-      else if (target_state.id == 4) hp_cost = referee_data.game_robot_hp_.blue_4_robot_hp_;
-      else if (target_state.id == 5) hp_cost = referee_data.game_robot_hp_.blue_5_robot_hp_;
-      else if (target_state.id == 7) hp_cost = referee_data.game_robot_hp_.blue_7_robot_hp_;
+  if (referee_data_.is_online_) {
+    if (referee_data_.game_robot_status_.robot_id_ <= RED_RADAR) {  // The enemy color is blue
+      if (target_state.id == 1) hp_cost = referee_data_.game_robot_hp_.blue_1_robot_hp_;
+      else if (target_state.id == 2) hp_cost = referee_data_.game_robot_hp_.blue_2_robot_hp_;
+      else if (target_state.id == 3) hp_cost = referee_data_.game_robot_hp_.blue_3_robot_hp_;
+      else if (target_state.id == 4) hp_cost = referee_data_.game_robot_hp_.blue_4_robot_hp_;
+      else if (target_state.id == 5) hp_cost = referee_data_.game_robot_hp_.blue_5_robot_hp_;
+      else if (target_state.id == 7) hp_cost = referee_data_.game_robot_hp_.blue_7_robot_hp_;
     } else {    // The enemy color is red
-      if (target_state.id == 1) hp_cost = referee_data.game_robot_hp_.red_1_robot_hp_;
-      else if (target_state.id == 2) hp_cost = referee_data.game_robot_hp_.red_2_robot_hp_;
-      else if (target_state.id == 3) hp_cost = referee_data.game_robot_hp_.red_3_robot_hp_;
-      else if (target_state.id == 4) hp_cost = referee_data.game_robot_hp_.red_4_robot_hp_;
-      else if (target_state.id == 5) hp_cost = referee_data.game_robot_hp_.red_5_robot_hp_;
-      else if (target_state.id == 7) hp_cost = referee_data.game_robot_hp_.red_7_robot_hp_;
+      if (target_state.id == 1) hp_cost = referee_data_.game_robot_hp_.red_1_robot_hp_;
+      else if (target_state.id == 2) hp_cost = referee_data_.game_robot_hp_.red_2_robot_hp_;
+      else if (target_state.id == 3) hp_cost = referee_data_.game_robot_hp_.red_3_robot_hp_;
+      else if (target_state.id == 4) hp_cost = referee_data_.game_robot_hp_.red_4_robot_hp_;
+      else if (target_state.id == 5) hp_cost = referee_data_.game_robot_hp_.red_5_robot_hp_;
+      else if (target_state.id == 7) hp_cost = referee_data_.game_robot_hp_.red_7_robot_hp_;
     }
   }
   double frequency =

@@ -23,14 +23,14 @@ struct TargetState {
 
 class TargetCostFunction {
  public:
-  explicit TargetCostFunction(ros::NodeHandle &nh);
-  double costFunction(const RefereeData &referee_data, const rm_msgs::TrackDataArray &track_data_array,
-                      bool only_attack_base = false);
-  double costFunction(const RefereeData &referee_data, const TargetState &target_state, bool only_attack_base = false);
-  int getId() { return optimal_id_; };
+  explicit TargetCostFunction(ros::NodeHandle &nh, const RefereeData &referee_data);
+  double costFunction(const rm_msgs::TrackDataArray &track_data_array, bool only_attack_base = false);
+  double costFunction(const TargetState &target_state, bool only_attack_base = false);
+  int getId() const { return optimal_id_; };
 
  private:
   double k_pos_{}, k_vel_{}, k_hp_{}, k_freq_{}, timeout_{};
+  const RefereeData &referee_data_;
   int optimal_id_{};
   std::map<int, TargetState> id2target_states_;
   ros::Time last_switch_target_;
