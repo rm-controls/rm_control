@@ -80,6 +80,7 @@ class ControllerManager {
   void stopMainControllers() { stopControllers(main_controllers_); }
   void startCalibrationControllers() { startControllers(calibration_controllers_); }
   void stopCalibrationControllers() { stopControllers(calibration_controllers_); }
+  bool isCalling() { return switch_caller_.isCalling(); }
  private:
   void loadController(const std::string &controller) {
     controller_manager_msgs::LoadController load_controller;

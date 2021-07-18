@@ -104,7 +104,7 @@ class QueryCalibrationServiceCaller : public ServiceCallerBase<control_msgs::Que
       nh) {}
   QueryCalibrationServiceCaller(XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
       : ServiceCallerBase<control_msgs::QueryCalibrationState>(controllers, nh) {}
-  bool getIsCalibrated() {
+  bool isCalibrated() {
     if (isCalling()) return false;
     return service_.response.is_calibrated;
   }
