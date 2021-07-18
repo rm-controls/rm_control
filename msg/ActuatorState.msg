@@ -23,6 +23,9 @@ bool[] halted
 # Need calibration
 bool[] need_calibration
 
+# Indicates if the motor is calibrated. A motor will be not calibrated when recover from halted
+bool[] calibrated
+
 # The value of the calibration reading: low (false) or high (true)
 bool[] calibration_reading
 
