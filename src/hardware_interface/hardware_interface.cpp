@@ -69,7 +69,9 @@ void RmBaseHardWareInterface::read(const ros::Time &time, const ros::Duration &p
     bus->read(time);
   for (auto &id2act_datas:bus_id2act_data_)
     for (auto &act_data:id2act_datas.second) {
-      act_data.second.halted = (time - act_data.second.stamp).toSec() > 0.01 || act_data.second.temp > 99;
+      try { // Duration will be out of dual 32-bit range while motor failure
+        act_data.second.halted = (time - act_data.second.stamp).toSec() > 0.01 || act_data.second.temp > 99;
+      } catch (std::runtime_error &ex) {}
       if (act_data.second.halted) {
         act_data.second.seq = 0;
         act_data.second.vel = 0;
