@@ -20,7 +20,7 @@ struct ActData {
   std::string type;
   ros::Time stamp;
   uint64_t seq;
-  bool halted = false, need_calibration = false, calibration_reading = false;
+  bool halted = false, need_calibration = false, calibrated = false, calibration_reading = false;
   uint16_t q_raw;
   int16_t qd_raw;
   uint8_t temp;
