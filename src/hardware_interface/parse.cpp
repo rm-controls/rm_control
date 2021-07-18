@@ -141,6 +141,7 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
       hardware_interface::ActuatorExtraHandle act_extra_(bus_id2act_data_[bus][id].name,
                                                          &bus_id2act_data_[bus][id].halted,
                                                          &bus_id2act_data_[bus][id].need_calibration,
+                                                         &bus_id2act_data_[bus][id].calibrated,
                                                          &bus_id2act_data_[bus][id].calibration_reading,
                                                          &bus_id2act_data_[bus][id].pos,
                                                          &bus_id2act_data_[bus][id].offset);
