@@ -97,10 +97,11 @@ class SwitchControllersServiceCaller : public ServiceCallerBase<controller_manag
   }
 };
 
-class QueryCalibrationService : public ServiceCallerBase<control_msgs::QueryCalibrationState> {
+class QueryCalibrationServiceCaller : public ServiceCallerBase<control_msgs::QueryCalibrationState> {
  public:
-  explicit QueryCalibrationService(ros::NodeHandle &nh) : ServiceCallerBase<control_msgs::QueryCalibrationState>(nh) {}
-  QueryCalibrationService(XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
+  explicit QueryCalibrationServiceCaller(ros::NodeHandle &nh) : ServiceCallerBase<control_msgs::QueryCalibrationState>(
+      nh) {}
+  QueryCalibrationServiceCaller(XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
       : ServiceCallerBase<control_msgs::QueryCalibrationState>(controllers, nh) {}
   bool getIsCalibrated() {
     if (isCalling()) return false;
@@ -108,9 +109,9 @@ class QueryCalibrationService : public ServiceCallerBase<control_msgs::QueryCali
   }
 };
 
-class SwitchEnemyColorService : public ServiceCallerBase<rm_msgs::ColorSwitch> {
+class SwitchEnemyColorServiceCaller : public ServiceCallerBase<rm_msgs::ColorSwitch> {
  public:
-  explicit SwitchEnemyColorService(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::ColorSwitch>(
+  explicit SwitchEnemyColorServiceCaller(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::ColorSwitch>(
       nh, "/detection/enemy_color_change") {}
   void setEnemyColor(const RefereeData &referee_data) {
     if (referee_data.robot_id_ != 0 && !is_set_) {
@@ -137,9 +138,9 @@ class SwitchEnemyColorService : public ServiceCallerBase<rm_msgs::ColorSwitch> {
   bool is_set_{};
 };
 
-class SwitchTargetTypeService : public ServiceCallerBase<rm_msgs::TargetSwitch> {
+class SwitchTargetTypeServiceCaller : public ServiceCallerBase<rm_msgs::TargetSwitch> {
  public:
-  explicit SwitchTargetTypeService(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::TargetSwitch>(
+  explicit SwitchTargetTypeServiceCaller(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::TargetSwitch>(
       nh, "/detection/target_change") {
     service_.request.target = "armor";
   }
