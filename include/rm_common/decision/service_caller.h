@@ -19,18 +19,17 @@ namespace rm_common {
 template<class ServiceType>
 class ServiceCallerBase {
  public:
-  ServiceCallerBase() = default;
-  explicit ServiceCallerBase(ros::NodeHandle &nh, const std::string &service_name = "") {
-    nh.param("error_amount_limit", error_amount_limit_, 0);
-    if (!nh.param("service_name", service_name_, service_name))
-      if (service_name.empty()) {
-        ROS_ERROR("Service name no defined (namespace: %s)", nh.getNamespace().c_str());
-        return;
-      }
+  explicit ServiceCallerBase(ros::NodeHandle &nh, const std::string &service_name = "")
+      : fail_count_(0), fail_limit_(0) {
+    nh.param("fail_limit", fail_limit_, 0);
+    if (!nh.param("service_name", service_name_, service_name) && service_name.empty()) {
+      ROS_ERROR("Service name no defined (namespace: %s)", nh.getNamespace().c_str());
+      return;
+    }
     client_ = nh.serviceClient<ServiceType>(service_name_);
   }
-  ServiceCallerBase(const XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh,
-                    const std::string &service_name = "") {
+  ServiceCallerBase(XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh,
+                    const std::string &service_name = "") : fail_count_(0), fail_limit_(0) {
     if (controllers.hasMember("service_name"))
       service_name_ = static_cast<std::string>(controllers["service_name"]);
     else {
@@ -54,30 +53,28 @@ class ServiceCallerBase {
     std::unique_lock<std::mutex> guard(mutex_, std::try_to_lock);
     return !guard.owns_lock();
   }
+
  protected:
   void callingThread() {
     std::lock_guard<std::mutex> guard(mutex_);
-    if (!client_.call(service_)) {
+    while (!client_.call(service_)) {
       ROS_INFO_ONCE("Failed to call service %s on %s. Retrying now ...",
-                    typeid(ServiceType).name(),
-                    service_name_.c_str());
-      if (error_amount_limit_ != 0) {
-        error_amount_++;
-        if (error_amount_ >= error_amount_limit_) {
-          ROS_ERROR_ONCE("Failed to call service %s on %s", typeid(ServiceType).name(), service_name_.c_str());
-          error_amount_ = 0;
+                    typeid(ServiceType).name(), service_name_.c_str());
+      if (fail_limit_ != 0) {
+        fail_count_++;
+        if (fail_count_ >= fail_limit_) {
+          ROS_ERROR("Failed to call service %s on %s", typeid(ServiceType).name(), service_name_.c_str());
+          fail_count_ = 0;
         }
       }
     }
   }
-
   std::string service_name_;
   ros::ServiceClient client_;
   ServiceType service_;
   std::thread *thread_{};
   std::mutex mutex_;
-  int error_amount_{};
-  int error_amount_limit_{};
+  int fail_count_, fail_limit_;
 };
 
 class SwitchControllersService : public ServiceCallerBase<controller_manager_msgs::SwitchController> {
@@ -96,7 +93,7 @@ class SwitchControllersService : public ServiceCallerBase<controller_manager_msg
     service_.request.strictness = service_.request.BEST_EFFORT;
     service_.request.start_asap = true;
   }
-  SwitchControllersService(const XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
+  SwitchControllersService(XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
       : ServiceCallerBase<controller_manager_msgs::SwitchController>(
       controllers, nh, "/controller_manager/switch_controller") {
     if (controllers.hasMember("start_controllers"))
@@ -137,7 +134,7 @@ class SwitchControllersService : public ServiceCallerBase<controller_manager_msg
 class QueryCalibrationService : public ServiceCallerBase<control_msgs::QueryCalibrationState> {
  public:
   explicit QueryCalibrationService(ros::NodeHandle &nh) : ServiceCallerBase<control_msgs::QueryCalibrationState>(nh) {}
-  QueryCalibrationService(const XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
+  QueryCalibrationService(XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
       : ServiceCallerBase<control_msgs::QueryCalibrationState>(controllers, nh) {}
   bool getIsCalibrated() {
     if (isCalling()) return false;
