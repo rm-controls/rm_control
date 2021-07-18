@@ -154,7 +154,7 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   double charge_power_{};
   double extra_power_{};
   double burst_power_{};
-  bool burst_flag_{};
+  bool burst_flag_ = false;
 };
 
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd> {
