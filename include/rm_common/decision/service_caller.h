@@ -8,6 +8,7 @@
 #include <chrono>
 #include <mutex>
 #include <thread>
+#include <utility>
 #include <ros/ros.h>
 #include <ros/service.h>
 #include <controller_manager_msgs/SwitchController.h>
@@ -77,58 +78,23 @@ class ServiceCallerBase {
   int fail_count_, fail_limit_;
 };
 
-class SwitchControllersService : public ServiceCallerBase<controller_manager_msgs::SwitchController> {
+class SwitchControllersServiceCaller : public ServiceCallerBase<controller_manager_msgs::SwitchController> {
  public:
-  explicit SwitchControllersService(ros::NodeHandle &nh) : ServiceCallerBase<controller_manager_msgs::SwitchController>(
-      nh, "/controller_manager/switch_controller") {
-    XmlRpc::XmlRpcValue controllers;
-    if (nh.getParam("start_controllers", controllers))
-      for (int i = 0; i < controllers.size(); ++i)
-        start_controllers_.push_back(controllers[i]);
-    if (nh.getParam("stop_controllers", controllers))
-      for (int i = 0; i < controllers.size(); ++i)
-        stop_controllers_.push_back(controllers[i]);
-    if (start_controllers_.empty() && stop_controllers_.empty())
-      ROS_ERROR("No start/stop controllers specified (namespace: %s)", nh.getNamespace().c_str());
+  explicit SwitchControllersServiceCaller(ros::NodeHandle &nh) :
+      ServiceCallerBase<controller_manager_msgs::SwitchController>(nh, "/controller_manager/switch_controller") {
     service_.request.strictness = service_.request.BEST_EFFORT;
     service_.request.start_asap = true;
   }
-  SwitchControllersService(XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
-      : ServiceCallerBase<controller_manager_msgs::SwitchController>(
-      controllers, nh, "/controller_manager/switch_controller") {
-    if (controllers.hasMember("start_controllers"))
-      for (int i = 0; i < controllers.size(); ++i)
-        start_controllers_.push_back(controllers["start_controllers"][i]);
-    if (controllers.hasMember("stop_controllers"))
-      for (int i = 0; i < controllers.size(); ++i)
-        stop_controllers_.push_back(controllers["stop_controllers"][i]);
-    if (start_controllers_.empty() && stop_controllers_.empty())
-      ROS_ERROR("No start/stop controllers specified (namespace: %s)", nh.getNamespace().c_str());
-    service_.request.strictness = service_.request.BEST_EFFORT;
-    service_.request.start_asap = true;
+  void startControllers(const std::vector<std::string> &controllers) {
+    service_.request.start_controllers = controllers;
   }
-  void startControllersOnly() {
-    service_.request.start_controllers = start_controllers_;
-    service_.request.stop_controllers.clear();
-  }
-  void stopControllersOnly() {
-    service_.request.stop_controllers = stop_controllers_;
-    service_.request.start_controllers.clear();
-  }
-  void switchControllers() {
-    service_.request.start_controllers = start_controllers_;
-    service_.request.stop_controllers = stop_controllers_;
-  }
-  void flipControllers() {
-    service_.request.start_controllers = stop_controllers_;
-    service_.request.stop_controllers = start_controllers_;
+  void stopControllers(const std::vector<std::string> &controllers) {
+    service_.request.stop_controllers = controllers;
   }
   bool getOk() {
     if (isCalling()) return false;
     return service_.response.ok;
   }
- private:
-  std::vector<std::string> start_controllers_, stop_controllers_;
 };
 
 class QueryCalibrationService : public ServiceCallerBase<control_msgs::QueryCalibrationState> {
