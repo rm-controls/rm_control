@@ -68,6 +68,7 @@ class ServiceCallerBase {
           fail_count_ = 0;
         }
       }
+//      ros::WallDuration(0.2).sleep();
     }
   }
   std::string service_name_;

@@ -22,36 +22,64 @@ class ControllerManager {
     load_client_.waitForExistence();
     ros::NodeHandle nh_list(nh, "controllers_list");
     XmlRpc::XmlRpcValue controllers;
-    if (!nh.getParam("state_controllers", controllers))
+    if (nh_list.getParam("state_controllers", controllers))
       for (int i = 0; i < controllers.size(); ++i) {
         state_controllers_.push_back(controllers[i]);
         loadController(controllers[i]);
       }
-    if (!nh.getParam("main_controllers", controllers))
+    if (nh_list.getParam("main_controllers", controllers))
       for (int i = 0; i < controllers.size(); ++i) {
         main_controllers_.push_back(controllers[i]);
         loadController(controllers[i]);
       }
-    if (!nh.getParam("calibration_controllers", controllers))
+    if (nh_list.getParam("calibration_controllers", controllers))
       for (int i = 0; i < controllers.size(); ++i) {
         calibration_controllers_.push_back(controllers[i]);
         loadController(controllers[i]);
       }
   }
   void update() {
-    if (!switch_caller_.isCalling() && switch_caller_.getOk()) {
+    if (!switch_caller_.isCalling()) {
       if (!start_buffer_.empty())
         switch_caller_.startControllers(start_buffer_);
       if (!stop_buffer_.empty())
         switch_caller_.stopControllers(stop_buffer_);
-      if (!stop_buffer_.empty() || !stop_buffer_.empty()) {
+      if (!start_buffer_.empty() || !stop_buffer_.empty()) {
         switch_caller_.callService();
         start_buffer_.clear();
         stop_buffer_.clear();
       }
     }
   }
-
+  void startController(const std::string &controller) {
+    if (std::find(start_buffer_.begin(), start_buffer_.end(), controller) == start_buffer_.end())
+      start_buffer_.push_back(controller);
+    // AVoid setting controller to start and stop in the same time
+    auto item = std::find(stop_buffer_.begin(), stop_buffer_.end(), controller);
+    if (item != stop_buffer_.end())
+      stop_buffer_.erase(item);
+  }
+  void stopController(const std::string &controller) {
+    if (std::find(stop_buffer_.begin(), stop_buffer_.end(), controller) == stop_buffer_.end())
+      stop_buffer_.push_back(controller);
+    // AVoid setting controller to start and stop in the same time
+    auto item = std::find(start_buffer_.begin(), start_buffer_.end(), controller);
+    if (item != start_buffer_.end())
+      start_buffer_.erase(item);
+  }
+  void startControllers(const std::vector<std::string> &controllers) {
+    for (const auto &controller:controllers)
+      startController(controller);
+  }
+  void stopControllers(const std::vector<std::string> &controllers) {
+    for (const auto &controller:controllers)
+      stopController(controller);
+  }
+  void startStateControllers() { startControllers(state_controllers_); }
+  void startMainControllers() { startControllers(main_controllers_); }
+  void stopMainControllers() { stopControllers(main_controllers_); }
+  void startCalibrationControllers() { startControllers(calibration_controllers_); }
+  void stopCalibrationControllers() { stopControllers(calibration_controllers_); }
  private:
   void loadController(const std::string &controller) {
     controller_manager_msgs::LoadController load_controller;
