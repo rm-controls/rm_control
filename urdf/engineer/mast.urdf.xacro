@@ -152,7 +152,7 @@
                 <offset>0.0</offset>
             </joint>
             <actuator name="mast_joint_motor">
-                <mechanicalReduction>71.44</mechanicalReduction>
+                <mechanicalReduction>52.63</mechanicalReduction>
             </actuator>
         </transmission>
 
