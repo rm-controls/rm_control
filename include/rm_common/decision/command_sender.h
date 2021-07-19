@@ -301,6 +301,37 @@ class JointPositionBinaryCommandSender : public CommandSenderBase<std_msgs::Floa
   double close_pos_{}, open_pos_{};
 };
 
+class JointJogCommandSender : public CommandSenderBase<std_msgs::Float64> {
+ public:
+  explicit JointJogCommandSender(ros::NodeHandle &nh, const sensor_msgs::JointState &joint_state) :
+      CommandSenderBase<std_msgs::Float64>(nh), joint_state_(joint_state) {
+    ROS_ASSERT(nh.getParam("joint", joint_));
+    ROS_ASSERT(nh.getParam("step", step_));
+  }
+  void reset() {
+    auto i = std::find(joint_state_.name.begin(), joint_state_.name.end(), joint_);
+    if (i != joint_state_.name.end())
+      msg_.data = joint_state_.position[std::distance(joint_state_.name.begin(), i)];
+    else
+      msg_.data = NAN;
+  }
+  void plus() {
+    if (msg_.data != NAN) {
+      msg_.data += step_;
+      sendCommand(ros::Time());
+    }
+  }
+  void minus() {
+    if (msg_.data != NAN) {
+      msg_.data -= step_;
+      sendCommand(ros::Time());
+    }
+  }
+ private:
+  std::string joint_{};
+  const sensor_msgs::JointState &joint_state_;
+  double step_{};
+};
 }
 
 #endif // RM_COMMON_COMMAND_SENDER_H_
