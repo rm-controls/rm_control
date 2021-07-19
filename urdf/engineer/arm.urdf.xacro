@@ -30,13 +30,13 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="0.004 0.071 0" rpy="0 0 0"/>
+                <origin xyz="-0.022768 -0.000245 0.034512" rpy="0 0 0"/>
                 <geometry>
                     <box size="0.088 0.142 0.106"/>
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="0.005 0.128 0" rpy="0 0 0"/>
+                <origin xyz="0.02 -0.000245 0.034512" rpy="0 0 0"/>
                 <geometry>
                     <cylinder length="0.106" radius="0.047"/>
                 </geometry>
@@ -144,7 +144,7 @@
         <!--  joint  -->
         <joint name="joint1" type="revolute">
             <axis xyz="0 1 0"/>
-            <origin xyz="0.122 0 0.124" rpy="1.57 0 0"/>
+            <origin xyz="0.175 0 0.164" rpy="0 0 0"/>
             <!--      limit not work while type="continuous"-->
             <limit effort="20" velocity="10" lower="${joint1_lower_limit}" upper="${joint1_upper_limit}"/>
             <safety_controller k_position="150" k_velocity="10"
@@ -157,7 +157,7 @@
 
         <joint name="joint2" type="revolute">
             <axis xyz="0 1 0"/>
-            <origin xyz="0.005 0.128 0" rpy="-1.57 0 0"/>
+            <origin xyz="0.005327 0 0.128" rpy="0 0 0"/>
             <limit effort="60" velocity="10" lower="${joint2_lower_limit}" upper="${joint2_upper_limit}"/>
             <safety_controller k_position="500" k_velocity="10"
                                soft_lower_limit="${joint2_lower_limit+threshold}"

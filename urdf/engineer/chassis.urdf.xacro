@@ -3,11 +3,11 @@
     <xacro:include filename="$(find rm_description)/urdf/common/mecanum_wheel.urdf.xacro"/>
 
     <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
-    <xacro:property name="wheel_front" value="0.1"/>
-    <xacro:property name="wheel_back" value="-0.18"/>
-    <xacro:property name="wheel_right" value="-0.24"/>
-    <xacro:property name="wheel_left" value="0.24"/>
-    <xacro:property name="wheel_offset_z" value="-0.06"/>
+    <xacro:property name="wheel_front" value="0.134874"/>
+    <xacro:property name="wheel_back" value="-0.134874"/>
+    <xacro:property name="wheel_right" value="-0.2448"/>
+    <xacro:property name="wheel_left" value="0.2448"/>
+    <xacro:property name="wheel_offset_z" value="0.000072"/>
     <xacro:property name="wheel_joint_damping" value="1.0"/>
     <xacro:property name="wheel_joint_friction" value="1.0"/>
 
@@ -17,8 +17,8 @@
             <inertial>
                 <mass value="11.91"/>
                 <origin xyz="-0.063 -0.010 -0.027"/>
-                <inertia ixx="4.230e-1" ixy="-5.057e-4" ixz="3.328e-2" iyy="3.602e-1"
-                         iyz="1.417e-2" izz="5.140e-1"/>
+                <inertia ixx="4.302e-2" ixy="7.618e-4" ixz="6.881e-3" iyy="3.95e-2"
+                         iyz="-1.841e-4" izz="7.25e-2"/>
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -27,32 +27,32 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="-0.043 0 0.020" rpy="0 0 0"/>
+                <origin xyz="0.005 0 0.06" rpy="0 0 0"/>
                 <geometry>
-                    <box size="0.486 0.596 0.169"/>
+                    <box size="0.5 0.596 0.169"/>
                 </geometry>
             </collision>
 
             <collision>
-                <origin xyz="-0.08 0.243 0.258" rpy="0 0 -0.5061455"/>
+                <origin xyz="-0.043688 0.236688 0.284" rpy="0 0 -0.5061455"/>
                 <geometry>
                     <box size="0.08 0.0217 0.3033"/>
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="-0.21 0.19 0.25833" rpy="0 0 1.0646508"/>
+                <origin xyz="-0.160269 0.184128 0.284" rpy="0 0 1.0646508"/>
                 <geometry>
                     <box size="0.08 0.0217 0.3033"/>
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="-0.19 0.05 0.258" rpy="0 0 -0.5061455"/>
+                <origin xyz="-0.143054 0.057391 0.284" rpy="0 0 -0.5061455"/>
                 <geometry>
                     <box size="0.08 0.0217 0.3033"/>
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="-0.0239 0.084 0.228" rpy="0 0 1.0646508"/>
+                <origin xyz="0.019028 0.084742 0.269" rpy="0 0 1.0646508"/>
                 <geometry>
                     <box size="0.080 0.003 0.250"/>
                 </geometry>
@@ -93,7 +93,7 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="-0.113 0.134 0.0" rpy="0 0.0 0"/>
+                <origin xyz="-0.08 0 0" rpy="0 0.0 0"/>
                 <geometry>
                     <box size="0.253 0.151 0.011"/>
                 </geometry>
@@ -102,7 +102,7 @@
 
         <joint name="card_joint" type="prismatic">
             <axis xyz="1 0 0"/>
-            <origin xyz="0.109 0.001 -0.11"/>
+            <origin xyz="0.209783 0.004 -0.08"/>
             <limit effort="0.1" velocity="30" lower="0" upper="0.05"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="base_link"/>
