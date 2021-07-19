@@ -271,7 +271,7 @@ typedef struct {
 }__packed InteractiveDataHeader;
 
 typedef struct {
-  uint8_t graphic_name_[3];
+  uint8_t graphic_id_[3];
   uint32_t operate_type_: 3;
   uint32_t graphic_type_: 3;
   uint32_t layer_: 4;
