@@ -69,6 +69,7 @@ class HeaderStampCommandSenderBase : public CommandSenderBase<MsgType> {
     CommandSenderBase<MsgType>::sendCommand(time);
   }
 };
+
 class Vel2DCommandSender : public CommandSenderBase<geometry_msgs::Twist> {
  public:
   explicit Vel2DCommandSender(ros::NodeHandle &nh) : CommandSenderBase<geometry_msgs::Twist>(nh) {
@@ -278,28 +279,25 @@ class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::Tw
   double max_linear_x_{}, max_linear_y_{}, max_linear_z_{}, max_angular_x_{}, max_angular_y_{}, max_angular_z_{};
 };
 
-class CoverCommandSender : public CommandSenderBase<std_msgs::Float64> {
+class JointPositionBinaryCommandSender : public CommandSenderBase<std_msgs::Float64> {
  public:
-  explicit CoverCommandSender(ros::NodeHandle &nh) : CommandSenderBase<std_msgs::Float64>(nh), has_cover_(false) {
-    if (nh.getParam("close_pos", close_pos_) && nh.getParam("open_pos", open_pos_))
-      has_cover_ = true;
+  explicit JointPositionBinaryCommandSender(ros::NodeHandle &nh) :
+      CommandSenderBase<std_msgs::Float64>(nh) {
+    ROS_ASSERT(nh.getParam("close_pos", close_pos_) && nh.getParam("open_pos", open_pos_));
   }
   void open() {
     msg_.data = open_pos_;
-    is_close_ = false;
+    state = false;
   }
   void close() {
     msg_.data = close_pos_;
-    is_close_ = true;
+    state = true;
   }
-  bool isClose() const { return is_close_; }
-  void sendCommand(const ros::Time &time) override {
-    if (has_cover_) CommandSenderBase<std_msgs::Float64>::sendCommand(time);
-  }
+  bool getState() const { return state; }
+  void sendCommand(const ros::Time &time) override { CommandSenderBase<std_msgs::Float64>::sendCommand(time); }
   void setZero() override {};
  private:
-  bool has_cover_;
-  bool is_close_{};
+  bool state{};
   double close_pos_{}, open_pos_{};
 };
 
