@@ -2,6 +2,19 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="arm">
 
     <xacro:macro name="arm" params="connected_to">
+    <xacro:property name="threshold" value="0.1"/>
+    <xacro:property name="joint1_lower_limit" value="-0.88190193"/>
+    <xacro:property name="joint1_upper_limit" value="5.233317170108"/>
+    <xacro:property name="joint2_lower_limit" value="-2.378679831401"/>
+    <xacro:property name="joint2_upper_limit" value="-0.0989819625299"/>
+    <xacro:property name="joint3_lower_limit" value="-0.88921949"/>
+    <xacro:property name="joint3_upper_limit" value="2.535032168"/>
+    <xacro:property name="joint4_lower_limit" value="-0.2989008"/>
+    <xacro:property name="joint4_upper_limit" value="2.614725376878"/>
+    <xacro:property name="joint5_lower_limit" value="-4.27171178"/>
+    <xacro:property name="joint5_upper_limit" value="1.40800999"/>
+
+
 
         <!--  link  -->
         <link name="link1">
@@ -17,13 +30,13 @@
                 </geometry>
             </visual>
             <collision>
-                <origin xyz="0.004 0.071 0" rpy="0 0 0"/>
+                <origin xyz="-0.022768 -0.000245 0.034512" rpy="0 0 0"/>
                 <geometry>
                     <box size="0.088 0.142 0.106"/>
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="0.005 0.128 0" rpy="0 0 0"/>
+                <origin xyz="0.02 -0.000245 0.034512" rpy="0 0 0"/>
                 <geometry>
                     <cylinder length="0.106" radius="0.047"/>
                 </geometry>
@@ -131,9 +144,12 @@
         <!--  joint  -->
         <joint name="joint1" type="revolute">
             <axis xyz="0 1 0"/>
-            <origin xyz="0.122 0 0.124" rpy="1.57 0 0"/>
+            <origin xyz="0.175 0 0.164" rpy="0 0 0"/>
             <!--      limit not work while type="continuous"-->
-            <limit effort="20" velocity="10" lower="-${pi}" upper="${pi}"/>
+            <limit effort="20" velocity="10" lower="${joint1_lower_limit}" upper="${joint1_upper_limit}"/>
+            <safety_controller k_position="150" k_velocity="10"
+                               soft_lower_limit="${joint1_lower_limit+threshold}"
+                               soft_upper_limit="${joint1_upper_limit-threshold}"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="${connected_to}"/>
             <child link="link1"/>
@@ -141,8 +157,11 @@
 
         <joint name="joint2" type="revolute">
             <axis xyz="0 1 0"/>
-            <origin xyz="0.005 0.128 0" rpy="-1.57 0 0"/>
-            <limit effort="60" velocity="10" lower="-2.5249" upper="0.042903"/>
+            <origin xyz="0.005327 0 0.128" rpy="0 0 0"/>
+            <limit effort="60" velocity="10" lower="${joint2_lower_limit}" upper="${joint2_upper_limit}"/>
+            <safety_controller k_position="500" k_velocity="10"
+                               soft_lower_limit="${joint2_lower_limit+threshold}"
+                               soft_upper_limit="${joint2_upper_limit-threshold}"/>
             <dynamics damping="0.0" friction="0.8"/>
             <parent link="link1"/>
             <child link="link2"/>
@@ -151,7 +170,10 @@
         <joint name="joint3" type="revolute">
             <axis xyz="0 1 0"/>
             <origin xyz="0.165 0 0" rpy="0 0 0"/>
-            <limit effort="30" velocity="10" lower="-0.7203" upper="2.6055"/>
+            <limit effort="30" velocity="10" lower="${joint3_lower_limit}" upper="${joint3_upper_limit}"/>
+            <safety_controller k_position="350" k_velocity="6"
+                               soft_lower_limit="${joint3_lower_limit+threshold}"
+                               soft_upper_limit="${joint3_upper_limit-threshold}"/>
             <dynamics damping="0.0" friction="0.5"/>
             <parent link="link2"/>
             <child link="link3"/>
@@ -160,7 +182,10 @@
         <joint name="joint4" type="revolute">
             <axis xyz="0 1 0"/>
             <origin xyz="0.106 0 0.028"/>
-            <limit effort="7" velocity="30" lower="-0.21556" upper="2.6459"/>
+            <limit effort="7" velocity="30" lower="${joint4_lower_limit}" upper="${joint4_upper_limit}"/>
+            <safety_controller k_position="20" k_velocity="2.5"
+                               soft_lower_limit="${joint4_lower_limit+threshold}"
+                               soft_upper_limit="${joint4_upper_limit-threshold}"/>
             <dynamics damping="0.0" friction="0.5"/>
             <parent link="link3"/>
             <child link="link4"/>
@@ -169,9 +194,12 @@
         <joint name="joint5" type="revolute">
             <axis xyz="1 0 0"/>
             <origin xyz="0.097 0 0.055"/>
-            <limit effort="13" velocity="18" lower="-3.139" upper="0.5454"/>
+            <limit effort="13" velocity="18" lower="${joint5_lower_limit}" upper="${joint5_upper_limit}"/>
+            <safety_controller k_position="50" k_velocity="5"
+                               soft_lower_limit="${joint5_lower_limit+threshold}"
+                               soft_upper_limit="${joint5_upper_limit-threshold}"/>
             <dynamics damping="0.0" friction="0.5"/>
-            <parent link="link4"/>
+            <parent link="link4"/>z
             <child link="link5"/>
         </joint>
 
