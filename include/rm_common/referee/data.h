@@ -36,7 +36,7 @@ struct RefereeData {
   RfidStatus rfid_status_;
   DartClientCmd dart_client_cmd_;
   InteractiveData interactive_data;
-  GraphicConfigData graphic_data_struct_;
+  GraphConfig graphic_data_struct_;
   CapacityData capacity_data;
   std::string robot_color_;
   int robot_id_;
