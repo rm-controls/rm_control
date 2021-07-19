@@ -1,0 +1,10 @@
+uint8 color
+uint8 target
+uint8 exposure
+uint8 RED = 0
+uint8 BLUE = 1
+uint8 ARMOR = 0
+uint8 BUFF = 1
+uint8 EXP_UP = 1
+---
+bool switch_is_success
