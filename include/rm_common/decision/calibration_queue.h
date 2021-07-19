@@ -16,7 +16,7 @@ class CalibrationQueue {
  public:
   explicit CalibrationQueue(XmlRpc::XmlRpcValue &rpc_value, ros::NodeHandle &nh,
                             ControllerManager &controller_manager) :
-      controller_manager_(controller_manager) {
+      controller_manager_(controller_manager), switched_(false) {
     // Don't calibration if using simulation
     ros::NodeHandle nh_global;
     bool use_sim_time;
@@ -39,27 +39,29 @@ class CalibrationQueue {
     if (calibration_services_.empty())
       return;
     calibration_itr_ = calibration_services_.begin();
-    for (auto service:calibration_services_) {
+    switched_ = false;
+    for (auto service:calibration_services_)
       service.query_services->getService().response.is_calibrated = false;
-    }
   }
   void update(const ros::Time &time) {
     if (calibration_services_.empty())
       return;
     if (isCalibrated())
       return;
-    if (!controller_manager_.isCalling()) {
+    if (switched_) {
       if (calibration_itr_->query_services->isCalibrated()) {
         // Flip controllers
         controller_manager_.startController(calibration_itr_->stop_controller);
         controller_manager_.stopController(calibration_itr_->start_controller);
         calibration_itr_++;
+        switched_ = false;
       } else if ((time - last_query_).toSec() > .2) {
         last_query_ = time;
         calibration_itr_->query_services->callService();
       }
     } else {
       // Switch controllers
+      switched_ = true;
       if (calibration_itr_ != calibration_services_.end()) {
         controller_manager_.startController(calibration_itr_->start_controller);
         controller_manager_.stopController(calibration_itr_->stop_controller);
@@ -73,6 +75,7 @@ class CalibrationQueue {
   std::vector<CalibrationService> calibration_services_;
   std::vector<CalibrationService>::iterator calibration_itr_;
   ControllerManager &controller_manager_;
+  bool switched_;
 };
 }
 

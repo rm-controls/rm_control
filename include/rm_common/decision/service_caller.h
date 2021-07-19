@@ -58,7 +58,7 @@ class ServiceCallerBase {
  protected:
   void callingThread() {
     std::lock_guard<std::mutex> guard(mutex_);
-    while (!client_.call(service_)) {
+    if (!client_.call(service_)) {
       ROS_INFO_ONCE("Failed to call service %s on %s. Retrying now ...",
                     typeid(ServiceType).name(), service_name_.c_str());
       if (fail_limit_ != 0) {
