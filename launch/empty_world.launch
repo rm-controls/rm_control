@@ -1,8 +1,8 @@
 <launch>
     <arg name="robot_type" default="$(env ROBOT_TYPE)" doc="Robot type [standard, auto, hero, engineer,sentry,rmua]"/>
     <arg name="load_chassis" default="true"/>
-    <arg name="load_gimbal" default="false"/>
-    <arg name="load_shooter" default="false"/>
+    <arg name="load_gimbal" default="true"/>
+    <arg name="load_shooter" default="true"/>
     <arg name="load_arm" default="true"/>
     <arg name="paused" default="false"/>
     <arg name="roller_type" default="simple" doc="simple or realistic"/>
