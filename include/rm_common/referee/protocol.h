@@ -287,8 +287,9 @@ typedef struct {
 }__packed GraphConfig;
 
 typedef struct {
-  InteractiveDataHeader student_interactive_header_data_;
-  GraphConfig config_data_[7];
+  InteractiveDataHeader header_;
+  GraphConfig config_;
+  uint8_t content_[30];
 }__packed GraphData;
 
 typedef struct {
