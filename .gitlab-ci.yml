@@ -11,6 +11,8 @@ stages:
 
 prepare:
   stage: prepare
+  only:
+    - master
   script:
     - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci .industrial_ci -b master
     - sed -i 's/ici_forward_mount TARGET_REPO_PATH ro/ici_forward_mount TARGET_REPO_PATH rw/g' .industrial_ci/industrial_ci/src/isolation/docker.sh
@@ -21,6 +23,8 @@ prepare:
 
 melodic:
   stage: build
+  only:
+    - master
   allow_failure: true
   artifacts:
     expire_in: 1 day
@@ -32,6 +36,8 @@ melodic:
 
 noetic:
   stage: build
+  only:
+    - master
   allow_failure: true
   artifacts:
     expire_in: 1 day
@@ -43,6 +49,8 @@ noetic:
 
 publish:
   stage: publish
+  only:
+    - master
   script:
     - apk add --update curl
     - curl ${PACKAGE_SCRIPT_URL}/gitlab-ci-publish.sh | sh
