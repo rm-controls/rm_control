@@ -40,10 +40,8 @@ class ControllerManager {
   }
   void update() {
     if (!switch_caller_.isCalling()) {
-      if (!start_buffer_.empty())
-        switch_caller_.startControllers(start_buffer_);
-      if (!stop_buffer_.empty())
-        switch_caller_.stopControllers(stop_buffer_);
+      switch_caller_.startControllers(start_buffer_);
+      switch_caller_.stopControllers(stop_buffer_);
       if (!start_buffer_.empty() || !stop_buffer_.empty()) {
         switch_caller_.callService();
         start_buffer_.clear();
