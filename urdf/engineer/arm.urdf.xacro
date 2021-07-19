@@ -143,7 +143,7 @@
 
         <!--  joint  -->
         <joint name="joint1" type="revolute">
-            <axis xyz="0 1 0"/>
+            <axis xyz="0 0 1"/>
             <origin xyz="0.175 0 0.164" rpy="0 0 0"/>
             <!--      limit not work while type="continuous"-->
             <limit effort="20" velocity="10" lower="${joint1_lower_limit}" upper="${joint1_upper_limit}"/>
