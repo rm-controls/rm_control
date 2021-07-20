@@ -8,29 +8,28 @@
 #include <chrono>
 #include <mutex>
 #include <thread>
+#include <utility>
 #include <ros/ros.h>
 #include <ros/service.h>
 #include <controller_manager_msgs/SwitchController.h>
 #include <control_msgs/QueryCalibrationState.h>
-#include <rm_msgs/ColorSwitch.h>
-#include <rm_msgs/TargetSwitch.h>
+#include <rm_msgs/StatusChange.h>
 
 namespace rm_common {
 template<class ServiceType>
 class ServiceCallerBase {
  public:
-  ServiceCallerBase() = default;
-  explicit ServiceCallerBase(ros::NodeHandle &nh, const std::string &service_name = "") {
-    nh.param("error_amount_limit", error_amount_limit_, 0);
-    if (!nh.param("service_name", service_name_, service_name))
-      if (service_name.empty()) {
-        ROS_ERROR("Service name no defined (namespace: %s)", nh.getNamespace().c_str());
-        return;
-      }
+  explicit ServiceCallerBase(ros::NodeHandle &nh, const std::string &service_name = "")
+      : fail_count_(0), fail_limit_(0) {
+    nh.param("fail_limit", fail_limit_, 0);
+    if (!nh.param("service_name", service_name_, service_name) && service_name.empty()) {
+      ROS_ERROR("Service name no defined (namespace: %s)", nh.getNamespace().c_str());
+      return;
+    }
     client_ = nh.serviceClient<ServiceType>(service_name_);
   }
-  ServiceCallerBase(const XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh,
-                    const std::string &service_name = "") {
+  ServiceCallerBase(XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh,
+                    const std::string &service_name = "") : fail_count_(0), fail_limit_(0) {
     if (controllers.hasMember("service_name"))
       service_name_ = static_cast<std::string>(controllers["service_name"]);
     else {
@@ -54,144 +53,103 @@ class ServiceCallerBase {
     std::unique_lock<std::mutex> guard(mutex_, std::try_to_lock);
     return !guard.owns_lock();
   }
+
  protected:
   void callingThread() {
     std::lock_guard<std::mutex> guard(mutex_);
     if (!client_.call(service_)) {
       ROS_INFO_ONCE("Failed to call service %s on %s. Retrying now ...",
-                    typeid(ServiceType).name(),
-                    service_name_.c_str());
-      if (error_amount_limit_ != 0) {
-        error_amount_++;
-        if (error_amount_ >= error_amount_limit_) {
-          ROS_ERROR_ONCE("Failed to call service %s on %s", typeid(ServiceType).name(), service_name_.c_str());
-          error_amount_ = 0;
+                    typeid(ServiceType).name(), service_name_.c_str());
+      if (fail_limit_ != 0) {
+        fail_count_++;
+        if (fail_count_ >= fail_limit_) {
+          ROS_ERROR("Failed to call service %s on %s", typeid(ServiceType).name(), service_name_.c_str());
+          fail_count_ = 0;
         }
       }
+//      ros::WallDuration(0.2).sleep();
     }
   }
-
   std::string service_name_;
   ros::ServiceClient client_;
   ServiceType service_;
   std::thread *thread_{};
   std::mutex mutex_;
-  int error_amount_{};
-  int error_amount_limit_{};
+  int fail_count_, fail_limit_;
 };
 
-class SwitchControllersService : public ServiceCallerBase<controller_manager_msgs::SwitchController> {
+class SwitchControllersServiceCaller : public ServiceCallerBase<controller_manager_msgs::SwitchController> {
  public:
-  explicit SwitchControllersService(ros::NodeHandle &nh) : ServiceCallerBase<controller_manager_msgs::SwitchController>(
-      nh, "/controller_manager/switch_controller") {
-    XmlRpc::XmlRpcValue controllers;
-    if (nh.getParam("start_controllers", controllers))
-      for (int i = 0; i < controllers.size(); ++i)
-        start_controllers_.push_back(controllers[i]);
-    if (nh.getParam("stop_controllers", controllers))
-      for (int i = 0; i < controllers.size(); ++i)
-        stop_controllers_.push_back(controllers[i]);
-    if (start_controllers_.empty() && stop_controllers_.empty())
-      ROS_ERROR("No start/stop controllers specified (namespace: %s)", nh.getNamespace().c_str());
+  explicit SwitchControllersServiceCaller(ros::NodeHandle &nh) :
+      ServiceCallerBase<controller_manager_msgs::SwitchController>(nh, "/controller_manager/switch_controller") {
     service_.request.strictness = service_.request.BEST_EFFORT;
     service_.request.start_asap = true;
   }
-  SwitchControllersService(const XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
-      : ServiceCallerBase<controller_manager_msgs::SwitchController>(
-      controllers, nh, "/controller_manager/switch_controller") {
-    if (controllers.hasMember("start_controllers"))
-      for (int i = 0; i < controllers.size(); ++i)
-        start_controllers_.push_back(controllers["start_controllers"][i]);
-    if (controllers.hasMember("stop_controllers"))
-      for (int i = 0; i < controllers.size(); ++i)
-        stop_controllers_.push_back(controllers["stop_controllers"][i]);
-    if (start_controllers_.empty() && stop_controllers_.empty())
-      ROS_ERROR("No start/stop controllers specified (namespace: %s)", nh.getNamespace().c_str());
-    service_.request.strictness = service_.request.BEST_EFFORT;
-    service_.request.start_asap = true;
+  void startControllers(const std::vector<std::string> &controllers) {
+    service_.request.start_controllers = controllers;
   }
-  void startControllersOnly() {
-    service_.request.start_controllers = start_controllers_;
-    service_.request.stop_controllers.clear();
-  }
-  void stopControllersOnly() {
-    service_.request.stop_controllers = stop_controllers_;
-    service_.request.start_controllers.clear();
-  }
-  void switchControllers() {
-    service_.request.start_controllers = start_controllers_;
-    service_.request.stop_controllers = stop_controllers_;
-  }
-  void flipControllers() {
-    service_.request.start_controllers = stop_controllers_;
-    service_.request.stop_controllers = start_controllers_;
+  void stopControllers(const std::vector<std::string> &controllers) {
+    service_.request.stop_controllers = controllers;
   }
   bool getOk() {
     if (isCalling()) return false;
     return service_.response.ok;
   }
- private:
-  std::vector<std::string> start_controllers_, stop_controllers_;
 };
 
-class QueryCalibrationService : public ServiceCallerBase<control_msgs::QueryCalibrationState> {
+class QueryCalibrationServiceCaller : public ServiceCallerBase<control_msgs::QueryCalibrationState> {
  public:
-  explicit QueryCalibrationService(ros::NodeHandle &nh) : ServiceCallerBase<control_msgs::QueryCalibrationState>(nh) {}
-  QueryCalibrationService(const XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
+  explicit QueryCalibrationServiceCaller(ros::NodeHandle &nh) : ServiceCallerBase<control_msgs::QueryCalibrationState>(
+      nh) {}
+  QueryCalibrationServiceCaller(XmlRpc::XmlRpcValue &controllers, ros::NodeHandle &nh)
       : ServiceCallerBase<control_msgs::QueryCalibrationState>(controllers, nh) {}
-  bool getIsCalibrated() {
+  bool isCalibrated() {
     if (isCalling()) return false;
     return service_.response.is_calibrated;
   }
 };
 
-class SwitchEnemyColorService : public ServiceCallerBase<rm_msgs::ColorSwitch> {
+class SwitchDetectionCaller : public ServiceCallerBase<rm_msgs::StatusChange> {
  public:
-  explicit SwitchEnemyColorService(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::ColorSwitch>(
-      nh, "/detection/enemy_color_change") {}
+  explicit SwitchDetectionCaller(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::StatusChange>(
+      nh, "/detection/status_switch") {
+    service_.request.target = rm_msgs::StatusChangeRequest::ARMOR;
+    service_.request.exposure = rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0;
+    callService();
+  }
   void setEnemyColor(const RefereeData &referee_data) {
     if (referee_data.robot_id_ != 0 && !is_set_) {
-      //RED:1~9  BLUE:101~109
-      service_.request.color = referee_data.robot_color_ == "blue" ? "red" : "blue";
+      service_.request.color =
+          referee_data.robot_color_ == "blue" ? rm_msgs::StatusChangeRequest::RED : rm_msgs::StatusChangeRequest::BLUE;
       callService();
       if (getIsSwitch())
         is_set_ = true;
     }
   }
   void switchEnemyColor() {
-    if (is_set_)
-      service_.request.color = service_.request.color == "blue" ? "red" : "blue";
+    service_.request.color = service_.request.color == rm_msgs::StatusChangeRequest::RED;
   }
-  std::string getColor() {
+  void switchTargetType() {
+    service_.request.target = service_.request.target == rm_msgs::StatusChangeRequest::ARMOR;
+  }
+  void switchExposureLevel() {
+    service_.request.exposure = service_.request.exposure == rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_4 ?
+                                rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0 : service_.request.exposure + 1;
+  }
+  int getColor() {
     return service_.request.color;
+  }
+  int getTarget() {
+    return service_.request.target;
   }
   bool getIsSwitch() {
     if (isCalling()) return false;
-    return service_.response.is_success;
+    return service_.response.switch_is_success;
   }
 
  private:
   bool is_set_{};
 };
-
-class SwitchTargetTypeService : public ServiceCallerBase<rm_msgs::TargetSwitch> {
- public:
-  explicit SwitchTargetTypeService(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::TargetSwitch>(
-      nh, "/detection/target_change") {
-    service_.request.target = "armor";
-  }
-  void switchTargetType() {
-    service_.request.target = service_.request.target == "armor" ? "buff" : "armor";
-  }
-  std::string getTarget() {
-    return service_.request.target;
-  }
-  bool getIsSwitch() {
-    if (isCalling()) return false;
-    return service_.response.target_switch_is_success;
-  }
-};
-
 }
 
 #endif //RM_COMMON_SERVICE_CALLER_H_
