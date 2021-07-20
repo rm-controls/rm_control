@@ -147,7 +147,7 @@
             <origin xyz="0.175 0 0.164" rpy="0 0 0"/>
             <!--      limit not work while type="continuous"-->
             <limit effort="20" velocity="10" lower="${joint1_lower_limit}" upper="${joint1_upper_limit}"/>
-            <safety_controller k_position="150" k_velocity="10"
+            <safety_controller k_position="37.5" k_velocity="10"
                                soft_lower_limit="${joint1_lower_limit+threshold}"
                                soft_upper_limit="${joint1_upper_limit-threshold}"/>
             <dynamics damping="0.0" friction="0.1"/>
@@ -159,7 +159,7 @@
             <axis xyz="0 1 0"/>
             <origin xyz="0.005327 0 0.128" rpy="0 0 0"/>
             <limit effort="60" velocity="10" lower="${joint2_lower_limit}" upper="${joint2_upper_limit}"/>
-            <safety_controller k_position="500" k_velocity="10"
+            <safety_controller k_position="150" k_velocity="10"
                                soft_lower_limit="${joint2_lower_limit+threshold}"
                                soft_upper_limit="${joint2_upper_limit-threshold}"/>
             <dynamics damping="0.0" friction="0.8"/>
@@ -171,7 +171,7 @@
             <axis xyz="0 1 0"/>
             <origin xyz="0.165 0 0" rpy="0 0 0"/>
             <limit effort="30" velocity="10" lower="${joint3_lower_limit}" upper="${joint3_upper_limit}"/>
-            <safety_controller k_position="350" k_velocity="6"
+            <safety_controller k_position="100" k_velocity="6"
                                soft_lower_limit="${joint3_lower_limit+threshold}"
                                soft_upper_limit="${joint3_upper_limit-threshold}"/>
             <dynamics damping="0.0" friction="0.5"/>
@@ -183,7 +183,7 @@
             <axis xyz="0 1 0"/>
             <origin xyz="0.106 0 0.028"/>
             <limit effort="18.53" velocity="13.5" lower="${joint4_lower_limit}" upper="${joint4_upper_limit}"/>
-            <safety_controller k_position="20" k_velocity="2.5"
+            <safety_controller k_position="10" k_velocity="2.5"
                                soft_lower_limit="${joint4_lower_limit+threshold}"
                                soft_upper_limit="${joint4_upper_limit-threshold}"/>
             <dynamics damping="0.0" friction="0.5"/>
@@ -195,7 +195,7 @@
             <axis xyz="1 0 0"/>
             <origin xyz="0.097 0 0.055"/>
             <limit effort="13" velocity="18" lower="${joint5_lower_limit}" upper="${joint5_upper_limit}"/>
-            <safety_controller k_position="50" k_velocity="5"
+            <safety_controller k_position="20" k_velocity="5"
                                soft_lower_limit="${joint5_lower_limit+threshold}"
                                soft_upper_limit="${joint5_upper_limit-threshold}"/>
             <dynamics damping="0.0" friction="0.5"/>
