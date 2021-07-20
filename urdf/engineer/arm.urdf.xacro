@@ -182,7 +182,7 @@
         <joint name="joint4" type="revolute">
             <axis xyz="0 1 0"/>
             <origin xyz="0.106 0 0.028"/>
-            <limit effort="7" velocity="30" lower="${joint4_lower_limit}" upper="${joint4_upper_limit}"/>
+            <limit effort="18.53" velocity="13.5" lower="${joint4_lower_limit}" upper="${joint4_upper_limit}"/>
             <safety_controller k_position="20" k_velocity="2.5"
                                soft_lower_limit="${joint4_lower_limit+threshold}"
                                soft_upper_limit="${joint4_upper_limit-threshold}"/>
