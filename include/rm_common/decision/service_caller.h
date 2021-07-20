@@ -13,8 +13,7 @@
 #include <ros/service.h>
 #include <controller_manager_msgs/SwitchController.h>
 #include <control_msgs/QueryCalibrationState.h>
-#include <rm_msgs/ColorSwitch.h>
-#include <rm_msgs/TargetSwitch.h>
+#include <rm_msgs/StatusChange.h>
 
 namespace rm_common {
 template<class ServiceType>
@@ -110,53 +109,47 @@ class QueryCalibrationServiceCaller : public ServiceCallerBase<control_msgs::Que
   }
 };
 
-class SwitchEnemyColorServiceCaller : public ServiceCallerBase<rm_msgs::ColorSwitch> {
+class SwitchDetectionCaller : public ServiceCallerBase<rm_msgs::StatusChange> {
  public:
-  explicit SwitchEnemyColorServiceCaller(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::ColorSwitch>(
-      nh, "/detection/enemy_color_change") {}
+  explicit SwitchDetectionCaller(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::StatusChange>(
+      nh, "/detection/status_switch") {
+    service_.request.target = rm_msgs::StatusChangeRequest::ARMOR;
+    service_.request.exposure = rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0;
+    callService();
+  }
   void setEnemyColor(const RefereeData &referee_data) {
     if (referee_data.robot_id_ != 0 && !is_set_) {
-      //RED:1~9  BLUE:101~109
-      service_.request.color = referee_data.robot_color_ == "blue" ? "red" : "blue";
+      service_.request.color =
+          referee_data.robot_color_ == "blue" ? rm_msgs::StatusChangeRequest::RED : rm_msgs::StatusChangeRequest::BLUE;
       callService();
       if (getIsSwitch())
         is_set_ = true;
     }
   }
   void switchEnemyColor() {
-    if (is_set_)
-      service_.request.color = service_.request.color == "blue" ? "red" : "blue";
+    service_.request.color = service_.request.color == rm_msgs::StatusChangeRequest::RED;
   }
-  std::string getColor() {
+  void switchTargetType() {
+    service_.request.target = service_.request.target == rm_msgs::StatusChangeRequest::ARMOR;
+  }
+  void switchExposureLevel() {
+    service_.request.exposure = service_.request.exposure == rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_4 ?
+                                rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0 : service_.request.exposure + 1;
+  }
+  int getColor() {
     return service_.request.color;
+  }
+  int getTarget() {
+    return service_.request.target;
   }
   bool getIsSwitch() {
     if (isCalling()) return false;
-    return service_.response.is_success;
+    return service_.response.switch_is_success;
   }
 
  private:
   bool is_set_{};
 };
-
-class SwitchTargetTypeServiceCaller : public ServiceCallerBase<rm_msgs::TargetSwitch> {
- public:
-  explicit SwitchTargetTypeServiceCaller(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::TargetSwitch>(
-      nh, "/detection/target_change") {
-    service_.request.target = "armor";
-  }
-  void switchTargetType() {
-    service_.request.target = service_.request.target == "armor" ? "buff" : "armor";
-  }
-  std::string getTarget() {
-    return service_.request.target;
-  }
-  bool getIsSwitch() {
-    if (isCalling()) return false;
-    return service_.response.target_switch_is_success;
-  }
-};
-
 }
 
 #endif //RM_COMMON_SERVICE_CALLER_H_
