@@ -10,11 +10,19 @@
     <xacro:if value="$(arg load_chassis)">
         <xacro:include filename="$(find rm_description)/urdf/rmua/chassis.urdf.xacro"/>
         <xacro:chassis roller_type="$(arg roller_type)"/>
+        <xacro:include filename="$(find rm_description)/urdf/common/imu.urdf.xacro"/>
+        <xacro:IMU connected_to="base_link" imu_name="base_imu" simulation="true"
+                   xyz="0.0 -0.165 0.0" rpy="0 0 ${pi}"/>
     </xacro:if>
 
     <xacro:if value="$(arg load_gimbal)">
         <xacro:include filename="$(find rm_description)/urdf/rmua/gimbal.urdf.xacro"/>
         <xacro:include filename="$(find rm_description)/urdf/rmua/gimbal.transmission.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/common/camera.urdf.xacro"/>
+        <xacro:camera_sensor xyz="0.127 0 -0.038" rpy="0 0 0" parent="pitch"
+                             camera_sim="$(arg use_simulation)"/>
+        <xacro:camera_optical_frame xyz="0.153 0 -0.0525" rpy="${pi/2} 0 ${pi/2}" parent="pitch"
+                                    camera_sim="$(arg use_simulation)"/>
     </xacro:if>
 
     <xacro:if value="$(arg load_shooter)">

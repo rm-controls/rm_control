@@ -11,11 +11,11 @@
 
 
     <xacro:friction_wheel prefixs="left" connected_to="pitch"
-                          wheel_x_offset="${wheel_offset_x}" wheel_y_offset="${offset_y}+${wheel_offset_y}"
+                          wheel_x_offset="${wheel_offset_x}" wheel_y_offset="${offset_y+wheel_offset_y}"
                           wheel_z_offset="${wheel_offset_z}"/>
 
     <xacro:friction_wheel prefixs="right" connected_to="pitch"
-                          wheel_x_offset="${wheel_offset_x}" wheel_y_offset="${offset_y}-${wheel_offset_y}"
+                          wheel_x_offset="${wheel_offset_x}" wheel_y_offset="${offset_y-wheel_offset_y}"
                           wheel_z_offset="${wheel_offset_z}"/>
 
 
