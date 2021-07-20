@@ -29,7 +29,7 @@
         <transmission name="trans_joint4">
             <type>transmission_interface/SimpleTransmission</type>
             <actuator name="joint4_motor">
-                <mechanicalReduction>71.165</mechanicalReduction>
+                <mechanicalReduction>-71.165</mechanicalReduction>
             </actuator>
             <joint name="joint4">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
