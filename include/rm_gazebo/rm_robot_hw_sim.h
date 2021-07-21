@@ -13,8 +13,10 @@ class RmRobotHWSim : public gazebo_ros_control::DefaultRobotHWSim {
   bool initSim(const std::string &robot_namespace,
                ros::NodeHandle model_nh,
                gazebo::physics::ModelPtr parent_model,
-               const urdf::Model *const urdf_model,
+               const urdf::Model *urdf_model,
                std::vector<transmission_interface::TransmissionInfo> transmissions) override;
+  void readSim(ros::Time time, ros::Duration period) override;
+
  private:
   hardware_interface::RobotStateInterface robot_state_interface_;
 };
