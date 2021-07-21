@@ -32,7 +32,7 @@ class ActuatorExtraHandle {
       throw HardwareInterfaceException("Cannot create handle '" + name + "'. offset pointer is null.");
   }
   std::string getName() const { return name_; }
-  bool getHalted_() const {
+  bool getHalted() const {
     assert(halted_);
     return *halted_;
   }
