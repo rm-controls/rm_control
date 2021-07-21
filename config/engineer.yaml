@@ -56,7 +56,7 @@ rm_base:
       id: 0x203
       type: rm_3508
       need_calibration: true
-    right_finger_motor:
+    right_finger_joint_motor:
       bus: can3
       id: 0x204
       type: rm_3508
