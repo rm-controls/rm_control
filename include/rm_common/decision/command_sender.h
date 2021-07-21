@@ -132,23 +132,27 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   void setZero() override {};
   void setBurstMode(bool burst_flag) { burst_flag_ = burst_flag; }
   bool getBurstMode() const { return burst_flag_; }
+  void setChargeMode(bool charge_flag) { charge_flag_ = charge_flag; }
+  bool getChargeMode() const { return charge_flag_; }
+  void setCapacityState(uint8_t capacity_mode) { capacity_mode_ = capacity_mode; }
+  uint8_t setCapactiyState() { return capacity_mode_; }
  private:
   void updateLimit() {
     if (referee_data_.is_online_) {
-      if (referee_data_.game_robot_status_.chassis_power_limit_ > 120)
-        msg_.power_limit = 200;
-      else {
+      if (charge_flag_) {
         if (referee_data_.capacity_data.cap_power_ < capacitor_threshold_)
-          msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ - charge_power_;
-        else {
-          if (getBurstMode())
-            msg_.power_limit = burst_power_;
-          else
-            msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ + extra_power_;
-        }
+          msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ * 0.85;
+        else
+          msg_.power_limit =
+              referee_data_.game_robot_status_.chassis_power_limit_;//It need to be calculated by formula
       }
-    } else
-      msg_.power_limit = safety_power_;
+    } else if (burst_flag_) {
+      if (referee_data_.capacity_data.cap_power_ < capacitor_threshold_)
+        msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_;
+      else
+        msg_.power_limit = burst_power_;
+    }
+    msg_.power_limit = safety_power_;
   }
   double safety_power_{};
   double capacitor_threshold_{};
@@ -156,6 +160,8 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   double extra_power_{};
   double burst_power_{};
   bool burst_flag_ = false;
+  bool charge_flag_ = false;
+  uint8_t capacity_mode_{};
 };
 
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd> {
