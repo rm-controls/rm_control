@@ -36,9 +36,9 @@
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="0.02 -0.000245 0.034512" rpy="0 0 0"/>
+                <origin xyz="0.001 -0.000245 0.04" rpy="1.57 0 0"/>
                 <geometry>
-                    <cylinder length="0.106" radius="0.047"/>
+                    <cylinder length="0.19" radius="0.047"/>
                 </geometry>
             </collision>
         </link>
