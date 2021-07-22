@@ -135,18 +135,17 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   void setChargeMode(bool charge_flag) { charge_flag_ = charge_flag; }
   bool getChargeMode() const { return charge_flag_; }
   void setCapacityState(uint8_t capacity_mode) { capacity_mode_ = capacity_mode; }
-  uint8_t setCapactiyState() { return capacity_mode_; }
+  uint8_t getCapacityState() { return capacity_mode_; }
  private:
   void updateLimit() {
     if (referee_data_.is_online_) {
-      if (charge_flag_) {
-        if (referee_data_.capacity_data.cap_power_ < capacitor_threshold_)
+      if (getChargeMode()) {
+        if (referee_data_.capacity_data.cap_power_ < capacitor_threshold_ && getCapacityState() == 0)
+          msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ - charge_power_;
+        else if (referee_data_.capacity_data.cap_power_ >= capacitor_threshold_ && getCapacityState() == 1)
           msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ * 0.85;
-        else
-          msg_.power_limit =
-              referee_data_.game_robot_status_.chassis_power_limit_;//It need to be calculated by formula
       }
-    } else if (burst_flag_) {
+    } else if (getBurstMode()) {
       if (referee_data_.capacity_data.cap_power_ < capacitor_threshold_)
         msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_;
       else
