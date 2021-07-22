@@ -270,7 +270,7 @@ typedef struct {
   uint16_t receiver_id_;
 }__packed InteractiveDataHeader;
 
-typedef struct {
+struct GraphConfig {
   uint8_t graphic_id_[3];
   uint32_t operate_type_: 3;
   uint32_t graphic_type_: 3;
@@ -284,7 +284,32 @@ typedef struct {
   uint32_t radius_: 10;
   uint32_t end_x_: 11;
   uint32_t end_y_: 11;
-}__packed GraphConfig;
+  bool operator==(const GraphConfig &config) {
+    return (graphic_id_[0] == config.graphic_id_[0] && graphic_id_[1] == config.graphic_id_[1]
+        && graphic_id_[2] == config.graphic_id_[2] && operate_type_ == config.operate_type_
+        && graphic_type_ == config.graphic_type_ && layer_ == config.layer_ && color_ == config.color_
+        && start_angle_ == config.start_angle_ && end_angle_ == config.end_angle_ && width_ == config.width_
+        && start_x_ == config.start_x_ && start_y_ == config.start_y_ && radius_ == config.radius_
+        && end_x_ == config.end_x_ && end_y_ == config.end_y_);
+  }
+  void operator=(const GraphConfig &config) {
+    graphic_id_[0] = config.graphic_id_[0];
+    graphic_id_[1] = config.graphic_id_[1];
+    graphic_id_[2] = config.graphic_id_[2];
+    operate_type_ = config.operate_type_;
+    graphic_type_ = config.graphic_type_;
+    layer_ = config.layer_;
+    color_ = config.color_;
+    start_angle_ = config.start_angle_;
+    end_angle_ = config.end_angle_;
+    width_ = config.width_;
+    start_x_ = config.start_x_;
+    start_y_ = config.start_y_;
+    radius_ = config.radius_;
+    end_x_ = config.end_x_;
+    end_y_ = config.end_y_;
+  }
+}__packed;
 
 typedef struct {
   InteractiveDataHeader header_;
