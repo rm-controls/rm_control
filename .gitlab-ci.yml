@@ -11,6 +11,8 @@ stages:
 
 prepare:
   stage: prepare
+  only:
+    - master
   script:
     - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci .industrial_ci -b master
     - echo $CI_COMMIT_REF_NAME > .industrial_ci/.ci_commit_ref_name
@@ -22,6 +24,8 @@ prepare:
 
 melodic:
   stage: build
+  only:
+    - master
   allow_failure: true
   artifacts:
     expire_in: 1 day
@@ -33,6 +37,8 @@ melodic:
 
 noetic:
   stage: build
+  only:
+    - master
   allow_failure: true
   artifacts:
     expire_in: 1 day
@@ -44,6 +50,8 @@ noetic:
 
 publish:
   stage: publish
+  only:
+    - master
   script:
     - apk add --update curl
     - curl ${PACKAGE_SCRIPT_URL}/gitlab-ci/v2/publish.sh | sh
