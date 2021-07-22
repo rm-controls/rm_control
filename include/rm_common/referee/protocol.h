@@ -7,6 +7,7 @@
 #define __packed __attribute__((packed))
 #include <cstdint>
 
+namespace rm_common {
 typedef enum {
   GAME_STATUS_CMD = 0x0001,
   GAME_RESULT_CMD = 0x0002,
@@ -79,7 +80,7 @@ typedef enum {
   ADD = 1,
   UPDATE = 2,
   DELETE = 3
-} GraphicOperateType;
+} GraphOperation;
 
 typedef enum {
   MAIN_COLOR = 0,
@@ -91,7 +92,7 @@ typedef enum {
   CYAN = 6,
   BLACK = 7,
   WHITE = 8
-} GraphicColorType;
+} GraphColor;
 
 typedef enum {
   LINE = 0,
@@ -99,15 +100,15 @@ typedef enum {
   CIRCLE = 2,
   ELLIPSE = 3,
   ARC = 4,
-  CHARACTER = 7
-} GraphicType;
+  STRING = 7
+} GraphType;
 
 typedef struct {
   uint8_t sof_;
   uint16_t data_length_;
   uint8_t seq_;
   uint8_t crc_8_;
-} __packed FrameHeaderStruct;
+} __packed FrameHeader;
 
 typedef struct {
   uint8_t game_type_: 4;
@@ -267,10 +268,10 @@ typedef struct {
   uint16_t data_cmd_id_;
   uint16_t sender_id_;
   uint16_t receiver_id_;
-}__packed InteractiveHeaderData;
+}__packed InteractiveDataHeader;
 
-typedef struct {
-  uint8_t graphic_name_[3];
+struct GraphConfig {
+  uint8_t graphic_id_[3];
   uint32_t operate_type_: 3;
   uint32_t graphic_type_: 3;
   uint32_t layer_: 4;
@@ -283,15 +284,41 @@ typedef struct {
   uint32_t radius_: 10;
   uint32_t end_x_: 11;
   uint32_t end_y_: 11;
-}__packed GraphicConfigData;
+  bool operator==(const GraphConfig &config) {
+    return (graphic_id_[0] == config.graphic_id_[0] && graphic_id_[1] == config.graphic_id_[1]
+        && graphic_id_[2] == config.graphic_id_[2] && operate_type_ == config.operate_type_
+        && graphic_type_ == config.graphic_type_ && layer_ == config.layer_ && color_ == config.color_
+        && start_angle_ == config.start_angle_ && end_angle_ == config.end_angle_ && width_ == config.width_
+        && start_x_ == config.start_x_ && start_y_ == config.start_y_ && radius_ == config.radius_
+        && end_x_ == config.end_x_ && end_y_ == config.end_y_);
+  }
+  void operator=(const GraphConfig &config) {
+    graphic_id_[0] = config.graphic_id_[0];
+    graphic_id_[1] = config.graphic_id_[1];
+    graphic_id_[2] = config.graphic_id_[2];
+    operate_type_ = config.operate_type_;
+    graphic_type_ = config.graphic_type_;
+    layer_ = config.layer_;
+    color_ = config.color_;
+    start_angle_ = config.start_angle_;
+    end_angle_ = config.end_angle_;
+    width_ = config.width_;
+    start_x_ = config.start_x_;
+    start_y_ = config.start_y_;
+    radius_ = config.radius_;
+    end_x_ = config.end_x_;
+    end_y_ = config.end_y_;
+  }
+}__packed;
 
 typedef struct {
-  InteractiveHeaderData student_interactive_header_data_;
-  GraphicConfigData config_data_[7];
-}__packed ClientGraphicData;
+  InteractiveDataHeader header_;
+  GraphConfig config_;
+  uint8_t content_[30];
+}__packed GraphData;
 
 typedef struct {
-  InteractiveHeaderData header_data_;
+  InteractiveDataHeader header_data_;
   uint8_t data_;
 }__packed InteractiveData;
 
@@ -352,5 +379,6 @@ const uint16_t wCRC_table[256] =
         0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330,
         0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
     };
+}
 
 #endif // RM_COMMON_REFEREE_PROTOCOL_H_
