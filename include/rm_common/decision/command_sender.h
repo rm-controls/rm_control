@@ -139,6 +139,8 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
  private:
   void updateLimit() {
     if (referee_data_.is_online_) {
+      if (referee_data_.game_robot_status_.chassis_power_limit_ > 120)
+        msg_.power_limit = burst_power_;
       if (getChargeMode()) {
         if (referee_data_.capacity_data.cap_power_ < capacitor_threshold_ && getCapacityState() == 0)
           msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ - charge_power_;
