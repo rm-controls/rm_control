@@ -7,7 +7,7 @@
     <xacro:property name="wheel_back" value="-0.134874"/>
     <xacro:property name="wheel_right" value="-0.2448"/>
     <xacro:property name="wheel_left" value="0.2448"/>
-    <xacro:property name="wheel_offset_z" value="0.000072"/>
+    <xacro:property name="wheel_offset_z" value="-0.029928"/>
     <xacro:property name="wheel_joint_damping" value="1.0"/>
     <xacro:property name="wheel_joint_friction" value="1.0"/>
 
@@ -15,7 +15,7 @@
 
         <link name="base_link">
             <inertial>
-                <mass value="11.91"/>
+                <mass value="2.361504"/>
                 <origin xyz="-0.063 -0.010 -0.027"/>
                 <inertia ixx="4.302e-2" ixy="7.618e-4" ixz="6.881e-3" iyy="3.95e-2"
                          iyz="-1.841e-4" izz="7.25e-2"/>
@@ -102,7 +102,7 @@
 
         <joint name="card_joint" type="prismatic">
             <axis xyz="1 0 0"/>
-            <origin xyz="0.209783 0.004 -0.08"/>
+            <origin xyz="0.209783 0.004 -0.064/>
             <limit effort="20.0" velocity="1.0" lower="0" upper="0.1"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="base_link"/>
@@ -112,7 +112,7 @@
 
         <joint name="stone_platform_joint" type="prismatic">
             <axis xyz="0 0 1"/>
-            <origin xyz="-0.113 0.134 0.114"/>
+            <origin xyz="-0.0706 0.134 0.114"/>
             <limit effort="1" velocity="30" lower="0" upper="0.024"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="base_link"/>
