@@ -3,7 +3,7 @@
     <xacro:include filename="$(find rm_description)/urdf/common/mecanum_wheel.urdf.xacro"/>
 
     <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
-    <xacro:property name="wheel_offset_z" value="-0.0269"/>
+    <xacro:property name="wheel_offset_z" value="-0.0266"/>
     <xacro:macro name="chassis" params="roller_type">
 
         <link name="base_link">
@@ -28,19 +28,19 @@
         </link>
 
         <xacro:mecanum_wheel prefix="left_front" connected_to="base_link"
-                             wheel_x_offset="0.2165" wheel_y_offset="0.1990"
+                             wheel_x_offset="0.172" wheel_y_offset="0.199"
                              wheel_z_offset="${wheel_offset_z}"
                              reflect="1" roller_type="${roller_type}"/>
         <xacro:mecanum_wheel prefix="right_front" connected_to="base_link"
-                             wheel_x_offset="0.2165" wheel_y_offset="-0.1990"
+                             wheel_x_offset="0.172" wheel_y_offset="-0.199"
                              wheel_z_offset="${wheel_offset_z}"
                              reflect="-1" roller_type="${roller_type}"/>
         <xacro:mecanum_wheel prefix="left_back" connected_to="base_link"
-                             wheel_x_offset="-0.1601" wheel_y_offset="0.1990"
+                             wheel_x_offset="-0.205" wheel_y_offset="0.1990"
                              wheel_z_offset="${wheel_offset_z}"
                              reflect="-1" roller_type="${roller_type}"/>
         <xacro:mecanum_wheel prefix="right_back" connected_to="base_link"
-                             wheel_x_offset="-0.1601" wheel_y_offset="-0.1990"
+                             wheel_x_offset="-0.205" wheel_y_offset="-0.1990"
                              wheel_z_offset="${wheel_offset_z}"
                              reflect="1" roller_type="${roller_type}"/>
         <xacro:wheel_transmission prefix="left_front" mechanical_reduction="19.2032"/>
