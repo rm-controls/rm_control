@@ -23,26 +23,4 @@
         </joint>
     </transmission>
 
-    <transmission name="trans_lower_yaw_joint">
-        <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="lower_yaw_joint_motor">
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-        <joint name="lower_yaw_joint">
-            <offset>-3.211</offset>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-    </transmission>
-
-    <transmission name="trans_lower_pitch_joint">
-        <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="lower_pitch_joint_motor">
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-        <joint name="lower_pitch_joint">
-            <offset>-5.211</offset>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-    </transmission>
-
 </robot>
