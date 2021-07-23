@@ -1,9 +1,5 @@
 # goal
-uint8 FOLD = 0
-uint8 RAISE_ARM = 1
-uint8 RECOVER = 5
-
-uint8 step_queue_id
+string step_queue_name
 ---
 # result
 bool finish
