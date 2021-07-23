@@ -14,8 +14,8 @@
         <link name="palm">
             <inertial>
                 <mass value="0.695"/>
-                <origin xyz="0.0 0.0 0.024" rpy="0 0 0"/>
-                <inertia ixx="5.042e-4" ixy="1.20e-7" ixz="-3.142e-6" iyy="2.444e-4" iyz="1.18e-7" izz="4.945e-4"/>
+                <origin xyz="0.0 0.0 -0.024" rpy="0 0 0"/>
+                <inertia ixx="4.945e-4" ixy="1.180e-7" ixz="3.142e-6" iyy="2.444e-4" iyz="-1.2e-7" izz="5.042e-4"/>
             </inertial>
             <visual>
                 <geometry>
@@ -35,9 +35,9 @@
 
         <link name="right_finger">
             <inertial>
-                <origin xyz="0.0 0.075 0.021" rpy="0 0 0"/>
+                <origin xyz="0.0 0.075 -0.021" rpy="0 0 0"/>
                 <mass value="0.284"/>
-                <inertia ixx="7.653e-4" ixy="1.922e-5" ixz="1.589e-5" iyy="3.805e-4" iyz="-3.052e-4" izz="4.364e-4"/>
+                <inertia ixx="4.364e-4" ixy="-3.052e-5" ixz="-1.589e-5" iyy="3.805e-4" iyz="-1.922e-5" izz="7.653e-4"/>
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 1.57 0"/>
@@ -62,9 +62,9 @@
 
         <link name="left_finger">
             <inertial>
-                <origin xyz="0.0 -0.075 0.021" rpy="0 0 0"/>
+                <origin xyz="0.0 -0.075 -0.021" rpy="0 0 0"/>
                 <mass value="0.284"/>
-                <inertia ixx="7.653e-4" ixy="1.922e-5" ixz="-1.589e-5" iyy="3.805e-4" iyz="3.052e-4" izz="4.364e-4"/>
+                <inertia ixx="4.364e-4" ixy="3.052e-4" ixz="1.589e-5" iyy="3.805e-4" iyz="-1.922e-5" izz="7.653e-4"/>
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 1.57 0"/>
