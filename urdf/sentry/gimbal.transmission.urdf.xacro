@@ -1,23 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot>
 
-    <transmission name="trans_yaw_joint">
+    <transmission name="trans_upper_yaw_joint">
         <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="yaw_joint_motor">
+        <actuator name="upper_yaw_joint_motor">
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
-        <joint name="yaw_joint">
+        <joint name="upper_yaw_joint">
             <offset>-3.211</offset>
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
 
-    <transmission name="trans_pitch_joint">
+    <transmission name="trans_upper_pitch_joint">
         <type>transmission_interface/SimpleTransmission</type>
-        <actuator name="pitch_joint_motor">
+        <actuator name="upper_pitch_joint_motor">
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
-        <joint name="pitch_joint">
+        <joint name="upper_pitch_joint">
+            <offset>-5.211</offset>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <transmission name="trans_lower_yaw_joint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="lower_yaw_joint_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="lower_yaw_joint">
+            <offset>-3.211</offset>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <transmission name="trans_lower_pitch_joint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="lower_pitch_joint_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="lower_pitch_joint">
             <offset>-5.211</offset>
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
