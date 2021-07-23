@@ -13,6 +13,10 @@
 #include <thread>
 
 namespace rm_base {
+struct CanFrameStamp {
+  can_frame frame;
+  ros::Time stamp;
+};
 
 class CanBus {
  public:
@@ -25,7 +29,7 @@ class CanBus {
   can::SocketCAN socket_can_;
   CanDataPtr data_prt_;
   std::string bus_name_;
-  std::vector<can_frame> read_buffer_;
+  std::vector<CanFrameStamp> read_buffer_;
 
   can_frame rm_frame0_{};  // for id 0x201~0x204
   can_frame rm_frame1_{};  // for id 0x205~0x208

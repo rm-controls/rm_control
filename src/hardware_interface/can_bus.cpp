@@ -86,7 +86,8 @@ void CanBus::write() {
 void CanBus::read(ros::Time time) {
   std::lock_guard<std::mutex> guard(mutex_);
 
-  for (const auto &frame:read_buffer_) {
+  for (const auto &frame_stamp:read_buffer_) {
+    can_frame frame = frame_stamp.frame;
     // Check if robomaster motor
     if (data_prt_.id2act_data_->find(frame.can_id) != data_prt_.id2act_data_->end()) {
       ActData &act_data = data_prt_.id2act_data_->find(frame.can_id)->second;
@@ -109,8 +110,8 @@ void CanBus::read(ros::Time time) {
           else if (act_data.q_raw - act_data.q_last < -4096)
             act_data.q_circle++;
         }
-        act_data.frequency = 1. / (time - act_data.stamp).toSec();
-        act_data.stamp = time;
+        act_data.frequency = 1. / (frame_stamp.stamp - act_data.stamp).toSec();
+        act_data.stamp = frame_stamp.stamp;
         act_data.seq++;
         act_data.q_last = act_data.q_raw;
         // Converter raw CAN data to position velocity and effort.
@@ -144,8 +145,8 @@ void CanBus::read(ros::Time time) {
             else if (pos_new - act_data.pos < -4 * M_PI)
               act_data.q_circle++;
           }
-          act_data.frequency = 1. / (time - act_data.stamp).toSec();
-          act_data.stamp = time;
+          act_data.frequency = 1. / (frame_stamp.stamp - act_data.stamp).toSec();
+          act_data.stamp = frame_stamp.stamp;
           act_data.seq++;
           act_data.pos = act_coeff.act2pos * static_cast<double> (act_data.q_raw) + act_coeff.act2pos_offset
               + static_cast<double>(act_data.q_circle) * 8 * M_PI + act_data.offset;
@@ -197,7 +198,8 @@ void CanBus::read(ros::Time time) {
 
 void CanBus::frameCallback(const can_frame &frame) {
   std::lock_guard<std::mutex> guard(mutex_);
-  read_buffer_.push_back(frame);
+  CanFrameStamp can_frame_stamp{.frame=frame, .stamp = ros::Time::now()};
+  read_buffer_.push_back(can_frame_stamp);
 }
 
 }

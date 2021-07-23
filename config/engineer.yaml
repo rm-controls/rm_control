@@ -32,7 +32,7 @@ rm_base:
       bus: can1
       id: 002
       type: cheetah
-      lp_cutoff_frequency: 100
+      lp_cutoff_frequency: 80
       need_calibration: true
     joint2_right_motor:
       bus: can1
