@@ -110,7 +110,9 @@ void CanBus::read(ros::Time time) {
           else if (act_data.q_raw - act_data.q_last < -4096)
             act_data.q_circle++;
         }
-        act_data.frequency = 1. / (frame_stamp.stamp - act_data.stamp).toSec();
+        try { // Duration will be out of dual 32-bit range while motor failure
+          act_data.frequency = 1. / (frame_stamp.stamp - act_data.stamp).toSec();
+        } catch (std::runtime_error &ex) {}
         act_data.stamp = frame_stamp.stamp;
         act_data.seq++;
         act_data.q_last = act_data.q_raw;
@@ -145,7 +147,9 @@ void CanBus::read(ros::Time time) {
             else if (pos_new - act_data.pos < -4 * M_PI)
               act_data.q_circle++;
           }
-          act_data.frequency = 1. / (frame_stamp.stamp - act_data.stamp).toSec();
+          try { // Duration will be out of dual 32-bit range while motor failure
+            act_data.frequency = 1. / (frame_stamp.stamp - act_data.stamp).toSec();
+          } catch (std::runtime_error &ex) {}
           act_data.stamp = frame_stamp.stamp;
           act_data.seq++;
           act_data.pos = act_coeff.act2pos * static_cast<double> (act_data.q_raw) + act_coeff.act2pos_offset
