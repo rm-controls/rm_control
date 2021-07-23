@@ -285,29 +285,32 @@ struct GraphConfig {
   uint32_t end_x_: 11;
   uint32_t end_y_: 11;
   bool operator==(const GraphConfig &config) {
-    return (graphic_id_[0] == config.graphic_id_[0] && graphic_id_[1] == config.graphic_id_[1]
-        && graphic_id_[2] == config.graphic_id_[2] && operate_type_ == config.operate_type_
-        && graphic_type_ == config.graphic_type_ && layer_ == config.layer_ && color_ == config.color_
-        && start_angle_ == config.start_angle_ && end_angle_ == config.end_angle_ && width_ == config.width_
-        && start_x_ == config.start_x_ && start_y_ == config.start_y_ && radius_ == config.radius_
-        && end_x_ == config.end_x_ && end_y_ == config.end_y_);
+    return (graphic_id_[0] == (uint32_t) config.graphic_id_[0] && graphic_id_[1] == (uint32_t) config.graphic_id_[1]
+        && graphic_id_[2] == (uint32_t) config.graphic_id_[2] && operate_type_ == (uint32_t) config.operate_type_
+        && graphic_type_ == (uint32_t) config.graphic_type_ && layer_ == (uint32_t) config.layer_
+        && color_ == (uint32_t) config.color_ && start_angle_ == (uint32_t) config.start_angle_
+        && end_angle_ == (uint32_t) config.end_angle_ && width_ == (uint32_t) config.width_
+        && start_x_ == (uint32_t) config.start_x_ && start_y_ == (uint32_t) config.start_y_
+        && radius_ == (uint32_t) config.radius_ && end_x_ == (uint32_t) config.end_x_
+        && end_y_ == (uint32_t) config.end_y_);
   }
-  void operator=(const GraphConfig &config) {
-    graphic_id_[0] = config.graphic_id_[0];
-    graphic_id_[1] = config.graphic_id_[1];
-    graphic_id_[2] = config.graphic_id_[2];
-    operate_type_ = config.operate_type_;
-    graphic_type_ = config.graphic_type_;
-    layer_ = config.layer_;
-    color_ = config.color_;
-    start_angle_ = config.start_angle_;
-    end_angle_ = config.end_angle_;
-    width_ = config.width_;
-    start_x_ = config.start_x_;
-    start_y_ = config.start_y_;
-    radius_ = config.radius_;
-    end_x_ = config.end_x_;
-    end_y_ = config.end_y_;
+  GraphConfig &operator=(const GraphConfig &config) {
+    graphic_id_[0] = (uint32_t) config.graphic_id_[0];
+    graphic_id_[1] = (uint32_t) config.graphic_id_[1];
+    graphic_id_[2] = (uint32_t) config.graphic_id_[2];
+    operate_type_ = (uint32_t) config.operate_type_;
+    graphic_type_ = (uint32_t) config.graphic_type_;
+    layer_ = (uint32_t) config.layer_;
+    color_ = (uint32_t) config.color_;
+    start_angle_ = (uint32_t) config.start_angle_;
+    end_angle_ = (uint32_t) config.end_angle_;
+    width_ = (uint32_t) config.width_;
+    start_x_ = (uint32_t) config.start_x_;
+    start_y_ = (uint32_t) config.start_y_;
+    radius_ = (uint32_t) config.radius_;
+    end_x_ = (uint32_t) config.end_x_;
+    end_y_ = (uint32_t) config.end_y_;
+    return *this;
   }
 }__packed;
 
