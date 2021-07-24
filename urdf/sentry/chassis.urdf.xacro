@@ -1,6 +1,8 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:include filename="$(find rm_description)/urdf/sentry/driven_wheel.urdf.xacro"/>
+    <xacro:include filename="driven_wheel1.urdf.xacro"/>
+    <xacro:include filename="driven_wheel2.urdf.xacro"/>
+    <xacro:include filename="driven_wheel3.urdf.xacro"/>
 
     <xacro:macro name="chassis" params="use_simulation">
 
@@ -55,35 +57,41 @@
         </joint>
 
         <xacro:if value="$(arg use_simulation)">
-            <xacro:driven_wheel num="1">
+            <xacro:driven_wheel1 num="1">
                 <origin rpy="${-pi/2} 0 0"/>
                 <axis xyz="0 1 0"/>
                 <origin xyz="-0.0977 0.0839 -0.013" rpy="0 0 0"/>
-            </xacro:driven_wheel>
+            </xacro:driven_wheel1>
 
-            <xacro:driven_wheel num="2">
+            <xacro:driven_wheel1 num="2">
                 <origin rpy="${-pi/2} 0 0"/>
                 <axis xyz="0 1 0"/>
                 <origin xyz="0.0977 0.0839 -0.013" rpy="0 0 0"/>
-            </xacro:driven_wheel>
+            </xacro:driven_wheel1>
 
-            <xacro:driven_wheel num="3">
+            <xacro:driven_wheel2 num="3">
                 <origin rpy="0 0 0"/>
                 <axis xyz="0 0 1"/>
-                <origin xyz="-0.0982 0.135 -0.0571" rpy="0 0 0"/>
-            </xacro:driven_wheel>
+                <origin xyz="0.11 0.098 -0.05486" rpy="0 0 0"/>
+            </xacro:driven_wheel2>
 
-            <xacro:driven_wheel num="4">
+            <xacro:driven_wheel2 num="4">
                 <origin rpy="0 0 0"/>
                 <axis xyz="0 0 1"/>
-                <origin xyz="0.0982 0.135 -0.0571" rpy="0 0 0"/>
-            </xacro:driven_wheel>
+                <origin xyz="-0.11 0.098 -0.05486" rpy="0 0 0"/>
+            </xacro:driven_wheel2>
 
-            <xacro:driven_wheel num="5">
+            <xacro:driven_wheel3 num="5">
                 <origin rpy="0 0 0"/>
                 <axis xyz="0 0 1"/>
-                <origin xyz="0 -0.073 -0.0572" rpy="0 0 0"/>
-            </xacro:driven_wheel>
+                <origin xyz="-0.07 -0.1 -0.05527" rpy="0 0 0"/>
+            </xacro:driven_wheel3>
+
+            <xacro:driven_wheel3 num="6">
+                <origin rpy="0 0 0"/>
+                <axis xyz="0 0 1"/>
+                <origin xyz="0.07 -0.1 0.05527" rpy="0 0 0"/>
+            </xacro:driven_wheel3>
         </xacro:if>
 
     </xacro:macro>

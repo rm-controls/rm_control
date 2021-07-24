@@ -1,0 +1,42 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="wheel_joint_effort" value="5"/>
+    <xacro:property name="wheel_joint_velocity" value="50"/>
+
+    <xacro:macro name="driven_wheel2" params="num *pose *axis *origin ">
+        <link name="link_driven_wheel${num}">
+            <visual>
+                <xacro:insert_block name="pose"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/sentry/driven_wheel2.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <inertial>
+                <mass value="1.527e-3"/>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="29.25e-9" ixy="-3.862e-14" ixz="-0.001e-9" iyy="29.251e-9"
+                         iyz="-0.001e-9" izz="52.083e-9"/>
+            </inertial>
+            <collision>
+                <!--        <origin xyz="0 0 0" rpy="0 0 0"/>-->
+                <xacro:insert_block name="pose"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/sentry/driven_wheel2.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="joint_wheel${num}" type="continuous">
+            <parent link="base_link"/>
+            <child link="link_driven_wheel${num}"/>
+            <xacro:insert_block name="axis"/>
+            <xacro:insert_block name="origin"/>
+            <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}" lower="-1e16" upper="1e16"/>
+            <dynamics damping="0.0" friction="0.05"/>
+        </joint>
+
+    </xacro:macro>
+
+</robot>
