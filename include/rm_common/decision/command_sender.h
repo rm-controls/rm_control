@@ -328,6 +328,7 @@ class JointJogCommandSender : public CommandSenderBase<std_msgs::Float64> {
       sendCommand(ros::Time());
     }
   }
+  const std::string &getJoint() { return joint_; }
  private:
   std::string joint_{};
   const sensor_msgs::JointState &joint_state_;
