@@ -42,7 +42,7 @@
         <origin xyz="-64.86e-3 0 -19e-3" rpy="0 0 0"/>
         <dynamics damping="0.0" friction="0.01"/>
         <limit effort="1.0" velocity="43.54" lower="-1e16" upper="1e16"/>
-        <parent link="base_link"/>
+        <parent link="upper_pitch"/>
         <child link="upper_trigger"/>
         <axis xyz="0 0 1 "/>
     </joint>
