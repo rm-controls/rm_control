@@ -138,29 +138,42 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   bool getNormalMode() { return normal_flag_; }
  private:
   void updateLimit() {
-    if (referee_data_.is_online_) {
-      if (referee_data_.capacity_data.is_online_) {
-        if (referee_data_.game_robot_status_.chassis_power_limit_ > 120)
-          msg_.power_limit = burst_power_;
-        else {
-          if (burst_flag_)
-            burst();
-          else if (normal_flag_)
-            normal();
-          else if (charge_flag_)
-            charge();
-        }
+    if (referee_data_.robot_id_ == rm_common::RobotId::BLUE_SENTRY
+        || referee_data_.robot_id_ == rm_common::RobotId::RED_SENTRY)
+      msg_.power_limit == 30;
+    else if (referee_data_.robot_id_ == rm_common::RobotId::RED_ENGINEER
+        || referee_data_.robot_id_ == rm_common::RobotId::BLUE_ENGINEER)
+      msg_.power_limit == 300;
+    else {
+      if (referee_data_.is_online_) {
+        if (referee_data_.capacity_data.is_online_) {
+          if (referee_data_.game_robot_status_.chassis_power_limit_ > 120)
+            msg_.power_limit = burst_power_;
+          else {
+            if (burst_flag_)
+              burst();
+            else if (charge_flag_)
+              charge();
+            else if (!burst_flag_ && !charge_flag_)
+              normal();
+          }
+        } else
+          msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_;
       } else
-        msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_;
-    } else
-      msg_.power_limit = safety_power_;
+        msg_.power_limit = safety_power_;
+    }
   }
-  void charge() { msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ * 0.85; }
+  void charge() {
+    if (referee_data_.capacity_data.cap_power_ > 0.92) {
+      setChargeMode(false);
+    }
+    msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ * 0.85;
+  }
   void burst() {
-    if (referee_data_.capacity_data.cap_power_ > capacitor_threshold_)
-      msg_.power_limit = burst_power_;
+    if (msg_.mode == rm_msgs::ChassisCmd::GYRO)
+      msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ + extra_power_;
     else
-      msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_;
+      msg_.power_limit = burst_power_;
   }
   void normal() {
     if (referee_data_.capacity_data.cap_power_ < 0.9)
@@ -176,7 +189,6 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   bool burst_flag_ = false;
   bool charge_flag_ = false;
   bool normal_flag_ = false;
-  uint8_t capacity_mode_{};
 };
 
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd> {
