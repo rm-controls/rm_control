@@ -15,7 +15,7 @@
 
         <link name="base_link">
             <inertial>
-                <mass value="2.361504"/>
+                <mass value="13"/>
                 <origin xyz="-0.063 -0.010 -0.027"/>
                 <inertia ixx="4.302e-2" ixy="7.618e-4" ixz="6.881e-3" iyy="3.95e-2"
                          iyz="-1.841e-4" izz="7.25e-2"/>
@@ -136,7 +136,7 @@
 
         <joint name="stone_platform_joint" type="prismatic">
             <axis xyz="0 0 1"/>
-            <origin xyz="-0.0706 0.134 0.114"/>
+            <origin xyz="-0.0706 0.134 0.144"/>
             <limit effort="1" velocity="30" lower="0" upper="0.024"/>
             <dynamics damping="0.0" friction="0.1"/>
             <parent link="base_link"/>
