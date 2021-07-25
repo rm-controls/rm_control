@@ -15,7 +15,8 @@
             <inertial>
                 <mass value="0.705"/>
                 <origin xyz="0.0 0.0 0" rpy="0 0 0"/>
-                <inertia ixx="1.483e-3" ixy="-3.268e-4" ixz="-1.279015e-5" iyy="1.014e-4" iyz="-5.7349231e-5" izz="1.553e-3"/>
+                <inertia ixx="1.483e-3" ixy="-3.268e-4" ixz="-1.279015e-5" iyy="1.014e-4" iyz="-5.7349231e-5"
+                         izz="1.553e-3"/>
             </inertial>
             <visual>
                 <geometry>
@@ -47,7 +48,7 @@
                 <inertia ixx="1.107e-3" ixy="4.148e-4" ixz="4.1265e-8" iyy="3.139e-4" iyz="7.1221e-8" izz="1.39e-3"/>
             </inertial>
             <visual>
-<!--                <origin xyz="0 0 0" rpy="0 0 0"/>-->
+                <!--                <origin xyz="0 0 0" rpy="0 0 0"/>-->
                 <geometry>
                     <mesh filename="package://rm_description/meshes/engineer/right_finger.stl"
                           scale="0.001 0.001 0.001"/>
@@ -65,21 +66,22 @@
             <inertial>
                 <origin xyz="0.015 0.062 8e-6" rpy="0 0 0"/>
                 <mass value="0.211439"/>
-                <inertia ixx="1.107e-3" ixy="-4.148e-4" ixz="4.1265e-8" iyy="3.139e-4" iyz="-0.071221e-8" izz="1.39e-3"/>
+                <inertia ixx="1.107e-3" ixy="-4.148e-4" ixz="4.1265e-8" iyy="3.139e-4" iyz="-0.071221e-8"
+                         izz="1.39e-3"/>
             </inertial>
             <visual>
-<!--                <origin xyz="0 0 0" rpy="0 1.57 0"/>-->
+                <!--                <origin xyz="0 0 0" rpy="0 1.57 0"/>-->
                 <geometry>
                     <mesh filename="package://rm_description/meshes/engineer/left_finger.stl"
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
-<!--            <collision>-->
-<!--                <origin xyz="0.0 -0.088 0.025" rpy="0 0 0"/>-->
-<!--                <geometry>-->
-<!--                    <box size="0.03 0.112 0.022"/>-->
-<!--                </geometry>-->
-<!--            </collision>-->
+            <!--            <collision>-->
+            <!--                <origin xyz="0.0 -0.088 0.025" rpy="0 0 0"/>-->
+            <!--                <geometry>-->
+            <!--                    <box size="0.03 0.112 0.022"/>-->
+            <!--                </geometry>-->
+            <!--            </collision>-->
             <collision>
                 <origin xyz="0.068474 0.126453 0.0" rpy="0 0 0"/>
                 <geometry>
@@ -101,7 +103,7 @@
             <child link="right_finger"/>
             <origin xyz="0.045 0 0" rpy="0 0 0"/>
             <axis xyz="0 1 0"/>
-            <limit effort="588" lower="-0.04" upper="0.0" velocity="3.772"/>
+            <limit effort="200" lower="-0.04" upper="0.0" velocity="3.772"/>
         </joint>
 
         <joint name="left_finger_joint" type="prismatic">
