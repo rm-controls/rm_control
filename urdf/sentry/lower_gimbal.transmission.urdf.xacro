@@ -3,10 +3,10 @@
     <transmission name="trans_lower_yaw_joint">
         <type>transmission_interface/SimpleTransmission</type>
         <actuator name="lower_yaw_joint_motor">
-            <mechanicalReduction>1</mechanicalReduction>
+            <mechanicalReduction>-1</mechanicalReduction>
         </actuator>
         <joint name="lower_yaw_joint">
-            <offset>-1.523</offset>
+            <offset>2.736</offset>
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
@@ -17,7 +17,7 @@
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
         <joint name="lower_pitch_joint">
-            <offset>-5.211</offset>
+            <offset>0.97</offset>
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
