@@ -68,9 +68,8 @@ class CalibrationQueue {
       }
     }
   }
- private:
   bool isCalibrated() { return calibration_itr_ == calibration_services_.end(); }
-
+ private:
   ros::Time last_query_;
   std::vector<CalibrationService> calibration_services_;
   std::vector<CalibrationService>::iterator calibration_itr_;

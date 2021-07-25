@@ -63,7 +63,7 @@ class ServiceCallerBase {
       if (fail_limit_ != 0) {
         fail_count_++;
         if (fail_count_ >= fail_limit_) {
-          ROS_ERROR("Failed to call service %s on %s", typeid(ServiceType).name(), service_name_.c_str());
+          ROS_ERROR_ONCE("Failed to call service %s on %s", typeid(ServiceType).name(), service_name_.c_str());
           fail_count_ = 0;
         }
       }
