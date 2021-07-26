@@ -2,10 +2,10 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:property name="threshold" value="0.1"/>
-  <xacro:property name="yaw_lower_limit" value="-3.0"/>
-  <xacro:property name="yaw_upper_limit" value="-0.2"/>
-  <xacro:property name="pitch_lower_limit" value="0.241"/>
-  <xacro:property name="pitch_upper_limit" value="0.885"/>
+  <xacro:property name="yaw_lower_limit" value="-2.461"/>
+  <xacro:property name="yaw_upper_limit" value="1.998"/>
+  <xacro:property name="pitch_lower_limit" value="0.112"/>
+  <xacro:property name="pitch_upper_limit" value="1.157"/>
 
   <link name="lower_yaw">
     <visual>

@@ -2,10 +2,10 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:property name="threshold" value="0.1"/>
-    <xacro:property name="yaw_lower_limit" value="-3.0"/>
-    <xacro:property name="yaw_upper_limit" value="-0.2"/>
-    <xacro:property name="pitch_lower_limit" value="0.241"/>
-    <xacro:property name="pitch_upper_limit" value="0.885"/>
+    <xacro:property name="yaw_lower_limit" value="-2.949"/>
+    <xacro:property name="yaw_upper_limit" value="3.027"/>
+    <xacro:property name="pitch_lower_limit" value="-0.843"/>
+    <xacro:property name="pitch_upper_limit" value="0.472"/>
 
     <link name="upper_yaw">
         <visual>
@@ -35,7 +35,7 @@
         <axis xyz="0 0 1"/>
         <origin xyz="0 0 83.4e-3"/>
         <dynamics damping="0" friction="0.1"/>
-        <limit effort="1.2" velocity="34" lower="${yaw_lower_limit}" upper="${yaw_upper_limit}"/>
+        <limit effort="1.2" velocity="13.82" lower="${yaw_lower_limit}" upper="${yaw_upper_limit}"/>
         <safety_controller k_position="100" k_velocity="0.1"
                            soft_lower_limit="${yaw_lower_limit+threshold}"
                            soft_upper_limit="${yaw_upper_limit-threshold}"/>
