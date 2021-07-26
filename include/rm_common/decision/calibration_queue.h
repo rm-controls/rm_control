@@ -43,15 +43,15 @@ class CalibrationQueue {
     for (auto service:calibration_services_)
       service.query_services->getService().response.is_calibrated = false;
   }
-  void update(const ros::Time &time) {
+  void update(const ros::Time &time, bool flip_controllers) {
     if (calibration_services_.empty())
       return;
     if (isCalibrated())
       return;
     if (switched_) {
       if (calibration_itr_->query_services->isCalibrated()) {
-        // Flip controllers
-        controller_manager_.startController(calibration_itr_->stop_controller);
+        if (flip_controllers)
+          controller_manager_.startController(calibration_itr_->stop_controller);
         controller_manager_.stopController(calibration_itr_->start_controller);
         calibration_itr_++;
         switched_ = false;
@@ -68,6 +68,7 @@ class CalibrationQueue {
       }
     }
   }
+  void update(const ros::Time &time) { update(time, true); }
   bool isCalibrated() { return calibration_itr_ == calibration_services_.end(); }
  private:
   ros::Time last_query_;
