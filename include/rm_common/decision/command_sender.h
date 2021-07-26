@@ -134,8 +134,7 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   bool getBurstMode() const { return burst_flag_; }
   void setChargeMode(bool charge_flag) { charge_flag_ = charge_flag; }
   bool getChargeMode() const { return charge_flag_; }
-  void setNormalMode(bool normal_flag) { normal_flag_ = normal_flag; }
-  bool getNormalMode() { return normal_flag_; }
+
  private:
   void updateLimit() {
     if (referee_data_.robot_id_ == rm_common::RobotId::BLUE_SENTRY
@@ -154,7 +153,9 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
               burst();
             else if (charge_flag_)
               charge();
-            else if (!burst_flag_ && !charge_flag_)
+            else if (!burst_flag_ && (abs(
+                referee_data_.capacity_data.limit_power_ - referee_data_.game_robot_status_.chassis_power_limit_)
+                < 0.05))
               normal();
           }
         } else
@@ -163,24 +164,15 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
         msg_.power_limit = safety_power_;
     }
   }
-  void charge() {
-    if (referee_data_.capacity_data.cap_power_ > 0.92) {
-      setChargeMode(false);
-    }
-    msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ * 0.85;
-  }
+  void charge() { msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ * 0.85; }
   void burst() {
     if (msg_.mode == rm_msgs::ChassisCmd::GYRO)
       msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ + extra_power_;
     else
       msg_.power_limit = burst_power_;
   }
-  void normal() {
-    if (referee_data_.capacity_data.cap_power_ < 0.9)
-      msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ - 5;
-    else
-      msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_;
-  }
+  void normal() { msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_; }
+
   double safety_power_{};
   double capacitor_threshold_{};
   double charge_power_{};
