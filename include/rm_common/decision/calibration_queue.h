@@ -21,7 +21,7 @@ class CalibrationQueue {
     ros::NodeHandle nh_global;
     bool use_sim_time;
     nh_global.param("use_sim_time", use_sim_time, false);
-    if (use_sim_time)
+    if (use_sim_time || rpc_value.getType() != XmlRpc::XmlRpcValue::TypeArray)
       return;
     for (int i = 0; i < rpc_value.size(); ++i) {
       ROS_ASSERT(rpc_value[i].hasMember("start_controller"));
