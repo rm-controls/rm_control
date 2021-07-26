@@ -140,10 +140,10 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   void updateLimit() {
     if (referee_data_.robot_id_ == rm_common::RobotId::BLUE_SENTRY
         || referee_data_.robot_id_ == rm_common::RobotId::RED_SENTRY)
-      msg_.power_limit == 30;
+      msg_.power_limit = 30;
     else if (referee_data_.robot_id_ == rm_common::RobotId::RED_ENGINEER
         || referee_data_.robot_id_ == rm_common::RobotId::BLUE_ENGINEER)
-      msg_.power_limit == 300;
+      msg_.power_limit = 300;
     else {
       if (referee_data_.is_online_) {
         if (referee_data_.capacity_data.is_online_) {
