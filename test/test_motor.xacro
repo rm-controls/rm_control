@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="test">
-  <link name="link_3508"/>
-  <link name="link_mit_cheetah0"/>
+<robot name="test">
+    <link name="base_link"/>
+    <link name="mit_link"/>
 
-  <joint name="joint_3508" type="prismatic">
-    <parent link="link_3508"/>
-    <child link="link_mit_cheetah0"/>
-    <limit effort="70" velocity="13.82" lower="-1e10" upper="1e10"/>
-    <origin xyz="0 0 0.25"/>
-  </joint>
-
-  <transmission name="joint_3508_trans">
-    <type>transmission_interface/SimpleTransmission</type>
-    <actuator name="act_3508">
-      <mechanicalReduction>72.1</mechanicalReduction>
-    </actuator>
-    <joint name="joint_3508">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      <offset>-0.004</offset>
+    <joint name="mit_joint" type="revolute">
+        <parent link="base_link"/>
+        <child link="mit_link"/>
+        <limit effort="30" velocity="50" lower="-1e10" upper="1e10"/>
+        <origin xyz="0 0 0.25"/>
     </joint>
-  </transmission>
+
+    <transmission name="mit_joint_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="mit_joint_motor">
+            <mechanicalReduction>1.0</mechanicalReduction>
+        </actuator>
+        <joint name="mit_joint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <offset>-0.004</offset>
+        </joint>
+    </transmission>
 
 </robot>
