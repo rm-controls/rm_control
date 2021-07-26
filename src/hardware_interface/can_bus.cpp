@@ -193,7 +193,7 @@ void CanBus::read(ros::Time time) {
         }
       }
     }
-    if (!is_too_big)
+    if (!is_too_big && frame.can_id != 0x0)
       ROS_ERROR_STREAM_ONCE(
           "Can not find defined device, id: 0x" << std::hex << frame.can_id << " on bus: " << bus_name_);
   }
