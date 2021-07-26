@@ -30,11 +30,12 @@ rm_base:
       type: rm_2006
       need_calibration: true
 
-    pitch_joint_motor:
+    yaw_joint_motor:
       bus: can1
       id: 0x201
       type: rm_3508
-    yaw_joint_motor:
+      need_calibration: true
+    pitch_joint_motor:
       bus: can1
       id: 0x202
       type: rm_3508
