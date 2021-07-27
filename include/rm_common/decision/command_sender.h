@@ -166,10 +166,13 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   }
   void charge() { msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ * 0.85; }
   void burst() {
-    if (msg_.mode == rm_msgs::ChassisCmd::GYRO)
-      msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ + extra_power_;
-    else
-      msg_.power_limit = burst_power_;
+    if (referee_data_.capacity_data.cap_power_ > capacitor_threshold_){
+      if (msg_.mode == rm_msgs::ChassisCmd::GYRO)
+        msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ + extra_power_;
+      else
+        msg_.power_limit = burst_power_;
+    }else
+      msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_;
   }
   void normal() { msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_; }
 
