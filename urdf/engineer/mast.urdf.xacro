@@ -55,14 +55,6 @@
             </visual>
         </link>
 
-        <!--        <link name="camera_telephoto"/>-->
-        <!--        <link name="camera_wideangle"/>-->
-
-        <!--        <link name="camera_wideangle_optical_frame"/>-->
-
-        <!--        <link name="camera_telephoto_optical_frame"/>-->
-
-
         <xacro:unless value="${connected_to == ''}">
             <joint name="mast_joint" type="prismatic">
                 <origin xyz="${xyz}" rpy="${rpy}"/>
@@ -78,16 +70,16 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <dynamics damping="0.0" friction="0.1"/>
-            <limit effort="0.1" velocity="10" lower="-3.14" upper="3.14"/>
+            <limit effort="0.1" velocity="10" lower="-0.23087" upper="3.496015"/>
             <parent link="mast"/>
             <child link="yaw"/>
             <axis xyz="0 0 1"/>
         </joint>
 
         <joint name="pitch_joint" type="revolute">
-            <origin xyz="0.0  0.029 0.059 " rpy="0 0 0"/>
+            <origin xyz="0.  0. 0.059 " rpy="0 0 0"/>
             <dynamics damping="0.0" friction="0.1"/>
-            <limit effort="0.1" velocity="10" lower="-0.38" upper="0.52"/>
+            <limit effort="0.1" velocity="10" lower="-0.47247" upper="1.25862"/>
             <parent link="yaw"/>
             <child link="pitch"/>
             <axis xyz="0 1 0 "/>
@@ -103,7 +95,7 @@
                 <mechanicalReduction>-1</mechanicalReduction>
             </actuator>
             <joint name="yaw_joint">
-                <offset>3.959203</offset>
+                <offset>-0.2538</offset>
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             </joint>
         </transmission>
@@ -114,7 +106,7 @@
                 <mechanicalReduction>-1</mechanicalReduction>
             </actuator>
             <joint name="pitch_joint">
-                <offset>3.34561</offset>
+                <offset>1.26553</offset>
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             </joint>
         </transmission>
