@@ -146,6 +146,8 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
     else {
       if (referee_data_.is_online_) {
         if (referee_data_.capacity_data.is_online_) {
+          if (checkCalibra())
+            return;
           if (referee_data_.game_robot_status_.chassis_power_limit_ > 120)
             msg_.power_limit = burst_power_;
           else {
@@ -172,6 +174,13 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
       msg_.power_limit = burst_power_;
   }
   void normal() { msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_; }
+  bool checkCalibra() {
+    if (referee_data_.capacity_data.limit_power_ == 0 && referee_data_.is_online_) {
+      msg_.power_limit = 0;
+      return true;
+    } else
+      return false;
+  }
 
   double safety_power_{};
   double capacitor_threshold_{};
@@ -180,7 +189,6 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   double burst_power_{};
   bool burst_flag_ = false;
   bool charge_flag_ = false;
-  bool normal_flag_ = false;
 };
 
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd> {
