@@ -18,6 +18,7 @@
 
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
+#include "rm_common/decision/power_limit.h"
 #include "rm_common/decision/target_cost_function.h"
 
 namespace rm_common {
@@ -104,94 +105,23 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   explicit ChassisCommandSender(ros::NodeHandle &nh, const RefereeData &referee_data)
       : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh, referee_data) {
     double accel_x, accel_y, accel_z;
+    power_limit_ = new PowerLimit(nh, referee_data, msg_);
     if (!nh.getParam("accel_x", accel_x))
       ROS_ERROR("Accel X no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("accel_y", accel_y))
       ROS_ERROR("Accel Y no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("accel_z", accel_z))
       ROS_ERROR("Accel Z no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("safety_power", safety_power_))
-      ROS_ERROR("Safety power no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("capacitor_threshold", capacitor_threshold_))
-      ROS_ERROR("Capacitor threshold no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("charge_power", charge_power_))
-      ROS_ERROR("Charge power no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("extra_power", extra_power_))
-      ROS_ERROR("Extra power no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("burst_power", burst_power_))
-      ROS_ERROR("Burst power no defined (namespace: %s)", nh.getNamespace().c_str());
     msg_.accel.linear.x = accel_x;
     msg_.accel.linear.y = accel_y;
     msg_.accel.angular.z = accel_z;
-    burst_flag_ = false;
   }
   void sendCommand(const ros::Time &time) override {
-    updateLimit();
+    msg_.power_limit = power_limit_->getLimitPower();
     TimeStampCommandSenderBase<rm_msgs::ChassisCmd>::sendCommand(time);
   }
   void setZero() override {};
-  void setBurstMode(bool burst_flag) { burst_flag_ = burst_flag; }
-  bool getBurstMode() const { return burst_flag_; }
-  void setChargeMode(bool charge_flag) { charge_flag_ = charge_flag; }
-  bool getChargeMode() const { return charge_flag_; }
-
- private:
-  void updateLimit() {
-    if (referee_data_.robot_id_ == rm_common::RobotId::BLUE_SENTRY
-        || referee_data_.robot_id_ == rm_common::RobotId::RED_SENTRY)
-      msg_.power_limit = 30;
-    else if (referee_data_.robot_id_ == rm_common::RobotId::RED_ENGINEER
-        || referee_data_.robot_id_ == rm_common::RobotId::BLUE_ENGINEER)
-      msg_.power_limit = 300;
-    else {
-      if (referee_data_.is_online_) {
-        if (referee_data_.capacity_data.is_online_) {
-          if (checkCalibra())
-            return;
-          if (referee_data_.game_robot_status_.chassis_power_limit_ > 120)
-            msg_.power_limit = burst_power_;
-          else {
-            if (burst_flag_)
-              burst();
-            else if (charge_flag_)
-              charge();
-            else if (!burst_flag_ && (abs(
-                referee_data_.capacity_data.limit_power_ - referee_data_.game_robot_status_.chassis_power_limit_)
-                < 0.05))
-              normal();
-          }
-        } else
-          msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_;
-      } else
-        msg_.power_limit = safety_power_;
-    }
-  }
-  void charge() { msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ * 0.85; }
-  void burst() {
-    if (referee_data_.capacity_data.cap_power_ > capacitor_threshold_) {
-      if (msg_.mode == rm_msgs::ChassisCmd::GYRO)
-        msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ + extra_power_;
-      else
-        msg_.power_limit = burst_power_;
-    } else
-      msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_;
-  }
-  void normal() { msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_; }
-  bool checkCalibra() {
-    if (referee_data_.capacity_data.limit_power_ == 0 && referee_data_.is_online_) {
-      msg_.power_limit = 0;
-      return true;
-    } else
-      return false;
-  }
-
-  double safety_power_{};
-  double capacitor_threshold_{};
-  double charge_power_{};
-  double extra_power_{};
-  double burst_power_{};
-  bool burst_flag_ = false;
-  bool charge_flag_ = false;
+  PowerLimit *power_limit_;
 };
 
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd> {
