@@ -204,12 +204,21 @@ class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd
       ROS_ERROR("Max pitch velocity no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("track_timeout", track_timeout_))
       ROS_ERROR("Track timeout no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("eject_sensitivity", eject_sensitivity_)) eject_sensitivity_ = 1.;
     cost_function_ = new TargetCostFunction(nh, referee_data);
   }
   ~GimbalCommandSender() { delete cost_function_; };
   void setRate(double scale_yaw, double scale_pitch) {
     msg_.rate_yaw = scale_yaw * max_yaw_rate_;
     msg_.rate_pitch = scale_pitch * max_pitch_vel_;
+    if (eject_flag_) {
+      msg_.rate_yaw *= eject_sensitivity_;
+      msg_.rate_pitch *= eject_sensitivity_;
+    }
+  }
+  void setZero() override {
+    msg_.rate_yaw = 0.;
+    msg_.rate_pitch = 0.;
   }
   void setBulletSpeed(double bullet_speed) {
     msg_.bullet_speed = bullet_speed;
@@ -227,14 +236,13 @@ class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd
     else
       setMode(rm_msgs::GimbalCmd::TRACK);
   }
-  void setZero() override {
-    msg_.rate_yaw = 0.;
-    msg_.rate_pitch = 0.;
-  }
+  void setEject(bool flag) { eject_flag_ = flag; }
+  bool getEject() { return eject_flag_; }
  private:
   TargetCostFunction *cost_function_;
-  double max_yaw_rate_{}, max_pitch_vel_{}, track_timeout_{};
   ros::Time last_track_;
+  double max_yaw_rate_{}, max_pitch_vel_{}, track_timeout_{}, eject_sensitivity_ = 1.;
+  bool eject_flag_{};
 };
 
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd> {
