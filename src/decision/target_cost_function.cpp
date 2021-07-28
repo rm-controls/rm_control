@@ -20,7 +20,7 @@ TargetCostFunction::TargetCostFunction(ros::NodeHandle &nh, const RefereeData &r
     ROS_ERROR("Timeout no defined (namespace: %s)", cost_nh.getNamespace().c_str());
 }
 
-double TargetCostFunction::costFunction(const rm_msgs::TrackDataArray &track_data_array, bool only_attack_base) {
+double TargetCostFunction::costFunction(const rm_msgs::TrackDataArray &track_data_array) {
   double optimal_cost = 1e9;
   for (const auto &track:track_data_array.tracks) {
     if (id2target_states_.find(track.id) == id2target_states_.end())
@@ -38,7 +38,7 @@ double TargetCostFunction::costFunction(const rm_msgs::TrackDataArray &track_dat
   for (const auto &target_state: id2target_states_) {
     if ((ros::Time::now() - target_state.second.last_receive_).toSec() > timeout_)
       continue;
-    double cost = costFunction(target_state.second, only_attack_base);
+    double cost = costFunction(target_state.second);
     if (cost < optimal_cost) {
       optimal_cost = cost;
       if (optimal_id_ != target_state.first) last_switch_target_ = ros::Time::now();
@@ -48,8 +48,7 @@ double TargetCostFunction::costFunction(const rm_msgs::TrackDataArray &track_dat
   return optimal_cost;
 }
 
-double TargetCostFunction::costFunction(const TargetState &target_state, bool only_attack_base) {
-  if (only_attack_base) return 0.;
+double TargetCostFunction::costFunction(const TargetState &target_state) {
   double distance = sqrt(pow(target_state.pos_x, 2) + pow(target_state.pos_y, 2) + pow(target_state.pos_z, 2));
   // TODO Finish Vel cost
   double velocity = 0.;

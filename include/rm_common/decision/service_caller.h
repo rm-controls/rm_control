@@ -115,6 +115,7 @@ class SwitchDetectionCaller : public ServiceCallerBase<rm_msgs::StatusChange> {
       nh, "/detection/status_switch") {
     service_.request.target = rm_msgs::StatusChangeRequest::ARMOR;
     service_.request.exposure = rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0;
+    service_.request.armor_target = rm_msgs::StatusChangeRequest::ARMOR_ALL;
     callService();
   }
   void setEnemyColor(const RefereeData &referee_data) {
@@ -132,6 +133,9 @@ class SwitchDetectionCaller : public ServiceCallerBase<rm_msgs::StatusChange> {
   void switchTargetType() {
     service_.request.target = service_.request.target == rm_msgs::StatusChangeRequest::ARMOR;
   }
+  void switchArmorTargetType() {
+    service_.request.armor_target = service_.request.armor_target == rm_msgs::StatusChangeRequest::ARMOR_ALL;
+  }
   void switchExposureLevel() {
     service_.request.exposure = service_.request.exposure == rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_4 ?
                                 rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0 : service_.request.exposure + 1;
@@ -141,6 +145,9 @@ class SwitchDetectionCaller : public ServiceCallerBase<rm_msgs::StatusChange> {
   }
   int getTarget() {
     return service_.request.target;
+  }
+  int getArmorTarget() {
+    return service_.request.armor_target;
   }
   bool getIsSwitch() {
     if (isCalling()) return false;

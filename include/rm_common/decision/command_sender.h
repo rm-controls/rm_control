@@ -168,12 +168,12 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
   }
   void charge() { msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ * 0.85; }
   void burst() {
-    if (referee_data_.capacity_data.cap_power_ > capacitor_threshold_){
+    if (referee_data_.capacity_data.cap_power_ > capacitor_threshold_) {
       if (msg_.mode == rm_msgs::ChassisCmd::GYRO)
         msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_ + extra_power_;
       else
         msg_.power_limit = burst_power_;
-    }else
+    } else
       msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_;
   }
   void normal() { msg_.power_limit = referee_data_.game_robot_status_.chassis_power_limit_; }
@@ -218,7 +218,7 @@ class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd
     msg_.aim_point = std::move(aim_point);
   }
   void updateCost(const rm_msgs::TrackDataArray &track_data_array) {
-    double cost = cost_function_->costFunction(track_data_array, base_only_);
+    double cost = cost_function_->costFunction(track_data_array);
     msg_.target_id = cost_function_->getId();
     if (!track_data_array.tracks.empty())
       last_track_ = ros::Time::now();
@@ -231,12 +231,9 @@ class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd
     msg_.rate_yaw = 0.;
     msg_.rate_pitch = 0.;
   }
-  void setBaseOnly(bool base_only) { base_only_ = base_only; }
-  bool getBaseOnly() const { return base_only_; }
  private:
   TargetCostFunction *cost_function_;
   double max_yaw_rate_{}, max_pitch_vel_{}, track_timeout_{};
-  bool base_only_ = false;
   ros::Time last_track_;
 };
 

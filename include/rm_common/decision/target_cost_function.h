@@ -24,8 +24,8 @@ struct TargetState {
 class TargetCostFunction {
  public:
   explicit TargetCostFunction(ros::NodeHandle &nh, const RefereeData &referee_data);
-  double costFunction(const rm_msgs::TrackDataArray &track_data_array, bool only_attack_base = false);
-  double costFunction(const TargetState &target_state, bool only_attack_base = false);
+  double costFunction(const rm_msgs::TrackDataArray &track_data_array);
+  double costFunction(const TargetState &target_state);
   int getId() const { return optimal_id_; };
 
  private:
