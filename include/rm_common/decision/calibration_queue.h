@@ -14,9 +14,8 @@ struct CalibrationService {
 
 class CalibrationQueue {
  public:
-  explicit CalibrationQueue(XmlRpc::XmlRpcValue &rpc_value, ros::NodeHandle &nh,
-                            ControllerManager &controller_manager) :
-      controller_manager_(controller_manager), switched_(false) {
+  explicit CalibrationQueue(XmlRpc::XmlRpcValue &rpc_value, ros::NodeHandle &nh, ControllerManager &controller_manager)
+      : controller_manager_(controller_manager), switched_(false) {
     // Don't calibration if using simulation
     ros::NodeHandle nh_global;
     bool use_sim_time;
@@ -70,11 +69,17 @@ class CalibrationQueue {
   }
   void update(const ros::Time &time) { update(time, true); }
   bool isCalibrated() { return calibration_itr_ == calibration_services_.end(); }
-  void stopCalibratingController() {
+  void stopController() {
     if (calibration_services_.empty())
       return;
-    if (calibration_itr_ != calibration_services_.end())
+    if (calibration_itr_ != calibration_services_.end() && switched_)
       controller_manager_.stopController(calibration_itr_->stop_controller);
+  }
+  void stop() {
+    if (switched_){
+      calibration_itr_ = calibration_services_.end();
+      switched_ = false;
+    }
   }
  private:
   ros::Time last_query_;
