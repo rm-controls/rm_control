@@ -149,6 +149,9 @@ class SwitchDetectionCaller : public ServiceCallerBase<rm_msgs::StatusChange> {
   int getArmorTarget() {
     return service_.request.armor_target;
   }
+  uint8_t getExposureLevel() {
+    return service_.request.exposure;
+  }
   bool getIsSwitch() {
     if (isCalling()) return false;
     return service_.response.switch_is_success;
