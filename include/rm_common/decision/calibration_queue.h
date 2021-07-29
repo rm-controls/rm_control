@@ -70,6 +70,12 @@ class CalibrationQueue {
   }
   void update(const ros::Time &time) { update(time, true); }
   bool isCalibrated() { return calibration_itr_ == calibration_services_.end(); }
+  void stopCalibratingController() {
+    if (calibration_services_.empty())
+      return;
+    if (calibration_itr_ != calibration_services_.end())
+      controller_manager_.stopController(calibration_itr_->stop_controller);
+  }
  private:
   ros::Time last_query_;
   std::vector<CalibrationService> calibration_services_;
