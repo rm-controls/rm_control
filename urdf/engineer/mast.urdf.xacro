@@ -79,7 +79,7 @@
         <joint name="pitch_joint" type="revolute">
             <origin xyz="0.  0. 0.059 " rpy="0 0 0"/>
             <dynamics damping="0.0" friction="0.1"/>
-            <limit effort="0.1" velocity="10" lower="-0.47247" upper="1.25862"/>
+            <limit effort="0.2" velocity="10" lower="-0.47247" upper="1.25862"/>
             <parent link="yaw"/>
             <child link="pitch"/>
             <axis xyz="0 1 0 "/>
