@@ -255,22 +255,22 @@ class JointPositionBinaryCommandSender : public CommandSenderBase<std_msgs::Floa
  public:
   explicit JointPositionBinaryCommandSender(ros::NodeHandle &nh) :
       CommandSenderBase<std_msgs::Float64>(nh) {
-    ROS_ASSERT(nh.getParam("close_pos", close_pos_) && nh.getParam("open_pos", open_pos_));
+    ROS_ASSERT(nh.getParam("on_pos", on_pos_) && nh.getParam("off_pos", off_pos_));
   }
-  void open() {
-    msg_.data = open_pos_;
-    state = false;
-  }
-  void close() {
-    msg_.data = close_pos_;
+  void on() {
+    msg_.data = on_pos_;
     state = true;
+  }
+  void off() {
+    msg_.data = off_pos_;
+    state = false;
   }
   bool getState() const { return state; }
   void sendCommand(const ros::Time &time) override { CommandSenderBase<std_msgs::Float64>::sendCommand(time); }
   void setZero() override {};
  private:
   bool state{};
-  double close_pos_{}, open_pos_{};
+  double on_pos_{}, off_pos_{};
 };
 
 class JointJogCommandSender : public CommandSenderBase<std_msgs::Float64> {
