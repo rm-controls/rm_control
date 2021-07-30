@@ -11,7 +11,7 @@
         <xacro:chassis/>
         <xacro:include filename="$(find rm_description)/urdf/common/imu.urdf.xacro"/>
         <xacro:IMU connected_to="base_link" imu_name="base_imu" simulation="true"
-                   xyz="0.0 -0.165 0.0" rpy="0 0 ${pi}"/>
+                   xyz="0.0 -0.165 0.0" rpy="0 0 0"/>
     </xacro:if>
 
     <xacro:if value="$(arg load_gimbal)">
@@ -20,7 +20,7 @@
         <xacro:include filename="$(find rm_description)/urdf/common/camera.urdf.xacro"/>
         <xacro:camera_sensor xyz="0.127 0 -0.038" rpy="0 0 0" parent="pitch"
                              camera_sim="$(arg use_simulation)"/>
-        <xacro:camera_optical_frame xyz="0.0921 -0.0046 -0.0307" rpy="1.580 -0.004 1.571" parent="pitch"
+        <xacro:camera_optical_frame xyz="0.089 -0.004 -0.083" rpy="1.593 0.0 1.567" parent="pitch"
                                     camera_sim="$(arg use_simulation)"/>
     </xacro:if>
 
