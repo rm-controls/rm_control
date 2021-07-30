@@ -59,8 +59,8 @@ rm_base:
       lp_cutoff_frequency: 100
       need_calibration: true
   imus:
-    gimbal_imu:
-      frame_id: gimbal_imu
+    base_imu:
+      frame_id: base_link
       bus: can0
       id: 0x300
       orientation_covariance_diagonal: [ 0.0012, 0.0012, 0.0012 ]
