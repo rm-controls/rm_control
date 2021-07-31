@@ -3,7 +3,7 @@
 
     <xacro:property name="threshold" value="0.05"/>
     <xacro:property name="pitch_lower_limit" value="-1.39"/>
-    <xacro:property name="pitch_upper_limit" value="0.31"/>
+    <xacro:property name="pitch_upper_limit" value="0.35"/>
 
     <link name="yaw">
         <inertial>
@@ -15,13 +15,13 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/hero/yaw.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/hero/yaw.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/hero/yaw.stl"  scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/hero/yaw.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
     </link>
@@ -46,7 +46,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://rm_description/meshes/hero/pitch.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://rm_description/meshes/hero/pitch.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
