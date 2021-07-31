@@ -43,7 +43,7 @@ class PowerLimit {
     else {//standard and hero
       if (referee_data_.is_online_) {
         if (referee_data_.capacity_data.is_online_) {
-          if (referee_data_.capacity_data.limit_power_ == 0 && referee_data_.is_online_)
+          if (referee_data_.game_status_.game_progress_ == 1)
             return 30;//calibra
           if (referee_data_.game_robot_status_.chassis_power_limit_ > 120)
             limit_power_ = burst_power_;
