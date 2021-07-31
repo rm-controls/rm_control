@@ -112,7 +112,7 @@ class QueryCalibrationServiceCaller : public ServiceCallerBase<control_msgs::Que
 class SwitchDetectionCaller : public ServiceCallerBase<rm_msgs::StatusChange> {
  public:
   explicit SwitchDetectionCaller(ros::NodeHandle &nh) : ServiceCallerBase<rm_msgs::StatusChange>(
-      nh, "/detection/status_switch") {
+      nh, "/detection_nodelet/status_switch") {
     service_.request.target = rm_msgs::StatusChangeRequest::ARMOR;
     service_.request.exposure = rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0;
     service_.request.armor_target = rm_msgs::StatusChangeRequest::ARMOR_ALL;
