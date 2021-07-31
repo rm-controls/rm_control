@@ -1,14 +1,14 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:macro name="camera_sensor" params="xyz rpy parent camera_sim">
-        <joint name="camera_mount_joint" type="fixed">
+    <xacro:macro name="camera_sensor" params="xyz rpy frame_id parent camera_sim">
+        <joint name="${frame_id}_joint" type="fixed">
             <axis xyz="0 1 0"/>
             <origin xyz="${xyz}" rpy="${rpy}"/>
             <parent link="${parent}"/>
-            <child link="camera_link"/>
+            <child link="${frame_id}"/>
         </joint>
 
-        <link name="camera_link">
+        <link name="${frame_id}">
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
@@ -29,13 +29,13 @@
         </link>
     </xacro:macro>
 
-    <xacro:macro name="camera_optical_frame" params="xyz rpy parent camera_sim">
-        <joint name="camera_optical_frame_joint" type="fixed">
+    <xacro:macro name="camera_optical_frame" params="xyz rpy frame_id parent camera_sim">
+        <joint name="${frame_id}_joint" type="fixed">
             <origin xyz="${xyz}" rpy="${rpy}"/>
             <parent link="${parent}"/>
-            <child link="camera_optical_frame"/>
+            <child link="${frame_id}"/>
         </joint>
-        <link name="camera_optical_frame"/>
+        <link name="${frame_id}"/>
 
         <xacro:if value="${camera_sim}">
             <gazebo reference="camera_link">
