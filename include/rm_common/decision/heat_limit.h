@@ -84,14 +84,14 @@ class HeatLimit {
   }
 
   void updateExpectShootFrequency() {
-    if (referee_data_.game_robot_status_.robot_level_ == 1)
+    if (burst_flag_)
+      shoot_frequency_ = burst_shoot_frequency_;
+    else if (referee_data_.game_robot_status_.robot_level_ == 1)
       shoot_frequency_ = expect_shoot_frequency_1_;
     else if (referee_data_.game_robot_status_.robot_level_ == 2)
       shoot_frequency_ = expect_shoot_frequency_2_;
     else if (referee_data_.game_robot_status_.robot_level_ == 3)
       shoot_frequency_ = expect_shoot_frequency_3_;
-    else if (burst_flag_)
-      shoot_frequency_ = burst_shoot_frequency_;
     else
       shoot_frequency_ = safe_shoot_frequency_;
   }
