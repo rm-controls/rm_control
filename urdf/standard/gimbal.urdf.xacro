@@ -3,7 +3,7 @@
 
     <xacro:property name="threshold" value="0.1"/>
     <xacro:property name="pitch_lower_limit" value="-0.7"/>
-    <xacro:property name="pitch_upper_limit" value="0.4"/>
+    <xacro:property name="pitch_upper_limit" value="0.45"/>
 
         <link name="yaw">
             <inertial>
