@@ -2,8 +2,8 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:property name="threshold" value="0.05"/>
-    <xacro:property name="pitch_lower_limit" value="-1.39"/>
-    <xacro:property name="pitch_upper_limit" value="0.35"/>
+    <xacro:property name="pitch_lower_limit" value="-1.4"/>
+    <xacro:property name="pitch_upper_limit" value="0.4"/>
 
     <link name="yaw">
         <inertial>
