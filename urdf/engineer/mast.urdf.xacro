@@ -22,9 +22,9 @@
                 </geometry>
             </collision>
             <collision>
-                <origin xyz="0. 0.004 0.03" rpy="0 0 0"/>
+                <origin xyz="0. 0.004 0.04" rpy="0 0 0"/>
                 <geometry>
-                    <cylinder length="0.14" radius="0.07"/>
+                    <cylinder length="0.1" radius="0.07"/>
                 </geometry>
             </collision>
         </link>
@@ -71,7 +71,7 @@
                     rpy="0 0 0"/>
             <dynamics damping="0.0" friction="0.1"/>
             <limit effort="0.2" velocity="10" lower="-0.6197" upper="3.4545"/>
-            <safety_controller k_position="0.2" k_velocity="0.04" soft_lower_limit="-0.519" soft_upper_limit="3.35"/>
+            <!--            <safety_controller k_position="2" k_velocity="0.02" soft_lower_limit="-0.519" soft_upper_limit="3.35"/>-->
             <parent link="mast"/>
             <child link="yaw"/>
             <axis xyz="0 0 1"/>
