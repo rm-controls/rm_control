@@ -136,6 +136,9 @@ class SwitchDetectionCaller : public ServiceCallerBase<rm_msgs::StatusChange> {
   void switchArmorTargetType() {
     service_.request.armor_target = service_.request.armor_target == rm_msgs::StatusChangeRequest::ARMOR_ALL;
   }
+  void setArmorTargetType(uint8_t armor_target) {
+    service_.request.armor_target = armor_target;
+  }
   void switchExposureLevel() {
     service_.request.exposure = service_.request.exposure == rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_4 ?
                                 rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0 : service_.request.exposure + 1;

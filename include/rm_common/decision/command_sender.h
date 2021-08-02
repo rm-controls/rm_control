@@ -13,6 +13,7 @@
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/GimbalDesError.h>
 #include <geometry_msgs/TwistStamped.h>
+#include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Float64.h>
 
