@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>rm_infrastructure</name>
-  <version>1.0.34</version>
+  <version>1.0.35</version>
   <description>Meta package that contains infrastructure package of rm_controls.</description>
   <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
 
