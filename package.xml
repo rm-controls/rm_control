@@ -18,6 +18,7 @@
     <depend>gazebo_ros</depend>
     <depend>gazebo_ros_control</depend>
 
+    <exec_depend>rm_description</exec_depend>
     <exec_depend>roboticsgroup_upatras_gazebo_plugins</exec_depend>
 
     <export>
