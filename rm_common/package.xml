@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>rm_common</name>
+    <version>1.0.34</version>
+    <description>The rm_common package</description>
+
+    <maintainer email="liaoqiayuan@gmail.com">qiayuan</maintainer>
+
+    <license>TODO</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>roscpp</depend>
+    <depend>roslint</depend>
+
+    <depend>tf</depend>
+    <depend>geometry_msgs</depend>
+    <depend>realtime_tools</depend>
+    <depend>rm_msgs</depend>
+    <depend>dynamic_reconfigure</depend>
+    <depend>eigen</depend>
+    <depend>control_msgs</depend>
+    <depend>controller_manager_msgs</depend>
+
+    <!-- The export tag contains other, unspecified, tags -->
+    <export>
+        <!-- Other tools can request additional information be placed here -->
+
+    </export>
+</package>
