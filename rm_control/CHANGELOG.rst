@@ -2,6 +2,11 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add exec_depend to package.xml of rm_control
+* Contributors: qiayuan
+
 1.0.37 (2021-08-11)
 -------------------
 * Rename rm_infrastructure to rm_control

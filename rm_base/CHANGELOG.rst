@@ -2,6 +2,11 @@
 Changelog for package rm_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add license to all source files
+* Contributors: qiayuan
+
 1.0.37 (2021-08-11)
 -------------------
 * Add CHANGELOG.rst
