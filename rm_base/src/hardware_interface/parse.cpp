@@ -127,7 +127,7 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
             std::make_pair(
                 id,
                 ActData{.name = it->first, .type = type, .stamp=ros::Time::now(), .seq = 0, .halted = false,
-                    .need_calibration = need_calibration, .calibration_reading = false, .q_raw = 0, .qd_raw = 0, .temp= 0,
+                        .need_calibration = need_calibration,.calibrated=false, .calibration_reading = false, .q_raw = 0, .qd_raw = 0, .temp= 0,
                     .q_circle = 0, .q_last = 0, .frequency = 0, .pos = 0, .vel = 0, .effort = 0, .cmd_pos = 0, .cmd_vel = 0,
                     .cmd_effort = 0, .exe_effort=0, .offset = 0,
                     .lp_filter=new LowPassFilter(nh)}));
