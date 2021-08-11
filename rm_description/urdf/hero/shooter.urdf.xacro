@@ -1,0 +1,51 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find rm_description)/urdf/common/friction.urdf.xacro"/>
+
+
+    <xacro:property name="wheel_offset_x" value="0.084"/>
+    <xacro:property name="wheel_offset_y" value="0.049"/>
+    <xacro:property name="wheel_offset_z" value="0.0"/>
+
+
+    <xacro:friction_wheel prefixs="left" connected_to="pitch"
+                          wheel_x_offset="${wheel_offset_x}" wheel_y_offset="${wheel_offset_y}"
+                          wheel_z_offset="${wheel_offset_z}"/>
+
+    <xacro:friction_wheel prefixs="right" connected_to="pitch"
+                          wheel_x_offset="${wheel_offset_x}" wheel_y_offset="${-wheel_offset_y}"
+                          wheel_z_offset="${wheel_offset_z}"/>
+
+
+    <link name="trigger">
+        <inertial>
+            <mass value="0.295177"/>
+            <origin xyz="-0.00842 0.0 0.00605"/>
+            <inertia ixx="2.255e-4" ixy="2.5698e-7" ixz="2.3929e-6" iyy="2.233e-4"
+                     iyz="5.22e-7" izz="2.643e-4"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://rm_description/meshes/hero/trigger.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://rm_description/meshes/hero/trigger.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="trigger_joint" type="continuous">
+        <origin xyz="-0.064 0 0" rpy="0 0 0"/>
+        <dynamics damping="0.0" friction="0.01"/>
+        <limit effort="6.99" velocity="35.758" lower="-1e16" upper="1e16"/>
+        <parent link="base_link"/>
+        <child link="trigger"/>
+        <axis xyz="0 0 1 "/>
+
+    </joint>
+
+</robot>

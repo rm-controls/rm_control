@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="engineer">
+    <xacro:arg name="load_chassis" default="true"/>
+    <xacro:arg name="load_arm" default="true"/>
+    <xacro:arg name="use_simulation" default="true"/>
+    <xacro:arg name="roller_type" default="simple"/>
+
+    <xacro:if value="$(arg load_chassis)">
+        <xacro:include filename="$(find rm_description)/urdf/engineer/chassis.urdf.xacro"/>
+        <xacro:chassis roller_type="$(arg roller_type)"/>
+    </xacro:if>
+
+    <xacro:if value="$(arg load_arm)">
+        <xacro:include filename="$(find rm_description)/urdf/engineer/arm.urdf.xacro"/>
+        <xacro:arm connected_to="base_link"/>
+        <xacro:include filename="$(find rm_description)/urdf/engineer/arm.transmission.xacro"/>
+        <xacro:arm_transmission simulation="$(arg use_simulation)"/>
+        <xacro:include filename="$(find rm_description)/urdf/engineer/hand.urdf.xacro"/>
+        <xacro:hand connected_to="link5" xyz="-0.014 0 0" rpy="0 0 0" simulation="$(arg use_simulation)"/>
+        <xacro:include filename="$(find rm_description)/urdf/engineer/mast.urdf.xacro"/>
+        <xacro:mast connected_to="link1" xyz="-0.0745 -0.1085 0.53" rpy="0 0 0" simulation="$(arg use_simulation)"/>
+    </xacro:if>
+
+    <xacro:if value="$(arg use_simulation)">
+        <gazebo>
+            <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
+                <robotNamespace>/</robotNamespace>
+                <robotSimType>rm_gazebo/RmRobotHWSim</robotSimType>
+            </plugin>
+        </gazebo>
+    </xacro:if>
+
+</robot>

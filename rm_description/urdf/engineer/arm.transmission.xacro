@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="arm">
+
+    <xacro:macro name="arm_transmission" params="simulation">
+
+        <!-- transmission -->
+        <transmission name="trans_joint1">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="joint1_motor">
+                <mechanicalReduction>71.75</mechanicalReduction>
+            </actuator>
+            <joint name="joint1">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>2.068</offset>
+            </joint>
+        </transmission>
+
+        <transmission name="trans_joint3">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="joint3_motor">
+                <mechanicalReduction>3</mechanicalReduction>
+            </actuator>
+            <joint name="joint3">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>-0.85</offset>
+            </joint>
+        </transmission>
+
+        <transmission name="trans_joint4">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="joint4_motor">
+                <mechanicalReduction>-71.165</mechanicalReduction>
+            </actuator>
+            <joint name="joint4">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>-0.334978036</offset>
+            </joint>
+        </transmission>
+
+        <transmission name="trans_joint5">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="joint5_motor">
+                <mechanicalReduction>50.895</mechanicalReduction>
+            </actuator>
+            <joint name="joint5">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>1.4378487</offset>
+            </joint>
+        </transmission>
+
+        <xacro:unless value="${simulation}">
+            <transmission name="trans_joint2">
+                <type>transmission_interface/DoubleActuatorTransmission</type>
+                <actuator name="joint2_left_motor">
+                    <role>actuator1</role>
+                    <mechanicalReduction>3</mechanicalReduction>
+                </actuator>
+                <actuator name="joint2_right_motor">
+                    <role>actuator2</role>
+                    <mechanicalReduction>-3</mechanicalReduction>
+                </actuator>
+                <joint name="joint2">
+                    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                    <offset>-2.391650</offset>
+                    <mechanicalReduction>1</mechanicalReduction>
+                </joint>
+            </transmission>
+        </xacro:unless>
+
+        <xacro:if value="${simulation}">
+            <transmission name="trans_joint2">
+                <type>transmission_interface/SimpleTransmission</type>
+                <actuator name="joint2_motor">
+                    <mechanicalReduction>-3</mechanicalReduction>
+                </actuator>
+                <joint name="joint2">
+                    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                    <offset>-2.3764</offset>
+                </joint>
+            </transmission>
+        </xacro:if>
+
+    </xacro:macro>
+
+</robot>

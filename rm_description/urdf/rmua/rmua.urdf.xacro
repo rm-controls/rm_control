@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rmua">
+
+    <xacro:arg name="load_chassis" default="true"/>
+    <xacro:arg name="load_gimbal" default="true"/>
+    <xacro:arg name="load_shooter" default="true"/>
+    <xacro:arg name="use_simulation" default="true"/>
+    <xacro:arg name="roller_type" default="realistic"/>
+
+    <xacro:if value="$(arg load_chassis)">
+        <xacro:include filename="$(find rm_description)/urdf/rmua/chassis.urdf.xacro"/>
+        <xacro:chassis roller_type="$(arg roller_type)"/>
+    </xacro:if>
+
+    <xacro:if value="$(arg load_gimbal)">
+        <xacro:include filename="$(find rm_description)/urdf/rmua/gimbal.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/rmua/gimbal.transmission.urdf.xacro"/>
+    </xacro:if>
+
+    <xacro:if value="$(arg load_shooter)">
+        <xacro:include filename="$(find rm_description)/urdf/rmua/shooter.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/rmua/shooter.transmission.urdf.xacro"/>
+    </xacro:if>
+
+    <xacro:if value="$(arg use_simulation)">
+        <gazebo>
+            <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
+                <robotNamespace>/</robotNamespace>
+                <robotSimType>rm_gazebo/RmRobotHWSim</robotSimType>
+            </plugin>
+        </gazebo>
+    </xacro:if>
+
+
+</robot>

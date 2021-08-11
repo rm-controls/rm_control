@@ -1,0 +1,192 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="chassis">
+
+    <xacro:include filename="$(find rm_description)/urdf/common/mecanum_wheel.urdf.xacro"/>
+
+    <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
+    <xacro:property name="wheel_front" value="0.134874"/>
+    <xacro:property name="wheel_back" value="-0.134874"/>
+    <xacro:property name="wheel_right" value="-0.2448"/>
+    <xacro:property name="wheel_left" value="0.2448"/>
+    <xacro:property name="wheel_offset_z" value="-0.029928"/>
+    <xacro:property name="wheel_joint_damping" value="1.0"/>
+    <xacro:property name="wheel_joint_friction" value="1.0"/>
+
+    <xacro:macro name="chassis" params="roller_type">
+
+        <link name="base_link">
+            <inertial>
+                <mass value="13"/>
+                <origin xyz="-0.063 -0.010 -0.027"/>
+                <inertia ixx="4.302e-2" ixy="7.618e-4" ixz="6.881e-3" iyy="3.95e-2"
+                         iyz="-1.841e-4" izz="7.25e-2"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/base.stl" scale="0.001 .001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="-0.125 0. 0.06" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.25 0.596 0.169"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.15 -0.15 0.015" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.255 0.29 0.06"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.15 0.144 0.015" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.255 0.29 0.06"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.16 0. 0.1" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.12 0.2 0.1"/>
+                </geometry>
+            </collision>
+
+            <collision>
+                <origin xyz="-0.038526 0.245965 0.224" rpy="0 0 -0.507"/>
+                <geometry>
+                    <box size="0.08 0.024213 0.448"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="-0.160269 0.184128 0.284" rpy="0 0 1.0646508"/>
+                <geometry>
+                    <box size="0.08 0.0217 0.3033"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="-0.148196 0.0485 0.224" rpy="0 0 -0.507"/>
+                <geometry>
+                    <box size="0.08 0.03 0.448"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.019028 0.084742 0.269" rpy="0 0 1.0646508"/>
+                <geometry>
+                    <box size="0.080 0.003 0.250"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="stone_platform">
+            <inertial>
+                <mass value="0.073"/>
+                <origin xyz="-0.037 -0.005 0.009"/>
+                <inertia ixx="5.874e-4" ixy="-2.845e-4" ixz="1.882e-5" iyy="2.133e-4" iyz="2.682e-5" izz="7.780e-4"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/stone_platform.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0 0.0 0"/>
+                <geometry>
+                    <box size="0.106 0.105 0.002"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="-0.08 -0.09 0.02" rpy="0 0 1.0646508"/>
+                <geometry>
+                    <box size="0.03 0.06 0.05"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="card">
+            <inertial>
+                <mass value="0.26"/>
+                <origin xyz="-0.071 -0.006 0.003"/>
+                <inertia ixx="1.078e-3" ixy="6.486e-5" ixz="1.454e-5" iyy="1.142e-4" iyz="5.143e-6" izz="2.215e-3"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/card.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="-0.08 0 0" rpy="0 0.0 0"/>
+                <geometry>
+                    <box size="0.253 0.151 0.011"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="card_joint" type="prismatic">
+            <axis xyz="1 0 0"/>
+            <origin xyz="0.15205 0. -0.07"/>
+            <limit effort="20.0" velocity="1.0" lower="0" upper="0.281"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <parent link="base_link"/>
+            <child link="card"/>
+        </joint>
+
+
+        <joint name="stone_platform_joint" type="prismatic">
+            <axis xyz="0 0 1"/>
+            <origin xyz="-0.0706 0.134 0.114"/>
+            <limit effort="20.0" velocity="1.0" lower="0" upper="0.19"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <parent link="base_link"/>
+            <child link="stone_platform"/>
+        </joint>
+
+        <transmission name="trans_stone_platform_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="stone_platform_joint_motor">
+                <mechanicalReduction>49.97</mechanicalReduction>
+            </actuator>
+            <joint name="stone_platform_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>0</offset>
+            </joint>
+        </transmission>
+
+        <transmission name="trans_card_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="card_joint_motor">
+                <mechanicalReduction>49.97</mechanicalReduction>
+            </actuator>
+            <joint name="card_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>0</offset>
+            </joint>
+        </transmission>
+
+
+        <xacro:mecanum_wheel prefix="left_front" connected_to="base_link"
+                             wheel_x_offset="${wheel_front}" wheel_y_offset="${wheel_left}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="1" roller_type="${roller_type}"/>
+        <xacro:mecanum_wheel prefix="right_front" connected_to="base_link"
+                             wheel_x_offset="${wheel_front}" wheel_y_offset="${wheel_right}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="-1" roller_type="${roller_type}"/>
+        <xacro:mecanum_wheel prefix="left_back" connected_to="base_link"
+                             wheel_x_offset="${wheel_back}" wheel_y_offset="${wheel_left}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="-1" roller_type="${roller_type}"/>
+        <xacro:mecanum_wheel prefix="right_back" connected_to="base_link"
+                             wheel_x_offset="${wheel_back}" wheel_y_offset="${wheel_right}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="1" roller_type="${roller_type}"/>
+        <xacro:wheel_transmission prefix="left_front" mechanical_reduction="19.2032"/>
+        <xacro:wheel_transmission prefix="right_front" mechanical_reduction="-19.2032"/>
+        <xacro:wheel_transmission prefix="left_back" mechanical_reduction="19.2032"/>
+        <xacro:wheel_transmission prefix="right_back" mechanical_reduction="-19.2032"/>
+
+    </xacro:macro>
+
+</robot>

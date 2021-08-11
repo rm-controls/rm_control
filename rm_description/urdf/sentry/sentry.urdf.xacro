@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="sentry">
+
+    <xacro:arg name="load_chassis" default="true"/>
+    <xacro:arg name="load_gimbal" default="true"/>
+    <xacro:arg name="load_shooter" default="true"/>
+    <xacro:arg name="upper_camera_link" default="upper_camera_link"/>
+    <xacro:arg name="upper_camera_optical_frame" default="upper_camera_optical_frame"/>
+    <xacro:arg name="lower_camera_link" default="lower_camera_link"/>
+    <xacro:arg name="lower_camera_optical_frame" default="lower_camera_optical_frame"/>
+    <xacro:arg name="use_simulation" default="true"/>
+
+    <xacro:if value="$(arg load_chassis)">
+        <xacro:include filename="$(find rm_description)/urdf/sentry/chassis.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/sentry/chassis.transmission.urdf.xacro"/>
+        <xacro:chassis use_simulation="$(arg use_simulation)"/>
+    </xacro:if>
+
+    <xacro:if value="$(arg load_gimbal)">
+        <xacro:include filename="$(find rm_description)/urdf/sentry/lower_gimbal.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/sentry/lower_gimbal.transmission.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/common/camera.urdf.xacro"/>
+        <xacro:camera_sensor xyz="0.127 0 -0.047" rpy="0 0 0" frame_id="$(arg lower_camera_link)" parent="lower_pitch"
+                             camera_sim="$(arg use_simulation)"/>
+        <xacro:camera_optical_frame xyz="0.153 0 -0.0615" rpy="${pi/2} 0 ${pi/2}"
+                                    frame_id="$(arg lower_camera_optical_frame)"
+                                    parent="lower_pitch" camera_sim="$(arg use_simulation)"/>
+
+        <xacro:include filename="$(find rm_description)/urdf/sentry/upper_gimbal.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/sentry/upper_gimbal.transmission.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/common/camera.urdf.xacro"/>
+        <xacro:camera_sensor xyz="0.127 0 -0.047" rpy="0 0 0" frame_id="$(arg upper_camera_link)" parent="upper_pitch"
+                             camera_sim="$(arg use_simulation)"/>
+        <xacro:camera_optical_frame xyz="0.153 0 -0.0615" rpy="${-pi/2} 0 ${-pi/2}"
+                                    frame_id="$(arg upper_camera_optical_frame)"
+                                    parent="upper_pitch" camera_sim="$(arg use_simulation)"/>
+    </xacro:if>
+
+    <xacro:if value="$(arg load_shooter)">
+        <xacro:include filename="$(find rm_description)/urdf/sentry/upper_shooter.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/sentry/upper_shooter.transmission.urdf.xacro"/>
+
+        <xacro:include filename="$(find rm_description)/urdf/sentry/lower_shooter.urdf.xacro"/>
+        <xacro:include filename="$(find rm_description)/urdf/sentry/lower_shooter.transmission.urdf.xacro"/>
+    </xacro:if>
+
+    <xacro:if value="$(arg use_simulation)">
+        <gazebo>
+            <plugin name="rm_ros_control" filename="librm_robot_hw_sim.so">
+                <robotNamespace>/</robotNamespace>
+                <robotSimType>rm_gazebo/RmRobotHWSim</robotSimType>
+            </plugin>
+        </gazebo>
+    </xacro:if>
+
+</robot>

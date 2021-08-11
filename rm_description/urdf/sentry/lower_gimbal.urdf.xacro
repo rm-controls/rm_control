@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="threshold" value="0.03"/>
+  <xacro:property name="yaw_lower_limit" value="-2.461"/>
+  <xacro:property name="yaw_upper_limit" value="1.998"/>
+  <xacro:property name="pitch_lower_limit" value="0.129"/>
+  <xacro:property name="pitch_upper_limit" value="1.175"/>
+
+  <link name="lower_yaw">
+    <visual>
+      <geometry>
+        <mesh filename="package://rm_description/meshes/sentry/lower_yaw.stl"
+              scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <inertial>
+      <mass value="1.84153"/>
+      <origin xyz="-48.613e-3 -7.311e-3 -40.711e-3" rpy="0 0 0"/>
+      <inertia ixx="9.308e-3" ixy="1.131e-3" ixz="-2.237e-3" iyy="2.582e-2"
+               iyz="-5.566e-4" izz="2.598e-2"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://rm_description/meshes/sentry/lower_yaw.stl"
+              scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="lower_yaw_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="lower_yaw"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="2.261e-3 31.206e-3 -235.253e-3"/>
+    <dynamics damping="0" friction="0.1"/>
+    <limit effort="1.2" velocity="34" lower="${yaw_lower_limit}" upper="${yaw_upper_limit}"/>
+    <safety_controller k_position="100" k_velocity="0.1"
+                       soft_lower_limit="${yaw_lower_limit+threshold}"
+                       soft_upper_limit="${yaw_upper_limit-threshold}"/>
+  </joint>
+
+  <link name="lower_pitch">
+    <inertial>
+      <mass value="725.237e-3"/>
+      <origin xyz="4.587e-3 2.933e-3 17.233e-3"/>
+      <inertia ixx="2.408e-3" ixy="7.760e-5" ixz="-8.109e-5" iyy="1.183e-3"
+               iyz="-1.337e-4" izz="2.824e-3"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://rm_description/meshes/sentry/lower_pitch.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://rm_description/meshes/sentry/lower_pitch.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="lower_pitch_joint" type="revolute">
+    <parent link="lower_yaw"/>
+    <child link="lower_pitch"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0 0 -0.1"/>
+    <dynamics damping="0" friction="0.1"/>
+    <limit effort="1.2" velocity="13.82" lower="${pitch_lower_limit}" upper="${pitch_upper_limit}"/>
+    <safety_controller k_position="100" k_velocity="0.1"
+                       soft_lower_limit="${pitch_lower_limit+threshold}"
+                       soft_upper_limit="${pitch_upper_limit-threshold}"/>
+  </joint>
+
+  <!--  <link name="upper_camera">-->
+  <!--    <inertial>-->
+  <!--          <mass value="0.17671"/>-->
+  <!--          <origin xyz="0.022 0.0 0.0"/>-->
+  <!--          <inertia ixx="2.129e-5" ixy="7.329e-8" ixz="-1.11e-7" iyy="2.198e-4" iyz="-8.04e-7" izz="2.197e-4"/>-->
+  <!--        </inertial>-->
+  <!--        <visual>-->
+  <!--          <origin xyz=" 0 0 0 " rpy="0 -1.57 0"/>-->
+  <!--          <geometry>-->
+  <!--            <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>-->
+  <!--          </geometry>-->
+  <!--          <material name="Black"/>-->
+  <!--        </visual>-->
+  <!--        <collision>-->
+  <!--          <origin xyz="0 0 0" rpy="0 -1.57 0"/>-->
+  <!--          <geometry>-->
+  <!--            <mesh filename="package://rm_description/meshes/common/camera.stl" scale="0.001 0.001 0.001"/>-->
+  <!--          </geometry>-->
+  <!--        </collision>-->
+  <!--      </link>-->
+
+  <!--      <joint name="camera_joint" type="fixed">-->
+  <!--        <parent link="pitch"/>-->
+  <!--        <child link="camera"/>-->
+  <!--        <origin xyz="0.086  0.0 -0.040" rpy="-1.57 0 -1.57"/>-->
+  <!--        <axis xyz="0 0 1"/>-->
+  <!--      </joint>-->
+
+</robot>

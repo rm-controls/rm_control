@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="mast">
+    <!-- safety_distance: Minimum safety distance in [m] by which the collision volumes are expanded and which is enforced during robot motions -->
+    <xacro:macro name="mast" params="connected_to:='' xyz:='0 0 0' rpy:='0 0 0' simulation">
+
+
+        <link name="mast">
+            <inertial>
+                <mass value="0.517"/>
+                <origin xyz="0.009 -0.002 -0.190" rpy="0 0 0"/>
+                <inertia ixx="1.221e-2" ixy="1.727e-5" ixz="6.890e-4" iyy="1.237e-2" iyz="-7.284e-5" izz="3.043e-4"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/mast.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.004 0 -0.259" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.035 0.035 0.45"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0. 0.004 0.04" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="0.1" radius="0.07"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="yaw">
+            <inertial>
+                <origin xyz="0.0 0.029 0.035" rpy="0 0 0"/>
+                <mass value="0.175"/>
+                <inertia ixx="3.583e-4" ixy="-4.2e-7" ixz="2.42e-7" iyy="1.473e-4" iyz="-4.618e-5" izz="2.568e-4"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/yaw.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+        </link>
+
+        <link name="pitch">
+            <inertial>
+                <origin xyz="0.0 -0.04 0.002" rpy="0 0 0"/>
+                <mass value="0.246"/>
+                <inertia ixx="1.883e-4" ixy="1.22e-7" ixz="-7.56e-6" iyy="2.304e-4" iyz="-2.18e-7" izz="2.662e-4"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/engineer/pitch.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+        </link>
+
+        <xacro:unless value="${connected_to == ''}">
+            <joint name="mast_joint" type="prismatic">
+                <origin xyz="${xyz}" rpy="${rpy}"/>
+                <parent link="${connected_to}"/>
+                <child link="mast"/>
+                <axis xyz="0 0 1"/>
+                <dynamics damping="0.0" friction="0.8"/>
+                <limit effort="25.0" velocity="1.0" lower="-0.37" upper="0"/>
+            </joint>
+        </xacro:unless>
+
+        <joint name="yaw_joint" type="revolute">
+            <origin xyz="0 0 0"
+                    rpy="0 0 0"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <limit effort="0.2" velocity="10" lower="-0.6197" upper="3.4545"/>
+            <!--            <safety_controller k_position="2" k_velocity="0.02" soft_lower_limit="-0.519" soft_upper_limit="3.35"/>-->
+            <parent link="mast"/>
+            <child link="yaw"/>
+            <axis xyz="0 0 1"/>
+        </joint>
+
+        <joint name="pitch_joint" type="revolute">
+            <origin xyz="0.  0. 0.059 " rpy="0 0 0"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <limit effort="0.2" velocity="10" lower="-0.47247" upper="1.25862"/>
+            <parent link="yaw"/>
+            <child link="pitch"/>
+            <axis xyz="0 1 0 "/>
+        </joint>
+
+        <gazebo reference="mast">
+            <self_collide>1</self_collide>
+        </gazebo>
+
+        <transmission name="trans_yaw_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="yaw_joint_motor">
+                <mechanicalReduction>-1</mechanicalReduction>
+            </actuator>
+            <joint name="yaw_joint">
+                <offset>-0.60668</offset>
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+
+        <transmission name="trans_pitch_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="pitch_joint_motor">
+                <mechanicalReduction>-1</mechanicalReduction>
+            </actuator>
+            <joint name="pitch_joint">
+                <offset>1.26553</offset>
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+
+        <transmission name="trans_mast_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="mast_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <offset>0.0</offset>
+            </joint>
+            <actuator name="mast_joint_motor">
+                <mechanicalReduction>-50.0</mechanicalReduction>
+            </actuator>
+        </transmission>
+
+
+    </xacro:macro>
+</robot>

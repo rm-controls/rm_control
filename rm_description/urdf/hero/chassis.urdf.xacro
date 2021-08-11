@@ -1,0 +1,97 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find rm_description)/urdf/common/mecanum_wheel.urdf.xacro"/>
+
+    <!-- https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.png -->
+    <xacro:property name="wheel_track" value="0.500"/>
+    <xacro:property name="wheel_base" value="0.475"/>
+    <xacro:property name="wheel_offset_z" value="-0.036"/>
+
+    <xacro:macro name="chassis" params="roller_type">
+
+        <link name="base_link">
+            <inertial>
+                <mass value="19.31"/>
+                <origin xyz="-0.02282 0.002773 0.008173"/>
+                <inertia ixx="4.041e-1" ixy="7.617e-3" ixz="-1.317e-2" iyy="3.322e-1"
+                         iyz="7.985e-2" izz="1.8e-1"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/hero/base.stl" scale="0.001 .001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/hero/base.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+
+        <link name="cover">
+            <inertial>
+                <mass value="0.118"/>
+                <origin xyz="-0.037 -0.003 0.0"/>
+                <inertia ixx="6.240e-4" ixy="7.325e-4" ixz="1.839e-5" iyy="1.083e-3" iyz="-1.166e-5" izz="1.602e-3"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/hero/cover.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.033 0.0 -0.0" rpy="0 0.0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/hero/cover.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="cover_joint" type="revolute">
+            <axis xyz="1 0 0"/>
+            <origin xyz="-0.27 0.201 0.125"/>
+            <limit effort="1" velocity="30" lower="-3.14" upper="3.14"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <parent link="base_link"/>
+            <child link="cover"/>
+        </joint>
+
+        <transmission name="trans_cover_joint">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="cover_joint_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+            <joint name="cover_joint">
+                <offset>0</offset>
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+
+        <xacro:mecanum_wheel prefix="left_front" connected_to="base_link"
+                             wheel_x_offset="${wheel_track/2}" wheel_y_offset="${wheel_base/2}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="1" roller_type="${roller_type}"/>
+        <xacro:mecanum_wheel prefix="right_front" connected_to="base_link"
+                             wheel_x_offset="${wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="-1" roller_type="${roller_type}"/>
+        <xacro:mecanum_wheel prefix="left_back" connected_to="base_link"
+                             wheel_x_offset="${-wheel_track/2}" wheel_y_offset="${wheel_base/2}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="-1" roller_type="${roller_type}"/>
+        <xacro:mecanum_wheel prefix="right_back" connected_to="base_link"
+                             wheel_x_offset="${-wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
+                             wheel_z_offset="${wheel_offset_z}"
+                             reflect="1" roller_type="${roller_type}"/>
+        <xacro:wheel_transmission prefix="left_front" mechanical_reduction="19.2032"/>
+        <xacro:wheel_transmission prefix="right_front" mechanical_reduction="-19.2032"/>
+        <xacro:wheel_transmission prefix="left_back" mechanical_reduction="19.2032"/>
+        <xacro:wheel_transmission prefix="right_back" mechanical_reduction="-19.2032"/>
+
+    </xacro:macro>
+
+</robot>

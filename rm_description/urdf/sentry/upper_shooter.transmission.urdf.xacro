@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot>
+
+    <transmission name="trans_upper_trigger_joint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="upper_trigger_joint_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="upper_trigger_joint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+
+    <transmission name="trans_upper_left_friction_wheel_joint_joint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="upper_left_friction_wheel_joint_motor">
+            <mechanicalReduction>-1</mechanicalReduction>
+        </actuator>
+        <joint name="upper_left_friction_wheel_joint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <transmission name="trans_upper_right_friction_wheel_joint_joint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="upper_right_friction_wheel_joint_motor">
+            <mechanicalReduction>-1</mechanicalReduction>
+        </actuator>
+        <joint name="upper_right_friction_wheel_joint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+</robot>

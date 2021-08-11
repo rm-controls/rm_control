@@ -1,0 +1,127 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="swerve_drive"
+                 params="prefix wheel_x_offset wheel_y_offset wheel_z_offset  connected_to reflect mirror">
+
+        <link name="${prefix}_pivot">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <xacro:if value="${reflect == 1}">
+                        <mesh filename="package://rm_description/meshes/common/right_front_swerve_pivot.stl"
+                              scale="0.001 0.001 0.001"/>
+                    </xacro:if>
+                    <xacro:if value="${reflect == -1}">
+                        <mesh filename="package://rm_description/meshes/common/left_front_swerve_pivot.stl"
+                              scale="0.001 0.001 0.001"/>
+                    </xacro:if>
+                </geometry>
+            </visual>
+            <inertial>
+                <xacro:if value="${reflect == 1}">
+                    <mass value="3.725118"/>
+                    <origin xyz="0.951e-3 5.254e-3 -23.161e-3" rpy="0 0 0"/>
+                    <inertia ixx="1.645e-2" ixy="-13783.466e-9" ixz="2.345e-4" iyy="1.562e-2" iyz="2.132e-3"
+                             izz="3.256e-3"/>
+                </xacro:if>
+                <xacro:if value="${reflect == -1}">
+                    <mass value="3.725115"/>
+                    <origin xyz="0.156793 0.150588 0.030271" rpy="0 0 0"/>
+                    <inertia ixx="1.143e-1" ixy="-9.835e-2" ixz="-2.178e-2" iyy="1.207e-1" iyz="-2.289e-2"
+                             izz="2e-1"/>
+                </xacro:if>
+            </inertial>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <xacro:if value="${reflect == 1}">
+                        <mesh filename="package://rm_description/meshes/common/right_front_swerve_pivot.stl"
+                              scale="0.001 0.001 0.001"/>
+                    </xacro:if>
+                    <xacro:if value="${reflect == -1}">
+                        <mesh filename="package://rm_description/meshes/common/left_front_swerve_pivot.stl"
+                              scale="0.001 0.001 0.001"/>
+                    </xacro:if>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${prefix}_pivot_joint" type="continuous">
+            <axis xyz="0 0 1"/>
+            <xacro:if value="${mirror == 1}">
+                <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_z_offset}" rpy="0 0 0"/>
+            </xacro:if>
+            <xacro:if value="${mirror == -1}">
+                <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_z_offset}" rpy="0 0 ${pi}"/>
+            </xacro:if>
+            <parent link="${connected_to}"/>
+            <child link="${prefix}_pivot"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <limit effort="1.2" velocity="31" lower="-1e10" upper="1e10"/>
+        </joint>
+
+
+        <link name="${prefix}_wheel">
+            <visual>
+                <origin xyz="0 0.0265 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/common/swerve_wheel.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <inertial>
+                <mass value="0.18791"/>
+                <origin xyz="6.908e-8 -7.298e-3 275e-6" rpy="0 0 0"/>
+                <inertia ixx="1.584e-4" ixy="0.199e-9" ixz="-0.173e-9" iyy="2.141e-4" iyz="768.622e-9" izz="1.575e-4"/>
+            </inertial>
+            <collision>
+                <origin xyz="0 0 0" rpy="${pi/2.} 0 0"/>
+                <geometry>
+                    <cylinder radius="0.05" length="0.053"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${prefix}_wheel_joint" type="continuous">
+            <axis xyz="0 1 0"/>
+            <origin xyz="0 0 -0.112" rpy="0 0 0"/>
+            <parent link="${prefix}_pivot"/>
+            <child link="${prefix}_wheel"/>
+            <limit effort="2.2" velocity="68" lower="-1e10" upper="1e10"/>
+            <dynamics damping="0.0" friction="0.05"/>
+        </joint>
+
+        <gazebo reference="${prefix}_wheel">
+            <mu1 value="20"/>
+            <mu2 value="20"/>
+            <kp value="1000000.0"/>
+            <kd value="100.0"/>
+            <material>Gazebo/Black</material>
+        </gazebo>
+    </xacro:macro>
+
+    <xacro:macro name="swerve_transmission" params="prefix wheel_reduction  pivot_offset">
+
+        <transmission name="${prefix}_pivot_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${prefix}_pivot_motor">
+                <mechanicalReduction>-1</mechanicalReduction>
+            </actuator>
+            <joint name="${prefix}_pivot_joint">
+                <offset>${pivot_offset}</offset>
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+
+        <transmission name="${prefix}_wheel_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${prefix}_wheel_motor">
+                <mechanicalReduction>${wheel_reduction}</mechanicalReduction>
+            </actuator>
+            <joint name="${prefix}_wheel_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+    </xacro:macro>
+
+</robot>

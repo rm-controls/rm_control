@@ -1,0 +1,66 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="wheel_radius" value="0.06"/>
+    <xacro:property name="wheel_width" value="0.032"/>
+    <xacro:property name="wheel_joint_effort" value="1.0"/>
+    <xacro:property name="wheel_joint_velocity" value="50"/>
+
+    <xacro:macro name="rubber_wheel"
+                 params="prefix connected_to wheel_x_offset wheel_y_offset wheel_z_offset mechanical_reduction">
+        <!--  link  -->
+        <link name="${prefix}_wheel">
+            <visual>
+                <geometry>
+                    <xacro:if value="${prefix=='left'}">
+                        <mesh filename="package://rm_description/meshes/balance/left_rubber_wheel.stl"
+                              scale="0.001 0.001 0.001"/>
+                    </xacro:if>
+                    <xacro:if value="${prefix=='right'}">
+                        <mesh filename="package://rm_description/meshes/balance/right_rubber_wheel.stl"
+                              scale="0.001 0.001 0.001"/>
+                    </xacro:if>
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="1.57 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <cylinder length="0.032" radius="0.06"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.23"/>
+                <xacro:if value="${prefix=='left'}">
+                    <origin xyz="0 0.00419 0"/>
+                </xacro:if>
+                <xacro:if value="${prefix=='right'}">
+                    <origin xyz="0 -0.00419 0"/>
+                </xacro:if>
+                <inertia ixx="3.048e-4" ixy="0.0" ixz="0.0" iyy="5.647e-4" iyz="0.0" izz="3.048e-4"/>
+            </inertial>
+        </link>
+
+        <!--  joint  -->
+        <joint name="${prefix}_wheel_joint" type="revolute">
+            <axis xyz="0 1 0"/>
+            <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_z_offset}" rpy="0 0 0"/>
+            <!--      limit not work while type="continuous"-->
+            <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}" lower="-1e16" upper="1e16"/>
+            <dynamics damping="0.0" friction="0.05"/>
+            <parent link="${connected_to}"/>
+            <child link="${prefix}_wheel"/>
+        </joint>
+
+        <!-- transmission -->
+        <transmission name="${prefix}_wheel_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${prefix}_wheel_actuator">
+                <mechanicalReduction>${mechanical_reduction}</mechanicalReduction>
+            </actuator>
+            <joint name="${prefix}_wheel_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+
+    </xacro:macro>
+
+</robot>

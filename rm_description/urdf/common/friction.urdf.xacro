@@ -1,0 +1,37 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="friction_wheel" params="prefixs:='' connected_to:=''  wheel_x_offset:='0' wheel_y_offset:='0' wheel_z_offset:='0' ">
+
+        <link name="${prefixs}_friction_wheel">
+            <inertial>
+                <mass value="0.15269"/>
+                <origin xyz="0 0 -0.004"/>
+                <inertia ixx="4.776e-5" ixy="2.192e-7" ixz="-1.28e-7" iyy="4.759e-5"
+                         iyz="-1.683e-7" izz="6.148e-5"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/common/friction.stl" scale="0.001 0.001 0.001" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/common/friction.stl"  scale="0.001 0.001 0.001" />
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${prefixs}_friction_wheel_joint"  type="continuous">
+            <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_offset_z}" rpy="0 0 0"/>"
+            <dynamics damping="0.0" friction="0.01"/>
+            <limit upper="1e16" lower="-1e16" effort="0.156" velocity="942.66"/>
+            <parent link="${connected_to}" />
+            <child link="${prefixs}_friction_wheel" />
+            <axis xyz="0 0 1" />
+
+        </joint>
+
+    </xacro:macro>
+</robot>

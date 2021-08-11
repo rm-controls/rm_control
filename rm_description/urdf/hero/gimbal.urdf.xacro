@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="threshold" value="0.05"/>
+    <xacro:property name="pitch_lower_limit" value="-1.4"/>
+    <xacro:property name="pitch_upper_limit" value="0.4"/>
+
+    <link name="yaw">
+        <inertial>
+            <mass value="3.941"/>
+            <origin xyz="-0.052 -0.057 0.152"/>
+            <inertia ixx="1.250e-1" ixy="-1.357e-2" ixz="3.487e-2" iyy="1.218e-1"
+                     iyz="3.775e-2" izz="3.242e-2"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://rm_description/meshes/hero/yaw.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://rm_description/meshes/hero/yaw.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="yaw_joint" type="revolute">
+        <origin xyz="0 0 0.129"
+                rpy="0 0 0"/>
+        <dynamics damping="0.0" friction="0.1"/>
+        <limit effort="1.2" velocity="13.82" lower="-1e10" upper="1e10"/>
+        <parent link="base_link"/>
+        <child link="yaw"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="pitch">
+        <inertial>
+            <mass value="1.125"/>
+            <origin xyz="0.104 0.0 0.024"/>
+            <inertia ixx="2.658e-3" ixy="4.995e-6" ixz="-3.326e-3" iyy="2.084e-2"
+                     iyz="6.020e-6" izz="1.948e-2"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://rm_description/meshes/hero/pitch.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://rm_description/meshes/hero/pitch.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="pitch_joint" type="revolute">
+        <origin xyz="-0.06  0 0.191 " rpy="0 0 0"/>
+        <dynamics damping="0.0" friction="0.1"/>
+        <limit effort="1.2" velocity="13.82" lower="${pitch_lower_limit}" upper="${pitch_upper_limit}"/>
+        <safety_controller k_velocity="0.1"
+                           k_position="100"
+                           soft_lower_limit="${pitch_lower_limit+threshold}"
+                           soft_upper_limit="${pitch_upper_limit-threshold}"/>
+        <parent link="yaw"/>
+        <child link="pitch"/>
+        <axis xyz="0 1 0 "/>
+    </joint>
+
+
+</robot>

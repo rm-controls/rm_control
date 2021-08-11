@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+
+<!-- This file contains plugins to simulate an Imu sensor attached to the robot. -->
+<!-- Documentation can be found at http://wiki.ros.org/hector_gazebo_plugins -->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="imu">
+    <xacro:macro name="IMU" params="connected_to imu_name simulation xyz:='0 0 0' rpy:='0 0 0' ">
+        <xacro:property name="imu_update_rate" value="200"/>
+        <xacro:property name="imu_calibration_service_name" value="${imu_name}/calibrate"/>
+        <xacro:property name="acceleration_offset" value="0.0 0.0 0.0"/>
+        <xacro:property name="acceleration_drift" value="0.0 0.0 0.0"/>
+        <xacro:property name="acceleration_drift_frequency" value="0.0 0.0 0.0"/>
+        <xacro:property name="acceleration_gaussian_noise" value="0.1 0.1 0.1"/>
+        <xacro:property name="rate_offset" value="0.0 0.0 0.0"/>
+        <xacro:property name="rate_drift" value="0.0 0.0 0.0"/>
+        <xacro:property name="rate_drift_frequency" value="0.0 0.0 0.0"/>
+        <xacro:property name="rate_gaussian_noise" value="0.2 0.2 0.2"/>
+        <xacro:property name="heading_offset" value="0.0"/>
+        <xacro:property name="heading_drift" value="0.0"/>
+        <xacro:property name="heading_drift_frequency" value="0.0"/>
+        <xacro:property name="heading_gaussian_noise" value="0.3"/>
+
+        <!-- Imu is fixed to the base link -->
+        <joint name="${imu_name}_joint" type="fixed">
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+            <parent link="${connected_to}"/>
+            <child link="${imu_name}"/>
+        </joint>
+
+        <!-- Imu link -->
+        <link name="${imu_name}">
+            <inertial>
+                <mass value="0.001"/>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001"/>
+            </inertial>
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <box size="0.015 0.015 0.004"/>
+                </geometry>
+            </visual>
+            <material name="orange">
+                <color rgba="255 108 10 255"/>
+            </material>
+        </link>
+        <gazebo reference="${imu_name}">
+            <material>Gazebo/Orange</material>
+        </gazebo>
+        <gazebo reference="${imu_name}_joint">
+            <disableFixedJointLumping>true</disableFixedJointLumping>
+        </gazebo>
+
+        <xacro:if value="${simulation}">
+            <gazebo>
+                <plugin name="smb_imu_plugin" filename="libhector_gazebo_ros_imu.so">
+                    <updateRate>${imu_update_rate}</updateRate>
+                    <bodyName>${imu_name}</bodyName>
+                    <frameId>${imu_name}</frameId>
+                    <topicName>${imu_name}</topicName>
+                    <serviceName>${imu_calibration_service_name}</serviceName>
+                    <accelOffset>${acceleration_offset}</accelOffset>
+                    <accelDrift>${acceleration_drift}</accelDrift>
+                    <accelDriftFrequency>${acceleration_drift_frequency}</accelDriftFrequency>
+                    <accelGaussianNoise>${acceleration_gaussian_noise}</accelGaussianNoise>
+                    <rateOffset>${rate_offset}</rateOffset>
+                    <rateDrift>${rate_drift}</rateDrift>
+                    <rateDriftFrequency>${rate_drift_frequency}</rateDriftFrequency>
+                    <rateGaussianNoise>${rate_gaussian_noise}</rateGaussianNoise>
+                    <headingOffset>${heading_offset}</headingOffset>
+                    <headingDrift>${heading_drift}</headingDrift>
+                    <headingDriftFrequency>${heading_drift_frequency}</headingDriftFrequency>
+                    <headingGaussianNoise>${heading_gaussian_noise}</headingGaussianNoise>
+                </plugin>
+            </gazebo>
+        </xacro:if>
+
+    </xacro:macro>
+</robot> 
