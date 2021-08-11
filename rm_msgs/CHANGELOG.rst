@@ -2,6 +2,9 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.0.36 (2021-08-11)
 -------------------
 * Add LICENSE and add licence to package.xml

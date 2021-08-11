@@ -2,6 +2,11 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Rename rm_infrastructure to rm_control
+* Contributors: qiayuan
+
 1.0.36 (2021-08-11)
 -------------------
 

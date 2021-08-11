@@ -4,6 +4,13 @@ Changelog for package rm_base
 
 Forthcoming
 -----------
+* Add CHANGELOG.rst
+* Set version rm_base as same as other package
+* Fix "non-trivial designated initializers not supported" on melodic.
+* Merge branch 'branch_memory'
+* Mkdir rm_base, prepare merge
+* Contributors: qiayuan
+
 * Set version rm_base as same as other package
 * Fix "non-trivial designated initializers not supported" on melodic.
 * Merge branch 'branch_memory'
