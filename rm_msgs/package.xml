@@ -4,7 +4,7 @@
     <version>1.0.35</version>
     <description>The rm_msgs package provides all the messages for all kind of robot</description>
     <maintainer email="liaoqiayuan@gmail.com">qiayuan</maintainer>
-    <license>TODO</license>
+    <license>BSD</license>
 
     <buildtool_depend>catkin</buildtool_depend>
 
