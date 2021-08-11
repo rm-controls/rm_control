@@ -2,19 +2,7 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.1.0 (2021-08-11)
-------------------
-
-1.0.37 (2021-08-11)
--------------------
-
-1.0.36 (2021-08-11)
--------------------
-* Add LICENSE and add licence to package.xml
-* Contributors: qiayuan
-
-1.0.35 (2021-08-11)
--------------------
-* Set version of package.xml to same
-* Merge rm_msgs.git to rm_infrastruct
+Forthcoming
+-----------
+* Reset all version to 0.1.0
 * Contributors: qiayuan

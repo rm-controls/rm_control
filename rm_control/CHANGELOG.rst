@@ -2,21 +2,10 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.1.0 (2021-08-11)
-------------------
-* Add exec_depend to package.xml of rm_control
-* Contributors: qiayuan
-
-1.0.37 (2021-08-11)
--------------------
-* Rename rm_infrastructure to rm_control
-* Contributors: qiayuan
-
-1.0.36 (2021-08-11)
--------------------
-
-1.0.35 (2021-08-11)
--------------------
-* Set version of package.xml to same
-* Add rm_infrastructure meta package
+Forthcoming
+-----------
+* Reset all version to 0.1.0
+* Remove exec_depend rm_base of rm_control for ros_controllers CI
+* Remove exec_depend: rm_description, rm_gazebo of rm_control
+* Update package.xml url of rm_control
 * Contributors: qiayuan
