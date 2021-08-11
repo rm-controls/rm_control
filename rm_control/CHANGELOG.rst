@@ -1,5 +1,5 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package rm_infrastructure
+Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1.0.36 (2021-08-11)
