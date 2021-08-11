@@ -1,0 +1,28 @@
+<launch>
+    <arg name="robot_type" default="$(env ROBOT_TYPE)" doc="Robot type [standard, auto, hero, engineer,sentry]"/>
+    <arg name="load_chassis" default="true"/>
+    <arg name="load_gimbal" default="false"/>
+    <arg name="load_shooter" default="false"/>
+    <arg name="load_arm" default="true"/>
+    <arg name="paused" default="false"/>
+    <arg name="roller_type" default="simple" doc="simple or realistic"/>
+
+    <rosparam file="$(find rm_gazebo)/config/mimic_joint.yaml" command="load"/>
+
+    <param name="robot_description" command="$(find xacro)/xacro $(find rm_description)/urdf/$(arg robot_type)/$(arg robot_type).urdf.xacro
+         load_chassis:=$(arg load_chassis) load_gimbal:=$(arg load_gimbal) load_shooter:=$(arg load_shooter)
+         load_arm:=$(arg load_arm)
+         use_simulation:=true roller_type:=$(arg roller_type)
+"/>
+
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find rm_gazebo)/worlds/engineer/big_resource.world"/>
+        <arg name="paused" value="false"/>
+    </include>
+
+    <!-- push robot_description to factory and spawn robot in gazebo -->
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" clear_params="true"
+          args="-z 0.5 -param robot_description -urdf -model $(arg robot_type)" output="screen"/>
+
+</launch>

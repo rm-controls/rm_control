@@ -1,0 +1,4 @@
+gazebo_ros_control:
+  pid_gains:
+    # the following gains are used by the gazebo_mimic_joint plugin
+    left_finger_joint: { p: 100000.0, i: 0.0, d: 200, i_clamp_max: 2, i_clamp_min: -2, antiwindup: true, publish_state: true }

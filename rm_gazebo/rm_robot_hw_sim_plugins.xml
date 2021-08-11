@@ -1,0 +1,11 @@
+<library path="lib/librm_robot_hw_sim">
+
+  <class
+      name="rm_gazebo/RmRobotHWSim"
+      type="rm_gazebo::RmRobotHWSim"
+      base_class_type="gazebo_ros_control::RobotHWSim">
+    <description>
+      The Robomaster robot simulation interface which constructs joint handles from an SDF/URDF.
+    </description>
+  </class>
+</library>
