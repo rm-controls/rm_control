@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="test">
+    <link name="base_link"/>
+    <link name="mit_link"/>
+
+    <joint name="mit_joint" type="revolute">
+        <parent link="base_link"/>
+        <child link="mit_link"/>
+        <limit effort="30" velocity="50" lower="-1e10" upper="1e10"/>
+        <origin xyz="0 0 0.25"/>
+    </joint>
+
+    <transmission name="mit_joint_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="mit_joint_motor">
+            <mechanicalReduction>1.0</mechanicalReduction>
+        </actuator>
+        <joint name="mit_joint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <offset>-0.004</offset>
+        </joint>
+    </transmission>
+
+</robot>

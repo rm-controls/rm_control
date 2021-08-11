@@ -1,0 +1,32 @@
+actuator_coefficient:
+  rm_3508: # RoboMaster 3508 without reducer
+    act2pos: 0.0007669903  # 2PI/8192
+    act2vel: 0.1047197551   # 2PI/60
+    act2effort: 1.90702994e-5  # 20/16384*0.0156223893
+    effort2act: 52437.561519   # 1/act2effort
+    max_out: 16384
+  rm_6020: # RoboMaster 3508 motor
+    act2pos: 0.0007670840  # 2PI/8192
+    act2vel: 0.1047197551   # 2PI/60
+    act2effort: 5.880969e-5  # special coefficient identify by hands...
+    effort2act: 17004.0   # 1/act2effort
+    max_out: 30000
+  rm_2006: # RoboMaster 2006 motor
+    act2pos: 2.13078897e-5  # 2PI/8192*(1/36)
+    act2vel: 0.0029088820   # 2PI/60*(1/36)
+    act2effort: 0.00018  #10/10000*0.18
+    effort2act: 5555.5555555   # 1/act2effort
+    max_out: 10000
+  cheetah: # MIT cheetah motor
+    act2pos: 3.81475547e-4  # 25/65535
+    act2vel: 0.0317446031   # 130/4095
+    act2effort: 0.008791208  # 36/4095
+    pos2act: 2621.4         # 65535/25
+    vel2act: 31.5           # 4095/130
+    effort2act: 113.75      # 4095/36
+    max_out: 0
+    act2pos_offset: -12.5
+    act2vel_offset: -65.0
+    act2effort_offset: -18.0
+    kp2act: 8.19            # 4095/500
+    kd2act: 819             # 4095/5
