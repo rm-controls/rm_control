@@ -2,8 +2,8 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.1.0 (2021-08-11)
+------------------
 * Add license to all source files
 * Set version of rm_gazebo as same as other package
 * Merge remote-tracking branch 'alias_memory/metapackage'

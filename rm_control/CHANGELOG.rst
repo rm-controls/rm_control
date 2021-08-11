@@ -2,8 +2,8 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.1.0 (2021-08-11)
+------------------
 * Add exec_depend to package.xml of rm_control
 * Contributors: qiayuan
 

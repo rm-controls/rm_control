@@ -2,8 +2,8 @@
 Changelog for package rm_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.1.0 (2021-08-11)
+------------------
 * Set version of rm_description as same as other package
 * Merge remote-tracking branch 'alias_memory/metapackage'
 * Move all files to rm_description/rm_description, prepare for merge
