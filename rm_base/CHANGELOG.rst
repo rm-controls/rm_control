@@ -2,8 +2,8 @@
 Changelog for package rm_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.37 (2021-08-11)
+-------------------
 * Add CHANGELOG.rst
 * Set version rm_base as same as other package
 * Fix "non-trivial designated initializers not supported" on melodic.
