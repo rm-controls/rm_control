@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 5/14/21.
 //
@@ -42,15 +42,22 @@
 #include <utility>
 #include <hardware_interface/internal/hardware_resource_manager.h>
 
-namespace hardware_interface {
-
-class ActuatorExtraHandle {
- public:
+namespace hardware_interface
+{
+class ActuatorExtraHandle
+{
+public:
   ActuatorExtraHandle() = default;
-  ActuatorExtraHandle(std::string name, bool *halted, bool *need_calibration, bool *calibrated,
-                      bool *calibration_reading, double *pos, double *offset)
-      : name_(std::move(name)), halted_(halted), need_calibration_(need_calibration), calibrated_(calibrated),
-        calibration_reading_(calibration_reading), pos_(pos), offset_(offset) {
+  ActuatorExtraHandle(std::string name, bool* halted, bool* need_calibration, bool* calibrated,
+                      bool* calibration_reading, double* pos, double* offset)
+    : name_(std::move(name))
+    , halted_(halted)
+    , need_calibration_(need_calibration)
+    , calibrated_(calibrated)
+    , calibration_reading_(calibration_reading)
+    , pos_(pos)
+    , offset_(offset)
+  {
     if (!halted)
       throw HardwareInterfaceException("Cannot create handle '" + name + "'. halted pointer is null.");
     if (!need_calibration)
@@ -64,49 +71,63 @@ class ActuatorExtraHandle {
     if (!offset)
       throw HardwareInterfaceException("Cannot create handle '" + name + "'. offset pointer is null.");
   }
-  std::string getName() const { return name_; }
-  bool getHalted() const {
+  std::string getName() const
+  {
+    return name_;
+  }
+  bool getHalted() const
+  {
     assert(halted_);
     return *halted_;
   }
-  bool getNeedCalibration() const {
+  bool getNeedCalibration() const
+  {
     assert(need_calibration_);
     return *need_calibration_;
   }
-  bool getCalibrated() const {
+  bool getCalibrated() const
+  {
     assert(calibrated_);
     return *calibrated_;
   }
-  bool getCalibrationReading() const {
+  bool getCalibrationReading() const
+  {
     assert(calibration_reading_);
     return *calibration_reading_;
   }
-  double getPosition() const {
+  double getPosition() const
+  {
     assert(pos_);
     return *pos_;
   }
-  double getOffset() const {
+  double getOffset() const
+  {
     assert(offset_);
     return *offset_;
   }
-  void setOffset(double offset) {
+  void setOffset(double offset)
+  {
     *offset_ = offset;
   }
-  void setCalibrated(bool calibrated) {
+  void setCalibrated(bool calibrated)
+  {
     *calibrated_ = calibrated;
   }
- private:
+
+private:
   std::string name_;
-  bool *halted_ = {nullptr};
-  bool *need_calibration_ = {nullptr};
-  bool *calibrated_ = {nullptr};
-  bool *calibration_reading_ = {nullptr};
-  double *pos_{};
-  double *offset_{};
+  bool* halted_ = { nullptr };
+  bool* need_calibration_ = { nullptr };
+  bool* calibrated_ = { nullptr };
+  bool* calibration_reading_ = { nullptr };
+  double* pos_{};
+  double* offset_{};
 };
 
-class ActuatorExtraInterface : public HardwareResourceManager<ActuatorExtraHandle, ClaimResources> {};
+class ActuatorExtraInterface : public HardwareResourceManager<ActuatorExtraHandle, ClaimResources>
+{
+};
 
-}
+}  // namespace hardware_interface
 
-#endif //RM_COMMON_CALIBRATION_INTERFACE_H_
+#endif  // RM_COMMON_CALIBRATION_INTERFACE_H_

@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 1/5/21.
 //
@@ -41,15 +41,17 @@
 #include <realtime_tools/realtime_publisher.h>
 #include <rm_msgs/LpData.h>
 
-class LowPassFilter {
- public:
-  explicit LowPassFilter(ros::NodeHandle &nh);
+class LowPassFilter
+{
+public:
+  explicit LowPassFilter(ros::NodeHandle& nh);
   explicit LowPassFilter(double cutoff_freq);
   void input(double in);
   void input(double in, ros::Time time);
   double output();
   void reset();
- private:
+
+private:
   double in_[3]{};
   double out_[3]{};
 
@@ -67,7 +69,6 @@ class LowPassFilter {
   ros::Duration delta_t_;
 
   std::shared_ptr<realtime_tools::RealtimePublisher<rm_msgs::LpData>> realtime_pub_{};
-
 };
 
-#endif //RM_COMMON_FILTERS_LP_FILTER_H
+#endif  // RM_COMMON_FILTERS_LP_FILTER_H

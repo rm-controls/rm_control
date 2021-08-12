@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 3/21/20.
 //
@@ -42,41 +42,52 @@
 #include <string>
 #include "math_utilities.h"
 
-template<typename T>
-class RampTraj {
- private:
-  T start_{};  //Start pos and velocity
-  T target_{};  //End pos and velocity
+template <typename T>
+class RampTraj
+{
+private:
+  T start_{};   // Start pos and velocity
+  T target_{};  // End pos and velocity
   T time_total_{};
   T time_acc_{};
   T time_start_{};
 
   T acc_{};
-  T speed_{}; //When in uniform speed
+  T speed_{};  // When in uniform speed
   T a0_, b0_, c0_;
   T a1_, b1_, c1_;
- public:
+
+public:
   RampTraj() = default;
-  void setLimit(T max_acc) { acc_ = max_acc; }
-  void setState(T start, T end, T time_now) {
+  void setLimit(T max_acc)
+  {
+    acc_ = max_acc;
+  }
+  void setState(T start, T end, T time_now)
+  {
     start_ = start;
     target_ = end;
     time_start_ = time_now;
   };
-  bool isReach(T t) { return (t >= time_total_ + time_start_); }
+  bool isReach(T t)
+  {
+    return (t >= time_total_ + time_start_);
+  }
 
-  bool calc(T t) {
-    if ((target_ - start_) < 0) {
+  bool calc(T t)
+  {
+    if ((target_ - start_) < 0)
+    {
       acc_ = -acc_;
     }
     time_total_ = t;
-    if (abs(acc_)//if distant is too small
-        < abs(4. * (target_ - start_)) / (t * t)) {
+    if (abs(acc_)  // if distant is too small
+        < abs(4. * (target_ - start_)) / (t * t))
+    {
       return false;
     }
-    time_acc_ = time_total_ / 2.
-        - sqrt(acc_ * acc_ * time_total_ * time_total_ - 4. * acc_ * (target_ - start_))
-            / abs(2. * acc_);
+    time_acc_ = time_total_ / 2. -
+                sqrt(acc_ * acc_ * time_total_ * time_total_ - 4. * acc_ * (target_ - start_)) / abs(2. * acc_);
     a0_ = start_;
     b0_ = 0.;
     c0_ = 0.5 * acc_;
@@ -87,91 +98,107 @@ class RampTraj {
     return true;
   };
 
-  T getPos(T t) {
+  T getPos(T t)
+  {
     t -= time_start_;
     if (t < 0.)
       return start_;
     else if (t > time_total_)
       return target_;
 
-    if (t <= time_total_) {
+    if (t <= time_total_)
+    {
       if (t < time_acc_)
         return a0_ + b0_ * t + c0_ * t * t;
       else if (t < time_total_ - time_acc_)
         return speed_ * (t - time_acc_) + a0_ + c0_ * (time_acc_ * time_acc_);
       else
         return a1_ + b1_ * t + c1_ * t * t;
-    } else
+    }
+    else
       return target_;
   }
 
-  T getVel(T t) {
+  T getVel(T t)
+  {
     t -= time_start_;
     if (t < 0. || t > time_total_)
       return 0;
 
-    if (t <= time_total_) {
+    if (t <= time_total_)
+    {
       if (t < time_acc_)
         return b0_ + 2. * c0_ * t;
       else if (t < time_total_ - time_acc_)
         return speed_;
       else
         return b1_ + 2. * c1_ * t;
-    } else
+    }
+    else
       return 0.;
   }
 
-  T getAcc(T t) {
+  T getAcc(T t)
+  {
     t -= time_start_;
     if (t < 0. || t > time_total_)
       return 0;
 
-    if (t <= time_total_) {
+    if (t <= time_total_)
+    {
       if (t < time_acc_)
         return 2. * c0_;
       else if (t < time_total_ - time_acc_)
         return 0;
       else
         return 2. * c1_;
-    } else
+    }
+    else
       return 0.;
   }
 };
 
-//actually it is a controller
-//ref: https://build-its-inprogress.blogspot.com/2017/12/controls-ramblings-how-to-get-from.html
-template<typename T>
-class MinTimeTraj {
- private:
+// actually it is a controller
+// ref: https://build-its-inprogress.blogspot.com/2017/12/controls-ramblings-how-to-get-from.html
+template <typename T>
+class MinTimeTraj
+{
+private:
   T target_{};
   T inertia_{};
   T max_tau_{};
   T tolerance_{};
   bool is_reach_{};
- public:
+
+public:
   MinTimeTraj() = default;
-  void setLimit(T max_tau, T inertia, T tolerance) {
+  void setLimit(T max_tau, T inertia, T tolerance)
+  {
     max_tau_ = max_tau;
     inertia_ = inertia;
     tolerance_ = tolerance;
   }
 
-  void setTarget(T target) {
+  void setTarget(T target)
+  {
     target_ = target;
     is_reach_ = false;
   }
-  bool isReach() {
+  bool isReach()
+  {
     return is_reach_;
   }
-  T getTau(T pos, T vel) {
+  T getTau(T pos, T vel)
+  {
     T dx = pos - target_;
     if (std::abs(dx) > tolerance_)
       return max_tau_ * sgn(-max_tau_ * dx - 0.5 * inertia_ * vel * std::abs(vel));
-    else {
+    else
+    {
       is_reach_ = true;
       return 0;
     }
   }
 };
 
-#endif // RM_COMMON_TF_RT_BROADCASTER_H
+#endif  // RM_COMMON_TF_RT_BROADCASTER_H

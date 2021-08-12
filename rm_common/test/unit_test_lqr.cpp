@@ -30,14 +30,15 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by chenzheng on 3/20/21.
 //
 
 #include <gtest/gtest.h>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
   testing::InitGoogleTest(&argc, argv);
 
   return RUN_ALL_TESTS();

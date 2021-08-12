@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 3/21/20.
 //
@@ -39,7 +39,8 @@
 #include <ros/ros.h>
 //#include <rm_msgs/Joint.h>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
   ros::init(argc, argv, "traj_test");
 
   ros::NodeHandle nh;
@@ -54,7 +55,8 @@ int main(int argc, char **argv) {
 
   if (!traj.calc(2.5))
     ROS_ERROR("Acc too small");
-  else {
+  else
+  {
     pub.publish(cmd);
     loop_rate.sleep();
     pub.publish(cmd);
@@ -74,7 +76,8 @@ int main(int argc, char **argv) {
 
     double t = -1.;
 
-    while (ros::ok() && !traj.isReach(t)) {
+    while (ros::ok() && !traj.isReach(t))
+    {
       cmd.q_des[0] = traj.getPos(t);
       cmd.qd_des[0] = traj.getVel(t);
       cmd.ff[0] = traj.getAcc(t);
@@ -108,7 +111,8 @@ int main(int argc, char **argv) {
   min_traj.setLimit(1., 1., 0.01);
   min_traj.setTarget(1.);
   double s[3]{};
-  while (ros::ok() && !min_traj.isReach()) {
+  while (ros::ok() && !min_traj.isReach())
+  {
     s[2] = min_traj.getTau(s[0], s[1]) / 1.;
     s[1] += 0.01 * s[2];
     s[0] += 0.01 * s[1];
