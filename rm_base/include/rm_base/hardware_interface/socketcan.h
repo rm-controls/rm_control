@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 3/3/21.
 //
@@ -44,15 +44,16 @@
 #include <pthread.h>
 #include <boost/function.hpp>
 
-namespace can {
-
-class SocketCAN {
- private:
+namespace can
+{
+class SocketCAN
+{
+private:
   ifreq interface_request_{};
   sockaddr_can address_{};
   pthread_t receiver_thread_id_{};
 
- public:
+public:
   /**
    * CAN socket file descriptor
    */
@@ -68,7 +69,7 @@ class SocketCAN {
   /**
    * Open and bind socket
    */
-  bool open(const std::string &interface, boost::function<void(const can_frame &frame)> handler);
+  bool open(const std::string& interface, boost::function<void(const can_frame& frame)> handler);
   /**
    * Close and unbind socket
    */
@@ -83,7 +84,7 @@ class SocketCAN {
   /**
    * Sends the referenced frame to the bus
    */
-  void write(can_frame *frame) const;
+  void write(can_frame* frame) const;
   /**
    * Starts a new thread, that will wait for socket events
    */
@@ -92,9 +93,9 @@ class SocketCAN {
    * Pointer to a function which shall be called
    * when frames are being received from the CAN bus
    */
-  boost::function<void(const can_frame &frame)> reception_handler;
+  boost::function<void(const can_frame& frame)> reception_handler;
 };
 
-}
+}  // namespace can
 
-#endif //RM_BASE_HARDWARE_INTERFACE_SOCKETCAN_H
+#endif  // RM_BASE_HARDWARE_INTERFACE_SOCKETCAN_H

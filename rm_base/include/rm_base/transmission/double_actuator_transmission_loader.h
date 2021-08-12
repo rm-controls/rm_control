@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 1/2/21.
 //
@@ -43,16 +43,17 @@
 #include <tinyxml.h>
 #include <transmission_interface/transmission_loader.h>
 
-namespace transmission_interface {
+namespace transmission_interface
+{
+class DoubleActuatorTransmissionLoader : public TransmissionLoader
+{
+public:
+  TransmissionSharedPtr load(const TransmissionInfo& transmission_info) override;
 
-class DoubleActuatorTransmissionLoader : public TransmissionLoader {
- public:
-  TransmissionSharedPtr load(const TransmissionInfo &transmission_info) override;
-
- private:
-  static bool getActuatorConfig(const TransmissionInfo &transmission_info, std::vector<double> &actuator_reduction);
-  static bool getJointConfig(const TransmissionInfo &transmission_info, double &joint_reduction, double &joint_offset);
+private:
+  static bool getActuatorConfig(const TransmissionInfo& transmission_info, std::vector<double>& actuator_reduction);
+  static bool getJointConfig(const TransmissionInfo& transmission_info, double& joint_reduction, double& joint_offset);
 };
 
-}
-#endif //RM_BASE_INCLUDE_RM_BASE_TRANSMISSION_REVOLUTE_TRANSMISSION_LOADER_H_
+}  // namespace transmission_interface
+#endif  // RM_BASE_INCLUDE_RM_BASE_TRANSMISSION_REVOLUTE_TRANSMISSION_LOADER_H_

@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 1/20/21.
 //
@@ -42,13 +42,16 @@
 #include <rm_common/filters/lp_filter.h>
 #include <unordered_map>
 
-namespace rm_base {
-struct ActCoeff {
-  double act2pos, act2vel, act2effort, pos2act, vel2act, effort2act, max_out,
-      act2pos_offset, act2vel_offset, act2effort_offset, kp2act, kd2act; // for MIT Cheetah motor
+namespace rm_base
+{
+struct ActCoeff
+{
+  double act2pos, act2vel, act2effort, pos2act, vel2act, effort2act, max_out, act2pos_offset, act2vel_offset,
+      act2effort_offset, kp2act, kd2act;  // for MIT Cheetah motor
 };
 
-struct ActData {
+struct ActData
+{
   std::string name;
   std::string type;
   ros::Time stamp;
@@ -64,10 +67,11 @@ struct ActData {
   double cmd_pos, cmd_vel, cmd_effort, exe_effort;
   double offset;
   // For multiple cycle under absolute encoder (RoboMaster motor)
-  LowPassFilter *lp_filter;
+  LowPassFilter* lp_filter;
 };
 
-struct ImuData {
+struct ImuData
+{
   double ori[4];
   double ori_cov[9];
   double angular_vel[3];
@@ -76,11 +80,12 @@ struct ImuData {
   double linear_acc_cov[9];
 };
 
-struct CanDataPtr {
-  std::unordered_map<std::string, ActCoeff> *type2act_coeffs_;
-  std::unordered_map<int, ActData> *id2act_data_;
-  std::unordered_map<int, ImuData> *id2imu_data_;
+struct CanDataPtr
+{
+  std::unordered_map<std::string, ActCoeff>* type2act_coeffs_;
+  std::unordered_map<int, ActData>* id2act_data_;
+  std::unordered_map<int, ImuData>* id2imu_data_;
 };
-}
+}  // namespace rm_base
 
-#endif //RM_BASE_INCLUDE_RM_BASE_TYPES_H_
+#endif  // RM_BASE_INCLUDE_RM_BASE_TYPES_H_

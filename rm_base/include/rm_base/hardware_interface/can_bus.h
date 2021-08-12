@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 12/28/20.
 //
@@ -45,19 +45,23 @@
 #include <mutex>
 #include <thread>
 
-namespace rm_base {
-struct CanFrameStamp {
+namespace rm_base
+{
+struct CanFrameStamp
+{
   can_frame frame;
   ros::Time stamp;
 };
 
-class CanBus {
- public:
-  CanBus(const std::string &bus_name, CanDataPtr data_prt);
+class CanBus
+{
+public:
+  CanBus(const std::string& bus_name, CanDataPtr data_prt);
   void read(ros::Time time);
   void write();
- private:
-  void frameCallback(const can_frame &frame);
+
+private:
+  void frameCallback(const can_frame& frame);
 
   can::SocketCAN socket_can_;
   CanDataPtr data_prt_;
@@ -70,6 +74,6 @@ class CanBus {
   mutable std::mutex mutex_;
 };
 
-}
+}  // namespace rm_base
 
-#endif  //RM_BASE_INCLUDE_RM_BASE_CAN_BUS_H_
+#endif  // RM_BASE_INCLUDE_RM_BASE_CAN_BUS_H_

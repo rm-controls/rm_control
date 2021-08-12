@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 12/30/20.
 //
@@ -50,13 +50,14 @@
 // ROS control
 #include <controller_manager/controller_manager.h>
 
-namespace rm_base {
+namespace rm_base
+{
 using namespace std::chrono;
 
-class RmBaseLoop {
- public:
-  RmBaseLoop(ros::NodeHandle &nh,
-             std::shared_ptr<RmBaseHardWareInterface> hardware_interface);
+class RmBaseLoop
+{
+public:
+  RmBaseLoop(ros::NodeHandle& nh, std::shared_ptr<RmBaseHardWareInterface> hardware_interface);
 
   /** Timed method that reads current hardware's state, runs the controller
       code once and sends the new commands to the hardware.
@@ -65,9 +66,9 @@ class RmBaseLoop {
           does NOT guarantee that the time source is strictly
           linearly increasing.
   **/
-  void update(const ros::TimerEvent &);
+  void update(const ros::TimerEvent&);
 
- private:
+private:
   // Startup and shutdown of the internal node inside a roscpp program
   ros::NodeHandle nh_;
 
@@ -93,6 +94,6 @@ class RmBaseLoop {
   // Abstract Hardware Interface for your robot
   std::shared_ptr<RmBaseHardWareInterface> hardware_interface_;
 };
-}// namespace rm_base
+}  // namespace rm_base
 
-#endif //RM_BASE_INCLUDE_RM_BASE_CONTROL_LOOP_H_
+#endif  // RM_BASE_INCLUDE_RM_BASE_CONTROL_LOOP_H_

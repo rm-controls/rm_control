@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 12/21/20.
 //
@@ -62,31 +62,32 @@
 
 #include "can_bus.h"
 
-namespace rm_base {
-
-class RmBaseHardWareInterface : public hardware_interface::RobotHW {
- public:
+namespace rm_base
+{
+class RmBaseHardWareInterface : public hardware_interface::RobotHW
+{
+public:
   RmBaseHardWareInterface() = default;
 
-  bool init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) override;
+  bool init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) override;
 
-  void read(const ros::Time &time, const ros::Duration &period) override;
+  void read(const ros::Time& time, const ros::Duration& period) override;
 
-  void write(const ros::Time &time, const ros::Duration &period) override;
+  void write(const ros::Time& time, const ros::Duration& period) override;
 
- private:
+private:
   bool is_actuator_specified_ = false;
 
-  bool parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs);
-  bool parseActData(XmlRpc::XmlRpcValue &act_datas, ros::NodeHandle &robot_hw_nh);
-  bool parseImuData(XmlRpc::XmlRpcValue &imu_datas, ros::NodeHandle &robot_hw_nh);
-  bool load_urdf(ros::NodeHandle &root_nh);
-  bool setupTransmission(ros::NodeHandle &root_nh);
-  bool setupJointLimit(ros::NodeHandle &root_nh);
-  void publishActuatorState(const ros::Time &time);
+  bool parseActCoeffs(XmlRpc::XmlRpcValue& act_coeffs);
+  bool parseActData(XmlRpc::XmlRpcValue& act_datas, ros::NodeHandle& robot_hw_nh);
+  bool parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHandle& robot_hw_nh);
+  bool load_urdf(ros::NodeHandle& root_nh);
+  bool setupTransmission(ros::NodeHandle& root_nh);
+  bool setupJointLimit(ros::NodeHandle& root_nh);
+  void publishActuatorState(const ros::Time& time);
 
   // Interface
-  std::vector<CanBus *> can_buses_{};
+  std::vector<CanBus*> can_buses_{};
   hardware_interface::ActuatorStateInterface act_state_interface_;
   hardware_interface::ActuatorExtraInterface act_extra_interface_;
   hardware_interface::EffortActuatorInterface effort_act_interface_;
@@ -94,15 +95,15 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
   std::unique_ptr<transmission_interface::TransmissionInterfaceLoader> transmission_loader_{};
   transmission_interface::RobotTransmissions robot_transmissions_;
-  transmission_interface::ActuatorToJointStateInterface *act_to_jnt_state_{};
-  transmission_interface::JointToActuatorEffortInterface *jnt_to_act_effort_{};
+  transmission_interface::ActuatorToJointStateInterface* act_to_jnt_state_{};
+  transmission_interface::JointToActuatorEffortInterface* jnt_to_act_effort_{};
   joint_limits_interface::EffortJointSaturationInterface effort_jnt_saturation_interface_;
   joint_limits_interface::EffortJointSoftLimitsInterface effort_jnt_soft_limits_interface_;
   std::vector<hardware_interface::JointHandle> effort_joint_handles_{};
 
   // URDF model of the robot
-  std::string urdf_string_;                   // for transmission
-  std::shared_ptr<urdf::Model> urdf_model_;   // for limit
+  std::string urdf_string_;                  // for transmission
+  std::shared_ptr<urdf::Model> urdf_model_;  // for limit
 
   // Actuator
   std::unordered_map<std::string, ActCoeff> type2act_coeffs_{};
@@ -113,8 +114,7 @@ class RmBaseHardWareInterface : public hardware_interface::RobotHW {
 
   ros::Time last_publish_time_;
   std::shared_ptr<realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>> actuator_state_pub_;
-
 };
 
-}
-#endif //RM_BASE_INCLUDE_RM_BASE_HARDWARE_INTERFACE_H_
+}  // namespace rm_base
+#endif  // RM_BASE_INCLUDE_RM_BASE_HARDWARE_INTERFACE_H_

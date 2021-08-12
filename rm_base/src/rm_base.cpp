@@ -30,18 +30,18 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 12/27/20.
 //
 
 #include "rm_base/control_loop.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
   ros::init(argc, argv, "rm_base");
   ros::NodeHandle nh;
   ros::NodeHandle robot_hw_nh("~");
-
 
   // Run the hardware interface node
   // -------------------------------
@@ -52,14 +52,18 @@ int main(int argc, char **argv) {
   ros::AsyncSpinner spinner(2);
   spinner.start();
 
-  struct sched_param params{.sched_priority = 95};
+  struct sched_param params
+  {
+    .sched_priority = 95
+  };
   if (sched_setscheduler(0, SCHED_FIFO, &params) == -1)
     ROS_ERROR("Set scheduler failed, RUN THIS NODE AS SUPER USER.\n");
 
-  try {
+  try
+  {
     // Create the hardware interface specific to your robot
-    std::shared_ptr<rm_base::RmBaseHardWareInterface>
-        rm_base_hw_interface = std::make_shared<rm_base::RmBaseHardWareInterface>();
+    std::shared_ptr<rm_base::RmBaseHardWareInterface> rm_base_hw_interface =
+        std::make_shared<rm_base::RmBaseHardWareInterface>();
     // Initialise the hardware interface:
     // 1. retrieve configuration from rosparam
     // 2. initialize the hardware and interface it with ros_control
@@ -71,11 +75,12 @@ int main(int argc, char **argv) {
     // Wait until shutdown signal received
     ros::waitForShutdown();
   }
-  catch (const ros::Exception &e) {
-    ROS_FATAL_STREAM("Error in the hardware interface:\n" << "\t" << e.what());
+  catch (const ros::Exception& e)
+  {
+    ROS_FATAL_STREAM("Error in the hardware interface:\n"
+                     << "\t" << e.what());
     return 1;
   }
 
   return 0;
 }
-

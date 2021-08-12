@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 5/16/21.
 //
@@ -42,14 +42,17 @@
 #include <joint_limits_interface/joint_limits_urdf.h>
 #include <joint_limits_interface/joint_limits_rosparam.h>
 
-namespace rm_base {
-
+namespace rm_base
+{
 // Lots of ugly parse xml code...
 
-bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs) {
+bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue& act_coeffs)
+{
   ROS_ASSERT(act_coeffs.getType() == XmlRpc::XmlRpcValue::TypeStruct);
-  try {
-    for (auto it = act_coeffs.begin(); it != act_coeffs.end(); ++it) {
+  try
+  {
+    for (auto it = act_coeffs.begin(); it != act_coeffs.end(); ++it)
+    {
       ActCoeff act_coeff{};
 
       // All motor
@@ -108,30 +111,38 @@ bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue &act_coeffs) {
       if (type2act_coeffs_.find(type) == type2act_coeffs_.end())
         type2act_coeffs_.insert(std::make_pair(type, act_coeff));
       else
-        ROS_ERROR_STREAM(
-            "Repeat actuator coefficient of type: " << type);
+        ROS_ERROR_STREAM("Repeat actuator coefficient of type: " << type);
     }
   }
-  catch (XmlRpc::XmlRpcException &e) {
+  catch (XmlRpc::XmlRpcException& e)
+  {
     ROS_FATAL_STREAM("Exception raised by XmlRpc while reading the "
-                         << "configuration: " << e.getMessage() << ".\n"
-                         << "Please check the configuration, particularly parameter types.");
+                     << "configuration: " << e.getMessage() << ".\n"
+                     << "Please check the configuration, particularly parameter types.");
     return false;
   }
   return true;
 }
 
-bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::NodeHandle &robot_hw_nh) {
+bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue& act_datas, ros::NodeHandle& robot_hw_nh)
+{
   ROS_ASSERT(act_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
-  try {
-    for (auto it = act_datas.begin(); it != act_datas.end(); ++it) {
-      if (!it->second.hasMember("bus")) {
+  try
+  {
+    for (auto it = act_datas.begin(); it != act_datas.end(); ++it)
+    {
+      if (!it->second.hasMember("bus"))
+      {
         ROS_ERROR_STREAM("Actuator " << it->first << " has no associated bus.");
         continue;
-      } else if (!it->second.hasMember("type")) {
+      }
+      else if (!it->second.hasMember("type"))
+      {
         ROS_ERROR_STREAM("Actuator " << it->first << " has no associated type.");
         continue;
-      } else if (!it->second.hasMember("id")) {
+      }
+      else if (!it->second.hasMember("id"))
+      {
         ROS_ERROR_STREAM("Actuator " << it->first << " has no associated ID.");
         continue;
       }
@@ -143,7 +154,8 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
       std::string bus = act_datas[it->first]["bus"], type = act_datas[it->first]["type"];
       int id = static_cast<int>(act_datas[it->first]["id"]);
       // check define of act_coeffs
-      if (type2act_coeffs_.find(type) == type2act_coeffs_.end()) {
+      if (type2act_coeffs_.find(type) == type2act_coeffs_.end())
+      {
         ROS_ERROR_STREAM("Type " << type << " has no associated coefficient.");
         return false;
       }
@@ -151,42 +163,59 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
       if (bus_id2act_data_.find(bus) == bus_id2act_data_.end())
         bus_id2act_data_.insert(std::make_pair(bus, std::unordered_map<int, ActData>()));
 
-      if (!(bus_id2act_data_[bus].find(id) == bus_id2act_data_[bus].end())) {
+      if (!(bus_id2act_data_[bus].find(id) == bus_id2act_data_[bus].end()))
+      {
         ROS_ERROR_STREAM("Repeat actuator on bus " << bus << " and ID " << id);
         return false;
-      } else {
+      }
+      else
+      {
         ros::NodeHandle nh = ros::NodeHandle(robot_hw_nh, "actuators/" + it->first);
-        bus_id2act_data_[bus].insert(
-            std::make_pair(
-                id,
-                ActData{.name = it->first, .type = type, .stamp=ros::Time::now(), .seq = 0, .halted = false,
-                        .need_calibration = need_calibration,.calibrated=false, .calibration_reading = false, .q_raw = 0, .qd_raw = 0, .temp= 0,
-                    .q_circle = 0, .q_last = 0, .frequency = 0, .pos = 0, .vel = 0, .effort = 0, .cmd_pos = 0, .cmd_vel = 0,
-                    .cmd_effort = 0, .exe_effort=0, .offset = 0,
-                    .lp_filter=new LowPassFilter(nh)}));
+        bus_id2act_data_[bus].insert(std::make_pair(id, ActData{ .name = it->first,
+                                                                 .type = type,
+                                                                 .stamp = ros::Time::now(),
+                                                                 .seq = 0,
+                                                                 .halted = false,
+                                                                 .need_calibration = need_calibration,
+                                                                 .calibrated = false,
+                                                                 .calibration_reading = false,
+                                                                 .q_raw = 0,
+                                                                 .qd_raw = 0,
+                                                                 .temp = 0,
+                                                                 .q_circle = 0,
+                                                                 .q_last = 0,
+                                                                 .frequency = 0,
+                                                                 .pos = 0,
+                                                                 .vel = 0,
+                                                                 .effort = 0,
+                                                                 .cmd_pos = 0,
+                                                                 .cmd_vel = 0,
+                                                                 .cmd_effort = 0,
+                                                                 .exe_effort = 0,
+                                                                 .offset = 0,
+                                                                 .lp_filter = new LowPassFilter(nh) }));
       }
 
       // for ros_control interface
-      hardware_interface::ActuatorStateHandle act_state(bus_id2act_data_[bus][id].name,
-                                                        &bus_id2act_data_[bus][id].pos,
+      hardware_interface::ActuatorStateHandle act_state(bus_id2act_data_[bus][id].name, &bus_id2act_data_[bus][id].pos,
                                                         &bus_id2act_data_[bus][id].vel,
                                                         &bus_id2act_data_[bus][id].effort);
-      hardware_interface::ActuatorExtraHandle act_extra_(bus_id2act_data_[bus][id].name,
-                                                         &bus_id2act_data_[bus][id].halted,
-                                                         &bus_id2act_data_[bus][id].need_calibration,
-                                                         &bus_id2act_data_[bus][id].calibrated,
-                                                         &bus_id2act_data_[bus][id].calibration_reading,
-                                                         &bus_id2act_data_[bus][id].pos,
-                                                         &bus_id2act_data_[bus][id].offset);
+      hardware_interface::ActuatorExtraHandle act_extra_(
+          bus_id2act_data_[bus][id].name, &bus_id2act_data_[bus][id].halted,
+          &bus_id2act_data_[bus][id].need_calibration, &bus_id2act_data_[bus][id].calibrated,
+          &bus_id2act_data_[bus][id].calibration_reading, &bus_id2act_data_[bus][id].pos,
+          &bus_id2act_data_[bus][id].offset);
       act_state_interface_.registerHandle(act_state);
       act_extra_interface_.registerHandle(act_extra_);
       // RoboMaster motors are effect actuator
-      if (type.find("rm") != std::string::npos || type.find("cheetah") != std::string::npos) {
+      if (type.find("rm") != std::string::npos || type.find("cheetah") != std::string::npos)
+      {
         effort_act_interface_.registerHandle(
             hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].exe_effort));
-      } else {
-        ROS_ERROR_STREAM("Actuator " << it->first <<
-                                     "'s type neither RoboMaster(rm_xxx) nor Cheetah(cheetah_xxx)");
+      }
+      else
+      {
+        ROS_ERROR_STREAM("Actuator " << it->first << "'s type neither RoboMaster(rm_xxx) nor Cheetah(cheetah_xxx)");
         return false;
       }
     }
@@ -195,35 +224,50 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue &act_datas, ros::
     registerInterface(&effort_act_interface_);
     is_actuator_specified_ = true;
   }
-  catch (XmlRpc::XmlRpcException &e) {
+  catch (XmlRpc::XmlRpcException& e)
+  {
     ROS_FATAL_STREAM("Exception raised by XmlRpc while reading the "
-                         << "configuration: " << e.getMessage() << ".\n"
-                         << "Please check the configuration, particularly parameter types.");
+                     << "configuration: " << e.getMessage() << ".\n"
+                     << "Please check the configuration, particularly parameter types.");
     return false;
   }
   return true;
 }
 
-bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue &imu_datas, ros::NodeHandle &robot_hw_nh) {
+bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHandle& robot_hw_nh)
+{
   ROS_ASSERT(imu_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
-  try {
-    for (auto it = imu_datas.begin(); it != imu_datas.end(); ++it) {
-      if (!it->second.hasMember("frame_id")) {
+  try
+  {
+    for (auto it = imu_datas.begin(); it != imu_datas.end(); ++it)
+    {
+      if (!it->second.hasMember("frame_id"))
+      {
         ROS_ERROR_STREAM("Imu " << it->first << " has no associated frame id.");
         continue;
-      } else if (!it->second.hasMember("bus")) {
+      }
+      else if (!it->second.hasMember("bus"))
+      {
         ROS_ERROR_STREAM("Imu " << it->first << " has no associated bus.");
         continue;
-      } else if (!it->second.hasMember("id")) {
+      }
+      else if (!it->second.hasMember("id"))
+      {
         ROS_ERROR_STREAM("Imu " << it->first << " has no associated ID.");
         continue;
-      } else if (!it->second.hasMember("orientation_covariance_diagonal")) {
+      }
+      else if (!it->second.hasMember("orientation_covariance_diagonal"))
+      {
         ROS_ERROR_STREAM("Imu " << it->first << " has no associated orientation covariance diagonal.");
         continue;
-      } else if (!it->second.hasMember("angular_velocity_covariance")) {
+      }
+      else if (!it->second.hasMember("angular_velocity_covariance"))
+      {
         ROS_ERROR_STREAM("Imu " << it->first << " has no associated angular velocity covariance.");
         continue;
-      } else if (!it->second.hasMember("linear_acceleration_covariance")) {
+      }
+      else if (!it->second.hasMember("linear_acceleration_covariance"))
+      {
         ROS_ERROR_STREAM("Imu " << it->first << " has no associated linear acceleration covariance.");
         continue;
       }
@@ -243,54 +287,53 @@ bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue &imu_dat
       for (int i = 0; i < linear_cov.size(); ++i)
         ROS_ASSERT(linear_cov[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
 
-      std::string frame_id = imu_datas[it->first]["frame_id"],
-          bus = imu_datas[it->first]["bus"];
+      std::string frame_id = imu_datas[it->first]["frame_id"], bus = imu_datas[it->first]["bus"];
       int id = static_cast<int>(imu_datas[it->first]["id"]);
 
       // for bus interface
       if (bus_id2imu_data_.find(bus) == bus_id2imu_data_.end())
         bus_id2imu_data_.insert(std::make_pair(bus, std::unordered_map<int, ImuData>()));
 
-      if (!(bus_id2imu_data_[bus].find(id) == bus_id2imu_data_[bus].end())) {
+      if (!(bus_id2imu_data_[bus].find(id) == bus_id2imu_data_[bus].end()))
+      {
         ROS_ERROR_STREAM("Repeat Imu on bus " << bus << " and ID " << id);
         return false;
-      } else
-        bus_id2imu_data_[bus].insert(
-            std::make_pair(id, ImuData{.ori={},
-                .ori_cov={
-                    static_cast<double>(ori_cov[0]), 0., 0.,
-                    0., static_cast<double>(ori_cov[1]), 0.,
-                    0., 0., static_cast<double>(ori_cov[2])}, .angular_vel={},
-                .angular_vel_cov={
-                    static_cast<double>(angular_cov[0]), 0., 0.,
-                    0., static_cast<double>(angular_cov[1]), 0.,
-                    0., 0., static_cast<double>(angular_cov[2])}, .linear_acc ={},
-                .linear_acc_cov={
-                    static_cast<double>(linear_cov[0]), 0., 0.,
-                    0., static_cast<double>(linear_cov[1]), 0.,
-                    0., 0., static_cast<double>(linear_cov[2])}}));
+      }
+      else
+        bus_id2imu_data_[bus].insert(std::make_pair(
+            id, ImuData{ .ori = {},
+                         .ori_cov = { static_cast<double>(ori_cov[0]), 0., 0., 0., static_cast<double>(ori_cov[1]), 0.,
+                                      0., 0., static_cast<double>(ori_cov[2]) },
+                         .angular_vel = {},
+                         .angular_vel_cov = { static_cast<double>(angular_cov[0]), 0., 0., 0.,
+                                              static_cast<double>(angular_cov[1]), 0., 0., 0.,
+                                              static_cast<double>(angular_cov[2]) },
+                         .linear_acc = {},
+                         .linear_acc_cov = { static_cast<double>(linear_cov[0]), 0., 0., 0.,
+                                             static_cast<double>(linear_cov[1]), 0., 0., 0.,
+                                             static_cast<double>(linear_cov[2]) } }));
 
       // for ros_control interface
       hardware_interface::ImuSensorHandle imu_sensor_handle(
-          it->first, frame_id,
-          bus_id2imu_data_[bus][id].ori, bus_id2imu_data_[bus][id].ori_cov,
+          it->first, frame_id, bus_id2imu_data_[bus][id].ori, bus_id2imu_data_[bus][id].ori_cov,
           bus_id2imu_data_[bus][id].angular_vel, bus_id2imu_data_[bus][id].angular_vel_cov,
           bus_id2imu_data_[bus][id].linear_acc, bus_id2imu_data_[bus][id].linear_acc_cov);
       imu_sensor_interface_.registerHandle(imu_sensor_handle);
-
     }
     registerInterface(&imu_sensor_interface_);
   }
-  catch (XmlRpc::XmlRpcException &e) {
+  catch (XmlRpc::XmlRpcException& e)
+  {
     ROS_FATAL_STREAM("Exception raised by XmlRpc while reading the "
-                         << "configuration: " << e.getMessage() << ".\n"
-                         << "Please check the configuration, particularly parameter types.");
+                     << "configuration: " << e.getMessage() << ".\n"
+                     << "Please check the configuration, particularly parameter types.");
     return false;
   }
   return true;
 }
 
-bool RmBaseHardWareInterface::load_urdf(ros::NodeHandle &root_nh) {
+bool RmBaseHardWareInterface::load_urdf(ros::NodeHandle& root_nh)
+{
   if (urdf_model_ == nullptr)
     urdf_model_ = std::make_shared<urdf::Model>();
   // get the urdf param on param server
@@ -298,87 +341,111 @@ bool RmBaseHardWareInterface::load_urdf(ros::NodeHandle &root_nh) {
   return !urdf_string_.empty() && urdf_model_->initString(urdf_string_);
 }
 
-bool RmBaseHardWareInterface::setupTransmission(ros::NodeHandle &root_nh) {
-  if (!is_actuator_specified_) return true;
-  try {
-    transmission_loader_ = std::make_unique<transmission_interface::TransmissionInterfaceLoader>(
-        this, &robot_transmissions_);
+bool RmBaseHardWareInterface::setupTransmission(ros::NodeHandle& root_nh)
+{
+  if (!is_actuator_specified_)
+    return true;
+  try
+  {
+    transmission_loader_ =
+        std::make_unique<transmission_interface::TransmissionInterfaceLoader>(this, &robot_transmissions_);
   }
-  catch (const std::invalid_argument &ex) {
+  catch (const std::invalid_argument& ex)
+  {
     ROS_ERROR_STREAM("Failed to create transmission interface loader. " << ex.what());
     return false;
   }
-  catch (const pluginlib::LibraryLoadException &ex) {
+  catch (const pluginlib::LibraryLoadException& ex)
+  {
     ROS_ERROR_STREAM("Failed to create transmission interface loader. " << ex.what());
     return false;
   }
-  catch (...) {
+  catch (...)
+  {
     ROS_ERROR_STREAM("Failed to create transmission interface loader. ");
     return false;
   }
 
   // Perform transmission loading
-  if (!transmission_loader_->load(urdf_string_)) { return false; }
+  if (!transmission_loader_->load(urdf_string_))
+  {
+    return false;
+  }
   act_to_jnt_state_ = robot_transmissions_.get<transmission_interface::ActuatorToJointStateInterface>();
   jnt_to_act_effort_ = robot_transmissions_.get<transmission_interface::JointToActuatorEffortInterface>();
 
   auto effort_joint_interface = this->get<hardware_interface::EffortJointInterface>();
   std::vector<std::string> names = effort_joint_interface->getNames();
-  for (const auto &name:names)
+  for (const auto& name : names)
     effort_joint_handles_.push_back(effort_joint_interface->getHandle(name));
 
   return true;
 }
 
-bool RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle &root_nh) {
-  if (!is_actuator_specified_) return true;
+bool RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle& root_nh)
+{
+  if (!is_actuator_specified_)
+    return true;
 
-  joint_limits_interface::JointLimits joint_limits; // Position
-  joint_limits_interface::SoftJointLimits soft_limits; // Soft Position
+  joint_limits_interface::JointLimits joint_limits;     // Position
+  joint_limits_interface::SoftJointLimits soft_limits;  // Soft Position
 
-  for (const auto &joint_handle:effort_joint_handles_) {
+  for (const auto& joint_handle : effort_joint_handles_)
+  {
     bool has_joint_limits{}, has_soft_limits{};
     std::string name = joint_handle.getName();
     // Get limits from URDF
     urdf::JointConstSharedPtr urdf_joint = urdf_model_->getJoint(joint_handle.getName());
-    if (urdf_joint == nullptr) {
+    if (urdf_joint == nullptr)
+    {
       ROS_ERROR_STREAM("URDF joint not found " << name);
       return false;
     }
     // Get limits from URDF
-    if (joint_limits_interface::getJointLimits(urdf_joint, joint_limits)) {
+    if (joint_limits_interface::getJointLimits(urdf_joint, joint_limits))
+    {
       has_joint_limits = true;
       ROS_DEBUG_STREAM("Joint " << name << " has URDF position limits.");
-    } else if (urdf_joint->type != urdf::Joint::CONTINUOUS)
+    }
+    else if (urdf_joint->type != urdf::Joint::CONTINUOUS)
       ROS_DEBUG_STREAM("Joint " << name << " does not have a URDF limit.");
     // Get soft limits from URDF
-    if (joint_limits_interface::getSoftJointLimits(urdf_joint, soft_limits)) {
+    if (joint_limits_interface::getSoftJointLimits(urdf_joint, soft_limits))
+    {
       has_soft_limits = true;
       ROS_DEBUG_STREAM("Joint " << name << " has soft joint limits from URDF.");
-    } else
+    }
+    else
       ROS_DEBUG_STREAM("Joint " << name << " does not have soft joint limits from URDF.");
     // Get limits from ROS param
-    if (joint_limits_interface::getJointLimits(joint_handle.getName(), root_nh, joint_limits)) {
+    if (joint_limits_interface::getJointLimits(joint_handle.getName(), root_nh, joint_limits))
+    {
       has_joint_limits = true;
       ROS_DEBUG_STREAM("Joint " << name << " has rosparam position limits.");
     }
     // Get soft limits from ROS param
-    if (joint_limits_interface::getSoftJointLimits(joint_handle.getName(), root_nh, soft_limits)) {
+    if (joint_limits_interface::getSoftJointLimits(joint_handle.getName(), root_nh, soft_limits))
+    {
       has_soft_limits = true;
       ROS_DEBUG_STREAM("Joint " << name << " has soft joint limits from ROS param.");
-    } else
+    }
+    else
       ROS_DEBUG_STREAM("Joint " << name << " does not have soft joint limits from ROS param.");
 
     // Slightly reduce the joint limits to prevent floating point errors
-    if (joint_limits.has_position_limits) {
+    if (joint_limits.has_position_limits)
+    {
       joint_limits.min_position += std::numeric_limits<double>::epsilon();
       joint_limits.max_position -= std::numeric_limits<double>::epsilon();
     }
-    if (has_soft_limits) { // Use soft limits
+    if (has_soft_limits)
+    {  // Use soft limits
       ROS_DEBUG_STREAM("Using soft saturation limits");
       effort_jnt_soft_limits_interface_.registerHandle(
           joint_limits_interface::EffortJointSoftLimitsHandle(joint_handle, joint_limits, soft_limits));
-    } else if (has_joint_limits) {
+    }
+    else if (has_joint_limits)
+    {
       ROS_DEBUG_STREAM("Using saturation limits (not soft limits)");
       effort_jnt_saturation_interface_.registerHandle(
           joint_limits_interface::EffortJointSaturationHandle(joint_handle, joint_limits));
@@ -387,4 +454,4 @@ bool RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle &root_nh) {
   return true;
 }
 
-}
+}  // namespace rm_base
