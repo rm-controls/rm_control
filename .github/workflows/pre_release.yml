@@ -13,6 +13,7 @@ jobs:
       BUILDER: catkin_make_isolated
       PRERELEASE: true
       BASEDIR: ${{ github.workspace }}/.work
+      ROS_VERSION: 1
     runs-on: ubuntu-latest
     steps:
       - name: "Free up disk space"
