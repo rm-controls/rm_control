@@ -65,11 +65,6 @@ TransmissionSharedPtr DoubleActuatorTransmissionLoader::load(const TransmissionI
   double jnt_reduction, jnt_offset;
   const bool jnt_config_ok = getJointConfig(transmission_info, jnt_reduction, jnt_offset);
 
-  if (!jnt_config_ok)
-  {
-    return TransmissionSharedPtr();
-  }
-
   // Transmission instance
   try
   {
