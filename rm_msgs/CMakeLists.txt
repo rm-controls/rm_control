@@ -26,9 +26,9 @@ add_message_files(
 )
 
 add_service_files(
-    FILES
-    ContinousDetectorSwitch.srv
-    StatusChange.srv
+        FILES
+        ContinousDetectorSwitch.srv
+        StatusChange.srv
 )
 
 add_message_files(
@@ -53,5 +53,10 @@ generate_messages(
 )
 
 catkin_package(
-        CATKIN_DEPENDS message_runtime
+        CATKIN_DEPENDS
+        message_runtime
+        std_msgs
+        geometry_msgs
+        actionlib
+        actionlib_msgs
 )

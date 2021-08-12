@@ -29,7 +29,9 @@ catkin_package(
         include
         ${EIGEN3_INCLUDE_DIR}
         CATKIN_DEPENDS
+        tf
         rm_msgs
+        geometry_msgs
         control_msgs
         controller_manager_msgs
         roscpp
