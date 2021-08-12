@@ -4,7 +4,7 @@ services:
 
 env:
   global:
-    - AFTER_SETUP_TARGET_WORKSPACE="sudo apt install curl && curl -H https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"
+    - AFTER_SETUP_TARGET_WORKSPACE="sudo apt install curl && curl https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"
     - AFTER_RUN_TARGET_TEST="cd $TARGET_WORKSPACE && fossa init && fossa analyze"
   matrix:
     - ROS_DISTRO="melodic"
