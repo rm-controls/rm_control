@@ -30,7 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
- 
+
 //
 // Created by qiayuan on 12/28/20.
 //
@@ -53,8 +53,7 @@ float int16ToFloat(unsigned short data) {
 
 CanBus::CanBus(const std::string &bus_name, CanDataPtr data_prt) : data_prt_(data_prt), bus_name_(bus_name) {
   // Initialize device at can_device, false for no loop back.
-  while (!socket_can_.open(bus_name, boost::bind(&CanBus::frameCallback, this, _1))
-      && ros::ok())
+  while (!socket_can_.open(bus_name, boost::bind(&CanBus::frameCallback, this, _1)) && ros::ok())
     ros::Duration(.5).sleep();
 
   ROS_INFO("Successfully connected to %s.", bus_name.c_str());
