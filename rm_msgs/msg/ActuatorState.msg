@@ -65,4 +65,3 @@ float64[] executed_effort
 # to get to the position of the actuator. This number is computed when the referece
 # sensor is triggered during the calibration phase
 float64[] offset
-

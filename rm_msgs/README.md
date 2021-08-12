@@ -2,7 +2,7 @@
 
 ## Overview
 
-This package includes srv, action, msgs and other message sending mechanisms, including the message types needed in 
+This package includes srv, action, msgs and other message sending mechanisms, including the message types needed in
 various packages.
 **Keywords:** message, mechanisms
 
@@ -102,7 +102,7 @@ using
     The time at which this actuator state was measured
 
 - string[] name
-   
+
     The name of the actuator
 
 - string[] type
@@ -116,15 +116,15 @@ using
 - int32[] id
 
     The CAN id
-  
+
 - bool[] halted
 
     Indicates if the motor is halted. A motor can be halted because of a voltage or temperature problem
-  
+
 - bool[] need_calibration
 
     calibration
-  
+
 - bool[] calibration_reading
 
     The value of the calibration reading: low (false) or high (true)
@@ -186,25 +186,25 @@ sensor is triggered during the calibration phase
     Standard metadata for higher-level stamped data types.
  This is generally used to communicate timestamped data
  in a particular coordinate frame.
-  
+
 - float64 alpha
-    
+
     the angle alpha of robot.
 
 - float64 alpha_dot
-    
-    the angle alpha speed of robot. 
+
+    the angle alpha speed of robot.
 
 - float64 vel
-  
+
     the velocity of robot
 
 - float64 theta_dot
 
-    the angle theta speed of robot. 
+    the angle theta speed of robot.
 
 - float64 control_1
-  
+
     left joint control
 
 - float64 control_2
@@ -215,22 +215,22 @@ sensor is triggered during the calibration phase
   This message contains various state parameter settings for basic chassis control
 
 - uint8 RAW = 0
-  
+
    the mode RAW:the Initial state.
 
 - uint8 FOLLOW = 1
-  
+
   the mode FOLLOW
 
 - uint8 GYRO = 2
-  
+
   the mode GYRO
 
 - uint8 TWIST = 3
-  
-  the mod TWIST: 
 
-- uint8 mode 
+  the mod TWIST:
+
+- uint8 mode
 
   The current mode of the chassis.
 
@@ -244,7 +244,7 @@ sensor is triggered during the calibration phase
 
 - string follow_source_frame
 
-  The source coordinate system tracked by the current chassis  
+  The source coordinate system tracked by the current chassis
 
 - time stamp
 
@@ -252,7 +252,7 @@ sensor is triggered during the calibration phase
 
 #### DbusData.msgs
   This message contains the information needed for remote control operation
-  
+
 - UP DOWN MID
 
     Set various operating modes of the robot from the trackwheel
@@ -276,23 +276,23 @@ sensor is triggered during the calibration phase
 - key_
 
     Various operations of the keyboard
-  
+
 - time stamp
 
     The time at which this actuator state was measured
 
 ####GimbalCmd.msg
-  
-  This message includes various commands received by the gimbal 
+
+  This message includes various commands received by the gimbal
 
 - uint8 RATE
-  
+
 Bullet launch
 
 - uint8 TRACK
 
    Self-aim
-  
+
 - uint8 DIRECT
 
   Manual control
@@ -321,7 +321,7 @@ Bullet launch
 - geometry_msgs/PointStamped
 
     This represents a Point with reference coordinate frame and timestamp
-  
+
 
 #### GimbalDesError.msg
 
@@ -335,17 +335,17 @@ Bullet launch
   in a particular coordinate frame.
 
 - geometry_msgs/Pose real_detection_pose
-  
+
    A representation of pose in free space, composed of position and orientation
 
 - geometry_msgs/Pose filtered_detection_pose
- 
+
    A representation of pose in free space, composed of position and orientation
 
 - geometry_msgs/Twist real_detection_twist
 
     This expresses velocity in free space broken into its linear and angular parts.
-  
+
 - geometry_msgs/Twist filtered_detection_twist
 
    This expresses velocity in free space broken into its linear and angular parts.

@@ -37,4 +37,3 @@ controllers:
 #    #    max_acceleration: 5.0
 #    has_effort_limits: true
 #    max_effort: 3
-
