@@ -63,7 +63,7 @@ TransmissionSharedPtr DoubleActuatorTransmissionLoader::load(const TransmissionI
   }
 
   double jnt_reduction, jnt_offset;
-  const bool jnt_config_ok = getJointConfig(transmission_info, jnt_reduction, jnt_offset);
+  getJointConfig(transmission_info, jnt_reduction, jnt_offset);
 
   // Transmission instance
   try
@@ -85,8 +85,8 @@ TransmissionSharedPtr DoubleActuatorTransmissionLoader::load(const TransmissionI
 bool DoubleActuatorTransmissionLoader::getActuatorConfig(const TransmissionInfo& transmission_info,
                                                          std::vector<double>& actuator_reduction)
 {
-  const std::string ACTUATOR1_ROLE = "actuator1";
-  const std::string ACTUATOR2_ROLE = "actuator2";
+  const std::string actuato_r1_role = "actuator1";
+  const std::string actuato_r2_role = "actuator2";
 
   std::vector<TiXmlElement> act_elements(2, "");
   std::vector<std::string> act_names(2);
@@ -107,11 +107,11 @@ bool DoubleActuatorTransmissionLoader::getActuatorConfig(const TransmissionInfo&
     //    if (act_role_status != true) { return false; }
 
     // Validate role string
-    if (ACTUATOR1_ROLE != act_role && ACTUATOR2_ROLE != act_role)
+    if (actuato_r1_role != act_role && actuato_r2_role != act_role)
     {
       ROS_ERROR_STREAM_NAMED("parser", "Actuator '" << act_names[i] << "' of transmission '" << transmission_info.name_
                                                     << "' does not specify a valid <role> element. Got '" << act_role
-                                                    << "', expected '" << ACTUATOR1_ROLE << "' or '" << ACTUATOR2_ROLE
+                                                    << "', expected '" << actuato_r1_role << "' or '" << actuato_r2_role
                                                     << "'.");
       return false;
     }
@@ -129,7 +129,7 @@ bool DoubleActuatorTransmissionLoader::getActuatorConfig(const TransmissionInfo&
 
   // Indices sorted according to role
   std::vector<unsigned int> id_map(2);
-  if (ACTUATOR1_ROLE == act_roles[0])
+  if (actuato_r1_role == act_roles[0])
   {
     id_map[0] = 0;
     id_map[1] = 1;
