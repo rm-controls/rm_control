@@ -1,0 +1,30 @@
+name: pre-release
+
+on: [ workflow_dispatch ]
+
+jobs:
+  default:
+    strategy:
+      matrix:
+        env:
+          - { ROS_DISTRO: noetic }
+          - { ROS_DISTRO: melodic }
+    env:
+      BUILDER: catkin_make_isolated
+      ROS_DISTRO: ${{ matrix.distro }}
+      PRERELEASE: true
+      BASEDIR: ${{ github.workspace }}/.work
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Free up disk space"
+        run: |
+          sudo apt-get -qq purge build-essential "ghc*"
+          sudo apt-get clean
+          # cleanup docker images not used by us
+          docker system prune -af
+          # free up a lot of stuff from /usr/local
+          sudo rm -rf /usr/local
+          df -h
+      - uses: actions/checkout@v2
+      - name: industrial_ci
+        uses: ros-industrial/industrial_ci@master
