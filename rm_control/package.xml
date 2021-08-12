@@ -1,22 +1,25 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>rm_control</name>
-  <version>0.1.1</version>
-  <description>Meta package that contains package of rm_control.</description>
-  <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
+    <name>rm_control</name>
+    <version>0.1.1</version>
+    <description>Meta package that contains package of rm_control.</description>
+    <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
 
-  <license>BSD</license>
+    <license>BSD</license>
 
-  <url type="repository">https://github.com/rm-controls/rm_control</url>
-  <url type="bugtracker">https://github.com/rm-controls/rm_control/issues</url>
+    <url type="repository">https://github.com/rm-controls/rm_control</url>
+    <url type="bugtracker">https://github.com/rm-controls/rm_control/issues</url>
 
-  <author email="liaoqiayuan@gmail.com">Qiayuan Liao</author>
+    <author email="liaoqiayuan@gmail.com">Qiayuan Liao</author>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <exec_depend>rm_msgs</exec_depend>
-  <exec_depend>rm_common</exec_depend>
+    <buildtool_depend>catkin</buildtool_depend>
+    <exec_depend>rm_msgs</exec_depend>
+    <exec_depend>rm_common</exec_depend>
+    <exec_depend>rm_base</exec_depend>
+    <exec_depend>rm_gazebo</exec_depend>
+    <exec_depend>rm_description</exec_depend>
 
-  <export>
-    <metapackage/>
-  </export>
+    <export>
+        <metapackage/>
+    </export>
 </package>
