@@ -15,8 +15,8 @@ before_script:
 
 script:
   - .industrial_ci/travis.sh
-  - fossa init
-  - fossa analyze
+  - cd <SOURCE_DIR> && fossa init
+  - cd <SOURCE_DIR> && fossa analyze
 
 after_success:
   - cd <SOURCE_DIR> && fossa test
