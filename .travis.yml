@@ -3,10 +3,12 @@ services:
   - docker
 
 env:
+  global:
+    - AFTER_SCRIPT="cd $TARGET_WORKSPACE && fossa init && fossa analyze"
   matrix:
     - ROS_DISTRO="melodic"
     - ROS_DISTRO="noetic"
-    - AFTER_SCRIPT="cd $TARGET_WORKSPACE && fossa init && fossa analyze"
+
 install:
   - git clone --quiet --depth=1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 
