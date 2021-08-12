@@ -4,6 +4,7 @@ services:
 
 env:
   global:
+    - BEFORE_SCRIPT="curl -H https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"
     - AFTER_SCRIPT="cd $TARGET_WORKSPACE && fossa init && fossa analyze"
   matrix:
     - ROS_DISTRO="melodic"
@@ -11,9 +12,6 @@ env:
 
 install:
   - git clone --quiet --depth=1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
-
-before_script:
-  - "curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"
 
 script:
   - .industrial_ci/travis.sh
