@@ -5,6 +5,7 @@
 ### Continuous Integration
 
 [![CI](https://github.com/rm-controls/rm_control/actions/workflows/industrial_ci.yml/badge.svg)](https://github.com/rm-controls/rm_control/actions/workflows/industrial_ci.yml)
+[![Format](https://github.com/rm-controls/rm_control/actions/workflows/format.yml/badge.svg)](https://github.com/rm-controls/rm_control/actions/workflows/format.yml)
 
 ### Licenses
 
