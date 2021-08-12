@@ -13,7 +13,6 @@ jobs:
       BUILDER: catkin_make_isolated
       PRERELEASE: true
       BASEDIR: ${{ github.workspace }}/.work
-      ROS_VERSION: 1
     runs-on: ubuntu-latest
     steps:
       - name: "Free up disk space"
@@ -26,5 +25,5 @@ jobs:
           sudo rm -rf /usr/local
           df -h
       - uses: actions/checkout@v2
-      - name: industrial_ci
-        uses: ros-industrial/industrial_ci@master
+      - uses: ros-industrial/industrial_ci@master
+        env: ${{ matrix.env }}
