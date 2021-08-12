@@ -59,7 +59,7 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle& ro
     ROS_WARN("No imu specified");
   else if (!parseImuData(xml_rpc_value, robot_hw_nh))
     return false;
-  if (!load_urdf(root_nh))
+  if (!loadUrdf(root_nh))
   {
     ROS_ERROR("Error occurred while setting up urdf");
     return false;

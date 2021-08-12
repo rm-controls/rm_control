@@ -332,7 +332,7 @@ bool rm_base::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue& imu_dat
   return true;
 }
 
-bool RmBaseHardWareInterface::load_urdf(ros::NodeHandle& root_nh)
+bool RmBaseHardWareInterface::loadUrdf(ros::NodeHandle& root_nh)
 {
   if (urdf_model_ == nullptr)
     urdf_model_ = std::make_shared<urdf::Model>();

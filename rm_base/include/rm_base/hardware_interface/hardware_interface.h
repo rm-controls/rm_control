@@ -81,7 +81,7 @@ private:
   bool parseActCoeffs(XmlRpc::XmlRpcValue& act_coeffs);
   bool parseActData(XmlRpc::XmlRpcValue& act_datas, ros::NodeHandle& robot_hw_nh);
   bool parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHandle& robot_hw_nh);
-  bool load_urdf(ros::NodeHandle& root_nh);
+  bool loadUrdf(ros::NodeHandle& root_nh);
   bool setupTransmission(ros::NodeHandle& root_nh);
   bool setupJointLimit(ros::NodeHandle& root_nh);
   void publishActuatorState(const ros::Time& time);
