@@ -11,7 +11,6 @@ jobs:
           - { ROS_DISTRO: melodic }
     env:
       BUILDER: catkin_make_isolated
-      ROS_DISTRO: ${{ matrix.distro }}
       PRERELEASE: true
       BASEDIR: ${{ github.workspace }}/.work
     runs-on: ubuntu-latest
