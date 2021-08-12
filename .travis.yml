@@ -17,3 +17,9 @@ script:
   - .industrial_ci/travis.sh
   - fossa init
   - fossa analyze
+
+after_success:
+  - cd <SOURCE_DIR> && fossa test
+
+notifications:
+  webhooks: https://app.fossa.io/hooks/travisci
