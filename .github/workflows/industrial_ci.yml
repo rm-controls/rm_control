@@ -23,4 +23,8 @@ jobs:
           key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
       # Run industrial_ci
       - uses: 'ros-industrial/industrial_ci@master'
-        env: ${{ matrix.env }}
+        env: 
+          ROS_DISTRO: ${{ matrix.env.ROS_DISTRO }}
+          ROS_REPO: ${{ matrix.env.ROS_REPO }}
+          AFTER_SETUP_ROSDEP: 'apt install -y -qq curl && curl ${PACKAGE_SCRIPT_URL}/gitlab-ci/v2/init.sh | bash'
+          AFTER_SCRIPT:       'apt install -y -qq curl && curl ${PACKAGE_SCRIPT_URL}/gitlab-ci/v2/package.sh | bash -s multi && curl ${PACKAGE_SCRIPT_URL}/gitlab-ci/v2/publish.sh | sh'
