@@ -2,6 +2,11 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add exec_depend rm_control
+* Contributors: qiayuan
+
 0.1.1 (2021-08-12)
 ------------------
 * Reset all version to 0.1.0
