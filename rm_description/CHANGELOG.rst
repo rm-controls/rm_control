@@ -2,8 +2,8 @@
 Changelog for package rm_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.2 (2021-08-14)
+------------------
 * Run pre-commit
 * Contributors: qiayuan
 

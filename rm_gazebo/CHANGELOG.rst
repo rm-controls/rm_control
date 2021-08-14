@@ -2,8 +2,8 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.2 (2021-08-14)
+------------------
 * Run pre-commit
 * Format rm_gazebo using clang-format
 * Contributors: qiayuan

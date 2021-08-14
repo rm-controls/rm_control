@@ -2,8 +2,8 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.2 (2021-08-14)
+------------------
 * Run pre-commit
 * Add missing CATKIN_DEPENDS in catkin_package()
 * Contributors: qiayuan

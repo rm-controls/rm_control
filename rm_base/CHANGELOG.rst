@@ -2,8 +2,8 @@
 Changelog for package rm_base
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.2 (2021-08-14)
+------------------
 * Run pre-commit
 * Fix error: unused variable ‘jnt_config_ok’
 * Code style: loadUrdf

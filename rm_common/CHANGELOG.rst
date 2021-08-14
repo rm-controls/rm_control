@@ -2,8 +2,8 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.2 (2021-08-14)
+------------------
 * Run pre-commit
 * Add missing CATKIN_DEPENDS in catkin_package()
 * Format rm_common using clang-format
