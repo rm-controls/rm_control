@@ -1,0 +1,99 @@
+rm_hw:
+  bus:
+    - can0
+    - can1
+    - can2
+    - can3
+  loop_frequency: 1000
+  cycle_time_error_threshold: 0.001
+  # Configurations of the actuators
+  actuators:
+    right_front_wheel_motor:
+      bus: can0
+      id: 0x201
+      type: rm_3508
+    left_front_wheel_motor:
+      bus: can0
+      id: 0x202
+      type: rm_3508
+    left_back_wheel_motor:
+      bus: can0
+      id: 0x203
+      type: rm_3508
+    right_back_wheel_motor:
+      bus: can0
+      id: 0x204
+      type: rm_3508
+    card_joint_motor:
+      bus: can0
+      id: 0x205
+      type: rm_2006
+      need_calibration: true
+
+    yaw_joint_motor:
+      bus: can1
+      id: 0x201
+      type: rm_3508
+      need_calibration: true
+    pitch_joint_motor:
+      bus: can1
+      id: 0x202
+      type: rm_3508
+      need_calibration: true
+    mast_joint_motor:
+      bus: can1
+      id: 0x203
+      type: rm_2006
+      need_calibration: true
+    stone_platform_joint_motor:
+      bus: can1
+      id: 0x204
+      type: rm_2006
+      need_calibration: true
+
+    joint1_motor:
+      bus: can3
+      id: 0x201
+      type: rm_3508
+      need_calibration: true
+    joint2_left_motor:
+      bus: can2
+      id: 002
+      type: cheetah
+      lp_cutoff_frequency: 80
+      need_calibration: true
+    joint2_right_motor:
+      bus: can2
+      id: 003
+      type: cheetah
+      lp_cutoff_frequency: 100
+      need_calibration: true
+    joint3_motor:
+      bus: can2
+      id: 001
+      type: cheetah
+      lp_cutoff_frequency: 100
+      need_calibration: true
+    joint4_motor:
+      bus: can3
+      id: 0x202
+      type: rm_3508
+      need_calibration: true
+    joint5_motor:
+      bus: can3
+      id: 0x203
+      type: rm_3508
+      need_calibration: true
+    right_finger_joint_motor:
+      bus: can3
+      id: 0x204
+      type: rm_3508
+      need_calibration: true
+
+controllers:
+  robot_state_controller:
+    type: robot_state_controller/RobotStateController
+    publish_rate: 100
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 100
