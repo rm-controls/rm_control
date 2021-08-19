@@ -200,13 +200,13 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue& act_datas, ros::
       hardware_interface::ActuatorStateHandle act_state(bus_id2act_data_[bus][id].name, &bus_id2act_data_[bus][id].pos,
                                                         &bus_id2act_data_[bus][id].vel,
                                                         &bus_id2act_data_[bus][id].effort);
-      hardware_interface::ActuatorExtraHandle act_extra_(
+      hardware_interface::ActuatorExtraHandle act_extra(
           bus_id2act_data_[bus][id].name, &bus_id2act_data_[bus][id].halted,
           &bus_id2act_data_[bus][id].need_calibration, &bus_id2act_data_[bus][id].calibrated,
           &bus_id2act_data_[bus][id].calibration_reading, &bus_id2act_data_[bus][id].pos,
           &bus_id2act_data_[bus][id].offset);
       act_state_interface_.registerHandle(act_state);
-      act_extra_interface_.registerHandle(act_extra_);
+      act_extra_interface_.registerHandle(act_extra);
       // RoboMaster motors are effect actuator
       if (type.find("rm") != std::string::npos || type.find("cheetah") != std::string::npos)
       {
