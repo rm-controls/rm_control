@@ -57,24 +57,24 @@ class CanBus
 {
 public:
   /** \brief
-   * Initialize device at can_device,retry if fail.Set up header of CAN frame.
+   * Initialize device at can_device, retry if fail. Set up header of CAN frame.
    *
-   * \param bus_name bus's name(example:can0)
-   * \param data_ptr pointer which point to CAN data
+   * \param bus_name Bus's name(example:can0).
+   * \param data_ptr Pointer which point to CAN data.
    */
   CanBus(const std::string& bus_name, CanDataPtr data_ptr);
-  /** \brief read active data from CAN frame,such as position,velocity,torque and so on.
+  /** \brief Read active data from CAN frame, such as position, velocity, torque and so on.
    *
-   * \param time ROS time,but it doesn't be used.
+   * \param time ROS time, but it doesn't be used.
    */
   void read(ros::Time time);
-  /** \brief write commands to can bus
+  /** \brief Write commands to can bus.
    *
    */
   void write();
 
 private:
-  /** \brief This function will be called when CAN bus receive message.It push frame which received into a vector:read_buffer_
+  /** \brief This function will be called when CAN bus receive message. It push frame which received into a vector: read_buffer_.
    *
    * @param frame The frame which socketcan receive.
    */
