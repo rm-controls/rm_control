@@ -35,8 +35,8 @@
 // Created by qiayuan on 3/3/21.
 //
 
-#ifndef RM_BASE_HARDWARE_INTERFACE_SOCKETCAN_H
-#define RM_BASE_HARDWARE_INTERFACE_SOCKETCAN_H
+#ifndef RM_HW_HARDWARE_INTERFACE_SOCKETCAN_H
+#define RM_HW_HARDWARE_INTERFACE_SOCKETCAN_H
 
 #include <linux/can.h>
 #include <net/if.h>
@@ -98,4 +98,4 @@ public:
 
 }  // namespace can
 
-#endif  // RM_BASE_HARDWARE_INTERFACE_SOCKETCAN_H
+#endif  // RM_HW_HARDWARE_INTERFACE_SOCKETCAN_H

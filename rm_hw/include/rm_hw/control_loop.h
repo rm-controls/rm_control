@@ -35,8 +35,8 @@
 // Created by qiayuan on 12/30/20.
 //
 
-#ifndef RM_HW_INCLUDE_RM_HW_CONTROL_LOOP_H_
-#define RM_HW_INCLUDE_RM_HW_CONTROL_LOOP_H_
+#ifndef RM_HW_CONTROL_LOOP_H
+#define RM_HW_CONTROL_LOOP_H
 
 #include "rm_hw/hardware_interface/hardware_interface.h"
 
@@ -96,4 +96,4 @@ private:
 };
 }  // namespace rm_hw
 
-#endif  // RM_HW_INCLUDE_RM_HW_CONTROL_LOOP_H_
+#endif  // RM_HW_CONTROL_LOOP_H

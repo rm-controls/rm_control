@@ -35,8 +35,8 @@
 // Created by qiayuan on 12/21/20.
 //
 
-#ifndef RM_BASE_INCLUDE_RM_BASE_HARDWARE_INTERFACE_H_
-#define RM_BASE_INCLUDE_RM_BASE_HARDWARE_INTERFACE_H_
+#ifndef RM_HW_INCLUDE_RM_HW_HARDWARE_INTERFACE_H_
+#define RM_HW_INCLUDE_RM_HW_HARDWARE_INTERFACE_H_
 
 #include <vector>
 #include <string>
@@ -116,4 +116,4 @@ private:
 };
 
 }  // namespace rm_hw
-#endif  // RM_BASE_INCLUDE_RM_BASE_HARDWARE_INTERFACE_H_
+#endif  // RM_HW_INCLUDE_RM_HW_HARDWARE_INTERFACE_H_
