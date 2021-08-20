@@ -59,7 +59,7 @@ public:
   /** \brief
    * Initialize device at can_device, retry if fail. Set up header of CAN frame.
    *
-   * \param bus_name Bus's name(example:can0).
+   * \param bus_name Bus's name(example: can0).
    * \param data_ptr Pointer which point to CAN data.
    */
   CanBus(const std::string& bus_name, CanDataPtr data_ptr);
