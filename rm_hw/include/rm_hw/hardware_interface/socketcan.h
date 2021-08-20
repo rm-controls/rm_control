@@ -67,37 +67,33 @@ public:
   SocketCAN() = default;
   ~SocketCAN();
 
-  /// \brief
-  ///
-  /// Open and bind socket
-  ///
-  /// \param interface bus's name(example:can0)
-  /// \param handler Pointer to a function which shall be called when frames are being received from the CAN bus
-  ///
-  /// \return \c true if it successfully open and bind socket.
+  /** \brief Open and bind socket
+   *
+   *
+   *
+   * \param interface bus's name(example:can0)
+   * \param handler Pointer to a function which shall be called when frames are being received from the CAN bus
+   *
+   * \returns \c true if it successfully open and bind socket.
+   */
   bool open(const std::string& interface, boost::function<void(const can_frame& frame)> handler);
-  /// \brief
-  ///
-  /// close socket
-  ///
+  /** \brief close socket
+   *
+   */
   void close();
-  /// \brief
-  ///
-  /// Returns whether the socket is open or closed
-  ///
-  ///
-  /// \return \c true if socket has opened.
+  /** \brief Returns whether the socket is open or closed
+   *
+   * \returns \c true if socket has opened.
+   */
   bool is_open() const;
-  /// \brief
-  ///
-  /// Sends the referenced frame to the bus
-  ///
-  /// \param frame referenced frame which you want to send.
+  /** \brief Sends the referenced frame to the bus
+   *
+   * \param frame referenced frame which you want to send.
+   */
   void write(can_frame* frame) const;
-  /// \brief
-  ///
-  /// Starts a new thread, that will wait for socket events
-  ///
+  /** \brief Starts a new thread, that will wait for socket events
+   *
+   */
   bool start_receiver_thread();
   /**
    * Pointer to a function which shall be called
