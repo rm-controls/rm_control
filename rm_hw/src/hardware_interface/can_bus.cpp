@@ -52,7 +52,7 @@ float int16ToFloat(unsigned short data)
   return *fp32;
 }
 
-CanBus::CanBus(const std::string& bus_name, CanDataPtr data_prt) : data_prt_(data_prt), bus_name_(bus_name)
+CanBus::CanBus(const std::string& bus_name, CanDataPtr data_ptr) : data_ptr_(data_ptr), bus_name_(bus_name)
 {
   // Initialize device at can_device, false for no loop back.
   while (!socket_can_.open(bus_name, boost::bind(&CanBus::frameCallback, this, _1)) && ros::ok())
@@ -73,13 +73,13 @@ void CanBus::write()
   std::fill(std::begin(rm_frame0_.data), std::end(rm_frame0_.data), 0);
   std::fill(std::begin(rm_frame1_.data), std::end(rm_frame1_.data), 0);
 
-  for (auto& item : *data_prt_.id2act_data_)
+  for (auto& item : *data_ptr_.id2act_data_)
   {
     if (item.second.type.find("rm") != std::string::npos)
     {
       if (item.second.halted)
         continue;
-      const ActCoeff& act_coeff = data_prt_.type2act_coeffs_->find(item.second.type)->second;
+      const ActCoeff& act_coeff = data_ptr_.type2act_coeffs_->find(item.second.type)->second;
       int id = item.first - 0x201;
       double cmd =
           minAbs(act_coeff.effort2act * item.second.exe_effort, act_coeff.max_out);  // add max_range to act_data
@@ -99,7 +99,7 @@ void CanBus::write()
     else if (item.second.type.find("cheetah") != std::string::npos)
     {
       can_frame frame{};
-      const ActCoeff& act_coeff = data_prt_.type2act_coeffs_->find(item.second.type)->second;
+      const ActCoeff& act_coeff = data_ptr_.type2act_coeffs_->find(item.second.type)->second;
       frame.can_id = item.first;
       frame.can_dlc = 8;
       uint16_t q_des = (int)(act_coeff.pos2act * (item.second.cmd_pos - act_coeff.act2pos_offset));
@@ -134,10 +134,10 @@ void CanBus::read(ros::Time time)
   {
     can_frame frame = frame_stamp.frame;
     // Check if robomaster motor
-    if (data_prt_.id2act_data_->find(frame.can_id) != data_prt_.id2act_data_->end())
+    if (data_ptr_.id2act_data_->find(frame.can_id) != data_ptr_.id2act_data_->end())
     {
-      ActData& act_data = data_prt_.id2act_data_->find(frame.can_id)->second;
-      const ActCoeff& act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
+      ActData& act_data = data_ptr_.id2act_data_->find(frame.can_id)->second;
+      const ActCoeff& act_coeff = data_ptr_.type2act_coeffs_->find(act_data.type)->second;
       if (act_data.type.find("rm") != std::string::npos)
       {
         act_data.q_raw = (frame.data[0] << 8u) | frame.data[1];
@@ -182,10 +182,10 @@ void CanBus::read(ros::Time time)
     // Check MIT Cheetah motor
     else if (frame.can_id == static_cast<unsigned int>(0x000))
     {
-      if (data_prt_.id2act_data_->find(frame.data[0]) != data_prt_.id2act_data_->end())
+      if (data_ptr_.id2act_data_->find(frame.data[0]) != data_ptr_.id2act_data_->end())
       {
-        ActData& act_data = data_prt_.id2act_data_->find(frame.data[0])->second;
-        const ActCoeff& act_coeff = data_prt_.type2act_coeffs_->find(act_data.type)->second;
+        ActData& act_data = data_ptr_.id2act_data_->find(frame.data[0])->second;
+        const ActCoeff& act_coeff = data_ptr_.type2act_coeffs_->find(act_data.type)->second;
         if (act_data.type.find("cheetah") != std::string::npos)
         {  // MIT Cheetah Motor
           act_data.q_raw = (frame.data[1] << 8) | frame.data[2];
@@ -235,7 +235,7 @@ void CanBus::read(ros::Time time)
     }
     if (!is_too_big)
     {  // TODO remove this ugly statement
-      for (auto& itr : *data_prt_.id2imu_data_)
+      for (auto& itr : *data_ptr_.id2imu_data_)
       {  // imu data are consisted of three frames
         switch (frame.can_id - static_cast<unsigned int>(itr.first))
         {

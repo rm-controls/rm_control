@@ -66,27 +66,33 @@ public:
 
   SocketCAN() = default;
   ~SocketCAN();
-  /**
-   * Open and bind socket
+
+  /** \brief Open and bind socket.
+   *
+   *
+   *
+   * \param interface bus's name(example: can0).
+   * \param handler Pointer to a function which shall be called when frames are being received from the CAN bus.
+   *
+   * \returns \c true if it successfully open and bind socket.
    */
   bool open(const std::string& interface, boost::function<void(const can_frame& frame)> handler);
-  /**
-   * Close and unbind socket
+  /** \brief Close and unbind socket.
+   *
    */
   void close();
-  /**
-   * Returns whether the socket is open or closed
+  /** \brief Returns whether the socket is open or closed.
    *
-   * @retval true     Socket is open
-   * @retval false    Socket is closed
+   * \returns \c True if socket has opened.
    */
   bool is_open() const;
-  /**
-   * Sends the referenced frame to the bus
+  /** \brief Sends the referenced frame to the bus.
+   *
+   * \param frame referenced frame which you want to send.
    */
   void write(can_frame* frame) const;
-  /**
-   * Starts a new thread, that will wait for socket events
+  /** \brief Starts a new thread, that will wait for socket events.
+   *
    */
   bool start_receiver_thread();
   /**
