@@ -70,20 +70,29 @@ public:
   RmBaseHardWareInterface() = default;
   /** \brief Get necessary params from param server. Init hardware_interface.
    *
+   * Get params from param server and check whether these params are set. Load urdf of robot. Set up transmission and
+   * joint limit. Get configuration of can bus and create data pointer which point to data received from Can bus.
+   *
    * @param root_nh Root node-handle of a ROS node.
    * @param robot_hw_nh Node-handle for robot hardware.
    * @return True when init successful, False when failed.
    */
   bool init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) override;
-  /** \brief Comunicate with hardware. Get datas, status of robot. Propagate actuator state to joint state for the
-   * stored transmission. Set all cmd to zero to avoid crazy soft limit oscillation when not controller loaded.
+  /** \brief Comunicate with hardware. Get datas, status of robot.
+   *
+   * Call CanBus::read(). Check whether temperature of actuator is too high and whether actuator is offline. Propagate
+   * actuator state to joint state for the stored transmission. Set all cmd to zero to avoid crazy soft limit
+   * oscillation when not controller loaded(all controllers update after read()).
+   *
    * @param time Current time
    * @param period Current time - last time
    */
   void read(const ros::Time& time, const ros::Duration& period) override;
 
-  /** \brief Comunicate with hardware. Publish command to robot. Propagate joint state to actuator state for the stored
-   * transmission.
+  /** \brief Comunicate with hardware. Publish command to robot.
+   *
+   * Propagate joint state to actuator state for the stored
+   * transmission. Limit cmd_effort into suitable value. Call CanBus::write(). Publish actuator current state.
    *
    * @param time Current time
    * @param period Current time - last time
