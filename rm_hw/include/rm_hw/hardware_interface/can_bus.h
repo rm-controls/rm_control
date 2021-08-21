@@ -63,7 +63,8 @@ public:
    * \param data_ptr Pointer which point to CAN data.
    */
   CanBus(const std::string& bus_name, CanDataPtr data_ptr);
-  /** \brief Read active data from read_buffer_ to data_ptr_, such as position, velocity, torque and so on. Clear read_buffer_ after reading.
+  /** \brief Read active data from read_buffer_ to data_ptr_, such as position, velocity, torque and so on. Clear
+   * read_buffer_ after reading.
    *
    * \param time ROS time, but it doesn't be used.
    */
