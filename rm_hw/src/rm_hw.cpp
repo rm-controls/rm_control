@@ -62,15 +62,14 @@ int main(int argc, char** argv)
   try
   {
     // Create the hardware interface specific to your robot
-    std::shared_ptr<rm_hw::RmBaseHardWareInterface> rm_hw_hw_interface =
-        std::make_shared<rm_hw::RmBaseHardWareInterface>();
+    std::shared_ptr<rm_hw::RmRobotHW> rm_hw_hw_interface = std::make_shared<rm_hw::RmRobotHW>();
     // Initialise the hardware interface:
     // 1. retrieve configuration from rosparam
     // 2. initialize the hardware and interface it with ros_control
     rm_hw_hw_interface->init(nh, robot_hw_nh);
 
     // Start the control loop
-    rm_hw::RmBaseLoop control_loop(nh, rm_hw_hw_interface);
+    rm_hw::RmRobotHWLoop control_loop(nh, rm_hw_hw_interface);
 
     // Wait until shutdown signal received
     ros::waitForShutdown();

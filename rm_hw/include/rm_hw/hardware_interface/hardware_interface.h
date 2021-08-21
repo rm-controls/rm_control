@@ -64,10 +64,10 @@
 
 namespace rm_hw
 {
-class RmBaseHardWareInterface : public hardware_interface::RobotHW
+class RmRobotHW : public hardware_interface::RobotHW
 {
 public:
-  RmBaseHardWareInterface() = default;
+  RmRobotHW() = default;
 
   bool init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) override;
 

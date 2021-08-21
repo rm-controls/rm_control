@@ -54,10 +54,10 @@ namespace rm_hw
 {
 using namespace std::chrono;
 
-class RmBaseLoop
+class RmRobotHWLoop
 {
 public:
-  RmBaseLoop(ros::NodeHandle& nh, std::shared_ptr<RmBaseHardWareInterface> hardware_interface);
+  RmRobotHWLoop(ros::NodeHandle& nh, std::shared_ptr<RmRobotHW> hardware_interface);
 
   /** Timed method that reads current hardware's state, runs the controller
       code once and sends the new commands to the hardware.
@@ -92,7 +92,7 @@ private:
   std::shared_ptr<controller_manager::ControllerManager> controller_manager_;
 
   // Abstract Hardware Interface for your robot
-  std::shared_ptr<RmBaseHardWareInterface> hardware_interface_;
+  std::shared_ptr<RmRobotHW> hardware_interface_;
 };
 }  // namespace rm_hw
 
