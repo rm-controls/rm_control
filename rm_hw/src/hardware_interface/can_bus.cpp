@@ -46,9 +46,9 @@ float int16ToFloat(unsigned short data)
   if (data == 0)
     return 0;
   float* fp32;
-  unsigned int fInt32 =
+  unsigned int f_int32 =
       ((data & 0x8000) << 16) | (((((data >> 10) & 0x1f) - 0x0f + 0x7f) & 0xff) << 23) | ((data & 0x03FF) << 13);
-  fp32 = (float*)&fInt32;
+  fp32 = (float*)&f_int32;
   return *fp32;
 }
 
