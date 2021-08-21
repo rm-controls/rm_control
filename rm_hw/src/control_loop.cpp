@@ -36,7 +36,7 @@
 //
 #include "rm_hw/control_loop.h"
 
-rm_hw::RmBaseLoop::RmBaseLoop(ros::NodeHandle& nh, std::shared_ptr<RmBaseHardWareInterface> hardware_interface)
+rm_hw::RmRobotHWLoop::RmRobotHWLoop(ros::NodeHandle& nh, std::shared_ptr<RmRobotHW> hardware_interface)
   : nh_(nh), hardware_interface_(std::move(hardware_interface))
 {
   // Create the controller manager
@@ -58,12 +58,12 @@ rm_hw::RmBaseLoop::RmBaseLoop(ros::NodeHandle& nh, std::shared_ptr<RmBaseHardWar
   // Get current time for use with first update
   last_time_ = steady_clock::now();
 
-  // Start timer that will periodically call RmBaseLoop::update
+  // Start timer that will periodically call RmRobotHWLoop::update
   desired_update_freq_ = ros::Duration(1 / loop_hz_);
-  loop_timer_ = nh_.createTimer(desired_update_freq_, &RmBaseLoop::update, this);
+  loop_timer_ = nh_.createTimer(desired_update_freq_, &RmRobotHWLoop::update, this);
 }
 
-void rm_hw::RmBaseLoop::update(const ros::TimerEvent&)
+void rm_hw::RmRobotHWLoop::update(const ros::TimerEvent&)
 {
   // Get change in time
   current_time_ = steady_clock::now();

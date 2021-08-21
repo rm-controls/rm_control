@@ -94,4 +94,4 @@ private:
 
 }  // namespace rm_hw
 
-#endif  // RM_BASE_INCLUDE_RM_BASE_CAN_BUS_H_
+#endif  // RM_HW_INCLUDE_RM_HW_CAN_BUS_H_

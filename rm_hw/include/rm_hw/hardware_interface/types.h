@@ -35,8 +35,8 @@
 // Created by qiayuan on 1/20/21.
 //
 
-#ifndef RM_BASE_INCLUDE_RM_BASE_TYPES_H_
-#define RM_BASE_INCLUDE_RM_BASE_TYPES_H_
+#ifndef RM_HW_INCLUDE_RM_HW_TYPES_H_
+#define RM_HW_INCLUDE_RM_HW_TYPES_H_
 
 #include <string>
 #include <rm_common/filters/lp_filter.h>
@@ -88,4 +88,4 @@ struct CanDataPtr
 };
 }  // namespace rm_hw
 
-#endif  // RM_BASE_INCLUDE_RM_BASE_TYPES_H_
+#endif  // RM_HW_INCLUDE_RM_HW_TYPES_H_

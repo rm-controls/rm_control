@@ -46,7 +46,7 @@ namespace rm_hw
 {
 // Lots of ugly parse xml code...
 
-bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue& act_coeffs)
+bool RmRobotHW::parseActCoeffs(XmlRpc::XmlRpcValue& act_coeffs)
 {
   ROS_ASSERT(act_coeffs.getType() == XmlRpc::XmlRpcValue::TypeStruct);
   try
@@ -124,7 +124,7 @@ bool RmBaseHardWareInterface::parseActCoeffs(XmlRpc::XmlRpcValue& act_coeffs)
   return true;
 }
 
-bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue& act_datas, ros::NodeHandle& robot_hw_nh)
+bool RmRobotHW::parseActData(XmlRpc::XmlRpcValue& act_datas, ros::NodeHandle& robot_hw_nh)
 {
   ROS_ASSERT(act_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
   try
@@ -234,7 +234,7 @@ bool RmBaseHardWareInterface::parseActData(XmlRpc::XmlRpcValue& act_datas, ros::
   return true;
 }
 
-bool rm_hw::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHandle& robot_hw_nh)
+bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHandle& robot_hw_nh)
 {
   ROS_ASSERT(imu_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
   try
@@ -332,7 +332,7 @@ bool rm_hw::RmBaseHardWareInterface::parseImuData(XmlRpc::XmlRpcValue& imu_datas
   return true;
 }
 
-bool RmBaseHardWareInterface::loadUrdf(ros::NodeHandle& root_nh)
+bool RmRobotHW::loadUrdf(ros::NodeHandle& root_nh)
 {
   if (urdf_model_ == nullptr)
     urdf_model_ = std::make_shared<urdf::Model>();
@@ -341,7 +341,7 @@ bool RmBaseHardWareInterface::loadUrdf(ros::NodeHandle& root_nh)
   return !urdf_string_.empty() && urdf_model_->initString(urdf_string_);
 }
 
-bool RmBaseHardWareInterface::setupTransmission(ros::NodeHandle& root_nh)
+bool RmRobotHW::setupTransmission(ros::NodeHandle& root_nh)
 {
   if (!is_actuator_specified_)
     return true;
@@ -382,7 +382,7 @@ bool RmBaseHardWareInterface::setupTransmission(ros::NodeHandle& root_nh)
   return true;
 }
 
-bool RmBaseHardWareInterface::setupJointLimit(ros::NodeHandle& root_nh)
+bool RmRobotHW::setupJointLimit(ros::NodeHandle& root_nh)
 {
   if (!is_actuator_specified_)
     return true;

@@ -41,7 +41,7 @@
 
 namespace rm_hw
 {
-bool RmBaseHardWareInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
+bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 {
   // Parse actuator coefficient specified by user (stored on ROS parameter server)
   XmlRpc::XmlRpcValue xml_rpc_value;
@@ -102,7 +102,7 @@ bool RmBaseHardWareInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle& ro
   return true;
 }
 
-void RmBaseHardWareInterface::read(const ros::Time& time, const ros::Duration& period)
+void RmRobotHW::read(const ros::Time& time, const ros::Duration& period)
 {
   for (auto bus : can_buses_)
     bus->read(time);
@@ -131,7 +131,7 @@ void RmBaseHardWareInterface::read(const ros::Time& time, const ros::Duration& p
     effort_joint_handle.setCommand(0.);
 }
 
-void RmBaseHardWareInterface::write(const ros::Time& time, const ros::Duration& period)
+void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
 {
   if (is_actuator_specified_)
   {
@@ -157,7 +157,7 @@ void RmBaseHardWareInterface::write(const ros::Time& time, const ros::Duration& 
   publishActuatorState(time);
 }
 
-void RmBaseHardWareInterface::publishActuatorState(const ros::Time& time)
+void RmRobotHW::publishActuatorState(const ros::Time& time)
 {
   if (last_publish_time_ + ros::Duration(1.0 / 100.0) < time)
   {
