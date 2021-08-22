@@ -80,8 +80,8 @@ public:
   bool init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) override;
   /** \brief Comunicate with hardware. Get datas, status of robot.
    *
-   * Call CanBus::read(). Check whether temperature of actuator is too high and whether actuator is offline. Propagate
-   * actuator state to joint state for the stored transmission. Set all cmd to zero to avoid crazy soft limit
+   * Call @ref rm_hw::CanBus::read(). Check whether temperature of actuator is too high and whether actuator is offline.
+   * Propagate actuator state to joint state for the stored transmission. Set all cmd to zero to avoid crazy soft limit
    * oscillation when not controller loaded(all controllers update after read()).
    *
    * @param time Current time
@@ -92,7 +92,7 @@ public:
   /** \brief Comunicate with hardware. Publish command to robot.
    *
    * Propagate joint state to actuator state for the stored
-   * transmission. Limit cmd_effort into suitable value. Call CanBus::write(). Publish actuator current state.
+   * transmission. Limit cmd_effort into suitable value. Call @ref rm_hw::CanBus::write(). Publish actuator current state.
    *
    * @param time Current time
    * @param period Current time - last time
