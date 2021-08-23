@@ -68,20 +68,94 @@ class RmRobotHW : public hardware_interface::RobotHW
 {
 public:
   RmRobotHW() = default;
-
+  /** \brief Get necessary params from param server. Init hardware_interface.
+   *
+   * Get params from param server and check whether these params are set. Load urdf of robot. Set up transmission and
+   * joint limit. Get configuration of can bus and create data pointer which point to data received from Can bus.
+   *
+   * @param root_nh Root node-handle of a ROS node.
+   * @param robot_hw_nh Node-handle for robot hardware.
+   * @return True when init successful, False when failed.
+   */
   bool init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) override;
-
+  /** \brief Comunicate with hardware. Get datas, status of robot.
+   *
+   * Call @ref rm_hw::CanBus::read(). Check whether temperature of actuator is too high and whether actuator is offline.
+   * Propagate actuator state to joint state for the stored transmission. Set all cmd to zero to avoid crazy soft limit
+   * oscillation when not controller loaded(all controllers update after read()).
+   *
+   * @param time Current time
+   * @param period Current time - last time
+   */
   void read(const ros::Time& time, const ros::Duration& period) override;
 
+  /** \brief Comunicate with hardware. Publish command to robot.
+   *
+   * Propagate joint state to actuator state for the stored
+   * transmission. Limit cmd_effort into suitable value. Call @ref rm_hw::CanBus::write(). Publish actuator current state.
+   *
+   * @param time Current time
+   * @param period Current time - last time
+   */
   void write(const ros::Time& time, const ros::Duration& period) override;
 
 private:
+  /** \brief Check whether some coefficients that are related to actuator are set up and load these coefficients.
+   *
+   * Check whether some coefficients that are related to actuator are set up and load these coefficients.
+   *
+   * @param act_coeffs Coefficients you want to check and load.
+   * @return True if all coefficients are set up.
+   */
   bool parseActCoeffs(XmlRpc::XmlRpcValue& act_coeffs);
+  /** \brief Check whether actuator is specified and load specified params.
+   *
+   * Check whether actuator is specified and load specified params.
+   *
+   * @param act_datas Params you want to check and load.
+   * @param robot_hw_nh Root node-handle of a ROS node.
+   * @return True if all params are set up.
+   */
   bool parseActData(XmlRpc::XmlRpcValue& act_datas, ros::NodeHandle& robot_hw_nh);
+  /** \brief Check whether some params that are related to imu are set up and load these params.
+   *
+   * Check whether some params that are related to imu are set up and load these params.
+   *
+   * @param imu_datas Params you want to check
+   * @param robot_hw_nh Root node-handle of a ROS node
+   * @return True if all params are set up.
+   */
   bool parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHandle& robot_hw_nh);
+  /** \brief Load urdf of robot from param server.
+   *
+   * Load urdf of robot from param server.
+   *
+   * @param root_nh Root node-handle of a ROS node
+   * @return True if successful.
+   */
   bool loadUrdf(ros::NodeHandle& root_nh);
+  /** \brief Set up transmission.
+   *
+   * Set up transmission
+   *
+   * @param root_nh Root node-handle of a ROS node.
+   * @return True if successful.
+   */
   bool setupTransmission(ros::NodeHandle& root_nh);
+  /** \brief Set up joint limit.
+   *
+   * Set up joint limit.
+   *
+   * @param root_nh Root node-handle of a ROS node.
+   * @return True if successful.
+   */
   bool setupJointLimit(ros::NodeHandle& root_nh);
+  /** \brief Publish actuator's state to a topic named "/actuator_states".
+   *
+   * Publish actuator's state to a topic named "/actuator_states".
+   *
+   * @param time Current time
+   */
   void publishActuatorState(const ros::Time& time);
 
   bool is_actuator_specified_ = false;
