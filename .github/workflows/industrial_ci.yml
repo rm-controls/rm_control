@@ -1,6 +1,6 @@
 name: ci
 
-on: [push, pull_request, workflow_dispatch]
+on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
   industrial_ci:
@@ -26,11 +26,11 @@ jobs:
       - id: branch_name
         run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
       - uses: 'gdut-dynamic-x/industrial_ci@master'
-        env: 
+        env:
           ROS_DISTRO: ${{ matrix.env.ROS_DISTRO }}
           ROS_REPO: ${{ matrix.env.ROS_REPO }}
           AFTER_SETUP_ROSDEP: 'apt install -y -qq curl && curl ${{ env.SCRIPT_URL }}init.sh | bash -s ${{ secrets.REPO_URL }}'
-          AFTER_SCRIPT:       'apt install -y -qq curl && curl ${{ env.SCRIPT_URL }}package.sh | bash -s ${{ steps.branch_name.outputs.short_ref }} multi'
+          AFTER_SCRIPT: 'apt install -y -qq curl && curl ${{ env.SCRIPT_URL }}package.sh | bash -s ${{ steps.branch_name.outputs.short_ref }} multi'
       - env:
           ROS_DISTRO: ${{ matrix.env.ROS_DISTRO }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
