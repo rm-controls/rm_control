@@ -25,11 +25,12 @@ jobs:
       # Run industrial_ci
       - id: branch_name
         run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
+      - run: ls && touch test1 && ls
       - uses: 'ros-industrial/industrial_ci@master'
         env: 
           ROS_DISTRO: ${{ matrix.env.ROS_DISTRO }}
           ROS_REPO: ${{ matrix.env.ROS_REPO }}
-          BEFORE_INIT: "sed -i 's/ici_forward_mount TARGET_REPO_PATH ro/ici_forward_mount TARGET_REPO_PATH rw/g' ${ICI_SRC_PATH}/isolation/docker.sh"
+          BEFORE_INIT: "ls && touch test2 && ls"
           AFTER_SETUP_ROSDEP: 'apt install -y -qq curl && curl ${{ env.SCRIPT_URL }}init.sh | bash -s ${{ secrets.REPO_URL }}'
           AFTER_SCRIPT:       'apt install -y -qq curl && curl ${{ env.SCRIPT_URL }}package.sh | bash -s ${{ steps.branch_name.outputs.short_ref }} multi'
       - env:
