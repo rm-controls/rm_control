@@ -32,6 +32,7 @@ jobs:
           AFTER_SETUP_ROSDEP: 'apt install -y -qq curl && curl ${{ env.SCRIPT_URL }}init.sh | bash -s ${{ secrets.REPO_URL }}'
           AFTER_SCRIPT:       'apt install -y -qq curl && curl ${{ env.SCRIPT_URL }}package.sh | bash -s ${{ steps.branch_name.outputs.short_ref }} multi'
       - env:
+          ROS_DISTRO: ${{ matrix.env.ROS_DISTRO }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_SERVER_HOSTKEYS: ${{ secrets.SSH_SERVER_HOSTKEYS }}
           REPO_SSH_HOST: ${{ secrets.REPO_SSH_HOST }}
