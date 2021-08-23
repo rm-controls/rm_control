@@ -14,8 +14,8 @@ The source code is released under a [BSD 3-Clause license](LICENSE).
 Affiliation: [Dynamicx]()<br />
 Maintainer: QiayuanLiao, liaoqiayuan@gmail.com**
 
-The rm_base package has been tested under [ROS] Melodic and Noetic on respectively 18.04 and 20.04. This is research
-code, expect that it changes often and any fitness for a particular purpose is disclaimed.
+The rm_hw package has been tested under [ROS] Melodic and Noetic on respectively 18.04 and 20.04. This is research code,
+expect that it changes often and any fitness for a particular purpose is disclaimed.
 
 [![Build Status](http://rsl-ci.ethz.ch/buildStatus/icon?job=ros_best_practices)](http://rsl-ci.ethz.ch/job/ros_best_practices/)
 
@@ -42,7 +42,6 @@ code, expect that it changes often and any fitness for a particular purpose is d
 [comment]: <> (            year = {2015})
 
 [comment]: <> (        })
-
 
 ### Building from Source
 
@@ -89,65 +88,66 @@ using
 
 [comment]: <> (	roslaunch ros_package_template ros_package_template.launch)
 
-
 ## Packages
 
 ### msgs
+
 #### ActuatorState.msgs
- This message contains the state of An actuator contains a motor and an encoder, and is connected
- to a joint by a transmission.
+
+This message contains the state of An actuator contains a motor and an encoder, and is connected to a joint by a
+transmission.
 
 - time[] stamp
 
-    The time at which this actuator state was measured
+  The time at which this actuator state was measured
 
 - string[] name
 
-    The name of the actuator
+  The name of the actuator
 
 - string[] type
 
-    The type of the actuator
+  The type of the actuator
 
 - string[] bus
 
-    The CAN bus
+  The CAN bus
 
 - int32[] id
 
-    The CAN id
+  The CAN id
 
 - bool[] halted
 
-    Indicates if the motor is halted. A motor can be halted because of a voltage or temperature problem
+  Indicates if the motor is halted. A motor can be halted because of a voltage or temperature problem
 
 - bool[] need_calibration
 
-    calibration
+  calibration
 
 - bool[] calibration_reading
 
-    The value of the calibration reading: low (false) or high (true)
+  The value of the calibration reading: low (false) or high (true)
 
 - uint16[] position_raw
 
-    The encoder raw position, represented by the number of encoder ticks
+  The encoder raw position, represented by the number of encoder ticks
 
 - int16[] velocity_raw
 
-    The encoder velocity, represented by rpm
+  The encoder velocity, represented by rpm
 
 - uint8[] temperature
 
-    The temperature of the motor, represented by c1elsius
+  The temperature of the motor, represented by c1elsius
 
 - int64[]  circle
 
-    The circle of absolute encoder
+  The circle of absolute encoder
 
 - uint16[] last_position_raw
 
-    The last encoder raw position, represented by the number of encoder ticks
+  The last encoder raw position, represented by the number of encoder ticks
 
 - float64[]  frequency
 
@@ -155,68 +155,67 @@ using
 
 - float64[] position
 
-    The encoder position in radians
+  The encoder position in radians
 
 - float64[] velocity
 
-    The encoder velocity in radians per second
+  The encoder velocity in radians per second
 
 - float64[] effort
 
-    The last effort that was measured by the actuator
+  The last effort that was measured by the actuator
 
 - float64[] commanded_effort
 
-    The last effort command that was requested without limit
+  The last effort command that was requested without limit
 
 - float64[] executed_effort
 
-    The last effort command that was requested with limit
+  The last effort command that was requested with limit
 
 - float64[] offset
 
-    The angular offset (in radians) that is added to the encoder reading,
-to get to the position of the actuator. This number is computed when the referece
-sensor is triggered during the calibration phase
+  The angular offset (in radians) that is added to the encoder reading, to get to the position of the actuator. This
+  number is computed when the referece sensor is triggered during the calibration phase
 
 #### BalanceState.msg
-  This message contains the state of balance robot.
 
-- std_msgs/Header header
-    Standard metadata for higher-level stamped data types.
- This is generally used to communicate timestamped data
- in a particular coordinate frame.
+This message contains the state of balance robot.
+
+- std_msgs/Header header Standard metadata for higher-level stamped data types. This is generally used to communicate
+  timestamped data in a particular coordinate frame.
 
 - float64 alpha
 
-    the angle alpha of robot.
+  the angle alpha of robot.
 
 - float64 alpha_dot
 
-    the angle alpha speed of robot.
+  the angle alpha speed of robot.
 
 - float64 vel
 
-    the velocity of robot
+  the velocity of robot
 
 - float64 theta_dot
 
-    the angle theta speed of robot.
+  the angle theta speed of robot.
 
 - float64 control_1
 
-    left joint control
+  left joint control
 
 - float64 control_2
 
-   right joint control
+  right joint control
 
 #### ChassisCmd.msg
-  This message contains various state parameter settings for basic chassis control
+
+This message contains various state parameter settings for basic chassis control
 
 - uint8 RAW = 0
 
-   the mode RAW:the Initial state.
+  the mode RAW:the Initial state.
 
 - uint8 FOLLOW = 1
 
@@ -251,39 +250,40 @@ sensor is triggered during the calibration phase
   The time at which this actuator state was measured
 
 #### DbusData.msgs
-  This message contains the information needed for remote control operation
+
+This message contains the information needed for remote control operation
 
 - UP DOWN MID
 
-    Set various operating modes of the robot from the trackwheel
+  Set various operating modes of the robot from the trackwheel
 
 - ch_l/r-x/y
 
-    Operation of the left and right joysticks
+  Operation of the left and right joysticks
 
 - s_l/r
 
-    Operation of the left and right impellers
+  Operation of the left and right impellers
 
 - wheel
 
-   The wave wheel that controls the small top
+  The wave wheel that controls the small top
 
 - m/p_xyz/lr
 
-    Various mouse operations
+  Various mouse operations
 
 - key_
 
-    Various operations of the keyboard
+  Various operations of the keyboard
 
 - time stamp
 
-    The time at which this actuator state was measured
+  The time at which this actuator state was measured
 
-####GimbalCmd.msg
+#### GimbalCmd.msg
 
-  This message includes various commands received by the gimbal
+This message includes various commands received by the gimbal
 
 - uint8 RATE
 
@@ -291,7 +291,7 @@ Bullet launch
 
 - uint8 TRACK
 
-   Self-aim
+  Self-aim
 
 - uint8 DIRECT
 
@@ -299,14 +299,13 @@ Bullet launch
 
 - time stamp
 
-   The time at which this actuator state was measured
+  The time at which this actuator state was measured
 
 - uint8 mode
 
-   The current mode of the chassis.
+  The current mode of the chassis.
 
 - uint8 target_id
-
 
 
 - float64 rate_yaw
@@ -316,39 +315,39 @@ Bullet launch
 
 - float64 bullet_speed
 
-   Bullet firing speed
+  Bullet firing speed
 
 - geometry_msgs/PointStamped
 
-    This represents a Point with reference coordinate frame and timestamp
-
+  This represents a Point with reference coordinate frame and timestamp
 
 #### GimbalDesError.msg
 
 #### KalmanData.msg
-  This message contains various kinematics data
+
+This message contains various kinematics data
 
 - std_msgs/Header header
 
-    Standard metadata for higher-level stamped data types.
-  This is generally used to communicate timestamped data
-  in a particular coordinate frame.
+  Standard metadata for higher-level stamped data types. This is generally used to communicate timestamped data in a
+  particular coordinate frame.
 
 - geometry_msgs/Pose real_detection_pose
 
-   A representation of pose in free space, composed of position and orientation
+  A representation of pose in free space, composed of position and orientation
 
 - geometry_msgs/Pose filtered_detection_pose
 
-   A representation of pose in free space, composed of position and orientation
+  A representation of pose in free space, composed of position and orientation
 
 - geometry_msgs/Twist real_detection_twist
 
-    This expresses velocity in free space broken into its linear and angular parts.
+  This expresses velocity in free space broken into its linear and angular parts.
 
 - geometry_msgs/Twist filtered_detection_twist
 
-   This expresses velocity in free space broken into its linear and angular parts.
+  This expresses velocity in free space broken into its linear and angular parts.
+
 #### LpData.msg
 
 #### MovingAverageData.msg
@@ -362,7 +361,6 @@ Bullet launch
 ### srv
 
 ### action
-
 
 [ROS]: http://www.ros.org
 

@@ -1,0 +1,29 @@
+<launch>
+    <arg name="robot_type" default="$(env ROBOT_TYPE)" doc="Robot type [standard, hero, engineer, sentry]"/>
+    <arg name="debug" default="false"/>
+    <arg name="load_chassis" default="true"/>
+    <arg name="load_gimbal" default="true"/>
+    <arg name="load_shooter" default="true"/>
+    <arg name="load_arm" default="true"/>
+
+    <arg unless="$(arg debug)" name="launch_prefix" value=""/>
+    <arg if="$(arg debug)" name="launch_prefix" value="gdbserver :1234"/>
+
+    <rosparam file="$(find rm_hw)/config/actuator_coefficient.yaml" command="load" ns="rm_hw"/>
+    <rosparam file="$(find rm_hw)/test/test_motor.yaml" command="load"/>
+
+    <rosparam file="$(find rm_hw)/test/test_motor.xacro" command="load" ns="robot_description"/>
+
+    <node name="rm_hw" launch-prefix="$(arg launch_prefix)" pkg="rm_hw" type="rm_hw" respawn="false"
+          output="screen"/>
+
+    <!-- load the controllers -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+          output="screen" args="
+                   controllers/joint_state_controller
+                   controllers/robot_state_controller
+                   controllers/joint_mit_cheetah_position_controller
+
+    "/>
+
+</launch>

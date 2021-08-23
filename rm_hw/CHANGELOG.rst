@@ -1,11 +1,15 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package rm_msgs
+Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 0.1.2 (2021-08-14)
 ------------------
 * Run pre-commit
-* Add missing CATKIN_DEPENDS in catkin_package()
+* Fix error: unused variable ‘jnt_config_ok’
+* Code style: loadUrdf
+* Delete unreachable code
+* Format rm_base using clang-format
+* Code style
 * Contributors: qiayuan
 
 0.1.1 (2021-08-12)

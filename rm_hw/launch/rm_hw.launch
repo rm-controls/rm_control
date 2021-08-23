@@ -1,0 +1,23 @@
+<launch>
+    <arg name="robot_type" default="$(env ROBOT_TYPE)" doc="Robot type [standard, hero, engineer, sentry]"/>
+    <arg name="debug" default="false"/>
+    <arg name="load_chassis" default="true"/>
+    <arg name="load_gimbal" default="true"/>
+    <arg name="load_shooter" default="true"/>
+    <arg name="load_arm" default="true"/>
+
+    <arg unless="$(arg debug)" name="launch_prefix" value=""/>
+    <arg if="$(arg debug)" name="launch_prefix" value="gdbserver :1234"/>
+
+    <param name="robot_description" command="$(find xacro)/xacro $(find rm_description)/urdf/$(arg robot_type)/$(arg robot_type).urdf.xacro
+         load_chassis:=$(arg load_chassis) load_gimbal:=$(arg load_gimbal) load_shooter:=$(arg load_shooter)
+         load_arm:=$(arg load_arm)
+         use_simulation:=false roller_type:=none
+"/>
+
+    <rosparam file="$(find rm_hw)/config/actuator_coefficient.yaml" command="load" ns="rm_hw"/>
+    <rosparam file="$(find rm_hw)/config/$(arg robot_type).yaml" command="load"/>
+
+    <node name="rm_hw" launch-prefix="$(arg launch_prefix)" pkg="rm_hw" type="rm_hw" respawn="false"
+          clear_params="true"/>
+</launch>

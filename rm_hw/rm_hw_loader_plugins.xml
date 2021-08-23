@@ -1,0 +1,11 @@
+<library path="lib/librm_hw_loader_plugins">
+    <!-- Transmission types -->
+    <class name="transmission_interface/DoubleActuatorTransmission"
+           type="transmission_interface::DoubleActuatorTransmissionLoader"
+           base_class_type="transmission_interface::TransmissionLoader">
+        <description>
+            Load from a URDF description the configuration of a joint using two actuator transmission.
+        </description>
+    </class>
+
+</library>

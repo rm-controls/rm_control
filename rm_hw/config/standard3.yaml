@@ -1,0 +1,76 @@
+rm_hw:
+  bus:
+    - can0
+    - can1
+  loop_frequency: 1000
+  cycle_time_error_threshold: 0.001
+  # Configurations of the actuators
+  actuators:
+    right_front_wheel_motor:
+      bus: can0
+      id: 0x201
+      type: rm_3508
+      lp_cutoff_frequency: 150
+    left_front_wheel_motor:
+      bus: can0
+      id: 0x202
+      type: rm_3508
+      lp_cutoff_frequency: 150
+    left_back_wheel_motor:
+      bus: can0
+      id: 0x203
+      type: rm_3508
+      lp_cutoff_frequency: 150
+    right_back_wheel_motor:
+      bus: can0
+      id: 0x204
+      type: rm_3508
+      lp_cutoff_frequency: 150
+    yaw_joint_motor:
+      bus: can0
+      id: 0x205
+      type: rm_6020
+      lp_cutoff_frequency: 50
+    pitch_joint_motor:
+      bus: can1
+      id: 0x206
+      type: rm_6020
+      lp_cutoff_frequency: 50
+    left_friction_wheel_joint_motor:
+      bus: can1
+      id: 0x201
+      type: rm_3508
+      lp_cutoff_frequency: 60
+    right_friction_wheel_joint_motor:
+      bus: can1
+      id: 0x202
+      type: rm_3508
+      lp_cutoff_frequency: 60
+    trigger_joint_motor:
+      bus: can1
+      id: 0x203
+      type: rm_2006
+      lp_cutoff_frequency: 100
+      need_calibration: true
+    cover_joint_motor:
+      bus: can1
+      id: 0x204
+      type: rm_2006
+      lp_cutoff_frequency: 100
+      need_calibration: true
+  imus:
+    base_imu:
+      frame_id: base_link
+      bus: can0
+      id: 0x300
+      orientation_covariance_diagonal: [ 0.0012, 0.0012, 0.0012 ]
+      angular_velocity_covariance: [ 0.0004, 0.0004, 0.0004 ]
+      linear_acceleration_covariance: [ 0.01, 0.01, 0.01 ]
+
+    test_imu:
+      frame_id: pitch
+      bus: can1
+      id: 0x300
+      orientation_covariance_diagonal: [ 0.0012, 0.0012, 0.0012 ]
+      angular_velocity_covariance: [ 0.0004, 0.0004, 0.0004 ]
+      linear_acceleration_covariance: [ 0.01, 0.01, 0.01 ]

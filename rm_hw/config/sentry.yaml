@@ -1,0 +1,73 @@
+rm_hw:
+  bus:
+    - can0
+    - can1
+  loop_frequency: 1000
+  cycle_time_error_threshold: 0.001
+  # Configurations of the actuators
+  actuators:
+    upper_left_friction_wheel_joint_motor:
+      bus: can0
+      id: 0x201
+      type: rm_3508
+      lp_cutoff_frequency: 60
+      lp_debug: true
+    upper_right_friction_wheel_joint_motor:
+      bus: can0
+      id: 0x202
+      type: rm_3508
+      lp_cutoff_frequency: 60
+      lp_debug: true
+    upper_trigger_joint_motor:
+      bus: can0
+      id: 0x203
+      type: rm_2006
+      lp_cutoff_frequency: 100
+      need_calibration: true
+    drive_joint_motor:
+      bus: can0
+      id: 0x204
+      type: rm_3508
+      lp_cutoff_frequency: 100
+    upper_pitch_joint_motor:
+      bus: can0
+      id: 0x205
+      type: rm_6020
+      lp_cutoff_frequency: 50
+      need_calibration: true
+    upper_yaw_joint_motor:
+      bus: can0
+      id: 0x206
+      type: rm_6020
+      lp_cutoff_frequency: 50
+      need_calibration: true
+    lower_left_friction_wheel_joint_motor:
+      bus: can1
+      id: 0x201
+      type: rm_3508
+      lp_cutoff_frequency: 60
+      lp_debug: true
+    lower_right_friction_wheel_joint_motor:
+      bus: can1
+      id: 0x202
+      type: rm_3508
+      lp_cutoff_frequency: 60
+      lp_debug: true
+    lower_trigger_joint_motor:
+      bus: can1
+      id: 0x207
+      type: rm_2006
+      lp_cutoff_frequency: 100
+      need_calibration: true
+    lower_pitch_joint_motor:
+      bus: can1
+      id: 0x205
+      type: rm_6020
+      lp_cutoff_frequency: 30
+      need_calibration: true
+    lower_yaw_joint_motor:
+      bus: can1
+      id: 0x206
+      type: rm_6020
+      lp_cutoff_frequency: 30
+      need_calibration: true
