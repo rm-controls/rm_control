@@ -35,8 +35,6 @@
 // Created by qiayuan on 1/2/21.
 //
 
-#ifndef RM_BASE_SRC_BASE_TRANSMISSION_REVOLUTE_TRANSMISSION_H_
-#define RM_BASE_SRC_BASE_TRANSMISSION_REVOLUTE_TRANSMISSION_H_
 #pragma once
 
 #include <cassert>
@@ -143,5 +141,3 @@ inline void DoubleActuatorTransmission::jointToActuatorEffort(const JointData& j
 }
 
 }  // namespace transmission_interface
-
-#endif  // RM_BASE_SRC_BASE_TRANSMISSION_REVOLUTE_TRANSMISSION_H_

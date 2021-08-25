@@ -35,8 +35,7 @@
 // Created by qiayuan on 12/30/20.
 //
 
-#ifndef RM_HW_CONTROL_LOOP_H
-#define RM_HW_CONTROL_LOOP_H
+#pragma once
 
 #include "rm_hw/hardware_interface/hardware_interface.h"
 
@@ -63,8 +62,7 @@ public:
       code once and sends the new commands to the hardware.
 
       Note: we do not use the TimerEvent time difference because it
-          does NOT guarantee that the time source is strictly
-          linearly increasing.
+          does NOT guarantee that the time source is strictly linearly increasing.
   **/
   void update(const ros::TimerEvent&);
 
@@ -95,5 +93,3 @@ private:
   std::shared_ptr<RmRobotHW> hardware_interface_;
 };
 }  // namespace rm_hw
-
-#endif  // RM_HW_CONTROL_LOOP_H
