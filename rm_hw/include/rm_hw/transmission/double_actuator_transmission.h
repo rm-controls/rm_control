@@ -51,11 +51,38 @@ namespace transmission_interface
 class DoubleActuatorTransmission : public Transmission
 {
 public:
+  /** \brief Check whether it has two actuators and one joint, throw error if not. Check whether Transmission reduction
+   * ratios are zero, throw error if true.
+   *
+   * @param actuator_reduction Actuator's reduction.
+   * @param joint_reduction Joint's reduction.
+   * @param joint_offset Joint's offset.
+   */
   DoubleActuatorTransmission(std::vector<double> actuator_reduction, double joint_reduction, double joint_offset = 0.0);
 
+  /** \brief Set conversion from actuator to joint on effort.
+   *
+   * @param act_data Data of actuator.
+   * @param jnt_data Data of joint.
+   */
   void actuatorToJointEffort(const ActuatorData& act_data, JointData& jnt_data) override;
+  /** \brief Set conversion from actuator to joint on velocity.
+   *
+   * @param act_data Data of actuator.
+   * @param jnt_data Data of joint.
+   */
   void actuatorToJointVelocity(const ActuatorData& act_data, JointData& jnt_data) override;
+  /** \brief Set conversion from actuator to joint on position.
+   *
+   * @param act_data Data of actuator.
+   * @param jnt_data Data of joint.
+   */
   void actuatorToJointPosition(const ActuatorData& act_data, JointData& jnt_data) override;
+  /** \brief Set conversion from joint to actuator on effort.
+   *
+   * @param act_data Data of actuator.
+   * @param jnt_data Data of joint.
+   */
   void jointToActuatorEffort(const JointData& jnt_data, ActuatorData& act_data) override;
   void jointToActuatorVelocity(const JointData& jnt_data, ActuatorData& act_data) override{};
   void jointToActuatorPosition(const JointData& jnt_data, ActuatorData& act_data) override{};
