@@ -35,8 +35,7 @@
 // Created by qiayuan on 3/21/20.
 //
 
-#ifndef RM_COMMON_TF_RT_BROADCASTER_H
-#define RM_COMMON_TF_RT_BROADCASTER_H
+#pragma once
 
 #include <cmath>
 #include <string>
@@ -200,5 +199,3 @@ public:
     }
   }
 };
-
-#endif  // RM_COMMON_TF_RT_BROADCASTER_H

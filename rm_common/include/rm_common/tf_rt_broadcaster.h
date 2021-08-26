@@ -35,8 +35,8 @@
 // Created by qiayuan on 1/3/21.
 //
 
-#ifndef RM_COMMON_TF_RT_BROADCASTER_H
-#define RM_COMMON_TF_RT_BROADCASTER_H
+#pragma once
+
 #include <ros/ros.h>
 #include <tf2_msgs/TFMessage.h>
 #include <geometry_msgs/TransformStamped.h>
@@ -69,4 +69,3 @@ private:
 };
 
 }  // namespace rm_common
-#endif  // RM_COMMON_TF_RT_BROADCASTER_H

@@ -35,8 +35,8 @@
 // Created by chenzheng on 3/20/21.
 //
 
-#ifndef RM_COMMON_LQR_H
-#define RM_COMMON_LQR_H
+#pragma once
+
 #include <iostream>
 #include <Eigen/Dense>
 #include "eigen_types.h"
@@ -145,5 +145,3 @@ private:
 
   DMat<T> a_, b_, q_, r_, k_;
 };
-
-#endif  // RM_COMMON_LQR_H

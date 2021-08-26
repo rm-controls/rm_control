@@ -35,8 +35,8 @@
 // Created by qiayuan on 5/19/21.
 //
 
-#ifndef RM_COMMON_HEAT_LIMIT_H_
-#define RM_COMMON_HEAT_LIMIT_H_
+#pragma once
+
 #include "rm_common/referee/data.h"
 namespace rm_common
 {
@@ -175,4 +175,3 @@ private:
 };
 
 }  // namespace rm_common
-#endif  // RM_COMMON_HEAT_LIMIT_H_

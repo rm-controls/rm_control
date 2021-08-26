@@ -35,8 +35,8 @@
 // Created by qiayuan on 7/7/20.
 //
 
-#ifndef RM_COMMON_ROS_UTILITIES_H
-#define RM_COMMON_ROS_UTILITIES_H
+#pragma once
+
 #include <ros/ros.h>
 #include <XmlRpcException.h>
 
@@ -78,5 +78,3 @@ inline double xmlRpcGetDouble(XmlRpc::XmlRpcValue& value, const std::string& fie
   else
     return default_value;
 }
-
-#endif  // RM_COMMON_ROS_UTILITIES_H

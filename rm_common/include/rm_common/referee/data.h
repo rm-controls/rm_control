@@ -35,8 +35,7 @@
 // Created by peter on 2021/7/17.
 //
 
-#ifndef RM_COMMON_REFEREE_DATA_H_
-#define RM_COMMON_REFEREE_DATA_H_
+#pragma once
 
 #include "rm_common/referee/protocol.h"
 
@@ -79,5 +78,3 @@ struct RefereeData
   bool is_online_ = false;
 };
 }  // namespace rm_common
-
-#endif  // RM_COMMON_REFEREE_DATA_H_
