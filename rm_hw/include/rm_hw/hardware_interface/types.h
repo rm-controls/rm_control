@@ -35,8 +35,7 @@
 // Created by qiayuan on 1/20/21.
 //
 
-#ifndef RM_HW_INCLUDE_RM_HW_TYPES_H_
-#define RM_HW_INCLUDE_RM_HW_TYPES_H_
+#pragma once
 
 #include <string>
 #include <rm_common/filters/lp_filter.h>
@@ -87,5 +86,3 @@ struct CanDataPtr
   std::unordered_map<int, ImuData>* id2imu_data_;
 };
 }  // namespace rm_hw
-
-#endif  // RM_HW_INCLUDE_RM_HW_TYPES_H_

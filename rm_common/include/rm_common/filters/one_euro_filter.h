@@ -35,8 +35,7 @@
 // Created by liucong on 2020/12/5.
 //
 
-#ifndef RM_COMMON_FILTERS_ONE_EURO_FILTER_H
-#define RM_COMMON_FILTERS_ONE_EURO_FILTER_H
+#pragma once
 
 #include <cmath>
 
@@ -101,5 +100,3 @@ private:
   T x_prev, dhatxprev, hatxprev;
   T filtered_val;
 };
-
-#endif  // RM_COMMON_FILTERS_ONE_EURO_FILTER_H

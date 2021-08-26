@@ -35,10 +35,8 @@
 // Created by qiayuan on 1/3/21.
 //
 
-#ifndef RM_COMMON_HARDWARE_INTERFACE_ROBOT_STATE_INTERFACE_H
-#define RM_COMMON_HARDWARE_INTERFACE_ROBOT_STATE_INTERFACE_H
-
 #pragma once
+
 #include <utility>
 
 #include <hardware_interface/internal/hardware_resource_manager.h>
@@ -93,4 +91,3 @@ class RobotStateInterface : public HardwareResourceManager<RobotStateHandle, Don
 {
 };
 }  // namespace hardware_interface
-#endif  // RM_COMMON_HARDWARE_INTERFACE_ROBOT_STATE_INTERFACE_H

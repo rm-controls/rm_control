@@ -35,8 +35,8 @@
 // Created by bruce on 2021/7/28.
 //
 
-#ifndef RM_COMMON_POWER_LIMIT_H_
-#define RM_COMMON_POWER_LIMIT_H_
+#pragma once
+
 #include <ros/ros.h>
 #include <rm_msgs/ChassisCmd.h>
 
@@ -162,5 +162,3 @@ private:
   const rm_msgs::ChassisCmd& chassis_cmd_;
 };
 }  // namespace rm_common
-
-#endif  // SRM_COMMON_POWER_LIMIT_H_

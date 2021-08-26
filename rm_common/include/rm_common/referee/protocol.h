@@ -35,9 +35,9 @@
 // Created by peter on 2021/5/17.
 //
 
-#ifndef RM_COMMON_REFEREE_PROTOCOL_H_
-#define RM_COMMON_REFEREE_PROTOCOL_H_
+#pragma once
 #define __packed __attribute__((packed))
+
 #include <cstdint>
 
 namespace rm_common
@@ -433,5 +433,3 @@ const uint16_t wCRC_table[256] = {
   0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 };
 }  // namespace rm_common
-
-#endif  // RM_COMMON_REFEREE_PROTOCOL_H_

@@ -35,8 +35,8 @@
 // Created by qiayuan on 1/5/21.
 //
 
-#ifndef RM_COMMON_FILTERS_LP_FILTER_H
-#define RM_COMMON_FILTERS_LP_FILTER_H
+#pragma once
+
 #include <dynamic_reconfigure/server.h>
 #include <realtime_tools/realtime_publisher.h>
 #include <rm_msgs/LpData.h>
@@ -70,5 +70,3 @@ private:
 
   std::shared_ptr<realtime_tools::RealtimePublisher<rm_msgs::LpData>> realtime_pub_{};
 };
-
-#endif  // RM_COMMON_FILTERS_LP_FILTER_H

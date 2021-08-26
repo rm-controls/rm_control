@@ -35,8 +35,8 @@
 // Created by qiayuan on 5/27/21.
 //
 
-#ifndef RM_COMMON_CALIBRATION_QUEUE_H_
-#define RM_COMMON_CALIBRATION_QUEUE_H_
+#pragma once
+
 #include "rm_common/decision/service_caller.h"
 
 namespace rm_common
@@ -146,5 +146,3 @@ private:
   bool switched_;
 };
 }  // namespace rm_common
-
-#endif  // RM_COMMON_CALIBRATION_QUEUE_H_

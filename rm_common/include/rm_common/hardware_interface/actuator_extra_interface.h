@@ -35,10 +35,8 @@
 // Created by qiayuan on 5/14/21.
 //
 
-#ifndef RM_COMMON_ACTUATOR_EXTRA_INTERFACE_H_
-#define RM_COMMON_ACTUATOR_EXTRA_INTERFACE_H_
-
 #pragma once
+
 #include <utility>
 #include <hardware_interface/internal/hardware_resource_manager.h>
 
@@ -129,5 +127,3 @@ class ActuatorExtraInterface : public HardwareResourceManager<ActuatorExtraHandl
 };
 
 }  // namespace hardware_interface
-
-#endif  // RM_COMMON_CALIBRATION_INTERFACE_H_

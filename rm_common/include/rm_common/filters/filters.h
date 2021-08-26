@@ -31,8 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
 
-#ifndef RM_COMMON_FILTERS_FILTERS_H
-#define RM_COMMON_FILTERS_FILTERS_H
+#pragma once
 
 template <typename T>
 class Filter
@@ -201,5 +200,3 @@ private:
   T x_prev, dhatxprev, hatxprev;
   T filtered_val;
 };
-
-#endif  // RM_COMMON_FILTERS_FILTERS_H
