@@ -65,14 +65,14 @@ public:
    */
   RmRobotHWLoop(ros::NodeHandle& nh, std::shared_ptr<RmRobotHW> hardware_interface);
   /** \brief Timed method that reads current hardware's state, runs the controller code once and sends the new commands
-   to the hardware.
+   * to the hardware.
    *
    * Timed method that reads current hardware's state, runs the controller
-      code once and sends the new commands to the hardware.
+   * code once and sends the new commands to the hardware.
    *
-   *      Note: we do not use the TimerEvent time difference because it
-          does NOT guarantee that the time source is strictly
-          linearly increasing.
+   * Note: we do not use the TimerEvent time difference because it
+   * does NOT guarantee that the time source is strictly
+   * linearly increasing.
    */
 
   void update(const ros::TimerEvent&);
