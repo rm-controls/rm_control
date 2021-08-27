@@ -35,8 +35,7 @@
 // Created by qiayuan on 12/22/19.
 //
 
-#ifndef RM_COMMON_MATH_UTILITIES_H
-#define RM_COMMON_MATH_UTILITIES_H
+#pragma once
 
 #include <cmath>
 template <typename T>
@@ -77,5 +76,3 @@ T alpha(T cutoff, double freq)
   T te = 1.0 / freq;
   return 1.0 / (1.0 + tau / te);
 }
-
-#endif  // RM_COMMON_MATH_UTILITIES_H

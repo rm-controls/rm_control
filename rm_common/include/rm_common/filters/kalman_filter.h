@@ -35,8 +35,8 @@
 // Created by qiayuan on 4/3/20.
 //
 
-#ifndef RM_COMMON_FILTERS_KALMAN_FILTER_H
-#define RM_COMMON_FILTERS_KALMAN_FILTER_H
+#pragma once
+
 #include <iostream>
 #include "rm_common/eigen_types.h"
 
@@ -125,5 +125,3 @@ private:
   const int m_, n_;  // dimension
   bool inited;
 };
-
-#endif  // RM_COMMON_FILTERS_KALMAN_FILTER_H

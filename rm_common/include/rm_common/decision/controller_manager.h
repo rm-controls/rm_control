@@ -34,8 +34,8 @@
 //
 // Created by astro on 2021/5/15.
 //
-#ifndef RM_COMMON_CONTROLLER_MANAGER_H_
-#define RM_COMMON_CONTROLLER_MANAGER_H_
+#pragma once
+
 #include "rm_common/decision/service_caller.h"
 
 #include <algorithm>
@@ -162,4 +162,3 @@ private:
 };
 
 }  // namespace rm_common
-#endif  // RM_COMMON_CONTROLLER_MANAGER_H_

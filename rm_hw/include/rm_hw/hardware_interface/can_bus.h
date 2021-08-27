@@ -35,8 +35,7 @@
 // Created by qiayuan on 12/28/20.
 //
 
-#ifndef RM_HW_INCLUDE_RM_HW_CAN_BUS_H_
-#define RM_HW_INCLUDE_RM_HW_CAN_BUS_H_
+#pragma once
 
 #include "rm_hw/hardware_interface/socketcan.h"
 #include "rm_hw/hardware_interface/types.h"
@@ -93,5 +92,3 @@ private:
 };
 
 }  // namespace rm_hw
-
-#endif  // RM_HW_INCLUDE_RM_HW_CAN_BUS_H_

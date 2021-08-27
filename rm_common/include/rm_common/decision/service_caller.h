@@ -35,8 +35,7 @@
 // Created by qiayuan on 5/22/21.
 //
 
-#ifndef RM_COMMON_SERVICE_CALLER_H_
-#define RM_COMMON_SERVICE_CALLER_H_
+#pragma once
 
 #include <chrono>
 #include <mutex>
@@ -244,5 +243,3 @@ private:
   bool is_set_{};
 };
 }  // namespace rm_common
-
-#endif  // RM_COMMON_SERVICE_CALLER_H_

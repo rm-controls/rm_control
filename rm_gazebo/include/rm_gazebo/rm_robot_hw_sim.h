@@ -35,8 +35,8 @@
 // Created by qiayuan on 2/10/21.
 //
 
-#ifndef RM_GAZEBO_RM_ROBOT_HW_SIM_H
-#define RM_GAZEBO_RM_ROBOT_HW_SIM_H
+#pragma once
+
 #include <gazebo_ros_control/default_robot_hw_sim.h>
 #include <rm_common/hardware_interface/robot_state_interface.h>
 
@@ -54,5 +54,3 @@ private:
   hardware_interface::RobotStateInterface robot_state_interface_;
 };
 }  // namespace rm_gazebo
-
-#endif  // RM_GAZEBO_RM_ROBOT_HW_SIM_H

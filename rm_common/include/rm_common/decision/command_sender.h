@@ -35,8 +35,8 @@
 // Created by qiayuan on 5/18/21.
 //
 
-#ifndef RM_COMMON_COMMAND_SENDER_H_
-#define RM_COMMON_COMMAND_SENDER_H_
+#pragma once
+
 #include <type_traits>
 #include <utility>
 
@@ -444,5 +444,3 @@ private:
   double step_{};
 };
 }  // namespace rm_common
-
-#endif  // RM_COMMON_COMMAND_SENDER_H_

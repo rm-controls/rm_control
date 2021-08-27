@@ -35,8 +35,7 @@
 // Created by qiayuan on 4/3/20.
 //
 
-#ifndef RM_COMMON_CPP_TYPES_H
-#define RM_COMMON_CPP_TYPES_H
+#pragma once
 
 #include <eigen3/Eigen/Dense>
 
@@ -157,5 +156,3 @@ using D3Mat = typename Eigen::Matrix<T, 3, Eigen::Dynamic>;
 // std::vector (a list) of Eigen things
 template <typename T>
 using vectorAligned = typename std::vector<T, Eigen::aligned_allocator<T>>;
-
-#endif  // RM_COMMON_CPP_TYPES_H

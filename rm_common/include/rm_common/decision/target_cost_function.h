@@ -35,8 +35,7 @@
 // Created by kiana on 2021/3/22.
 //
 
-#ifndef RM_COMMON_TARGET_COST_FUNCTION_H_
-#define RM_COMMON_TARGET_COST_FUNCTION_H_
+#pragma once
 
 #include <ros/ros.h>
 #include <tf2_ros/transform_listener.h>
@@ -75,4 +74,3 @@ private:
   ros::Time last_switch_target_;
 };
 }  // namespace rm_common
-#endif  // RM_COMMON_TARGET_COST_FUNCTION_H_

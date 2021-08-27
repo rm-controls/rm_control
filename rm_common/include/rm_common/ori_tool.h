@@ -35,8 +35,8 @@
 // Created by qiayuan on 8/13/20.
 //
 
-#ifndef RM_COMMON_ORI_TOOL_H_
-#define RM_COMMON_ORI_TOOL_H_
+#pragma once
+
 #include <geometry_msgs/Quaternion.h>
 #include <tf/transform_datatypes.h>
 #include <eigen3/Eigen/Core>
@@ -52,5 +52,3 @@ double yawFromQuat(const geometry_msgs::Quaternion& q);
 tf::Quaternion getAverageQuaternion(const std::vector<tf::Quaternion>& quaternions, const std::vector<double>& weights);
 
 tf::Quaternion rotationMatrixToQuaternion(const Eigen::Map<Eigen::Matrix3d>& rot);
-
-#endif  // RM_COMMON_ORI_TOOL_H_

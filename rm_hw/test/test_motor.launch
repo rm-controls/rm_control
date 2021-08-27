@@ -14,7 +14,7 @@
 
     <rosparam file="$(find rm_hw)/test/test_motor.xacro" command="load" ns="robot_description"/>
 
-    <node name="rm_hw" launch-prefix="$(arg launch_prefix)" pkg="rm_hw" type="rm_base" respawn="false"
+    <node name="rm_hw" launch-prefix="$(arg launch_prefix)" pkg="rm_hw" type="rm_hw" respawn="false"
           output="screen"/>
 
     <!-- load the controllers -->
