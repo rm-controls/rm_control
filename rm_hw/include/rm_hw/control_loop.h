@@ -66,11 +66,10 @@ public:
   /** \brief Timed method that reads current hardware's state, runs the controller code once and sends the new commands
    * to the hardware.
    *
-   * Timed method that reads current hardware's state, runs the controller
-   * code once and sends the new commands to the hardware.
+   * Timed method that reads current hardware's state, runs the controller code once and sends the new commands to the
+   * hardware.
    *
-   * Note: we do not use the TimerEvent time difference because it
-   * does NOT guarantee that the time source is strictly
+   * Note: we do not use the TimerEvent time difference because it does NOT guarantee that the time source is strictly
    * linearly increasing.
    */
 
