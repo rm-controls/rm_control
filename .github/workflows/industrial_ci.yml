@@ -23,6 +23,6 @@ jobs:
           key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
       # Run industrial_ci
       - uses: 'ros-industrial/industrial_ci@master'
-        env: 
+        env:
           ROS_DISTRO: ${{ matrix.env.ROS_DISTRO }}
           ROS_REPO: ${{ matrix.env.ROS_REPO }}
