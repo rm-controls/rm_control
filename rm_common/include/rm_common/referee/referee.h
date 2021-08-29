@@ -5,7 +5,6 @@
 #define RM_COMMON_REFEREE_H_
 
 #include <cstdint>
-#include <serial/serial.h>
 #include <ros/ros.h>
 
 #include <rm_msgs/Referee.h>
@@ -41,20 +40,29 @@ public:
     : super_capacitor_(referee_data_.capacity_data)
     , last_get_(ros::Time::now())
     , last_send_(ros::Time::now())
-    , serial_port_("/dev/usbReferee")
     , client_id_(0)
   {
     referee_data_.robot_hurt_.hurt_type_ = 0x09;
   };
-  void init();
   void read();
   void addUi(const rm_common::GraphConfig& config, const std::string& content, bool priority_flag = false);
   void sendUi(const ros::Time& time);
   void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);
+  void clearBuffer()
+  {
+    rx_buffer_.clear();
+    for (int i = 0; i < 128; i++)
+      tx_buffer_[i] = 0;
+    rx_len_ = 0;
+    tx_len_ = 0;
+  }
 
   ros::Publisher referee_pub_;
   ros::Publisher super_capacitor_pub_;
   rm_common::RefereeData referee_data_{};
+  std::vector<uint8_t> rx_buffer_;
+  uint8_t tx_buffer_[128];
+  int tx_len_, rx_len_;
 
 private:
   int unpack(uint8_t* rx_data);
@@ -63,12 +71,10 @@ private:
   void publishData();
 
   SuperCapacitor super_capacitor_;
-  serial::Serial serial_;
   ros::Time last_get_, last_send_;
   rm_msgs::Referee referee_pub_data_;
   rm_msgs::SuperCapacitor super_capacitor_pub_data_;
   std::vector<std::pair<rm_common::GraphConfig, std::string>> ui_queue_;
-  const std::string serial_port_;
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
   const int k_unpack_buffer_length_ = 256;
   uint8_t unpack_buffer_[256]{};

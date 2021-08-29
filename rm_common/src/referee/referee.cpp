@@ -5,65 +5,19 @@
 
 namespace rm_common
 {
-void Referee::init()
-{
-  serial::Timeout timeout = serial::Timeout::simpleTimeout(50);
-  try
-  {
-    serial_.setPort(serial_port_);
-    serial_.setBaudrate(115200);
-    serial_.setTimeout(timeout);
-  }
-  catch (std::exception& e)
-  {
-    ROS_ERROR("Cannot set serial port of referee system, check whether the serial library is installed and try to use "
-              "catkin clean");
-    return;
-  }
-  if (!serial_.isOpen())
-  {
-    try
-    {
-      serial_.open();
-    }
-    catch (serial::IOException& e)
-    {
-      ROS_ERROR("Cannot open referee port");
-    }
-  }
-  if (referee_data_.is_online_)
-    ROS_INFO("Referee system connect successfully");
-}
-
 // read data from referee
 void Referee::read()
 {
-  std::vector<uint8_t> rx_buffer;
   uint8_t temp_buffer[256] = { 0 };
-  int rx_len = 0, frame_len;
-
+  int frame_len;
   if (ros::Time::now() - last_get_ > ros::Duration(0.1))
     referee_data_.is_online_ = false;
-  try
+  if (rx_len_ < k_unpack_buffer_length_)
   {
-    if (serial_.available())
-    {
-      rx_len = (int)serial_.available();
-      serial_.read(rx_buffer, rx_len);
-    }
-  }
-  catch (serial::IOException& e)
-  {
-    ROS_ERROR("Referee system disconnect, cannot read referee data");
-    referee_data_.is_online_ = false;
-    return;
-  }
-  if (rx_len < k_unpack_buffer_length_)
-  {
-    for (int kI = 0; kI < k_unpack_buffer_length_ - rx_len; ++kI)
-      temp_buffer[kI] = unpack_buffer_[kI + rx_len];
-    for (int kI = 0; kI < rx_len; ++kI)
-      temp_buffer[kI + k_unpack_buffer_length_ - rx_len] = rx_buffer[kI];
+    for (int kI = 0; kI < k_unpack_buffer_length_ - rx_len_; ++kI)
+      temp_buffer[kI] = unpack_buffer_[kI + rx_len_];
+    for (int kI = 0; kI < rx_len_; ++kI)
+      temp_buffer[kI + k_unpack_buffer_length_ - rx_len_] = rx_buffer_[kI];
     for (int kI = 0; kI < k_unpack_buffer_length_; ++kI)
       unpack_buffer_[kI] = temp_buffer[kI];
   }
@@ -76,7 +30,7 @@ void Referee::read()
         kI += frame_len;
     }
   }
-  super_capacitor_.read(rx_buffer);
+  super_capacitor_.read(rx_buffer_);
   getRobotInfo();
   publishData();
 }
@@ -290,25 +244,17 @@ void Referee::publishData()
 
 void Referee::sendInteractiveData(int data_cmd_id, int receiver_id, uint8_t data)
 {
-  uint8_t tx_buffer[128] = { 0 };
   uint8_t tx_data[sizeof(rm_common::InteractiveData)] = { 0 };
   auto student_interactive_data = (rm_common::InteractiveData*)tx_data;
-  int tx_len = k_header_length_ + k_cmd_id_length_ + (int)sizeof(rm_common::InteractiveData) + k_tail_length_;
 
+  for (int i = 0; i < 128; i++)
+    tx_buffer_[i] = 0;
   student_interactive_data->header_data_.data_cmd_id_ = data_cmd_id;
   student_interactive_data->header_data_.sender_id_ = referee_data_.robot_id_;
   student_interactive_data->header_data_.receiver_id_ = receiver_id;
   student_interactive_data->data_ = data;
-  pack(tx_buffer, tx_data, rm_common::RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(rm_common::InteractiveData));
-
-  try
-  {
-    serial_.write(tx_buffer, tx_len);
-  }
-  catch (serial::PortNotOpenedException& e)
-  {
-    ROS_ERROR("Cannot open referee port, fail to send command to sentry");
-  }
+  pack(tx_buffer_, tx_data, rm_common::RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(rm_common::InteractiveData));
+  tx_len_ = k_header_length_ + k_cmd_id_length_ + (int)sizeof(rm_common::InteractiveData) + k_tail_length_;
 }
 
 void Referee::addUi(const rm_common::GraphConfig& config, const std::string& content, bool priority_flag)
@@ -325,7 +271,6 @@ void Referee::sendUi(const ros::Time& time)
 {
   if (ui_queue_.empty() || time - last_send_ < ros::Duration(0.05))
     return;
-  uint8_t tx_buffer[128] = { 0 };
   rm_common::GraphData tx_data;
   int data_len = (int)sizeof(rm_common::GraphData);
   tx_data.header_.sender_id_ = referee_data_.robot_id_;
@@ -347,15 +292,8 @@ void Referee::sendUi(const ros::Time& time)
         tx_data.content_[i] = ' ';
     }
   }
-  pack(tx_buffer, (uint8_t*)&tx_data, rm_common::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
-  try
-  {
-    serial_.write(tx_buffer, k_header_length_ + k_cmd_id_length_ + k_tail_length_ + data_len);
-  }
-  catch (serial::PortNotOpenedException& e)
-  {
-    ROS_ERROR_ONCE("Cannot open referee port, fail to draw UI");
-  }
+  pack(tx_buffer_, (uint8_t*)&tx_data, rm_common::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
+  tx_len_ = k_header_length_ + k_cmd_id_length_ + k_tail_length_ + data_len;
   ui_queue_.pop_back();
   last_send_ = time;
 }
