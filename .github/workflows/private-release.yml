@@ -27,7 +27,6 @@ jobs:
         run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
       - uses: 'gdut-dynamic-x/industrial_ci@master'
         env:
-          TEST: skip
           ROS_DISTRO: ${{ matrix.env.ROS_DISTRO }}
           ROS_REPO: ${{ matrix.env.ROS_REPO }}
           AFTER_SETUP_ROSDEP: 'apt install -y -qq curl && curl ${{ env.SCRIPT_URL }}init.sh | bash -s ${{ secrets.REPO_URL }}'
@@ -38,4 +37,4 @@ jobs:
           SSH_SERVER_HOSTKEYS: ${{ secrets.SSH_SERVER_HOSTKEYS }}
           REPO_SSH_HOST: ${{ secrets.REPO_SSH_HOST }}
           REPO_SSH_PORT: ${{ secrets.REPO_SSH_PORT }}
-        run: ls && curl ${{ env.SCRIPT_URL }}publish.sh | sh -s ${{ steps.branch_name.outputs.short_ref }}
+        run: curl ${{ env.SCRIPT_URL }}publish.sh | sh -s ${{ steps.branch_name.outputs.short_ref }}
