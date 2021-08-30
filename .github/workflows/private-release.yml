@@ -1,0 +1,40 @@
+name: private-release
+
+on: [ push, workflow_dispatch ]
+
+jobs:
+  industrial_ci:
+    strategy:
+      matrix:
+        env:
+          - { ROS_DISTRO: noetic, ROS_REPO: testing }
+          - { ROS_DISTRO: noetic, ROS_REPO: main }
+          - { ROS_DISTRO: melodic, ROS_REPO: testing }
+          - { ROS_DISTRO: melodic, ROS_REPO: main }
+    env:
+      CCACHE_DIR: /github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
+      SCRIPT_URL: https://raw.githubusercontent.com/gdut-dynamic-x/ci_scripts/master/
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # This step will fetch/store the directory used by ccache before/after the ci run
+      - uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
+      # Run industrial_ci
+      - id: branch_name
+        run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
+      - uses: 'gdut-dynamic-x/industrial_ci@master'
+        env:
+          ROS_DISTRO: ${{ matrix.env.ROS_DISTRO }}
+          ROS_REPO: ${{ matrix.env.ROS_REPO }}
+          AFTER_SETUP_ROSDEP: 'apt install -y -qq curl && curl ${{ env.SCRIPT_URL }}init.sh | bash -s ${{ secrets.REPO_URL }}'
+          AFTER_SCRIPT: 'apt install -y -qq curl && curl ${{ env.SCRIPT_URL }}package.sh | bash -s ${{ steps.branch_name.outputs.short_ref }} multi'
+      - env:
+          ROS_DISTRO: ${{ matrix.env.ROS_DISTRO }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_SERVER_HOSTKEYS: ${{ secrets.SSH_SERVER_HOSTKEYS }}
+          REPO_SSH_HOST: ${{ secrets.REPO_SSH_HOST }}
+          REPO_SSH_PORT: ${{ secrets.REPO_SSH_PORT }}
+        run: curl ${{ env.SCRIPT_URL }}publish.sh | sh -s ${{ steps.branch_name.outputs.short_ref }}
