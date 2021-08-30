@@ -45,10 +45,35 @@ namespace transmission_interface
 class DoubleActuatorTransmissionLoader : public TransmissionLoader
 {
 public:
+  /** \brief Load transmission.
+   *
+   *
+   *
+   * @param transmission_info A pointer which point to data that stored name, type, joints, actuators of a transmission.
+   * @return If successful, it will return a pointer which point to a transmission that has been loaded. If failed, it
+   * is useless.
+   */
   TransmissionSharedPtr load(const TransmissionInfo& transmission_info) override;
 
 private:
+  /** \brief Get actuators' configuration.
+   *
+   *
+   *
+   * @param transmission_info A pointer which point to data that stored name, type, joints, actuators of a transmission.
+   * @param actuator_reduction This function will store actuator's reductiono into this variable.
+   * @return If successful, return true. If failed, return false.
+   */
   static bool getActuatorConfig(const TransmissionInfo& transmission_info, std::vector<double>& actuator_reduction);
+  /** \brief Get joints' configuration.
+   *
+   *
+   *
+   * @param transmission_info A pointer which point to data that stored name, type, joints, actuators of a transmission.
+   * @param joint_reduction This function will store joint's reduction into this variable.
+   * @param joint_offset This function will store joint's offset into this variable.
+   * @return Useless.
+   */
   static bool getJointConfig(const TransmissionInfo& transmission_info, double& joint_reduction, double& joint_offset);
 };
 
