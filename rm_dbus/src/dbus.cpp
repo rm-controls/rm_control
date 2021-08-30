@@ -19,17 +19,21 @@ extern "C" {
 extern int ioctl(int __fd, unsigned long int __request, ...) throw();
 }
 
-void DBus::init(const char *serial) {
+void DBus::init(const char* serial)
+{
   int fd = open(serial, O_RDWR | O_NOCTTY | O_SYNC);
 
-  struct termios2 options{};
+  struct termios2 options
+  {
+  };
   ioctl(fd, TCGETS2, &options);
 
-  if (fd == -1) {
+  if (fd == -1)
+  {
     ROS_ERROR("[rt_dbus] Unable to open dbus\n");
   }
 
-  //Even parity(8E1):
+  // Even parity(8E1):
   options.c_cflag &= ~CBAUD;
   options.c_cflag |= BOTHER;
 
@@ -49,25 +53,31 @@ void DBus::init(const char *serial) {
   options.c_cc[VTIME] = 0;
   options.c_cc[VMIN] = 0;
 
-  options.c_oflag = 0;      // no remapping, no delays
-  options.c_cflag |= (CLOCAL | CREAD);// ignore modem controls, enable reading
+  options.c_oflag = 0;                  // no remapping, no delays
+  options.c_cflag |= (CLOCAL | CREAD);  // ignore modem controls, enable reading
   ioctl(fd, TCSETS2, &options);
 
   port_ = fd;
 }
 
-void DBus::read() {
+void DBus::read()
+{
   uint8_t read_byte;
-  int timeout = 0;  //time out of one package
-  int count = 0;    //count of bit of one package
-  while (timeout < 10) {
+  int timeout = 0;  // time out of one package
+  int count = 0;    // count of bit of one package
+  while (timeout < 10)
+  {
     // Read a byte //
     size_t n = ::read(port_, &read_byte, sizeof(read_byte));
-    if (n == 0) {
+    if (n == 0)
+    {
       timeout++;
-    } else if (n == 1) {
+    }
+    else if (n == 1)
+    {
       // Shift the buffer //
-      for (int i = 0; i < 17; i++) {
+      for (int i = 0; i < 17; i++)
+      {
         buff_[i] = buff_[i + 1];
       }
       buff_[17] = read_byte;
@@ -75,15 +85,19 @@ void DBus::read() {
     }
   }
   unpack();
-  if (count < 17) {
+  if (count < 17)
+  {
     memset(&d_bus_data_, 0, sizeof(d_bus_data_));
     is_update_ = false;
-  } else {
+  }
+  else
+  {
     is_update_ = true;
   }
 }
 
-void DBus::unpack() {
+void DBus::unpack()
+{
   d_bus_data_.ch0 = (buff_[0] | buff_[1] << 8) & 0x07FF;
   d_bus_data_.ch0 -= 1024;
   d_bus_data_.ch1 = (buff_[1] >> 3 | buff_[2] << 5) & 0x07FF;
@@ -105,10 +119,9 @@ void DBus::unpack() {
   d_bus_data_.s1 = ((buff_[5] >> 4) & 0x000C) >> 2;
   d_bus_data_.s0 = (buff_[5] >> 4) & 0x0003;
 
-  if ((abs(d_bus_data_.ch0) > 660) || \
-      (abs(d_bus_data_.ch1) > 660) || \
-      (abs(d_bus_data_.ch2) > 660) || \
-      (abs(d_bus_data_.ch3) > 660)) {
+  if ((abs(d_bus_data_.ch0) > 660) || (abs(d_bus_data_.ch1) > 660) || (abs(d_bus_data_.ch2) > 660) ||
+      (abs(d_bus_data_.ch3) > 660))
+  {
     is_success = false;
     return;
   }
@@ -117,22 +130,23 @@ void DBus::unpack() {
   d_bus_data_.z = buff_[10] | (buff_[11] << 8);
   d_bus_data_.l = buff_[12];
   d_bus_data_.r = buff_[13];
-  d_bus_data_.key = buff_[14] | buff_[15] << 8; // key board code
+  d_bus_data_.key = buff_[14] | buff_[15] << 8;  // key board code
   d_bus_data_.wheel = (buff_[16] | buff_[17] << 8) - 1024;
   is_success = true;
 }
 
-void DBus::getData(rm_msgs::DbusData *d_bus_data) const {
-
-  if (is_success) {
-    d_bus_data->ch_r_x = static_cast<double> (d_bus_data_.ch0 / 660.0);
-    d_bus_data->ch_r_y = static_cast<double> (d_bus_data_.ch1 / 660.0);
-    d_bus_data->ch_l_x = static_cast<double> (d_bus_data_.ch2 / 660.0);
-    d_bus_data->ch_l_y = static_cast<double> (d_bus_data_.ch3 / 660.0);
-    d_bus_data->m_x = static_cast<double> (d_bus_data_.x / 1600.0);
-    d_bus_data->m_y = static_cast<double> (d_bus_data_.y / 1600.0);
-    d_bus_data->m_z = static_cast<double> (d_bus_data_.z / 1600.0);
-    d_bus_data->wheel = static_cast<double> (d_bus_data_.wheel / 660.0);
+void DBus::getData(rm_msgs::DbusData* d_bus_data) const
+{
+  if (is_success)
+  {
+    d_bus_data->ch_r_x = static_cast<double>(d_bus_data_.ch0 / 660.0);
+    d_bus_data->ch_r_y = static_cast<double>(d_bus_data_.ch1 / 660.0);
+    d_bus_data->ch_l_x = static_cast<double>(d_bus_data_.ch2 / 660.0);
+    d_bus_data->ch_l_y = static_cast<double>(d_bus_data_.ch3 / 660.0);
+    d_bus_data->m_x = static_cast<double>(d_bus_data_.x / 1600.0);
+    d_bus_data->m_y = static_cast<double>(d_bus_data_.y / 1600.0);
+    d_bus_data->m_z = static_cast<double>(d_bus_data_.z / 1600.0);
+    d_bus_data->wheel = static_cast<double>(d_bus_data_.wheel / 660.0);
 
     d_bus_data->s_l = d_bus_data_.s1;
     d_bus_data->s_r = d_bus_data_.s0;
