@@ -30,8 +30,6 @@ catkin_package(
     INCLUDE_DIRS
     include
     ## This is only necessary because Eigen3 sets a non-standard EIGEN3_INCLUDE_DIR variable
-    LIBRARIES
-    ${PROJECT_NAME}
     CATKIN_DEPENDS
     roscpp
     rm_common

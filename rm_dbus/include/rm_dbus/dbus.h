@@ -8,7 +8,8 @@
 #include <cstdint>
 #include <rm_msgs/DbusData.h>
 
-typedef struct {
+typedef struct
+{
   int16_t ch0;
   int16_t ch1;
   int16_t ch2;
@@ -27,16 +28,16 @@ typedef struct {
 
 } DBusData_t;
 
-class DBus {
-
- public:
+class DBus
+{
+public:
   DBus() = default;
   ~DBus() = default;
-  void init(const char *serial);
-  void getData(rm_msgs::DbusData *d_bus_data) const;
+  void init(const char* serial);
+  void getData(rm_msgs::DbusData* d_bus_data) const;
   void read();
 
- private:
+private:
   DBusData_t d_bus_data_{};
   int port_{};
   int16_t buff_[18]{};
@@ -45,5 +46,4 @@ class DBus {
   void unpack();
 };
 
-#endif //SRC_RM_BRIDGE_INCLUDE_RT_RT_DBUS_H_
-
+#endif  // SRC_RM_BRIDGE_INCLUDE_RT_RT_DBUS_H_

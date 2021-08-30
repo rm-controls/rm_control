@@ -7,16 +7,18 @@
 #include "dbus.h"
 #include <ros/ros.h>
 #include <rm_msgs/DbusData.h>
-class DBusNode {
- private:
+class DBusNode
+{
+private:
   ros::NodeHandle nh_;
   ros::Publisher dbus_pub_;
   std::string serial_port_;
   rm_msgs::DbusData dbus_cmd_;
   DBus dbus_{};
- public:
+
+public:
   DBusNode();
   ~DBusNode() = default;
   void run();
 };
-#endif //SRC_RM_BRIDGE_INCLUDE_DBUS_NODE_H_
+#endif  // SRC_RM_BRIDGE_INCLUDE_DBUS_NODE_H_
