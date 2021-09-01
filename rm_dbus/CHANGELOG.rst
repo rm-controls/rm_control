@@ -2,8 +2,8 @@
 Changelog for package rm_dbus
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.3 (2021-09-01)
+------------------
 * Format the code
 * Format the code
 * Add licence

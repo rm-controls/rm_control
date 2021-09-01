@@ -2,8 +2,8 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.3 (2021-09-01)
+------------------
 * Format the code
 * Merge remote-tracking branch 'origin/master'
 * Merge pull request `#6 <https://github.com/rm-controls/rm_control/issues/6>`_ from ye-luo-xi-tui/master

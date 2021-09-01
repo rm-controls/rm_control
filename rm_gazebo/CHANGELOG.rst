@@ -2,8 +2,8 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.3 (2021-09-01)
+------------------
 * Merge remote-tracking branch 'origin/master'
 * Merge branch 'master' into master
 * Use “pragma once” in rm_gazebo headers instead of include guards.

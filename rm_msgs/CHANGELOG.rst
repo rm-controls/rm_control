@@ -2,8 +2,8 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.3 (2021-09-01)
+------------------
 * Merge branch 'master' into master
 * Rename rm_base to rm_hw
 * Contributors: QiayuanLiao, qiayuan
