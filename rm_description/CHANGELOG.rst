@@ -2,6 +2,14 @@
 Changelog for package rm_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge branch 'master' into master
+* Contributors: QiayuanLiao
+
+* Merge branch 'master' into master
+* Contributors: QiayuanLiao
+
 0.1.2 (2021-08-14)
 ------------------
 * Run pre-commit

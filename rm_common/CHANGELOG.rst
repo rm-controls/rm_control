@@ -2,6 +2,40 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Format the code
+* Format the code
+* Add licence
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#7 <https://github.com/rm-controls/rm_control/issues/7>`_ from Peter-Chan-tech/master
+  Move referee operations to rm_common
+* Remove serial lib in rm_common
+* Reformat
+* Add new line at the end of files
+* Move referee.cpp and referee.h to rm_common
+* Merge remote-tracking branch 'origin/master'
+* Merge branch 'master' into master
+* Use “pragma once” in rm_common headers instead of include guards.
+* Merge branch 'master' into master
+* Contributors: Peter-Chan-tech, QiayuanLiao, chenzheng, qiayuan, ye-luo-xi-tui, yezi
+
+* Format the code
+* Format the code
+* Add licence
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#7 <https://github.com/rm-controls/rm_control/issues/7>`_ from Peter-Chan-tech/master
+  Move referee operations to rm_common
+* Remove serial lib in rm_common
+* Reformat
+* Add new line at the end of files
+* Move referee.cpp and referee.h to rm_common
+* Merge remote-tracking branch 'origin/master'
+* Merge branch 'master' into master
+* Use “pragma once” in rm_common headers instead of include guards.
+* Merge branch 'master' into master
+* Contributors: Peter-Chan-tech, QiayuanLiao, chenzheng, qiayuan, ye-luo-xi-tui, yezi
+
 0.1.2 (2021-08-14)
 ------------------
 * Run pre-commit

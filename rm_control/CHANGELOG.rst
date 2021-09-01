@@ -2,6 +2,16 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge branch 'master' into master
+* Rename rm_base to rm_hw
+* Contributors: QiayuanLiao, qiayuan
+
+* Merge branch 'master' into master
+* Rename rm_base to rm_hw
+* Contributors: QiayuanLiao, qiayuan
+
 0.1.2 (2021-08-14)
 ------------------
 * Add exec_depend rm_control
