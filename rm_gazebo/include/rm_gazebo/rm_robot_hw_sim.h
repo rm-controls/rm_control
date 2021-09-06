@@ -64,8 +64,10 @@ public:
 
 private:
   void parseImu(XmlRpc::XmlRpcValue& imu_datas, const gazebo::physics::ModelPtr& parent_model);
+
   hardware_interface::RobotStateInterface robot_state_interface_;
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
+  WorldPtr world_;
   std::vector<ImuData> imu_datas_;
 };
 
