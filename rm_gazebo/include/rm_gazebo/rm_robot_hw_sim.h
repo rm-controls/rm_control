@@ -38,10 +38,22 @@
 #pragma once
 
 #include <gazebo_ros_control/default_robot_hw_sim.h>
+#include <hardware_interface/imu_sensor_interface.h>
 #include <rm_common/hardware_interface/robot_state_interface.h>
 
 namespace rm_gazebo
 {
+struct ImuData
+{
+  gazebo::physics::LinkPtr link_prt;
+  double ori[4];
+  double ori_cov[9];
+  double angular_vel[3];
+  double angular_vel_cov[9];
+  double linear_acc[3];
+  double linear_acc_cov[9];
+};
+
 class RmRobotHWSim : public gazebo_ros_control::DefaultRobotHWSim
 {
 public:
@@ -51,6 +63,10 @@ public:
   void readSim(ros::Time time, ros::Duration period) override;
 
 private:
+  void parseImu(XmlRpc::XmlRpcValue& imu_datas, const gazebo::physics::ModelPtr& parent_model);
   hardware_interface::RobotStateInterface robot_state_interface_;
+  hardware_interface::ImuSensorInterface imu_sensor_interface_;
+  std::vector<ImuData> imu_datas_;
 };
+
 }  // namespace rm_gazebo
