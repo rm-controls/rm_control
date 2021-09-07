@@ -51,6 +51,6 @@ public:
   void readSim(ros::Time time, ros::Duration period) override;
 
 private:
-  hardware_interface::RobotStateInterface robot_state_interface_;
+  rm_control::RobotStateInterface robot_state_interface_;
 };
 }  // namespace rm_gazebo
