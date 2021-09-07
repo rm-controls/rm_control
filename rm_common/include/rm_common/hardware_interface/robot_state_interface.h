@@ -45,7 +45,7 @@
 
 #include "rm_common/tf_rt_broadcaster.h"
 
-namespace hardware_interface
+namespace rm_control
 {
 class RobotStateHandle
 {
@@ -54,7 +54,8 @@ public:
   RobotStateHandle(std::string name, tf2_ros::Buffer* buffer) : name_(std::move(name)), buffer_(buffer)
   {
     if (!buffer)
-      throw HardwareInterfaceException("Cannot create handle '" + name + "'. Tf Buffer data pointer is null.");
+      throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
+                                                           "'. Tf Buffer data pointer is null.");
   };
 
   geometry_msgs::TransformStamped lookupTransform(const std::string& target_frame, const std::string& source_frame,
@@ -87,7 +88,8 @@ private:
   tf2_ros::Buffer* buffer_{};
 };
 
-class RobotStateInterface : public HardwareResourceManager<RobotStateHandle, DontClaimResources>
+class RobotStateInterface
+  : public hardware_interface::HardwareResourceManager<RobotStateHandle, hardware_interface::DontClaimResources>
 {
 };
-}  // namespace hardware_interface
+}  // namespace rm_control
