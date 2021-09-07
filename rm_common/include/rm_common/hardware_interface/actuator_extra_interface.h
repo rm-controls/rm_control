@@ -40,7 +40,7 @@
 #include <utility>
 #include <hardware_interface/internal/hardware_resource_manager.h>
 
-namespace hardware_interface
+namespace rm_control
 {
 class ActuatorExtraHandle
 {
@@ -57,17 +57,22 @@ public:
     , offset_(offset)
   {
     if (!halted)
-      throw HardwareInterfaceException("Cannot create handle '" + name + "'. halted pointer is null.");
+      throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
+                                                           "'. halted pointer is null.");
     if (!need_calibration)
-      throw HardwareInterfaceException("Cannot create handle '" + name + "'. need_calibration  pointer is null.");
+      throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
+                                                           "'. need_calibration  pointer is null.");
     if (!calibrated)
-      throw HardwareInterfaceException("Cannot create handle '" + name + "'. calibrated pointer is null.");
+      throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
+                                                           "'. calibrated pointer is null.");
     if (!calibration_reading)
-      throw HardwareInterfaceException("Cannot create handle '" + name + "'. calibration reading pointer is null.");
+      throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
+                                                           "'. calibration reading pointer is null.");
     if (!pos)
-      throw HardwareInterfaceException("Cannot create handle '" + name + "'. pos pointer is null.");
+      throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name + "'. pos pointer is null.");
     if (!offset)
-      throw HardwareInterfaceException("Cannot create handle '" + name + "'. offset pointer is null.");
+      throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
+                                                           "'. offset pointer is null.");
   }
   std::string getName() const
   {
@@ -122,8 +127,9 @@ private:
   double* offset_{};
 };
 
-class ActuatorExtraInterface : public HardwareResourceManager<ActuatorExtraHandle, ClaimResources>
+class ActuatorExtraInterface
+  : public hardware_interface::HardwareResourceManager<ActuatorExtraHandle, hardware_interface::ClaimResources>
 {
 };
 
-}  // namespace hardware_interface
+}  // namespace rm_control
