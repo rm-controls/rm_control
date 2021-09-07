@@ -67,7 +67,7 @@ private:
 
   hardware_interface::RobotStateInterface robot_state_interface_;
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
-  WorldPtr world_;
+  gazebo::physics::WorldPtr world_;
   std::vector<ImuData> imu_datas_;
 };
 

@@ -134,19 +134,19 @@ void RmRobotHWSim::parseImu(XmlRpc::XmlRpcValue& imu_datas, const gazebo::physic
     ROS_ASSERT(link_ptr != nullptr);
     imu_datas_.push_back((ImuData{
         .link_prt = link_ptr,
-        .ori = {},
+        .ori = { 0., 0., 0., 0. },
         .ori_cov = { static_cast<double>(ori_cov[0]), 0., 0., 0., static_cast<double>(ori_cov[1]), 0., 0., 0.,
                      static_cast<double>(ori_cov[2]) },
-        .angular_vel = {},
+        .angular_vel = { 0., 0., 0. },
         .angular_vel_cov = { static_cast<double>(angular_cov[0]), 0., 0., 0., static_cast<double>(angular_cov[1]), 0.,
                              0., 0., static_cast<double>(angular_cov[2]) },
-        .linear_acc = {},
+        .linear_acc = { 0., 0., 0. },
         .linear_acc_cov = { static_cast<double>(linear_cov[0]), 0., 0., 0., static_cast<double>(linear_cov[1]), 0., 0.,
                             0., static_cast<double>(linear_cov[2]) } }));
-    std::vector<ImuData>::iterator imu_data = imu_datas_.end();
-    imu_sensor_interface_.registerHandle(hardware_interface::ImuSensorHandle(
-        it->first, frame_id, imu_data->ori, imu_data->ori_cov, imu_data->angular_vel, imu_data->angular_vel_cov,
-        imu_data->linear_acc, imu_data->linear_acc_cov));
+    ImuData& imu_data = imu_datas_.back();
+    imu_sensor_interface_.registerHandle(
+        hardware_interface::ImuSensorHandle(it->first, frame_id, imu_data.ori, imu_data.ori_cov, imu_data.angular_vel,
+                                            imu_data.angular_vel_cov, imu_data.linear_acc, imu_data.linear_acc_cov));
   }
 }
 
