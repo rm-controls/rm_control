@@ -4,9 +4,12 @@ uint8 DIRECT = 2
 
 time stamp
 uint8 mode
-uint8 target_id
+
+# RATE
 float64 rate_yaw
 float64 rate_pitch
 
+# TRACK/DIRECT
 float64 bullet_speed
-geometry_msgs/PointStamped aim_point
+geometry_msgs/PointStamped target_pos
+geometry_msgs/Vector3Stamped target_vel
