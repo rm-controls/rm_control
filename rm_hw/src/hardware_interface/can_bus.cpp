@@ -41,17 +41,6 @@
 #include <rm_common/math_utilities.h>
 namespace rm_hw
 {
-float int16ToFloat(unsigned short data)
-{
-  if (data == 0)
-    return 0;
-  float* fp32;
-  unsigned int f_int32 =
-      ((data & 0x8000) << 16) | (((((data >> 10) & 0x1f) - 0x0f + 0x7f) & 0xff) << 23) | ((data & 0x03FF) << 13);
-  fp32 = (float*)&f_int32;
-  return *fp32;
-}
-
 CanBus::CanBus(const std::string& bus_name, CanDataPtr data_ptr) : data_ptr_(data_ptr), bus_name_(bus_name)
 {
   // Initialize device at can_device, false for no loop back.
@@ -223,44 +212,30 @@ void CanBus::read(ros::Time time)
       }
     }
     // Check if IMU
-    float imu_frame_data[4] = { 0 };
-    bool is_too_big = false;  // int16ToFloat failed sometime
-    for (int i = 0; i < 4; ++i)
-    {
-      float value = int16ToFloat((frame.data[i * 2] << 8) | frame.data[i * 2 + 1]);
-      if (value > 1e3 || value < -1e3)
-        is_too_big = true;
-      else
-        imu_frame_data[i] = value;
-    }
-    if (!is_too_big)
-    {  // TODO remove this ugly statement
-      for (auto& itr : *data_ptr_.id2imu_data_)
-      {  // imu data are consisted of three frames
-        switch (frame.can_id - static_cast<unsigned int>(itr.first))
-        {
-          case 0:
-            itr.second.linear_acc[0] = imu_frame_data[0] * 9.81;
-            itr.second.linear_acc[1] = imu_frame_data[1] * 9.81;
-            itr.second.linear_acc[2] = imu_frame_data[2] * 9.81;
-            itr.second.angular_vel[0] = imu_frame_data[3] / 360. * 2. * M_PI;
-            continue;
-          case 1:
-            itr.second.angular_vel[1] = imu_frame_data[0] / 360. * 2. * M_PI;
-            itr.second.angular_vel[2] = imu_frame_data[1] / 360. * 2. * M_PI;
-            itr.second.ori[3] = imu_frame_data[2];  // Note the quaternion order
-            itr.second.ori[0] = imu_frame_data[3];
-            continue;
-          case 2:
-            itr.second.ori[1] = imu_frame_data[0];
-            itr.second.ori[2] = imu_frame_data[1];
-            continue;
-          default:
-            break;
-        }
+    for (auto& itr : *data_ptr_.id2imu_data_)
+    {  // imu data are consisted of two frames
+      switch (frame.can_id - static_cast<unsigned int>(itr.first))
+      {
+        int16_t temp;
+        case 0:
+          itr.second.angular_vel[0] = ((int16_t)((frame.data[1]) << 8) | frame.data[0]) * itr.second.angular_vel_coeff;
+          itr.second.angular_vel[1] = ((int16_t)((frame.data[3]) << 8) | frame.data[2]) * itr.second.angular_vel_coeff;
+          itr.second.angular_vel[2] = ((int16_t)((frame.data[5]) << 8) | frame.data[4]) * itr.second.angular_vel_coeff;
+          temp = (int16_t)((frame.data[7] << 3) | (frame.data[6] >> 5));
+          if (temp > 1023)
+            temp -= 2048;
+          itr.second.temperature = temp * itr.second.temp_coeff + itr.second.temp_offset;
+          continue;
+        case 1:
+          itr.second.linear_acc[0] = ((int16_t)((frame.data[1]) << 8) | frame.data[0]) * itr.second.accel_coeff;
+          itr.second.linear_acc[1] = ((int16_t)((frame.data[3]) << 8) | frame.data[2]) * itr.second.accel_coeff;
+          itr.second.linear_acc[2] = ((int16_t)((frame.data[5]) << 8) | frame.data[4]) * itr.second.accel_coeff;
+          continue;
+        default:
+          break;
       }
     }
-    if (!is_too_big && frame.can_id != 0x0)
+    if (frame.can_id != 0x0)
       ROS_ERROR_STREAM_ONCE("Can not find defined device, id: 0x" << std::hex << frame.can_id
                                                                   << " on bus: " << bus_name_);
   }
