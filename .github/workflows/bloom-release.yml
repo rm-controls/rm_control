@@ -25,6 +25,7 @@ jobs:
           release_repository_push_url: https://github.com/${{ github.repository }}-release.git
           tag_and_release: true
           open_pr: true
+          debug_bloom: true
       - name: create GitHub release
         uses: actions/create-release@v1
         continue-on-error: true
