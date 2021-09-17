@@ -119,6 +119,12 @@ void CanBus::read(ros::Time time)
 {
   std::lock_guard<std::mutex> guard(mutex_);
 
+  for (auto& imu : *data_ptr_.id2imu_data_)
+  {
+    imu.second.gyro_updated = false;
+    imu.second.accel_updated = false;
+  }
+
   for (const auto& frame_stamp : read_buffer_)
   {
     can_frame frame = frame_stamp.frame;
@@ -208,32 +214,31 @@ void CanBus::read(ros::Time time)
           // Low pass filter
           act_data.lp_filter->input(act_data.vel);
           act_data.vel = act_data.lp_filter->output();
+          continue;
         }
       }
     }
-    // Check if IMU
-    for (auto& itr : *data_ptr_.id2imu_data_)
-    {  // imu data are consisted of two frames
-      switch (frame.can_id - static_cast<unsigned int>(itr.first))
-      {
-        int16_t temp;
-        case 0:
-          itr.second.angular_vel[0] = ((int16_t)((frame.data[1]) << 8) | frame.data[0]) * itr.second.angular_vel_coeff;
-          itr.second.angular_vel[1] = ((int16_t)((frame.data[3]) << 8) | frame.data[2]) * itr.second.angular_vel_coeff;
-          itr.second.angular_vel[2] = ((int16_t)((frame.data[5]) << 8) | frame.data[4]) * itr.second.angular_vel_coeff;
-          temp = (int16_t)((frame.data[7] << 3) | (frame.data[6] >> 5));
-          if (temp > 1023)
-            temp -= 2048;
-          itr.second.temperature = temp * itr.second.temp_coeff + itr.second.temp_offset;
-          continue;
-        case 1:
-          itr.second.linear_acc[0] = ((int16_t)((frame.data[1]) << 8) | frame.data[0]) * itr.second.accel_coeff;
-          itr.second.linear_acc[1] = ((int16_t)((frame.data[3]) << 8) | frame.data[2]) * itr.second.accel_coeff;
-          itr.second.linear_acc[2] = ((int16_t)((frame.data[5]) << 8) | frame.data[4]) * itr.second.accel_coeff;
-          continue;
-        default:
-          break;
-      }
+    else if (data_ptr_.id2imu_data_->find(frame.can_id) != data_ptr_.id2imu_data_->end())  // Check if IMU gyro
+    {
+      ImuData& imu_data = data_ptr_.id2imu_data_->find(frame.can_id)->second;
+      imu_data.gyro_updated = true;
+      imu_data.angular_vel[0] = ((int16_t)((frame.data[1]) << 8) | frame.data[0]) * imu_data.angular_vel_coeff;
+      imu_data.angular_vel[1] = ((int16_t)((frame.data[3]) << 8) | frame.data[2]) * imu_data.angular_vel_coeff;
+      imu_data.angular_vel[2] = ((int16_t)((frame.data[5]) << 8) | frame.data[4]) * imu_data.angular_vel_coeff;
+      int16_t temp = (int16_t)((frame.data[6] << 3) | (frame.data[7] >> 5));
+      if (temp > 1023)
+        temp -= 2048;
+      imu_data.temperature = temp * imu_data.temp_coeff + imu_data.temp_offset;
+      continue;
+    }
+    else if (data_ptr_.id2imu_data_->find(frame.can_id - 1) != data_ptr_.id2imu_data_->end())  // Check if IMU accel
+    {
+      ImuData& imu_data = data_ptr_.id2imu_data_->find(frame.can_id - 1)->second;
+      imu_data.accel_updated = true;
+      imu_data.linear_acc[0] = ((int16_t)((frame.data[1]) << 8) | frame.data[0]) * imu_data.accel_coeff;
+      imu_data.linear_acc[1] = ((int16_t)((frame.data[3]) << 8) | frame.data[2]) * imu_data.accel_coeff;
+      imu_data.linear_acc[2] = ((int16_t)((frame.data[5]) << 8) | frame.data[4]) * imu_data.accel_coeff;
+      continue;
     }
     if (frame.can_id != 0x0)
       ROS_ERROR_STREAM_ONCE("Can not find defined device, id: 0x" << std::hex << frame.can_id

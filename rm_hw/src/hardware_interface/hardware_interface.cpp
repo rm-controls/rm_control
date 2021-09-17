@@ -43,8 +43,8 @@ namespace rm_hw
 {
 bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 {
-  // Parse actuator coefficient specified by user (stored on ROS parameter server)
   XmlRpc::XmlRpcValue xml_rpc_value;
+  // Parse actuator coefficient specified by user (stored on ROS parameter server)
   if (!robot_hw_nh.getParam("actuator_coefficient", xml_rpc_value))
     ROS_WARN("No actuator coefficient specified");
   else if (!parseActCoeffs(xml_rpc_value))
@@ -59,23 +59,6 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     ROS_WARN("No imu specified");
   else if (!parseImuData(xml_rpc_value, robot_hw_nh))
     return false;
-  if (!loadUrdf(root_nh))
-  {
-    ROS_ERROR("Error occurred while setting up urdf");
-    return false;
-  }
-  // Initialize transmission
-  if (!setupTransmission(root_nh))
-  {
-    ROS_ERROR("Error occurred while setting up transmission");
-    return false;
-  }
-  // Initialize joint limit
-  if (!setupJointLimit(root_nh))
-  {
-    ROS_ERROR("Error occurred while setting up joint limit");
-    return false;
-  }
   // CAN Bus
   if (!robot_hw_nh.getParam("bus", xml_rpc_value))
     ROS_WARN("No bus specified");
@@ -92,6 +75,24 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
       else
         ROS_ERROR_STREAM("Unknown bus: " << bus_name);
     }
+  }
+
+  if (!loadUrdf(root_nh))
+  {
+    ROS_ERROR("Error occurred while setting up urdf");
+    return false;
+  }
+  // Initialize transmission
+  if (!setupTransmission(root_nh))
+  {
+    ROS_ERROR("Error occurred while setting up transmission");
+    return false;
+  }
+  // Initialize joint limit
+  if (!setupJointLimit(root_nh))
+  {
+    ROS_ERROR("Error occurred while setting up joint limit");
+    return false;
   }
 
   // Other Interface
@@ -159,6 +160,8 @@ void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
 
 void RmRobotHW::publishActuatorState(const ros::Time& time)
 {
+  if (!is_actuator_specified_)
+    return;
   if (last_publish_time_ + ros::Duration(1.0 / 100.0) < time)
   {
     if (actuator_state_pub_->trylock())
