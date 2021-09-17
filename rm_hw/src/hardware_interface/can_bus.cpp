@@ -140,14 +140,9 @@ void CanBus::read(ros::Time time)
         int16_t cur = (frame.data[4] << 8u) | frame.data[5];
         act_data.temp = frame.data[6];
 
-        // TODO: Check the code blew
-        //      if (act_data.type.find("6020") != std::string::npos)
-        //        if (std::abs(q - act_data.q_last) < 3)
-        //          q = act_data.q_last;
-
         // Multiple circle
-        if (act_data.seq != 0)
-        {  // first receive
+        if (act_data.seq != 0)  // not the first receive
+        {
           if (act_data.q_raw - act_data.q_last > 4096)
             act_data.q_circle--;
           else if (act_data.q_raw - act_data.q_last < -4096)
@@ -187,8 +182,8 @@ void CanBus::read(ros::Time time)
           uint16_t qd = (frame.data[3] << 4) | (frame.data[4] >> 4);
           uint16_t cur = ((frame.data[4] & 0xF) << 8) | frame.data[5];
           // Multiple cycle
-          // NOTE: Raw data range is -4pi~4pi
-          if (act_data.seq != 0)
+          // NOTE: The raw data range is -4pi~4pi
+          if (act_data.seq != 0)  // not the first receive
           {
             double pos_new = act_coeff.act2pos * static_cast<double>(act_data.q_raw) + act_coeff.act2pos_offset +
                              static_cast<double>(act_data.q_circle) * 8 * M_PI + act_data.offset;
