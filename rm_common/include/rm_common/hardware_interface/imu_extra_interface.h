@@ -46,8 +46,10 @@ class ImuExtraHandle
 {
 public:
   ImuExtraHandle() = default;
-  ImuExtraHandle(std::string name, bool* accel_update, bool* gyro_update, bool* camera_trigger, double* temperature)
+  ImuExtraHandle(std::string name, double* orientation, bool* accel_update, bool* gyro_update, bool* camera_trigger,
+                 const double* temperature)
     : name_(std::move(name))
+    , orientation_(orientation)
     , accel_updated_(accel_update)
     , gyro_updated_(gyro_update)
     , camera_trigger_(camera_trigger)
@@ -69,6 +71,10 @@ public:
   std::string getName() const
   {
     return name_;
+  }
+  double* getOrientation()
+  {
+    return orientation_;
   }
   bool getAccelUpdated() const
   {
@@ -93,10 +99,11 @@ public:
 
 private:
   std::string name_;
+  double* orientation_;
   bool* accel_updated_;
   bool* gyro_updated_;
   bool* camera_trigger_;
-  double* temperature_{};
+  const double* temperature_{};
   // TODO: Add magnetic (double* )
 };
 

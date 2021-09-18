@@ -337,7 +337,8 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
           bus_id2imu_data_[bus][id].angular_vel, bus_id2imu_data_[bus][id].angular_vel_cov,
           bus_id2imu_data_[bus][id].linear_acc, bus_id2imu_data_[bus][id].linear_acc_cov);
       imu_sensor_interface_.registerHandle(imu_sensor_handle);
-      rm_control::ImuExtraHandle imu_extra_handle(it->first, &bus_id2imu_data_[bus][id].accel_updated,
+      rm_control::ImuExtraHandle imu_extra_handle(it->first, bus_id2imu_data_[bus][id].ori,
+                                                  &bus_id2imu_data_[bus][id].accel_updated,
                                                   &bus_id2imu_data_[bus][id].gyro_updated,
                                                   &bus_id2imu_data_[bus][id].camera_trigger,
                                                   &bus_id2imu_data_[bus][id].temperature);
