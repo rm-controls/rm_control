@@ -72,9 +72,12 @@ public:
   {
     return name_;
   }
-  double* getOrientation()
+  void setOrientation(const double* ori)
   {
-    return orientation_;
+    orientation_[0] = ori[0];
+    orientation_[1] = ori[1];
+    orientation_[2] = ori[2];
+    orientation_[3] = ori[3];
   }
   bool getAccelUpdated() const
   {
