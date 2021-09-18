@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: mkdir build
       - uses: mattnotmitt/doxygen-action@v1
       - uses: peaceiris/actions-gh-pages@v3
         with:
