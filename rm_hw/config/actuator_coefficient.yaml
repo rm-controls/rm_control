@@ -9,7 +9,7 @@ actuator_coefficient:
     act2pos: 0.0007670840  # 2PI/8192
     act2vel: 0.1047197551   # 2PI/60
     act2effort: 5.880969e-5  # special coefficient identify by hands...
-    effort2act: 17004.0   # 1/act2effort
+    effort2act: 25000   #
     max_out: 30000
   rm_2006: # RoboMaster 2006 motor
     act2pos: 2.13078897e-5  # 2PI/8192*(1/36)
