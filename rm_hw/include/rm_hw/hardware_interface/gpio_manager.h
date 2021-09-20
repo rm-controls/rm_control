@@ -31,7 +31,7 @@ public:
   ~GpioMangager();
   bool init(const ros::NodeHandle& module_nh);
   void writeOutput(int pin, bool IS_HIGH);
-  void readInput(struct GpioDataStamp* gpio_data_stamp);
+  void readInput(std::vector<GpioDataStamp>& gpio_data_stamp_vector);
 
 private:
   void addInIo(int pin);
