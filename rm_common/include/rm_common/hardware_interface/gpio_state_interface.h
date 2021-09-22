@@ -13,7 +13,7 @@ class GpioStateHandle
 {
 public:
   GpioStateHandle() = default;
-  GpioStateHandle(std::string name, int* value) : name_(name), value_(value)
+  GpioStateHandle(std::string name, int* value) : name_(std::move(name)), value_(value)
   {
     if (!value)
       throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
