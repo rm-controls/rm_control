@@ -57,9 +57,11 @@
 
 #include <rm_common/hardware_interface/robot_state_interface.h>
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
+#include <rm_common/hardware_interface/gpio_state_interface.h>
 #include <rm_msgs/ActuatorState.h>
 
 #include "can_bus.h"
+#include "gpio_manager.h"
 
 namespace rm_hw
 {
@@ -125,6 +127,15 @@ private:
    * @return True if all params are set up.
    */
   bool parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHandle& robot_hw_nh);
+  /** \brief Check whether somme params that are related to gpio are set up and load these params.
+   *
+   * Check whether somme params that are related to gpio are set up and load these params.
+   *
+   * @param gpio_cfgs Params you want to check and load
+   * @param robot_hw_nh A handle of a ROS node
+   * @return True if all params are set up.
+   */
+  bool parseGpioCfg(XmlRpc::XmlRpcValue& gpio_cfgs, ros::NodeHandle& robot_hw_nh);
   /** \brief Load urdf of robot from param server.
    *
    * Load urdf of robot from param server.
@@ -160,6 +171,9 @@ private:
   bool is_actuator_specified_ = false;
   // Interface
   std::vector<CanBus*> can_buses_{};
+  std::vector<GpioDataStamp> gpio_read_stamp_;
+  GpioMangager gpio_manager_{};
+  rm_control::GpioStateInterface gpio_state_interface_;
   hardware_interface::ActuatorStateInterface act_state_interface_;
   rm_control::ActuatorExtraInterface act_extra_interface_;
   hardware_interface::EffortActuatorInterface effort_act_interface_;

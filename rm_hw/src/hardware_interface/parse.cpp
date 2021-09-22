@@ -332,6 +332,51 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
   return true;
 }
 
+bool RmRobotHW::parseGpioCfg(XmlRpc::XmlRpcValue& gpio_cfgs, ros::NodeHandle& robot_hw_nh)
+{
+  int i = 0;
+  for (auto it = gpio_cfgs.begin(); it != gpio_cfgs.end(); ++it)
+  {
+    if (it->second.hasMember("pin"))
+    {
+      gpio_manager_.mapName2Pin_.insert(std::make_pair(it->first, gpio_cfgs[it->first]["pin"]));
+      if (it->second.hasMember("direction"))
+      {
+        std::string direction = gpio_cfgs[it->first]["direction"];
+        std::string::size_type idx;
+        idx = direction.find("out");
+        if (idx == std::string::npos)
+        {
+          idx = direction.find("in");
+          if (idx == std::string::npos)
+            ROS_ERROR("Module %s hasn't set direction.", it->first.data());
+          else
+          {
+            gpio_manager_.addInIo(gpio_cfgs[it->first]["pin"]);
+            GpioDataStamp gpio_data_stamp;
+            gpio_data_stamp.data.name = it->first;
+            gpio_read_stamp_.push_back(gpio_data_stamp);
+            rm_control::GpioStateHandle gpio_state_handle(it->first, &gpio_read_stamp_[i].data.value);
+            i++;
+            gpio_state_interface_.registerHandle(gpio_state_handle);
+          }
+        }
+        else
+          gpio_manager_.addOutIo(gpio_cfgs[it->first]["pin"]);
+      }
+      else
+      {
+        ROS_ERROR("Module %s hasn't set direction.", it->first.data());
+      }
+    }
+    else
+    {
+      ROS_ERROR("Module %s hasn't set pin ID", it->first.data());
+    }
+  }
+  return true;
+}
+
 bool RmRobotHW::loadUrdf(ros::NodeHandle& root_nh)
 {
   if (urdf_model_ == nullptr)

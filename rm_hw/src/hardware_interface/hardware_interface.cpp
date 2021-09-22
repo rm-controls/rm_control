@@ -59,6 +59,10 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     ROS_WARN("No imu specified");
   else if (!parseImuData(xml_rpc_value, robot_hw_nh))
     return false;
+  if (!robot_hw_nh.getParam("gpios", xml_rpc_value))
+    ROS_WARN("No gpio specified");
+  else if (!parseGpioCfg(xml_rpc_value, robot_hw_nh))
+    return false;
   if (!loadUrdf(root_nh))
   {
     ROS_ERROR("Error occurred while setting up urdf");
@@ -96,6 +100,7 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 
   // Other Interface
   registerInterface(&robot_state_interface_);
+  registerInterface(&gpio_state_interface_);
 
   actuator_state_pub_.reset(
       new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_states", 100));
@@ -129,6 +134,8 @@ void RmRobotHW::read(const ros::Time& time, const ros::Duration& period)
   // Set all cmd to zero to avoid crazy soft limit oscillation when not controller loaded
   for (auto effort_joint_handle : effort_joint_handles_)
     effort_joint_handle.setCommand(0.);
+  // Gpio
+  gpio_manager_.readInput(gpio_read_stamp_);
 }
 
 void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
