@@ -39,6 +39,7 @@ bool GpioMangager::init(const ros::NodeHandle& module_nh)
   {
     if (it->second.hasMember("pin"))
     {
+      mapName2Pin_.insert(std::make_pair(it->first, xml_rpc_value[it->first]["pin"]));
       if (it->second.hasMember("direction"))
       {
         std::string direction = xml_rpc_value[it->first]["direction"];
@@ -66,6 +67,77 @@ bool GpioMangager::init(const ros::NodeHandle& module_nh)
     }
   }
   return true;
+}
+
+void GpioMangager::writeOutput(int pin, bool IS_HIGH)
+{
+  lseek(mapOutputIo_[pin], 0, SEEK_SET);
+  if (IS_HIGH)
+  {
+    int ref = write(mapOutputIo_[pin], "1", 1);
+    if (ref == -1)
+      ROS_ERROR("[GPIO]Failed to write to GPIO%d.", pin);
+  }
+  else
+  {
+    int ref = write(mapOutputIo_[pin], "0", 1);
+    if (ref == -1)
+      ROS_ERROR("[GPIO]Failed to write to GPIO%d.", pin);
+  }
+}
+
+void GpioMangager::writeOutput(std::vector<GpioDataStamp>& gpio_write_stamp)
+{
+  for (const auto& iter : gpio_write_stamp)
+  {
+    lseek(mapOutputIo_[mapName2Pin_[iter.data.name]], 0, SEEK_SET);
+    if (iter.data.value)
+    {
+      int ref = write(mapOutputIo_[mapName2Pin_[iter.data.name]], "1", 1);
+      if (ref == -1)
+        ROS_ERROR("[GPIO]Failed to write to GPIO%d.", mapName2Pin_[iter.data.name]);
+    }
+    else
+    {
+      int ref = write(mapOutputIo_[mapName2Pin_[iter.data.name]], "0", 1);
+      if (ref == -1)
+        ROS_ERROR("[GPIO]Failed to write to GPIO%d.", mapName2Pin_[iter.data.name]);
+    }
+  }
+}
+
+void GpioMangager::readInput(std::vector<GpioDataStamp>& gpio_read_stamp)
+{
+  int j = 0;
+  for (auto iter : mapInputIo_)
+  {
+    fds[j].fd = iter.second;
+    fds[j].events = POLLPRI;
+    j++;
+  }
+  char state;
+  int ret = poll(fds, mapInputIo_.size(), 0);
+  if (ret == -1)
+  {
+    ROS_ERROR("poll failed!\n");
+  }
+  for (int i = 0; i < mapInputIo_.size(); i++)
+  {
+    if (fds[i].revents & POLLPRI)
+    {
+      int gpio_fd = fds[i].fd;
+      lseek(gpio_fd, 0, SEEK_SET);
+      ret = read(gpio_fd, &state, 1);
+      if (ret == -1)
+      {
+        ROS_ERROR("[gpio]:run :read failed");
+        break;
+      }
+    }
+    bool value = (state == 0x31);
+    gpio_read_stamp[i].data.value = value;
+    gpio_read_stamp[i].stamp = ros::Time::now();
+  }
 }
 
 void GpioMangager::addInIo(int pin)
@@ -98,64 +170,6 @@ void GpioMangager::addOutIo(int pin)
     ROS_ERROR("[gpio]Unable to open /sys/class/gpio/gpio%i/value", pin);
   }
   mapOutputIo_.insert(std::make_pair(pin, fd));
-}
-
-void GpioMangager::writeOutput(int pin, bool IS_HIGH)
-{
-  lseek(mapOutputIo_[pin], 0, SEEK_SET);
-  if (IS_HIGH)
-  {
-    int ref = write(mapOutputIo_[pin], "1", 1);
-    if (ref == -1)
-      ROS_ERROR("[GPIO]Failed to write to GPIO%d.", pin);
-  }
-  else
-  {
-    int ref = write(mapOutputIo_[pin], "0", 1);
-    if (ref == -1)
-      ROS_ERROR("[GPIO]Failed to write to GPIO%d.", pin);
-  }
-}
-
-void GpioMangager::readInput(std::vector<GpioDataStamp>& gpio_data_stamp_vector)
-{
-  int j = 0;
-  for (auto iter : mapInputIo_)
-  {
-    fds[j].fd = iter.second;
-    fds[j].events = POLLPRI;
-    j++;
-  }
-  char state;
-  int ret = poll(fds, mapInputIo_.size(), 0);
-  if (ret == -1)
-  {
-    ROS_ERROR("poll failed!\n");
-  }
-  std::map<int, int>::iterator it = mapInputIo_.begin();
-  std::vector<GpioDataStamp>::iterator iter = gpio_data_stamp_vector.begin();
-  for (int i = 0; i < mapInputIo_.size(); i++)
-  {
-    if (fds[i].revents & POLLPRI)
-    {
-      int gpio_fd = fds[i].fd;
-      lseek(gpio_fd, 0, SEEK_SET);
-      ret = read(gpio_fd, &state, 1);
-      if (ret == -1)
-      {
-        ROS_ERROR("[gpio]:run :read failed");
-        break;
-      }
-    }
-    bool value = (state == 0x31);
-    GpioDataStamp gpio_data_stamp;
-    gpio_data_stamp.data.pin = it->first;
-    gpio_data_stamp.data.value = value;
-    gpio_data_stamp.stamp = ros::Time::now();
-    gpio_data_stamp_vector.push_back(gpio_data_stamp);
-    ++it;
-    ++iter;
-  }
 }
 
 void GpioMangager::ioDirectionSet(const std::string& pin, bool IS_OUT)
