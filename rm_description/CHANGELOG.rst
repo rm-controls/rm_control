@@ -2,6 +2,21 @@
 Changelog for package rm_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update standard5's imu orientation
+* Update IMU orientation of standard5.urdf.xacro
+* Merge branch 'master' into gimbal/opti_or_simplify
+  # Conflicts:
+  #	rm_description/urdf/hero/hero.urdf.xacro
+  #	rm_description/urdf/standard3/standard3.urdf.xacro
+  #	rm_description/urdf/standard4/standard4.urdf.xacro
+  #	rm_description/urdf/standard5/standard5.urdf.xacro
+* Update URDF of imu
+* Merge branch 'master' into gimbal/opti_or_simplify
+* Update URDF of imu
+* Contributors: qiayuan
+
 0.1.5 (2021-09-02)
 ------------------
 
