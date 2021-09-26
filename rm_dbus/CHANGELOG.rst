@@ -5,6 +5,12 @@ Changelog for package rm_dbus
 0.1.6 (2021-09-26)
 ------------------
 
+Forthcoming
+-----------
+* 0.1.6
+* Update CHANGELOG
+* Contributors: qiayuan
+
 0.1.5 (2021-09-02)
 ------------------
 

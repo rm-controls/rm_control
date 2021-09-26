@@ -11,6 +11,17 @@ Changelog for package rm_hw
 * Change name of namespace:from hardware_interface to rm_control.
 * Contributors: QiayuanLiao, qiayuan, yezi
 
+Forthcoming
+-----------
+* 0.1.6
+* Update CHANGELOG
+* Fix some comment messed up by pre-commit
+* Merge branch 'namespace' into rm_gazebo/imu_sensor_interface
+* Merge pull request `#8 <https://github.com/rm-controls/rm_control/issues/8>`_ from ye-luo-xi-tui/namespace
+  Change name of namespace:from hardware_interface to rm_control.
+* Change name of namespace:from hardware_interface to rm_control.
+* Contributors: QiayuanLiao, qiayuan, yezi
+
 0.1.5 (2021-09-02)
 ------------------
 
