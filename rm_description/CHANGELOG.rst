@@ -2,6 +2,11 @@
 Changelog for package rm_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update URDF of imu
+* Contributors: qiayuan
+
 0.1.5 (2021-09-02)
 ------------------
 
