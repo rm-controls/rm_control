@@ -2,9 +2,16 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
-* Remove cover of ShooterCmd
+0.1.6 (2021-09-26)
+------------------
+* Merge branch 'gimbal/opti_or_simplify'
+* Modified GimbalCmd.msg, and delete moving_average_filter
+* Contributors: qiayuan
+
+0.1.7 (2021-09-26)
+------------------
+* 0.1.6
+* Update CHANGELOG
 * Merge branch 'gimbal/opti_or_simplify'
 * Modified GimbalCmd.msg, and delete moving_average_filter
 * Contributors: qiayuan

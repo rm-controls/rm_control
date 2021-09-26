@@ -2,10 +2,23 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.6 (2021-09-26)
+------------------
 * Update URDF of imu
-* Merge branch 'master' into gimbal/opti_or_simplify
+* Merge branch 'namespace' into rm_gazebo/imu_sensor_interface
+* Merge pull request `#8 <https://github.com/rm-controls/rm_control/issues/8>`_ from ye-luo-xi-tui/namespace
+  Change name of namespace:from hardware_interface to rm_control.
+* Change name of namespace:from hardware_interface to rm_control.
+* Fix some stupid imu_sensor_interface bug in rm_gazebo
+* Tested rm_gazebo imu data using Debug in line.
+  TODO: Add gravity and noise to the data
+* Add imu_sensor_interface without test.
+* Contributors: QiayuanLiao, qiayuan, yezi
+
+0.1.7 (2021-09-26)
+------------------
+* 0.1.6
+* Update CHANGELOG
 * Update URDF of imu
 * Merge branch 'namespace' into rm_gazebo/imu_sensor_interface
 * Merge pull request `#8 <https://github.com/rm-controls/rm_control/issues/8>`_ from ye-luo-xi-tui/namespace
