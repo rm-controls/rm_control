@@ -5,8 +5,8 @@ Changelog for package rm_control
 0.1.6 (2021-09-26)
 ------------------
 
-Forthcoming
------------
+0.1.7 (2021-09-26)
+------------------
 * 0.1.6
 * Update CHANGELOG
 * Contributors: qiayuan

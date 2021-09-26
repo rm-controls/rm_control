@@ -11,8 +11,8 @@ Changelog for package rm_hw
 * Change name of namespace:from hardware_interface to rm_control.
 * Contributors: QiayuanLiao, qiayuan, yezi
 
-Forthcoming
------------
+0.1.7 (2021-09-26)
+------------------
 * 0.1.6
 * Update CHANGELOG
 * Fix some comment messed up by pre-commit

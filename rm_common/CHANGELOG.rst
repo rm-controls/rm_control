@@ -10,8 +10,8 @@ Changelog for package rm_common
 * Change name of namespace:from hardware_interface to rm_control.
 * Contributors: QiayuanLiao, qiayuan, yezi
 
-Forthcoming
------------
+0.1.7 (2021-09-26)
+------------------
 * 0.1.6
 * Update CHANGELOG
 * Merge branch 'namespace' into rm_gazebo/imu_sensor_interface

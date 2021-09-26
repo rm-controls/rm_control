@@ -8,8 +8,8 @@ Changelog for package rm_msgs
 * Modified GimbalCmd.msg, and delete moving_average_filter
 * Contributors: qiayuan
 
-Forthcoming
------------
+0.1.7 (2021-09-26)
+------------------
 * 0.1.6
 * Update CHANGELOG
 * Merge branch 'gimbal/opti_or_simplify'
