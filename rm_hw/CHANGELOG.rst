@@ -2,8 +2,8 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.6 (2021-09-26)
+------------------
 * Fix some comment messed up by pre-commit
 * Merge branch 'namespace' into rm_gazebo/imu_sensor_interface
 * Merge pull request `#8 <https://github.com/rm-controls/rm_control/issues/8>`_ from ye-luo-xi-tui/namespace

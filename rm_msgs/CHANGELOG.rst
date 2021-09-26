@@ -2,8 +2,8 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.6 (2021-09-26)
+------------------
 * Merge branch 'gimbal/opti_or_simplify'
 * Modified GimbalCmd.msg, and delete moving_average_filter
 * Contributors: qiayuan
