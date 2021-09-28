@@ -1,0 +1,12 @@
+rm_common:
+  ubuntu: [ros-noetic-rm-common]
+rm_dbus:
+  ubuntu: [ros-noetic-rm-dbus]
+rm_description:
+  ubuntu: [ros-noetic-rm-description]
+rm_gazebo:
+  ubuntu: [ros-noetic-rm-gazebo]
+rm_hw:
+  ubuntu: [ros-noetic-rm-hw]
+rm_msgs:
+  ubuntu: [ros-noetic-rm-msgs]
