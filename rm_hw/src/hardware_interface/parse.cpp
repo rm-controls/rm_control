@@ -327,10 +327,14 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
                          .linear_acc_cov = { static_cast<double>(linear_cov[0]), 0., 0., 0.,
                                              static_cast<double>(linear_cov[1]), 0., 0., 0.,
                                              static_cast<double>(linear_cov[2]) },
+                         .temperature = 0.0,
                          .angular_vel_coeff = xmlRpcGetDouble(imu_datas[it->first], "angular_vel_coeff", 0.),
                          .accel_coeff = xmlRpcGetDouble(imu_datas[it->first], "accel_coeff", 0.),
                          .temp_coeff = xmlRpcGetDouble(imu_datas[it->first], "temp_coeff", 0.),
-                         .temp_offset = xmlRpcGetDouble(imu_datas[it->first], "temp_offset", 0.) }));
+                         .temp_offset = xmlRpcGetDouble(imu_datas[it->first], "temp_offset", 0.),
+                         .accel_updated = false,
+                         .gyro_updated = false,
+                         .camera_trigger = false }));
       // for ros_control interface
       hardware_interface::ImuSensorHandle imu_sensor_handle(
           it->first, frame_id, bus_id2imu_data_[bus][id].ori, bus_id2imu_data_[bus][id].ori_cov,
