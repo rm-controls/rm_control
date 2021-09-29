@@ -121,7 +121,7 @@ void GpioMangager::readInput(std::vector<GpioDataStamp>& gpio_read_stamp)
   {
     ROS_ERROR("poll failed!\n");
   }
-  for (int i = 0; i < mapInputIo_.size(); i++)
+  for (unsigned int i = 0; i < mapInputIo_.size(); i++)
   {
     if (fds[i].revents & POLLPRI)
     {
