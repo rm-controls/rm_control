@@ -2,6 +2,24 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.6 (2021-09-26)
+------------------
+* Merge branch 'namespace' into rm_gazebo/imu_sensor_interface
+* Merge pull request `#8 <https://github.com/rm-controls/rm_control/issues/8>`_ from ye-luo-xi-tui/namespace
+  Change name of namespace:from hardware_interface to rm_control.
+* Change name of namespace:from hardware_interface to rm_control.
+* Contributors: QiayuanLiao, qiayuan, yezi
+
+0.1.7 (2021-09-26)
+------------------
+* 0.1.6
+* Update CHANGELOG
+* Merge branch 'namespace' into rm_gazebo/imu_sensor_interface
+* Merge pull request `#8 <https://github.com/rm-controls/rm_control/issues/8>`_ from ye-luo-xi-tui/namespace
+  Change name of namespace:from hardware_interface to rm_control.
+* Change name of namespace:from hardware_interface to rm_control.
+* Contributors: QiayuanLiao, qiayuan, yezi
+
 0.1.5 (2021-09-02)
 ------------------
 

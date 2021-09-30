@@ -57,7 +57,10 @@
 
 #include <rm_common/hardware_interface/robot_state_interface.h>
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
+
 #include <rm_common/hardware_interface/gpio_state_interface.h>
+#include <rm_common/hardware_interface/imu_extra_interface.h>
+
 #include <rm_msgs/ActuatorState.h>
 
 #include "can_bus.h"
@@ -179,6 +182,7 @@ private:
   hardware_interface::EffortActuatorInterface effort_act_interface_;
   rm_control::RobotStateInterface robot_state_interface_;
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
+  rm_control::ImuExtraInterface imu_extra_interface_;
   std::unique_ptr<transmission_interface::TransmissionInterfaceLoader> transmission_loader_{};
   transmission_interface::RobotTransmissions robot_transmissions_;
   transmission_interface::ActuatorToJointStateInterface* act_to_jnt_state_{};
