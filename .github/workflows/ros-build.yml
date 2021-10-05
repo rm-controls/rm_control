@@ -72,8 +72,8 @@ jobs:
         uses: wlixcc/SFTP-Deploy-Action@v1.0
         with:
           username: 'root'
-          server: '${{ secrets.REPO_URL }} '
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} 
+          server: '${{ secrets.REPO_SSH_HOST }}'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           local_path: './*.deb'
           remote_path: '/usr/local/web/rm-source/incoming'
           args: '-o ConnectTimeout=5'
