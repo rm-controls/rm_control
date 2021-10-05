@@ -68,9 +68,12 @@ jobs:
             fi
           done
           ls
-      - name: Archive deb file
-        uses: actions/upload-artifact@v2
+      - name: deploy file
+        uses: wlixcc/SFTP-Deploy-Action@v1.0
         with:
-          name: rm-control-package
-          path: |
-            *.deb
+          username: 'root'
+          server: '${{ secrets.REPO_URL }} '
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} 
+          local_path: './*.deb'
+          remote_path: '/usr/local/web/rm-source/incoming'
+          args: '-o ConnectTimeout=5'
