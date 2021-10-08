@@ -57,6 +57,9 @@ target_link_libraries(rm_common ${catkin_LIBRARIES})
 #target_link_libraries(test_traj rm_common ${catkin_LIBRARIES})
 target_link_libraries(test_kalman rm_common ${catkin_LIBRARIES})
 
+# Fix rm_msgs generation problem
+# See https://answers.ros.org/question/73048
+add_dependencies(rm_common rm_msgs_generate_messages_cpp)
 
 #############
 ## Install ##
