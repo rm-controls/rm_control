@@ -20,10 +20,10 @@
 
     <link name="trigger">
         <inertial>
-            <mass value="0.295177"/>
-            <origin xyz="-0.00842 0.0 0.00605"/>
-            <inertia ixx="2.255e-4" ixy="2.5698e-7" ixz="2.3929e-6" iyy="2.233e-4"
-                     iyz="5.22e-7" izz="2.643e-4"/>
+            <mass value="0.2972"/>
+            <origin xyz="-0.00549 -0.00233 0.00344"/>
+            <inertia ixx="1.955e-4" ixy="-2.402e-5" ixz="-2.718e-5" iyy="3.514e-4"
+                     iyz="-6.239e-6" izz="4.209e-4"/>
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>

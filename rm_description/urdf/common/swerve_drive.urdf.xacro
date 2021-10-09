@@ -19,16 +19,16 @@
             </visual>
             <inertial>
                 <xacro:if value="${reflect == 1}">
-                    <mass value="3.725118"/>
-                    <origin xyz="0.951e-3 5.254e-3 -23.161e-3" rpy="0 0 0"/>
-                    <inertia ixx="1.645e-2" ixy="-13783.466e-9" ixz="2.345e-4" iyy="1.562e-2" iyz="2.132e-3"
-                             izz="3.256e-3"/>
+                    <mass value="0.854"/>
+                    <origin xyz="0.000054 0.008 0.00548" rpy="0 0 0"/>
+                    <inertia ixx="6.711e-4" ixy="1.958e-9" ixz="-1.109e-6" iyy="6.703e-4" iyz="-1.095e-7"
+                             izz="7.091e-4"/>
                 </xacro:if>
                 <xacro:if value="${reflect == -1}">
-                    <mass value="3.725115"/>
-                    <origin xyz="0.156793 0.150588 0.030271" rpy="0 0 0"/>
-                    <inertia ixx="1.143e-1" ixy="-9.835e-2" ixz="-2.178e-2" iyy="1.207e-1" iyz="-2.289e-2"
-                             izz="2e-1"/>
+                    <mass value="0.854"/>
+                    <origin xyz="0.000054 0.008 0.00548" rpy="0 0 0"/>
+                    <inertia ixx="6.711e-4" ixy="1.958e-9" ixz="-1.109e-6" iyy="6.703e-4" iyz="-1.095e-7"
+                             izz="7.091e-4"/>
                 </xacro:if>
             </inertial>
             <collision>
@@ -70,9 +70,9 @@
                 </geometry>
             </visual>
             <inertial>
-                <mass value="0.18791"/>
-                <origin xyz="6.908e-8 -7.298e-3 275e-6" rpy="0 0 0"/>
-                <inertia ixx="1.584e-4" ixy="0.199e-9" ixz="-0.173e-9" iyy="2.141e-4" iyz="768.622e-9" izz="1.575e-4"/>
+                <mass value="0.543"/>
+                <origin xyz="0.000024 0.024 0.000129" rpy="0 0 0"/>
+                <inertia ixx="4.895e-4" ixy="-3.948e-7" ixz="1.726e-7" iyy="2.894e-4" iyz="1.133e-6" izz="4.887e-4"/>
             </inertial>
             <collision>
                 <origin xyz="0 0 0" rpy="${pi/2.} 0 0"/>
