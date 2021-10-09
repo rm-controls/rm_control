@@ -15,4 +15,4 @@
 ## Documentation
 [rm-controls Documentation](https://rm-controls.github.io/)
 
-[rm-control Doxygen Documentation](https://rm-controls.github.io/rm_control/index.html)
+[rm-control Doxygen Documentation](https://rm-control.netlify.app/)
