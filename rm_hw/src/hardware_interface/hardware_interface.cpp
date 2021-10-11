@@ -61,7 +61,7 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     return false;
   if (!robot_hw_nh.getParam("gpios", xml_rpc_value))
     ROS_WARN("No gpio specified");
-  else if (!parseGpioCfg(xml_rpc_value, robot_hw_nh))
+  else if (!parseGpioData(xml_rpc_value, robot_hw_nh))
     return false;
   if (!loadUrdf(root_nh))
   {

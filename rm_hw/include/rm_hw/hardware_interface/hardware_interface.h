@@ -131,11 +131,11 @@ private:
    *
    * Check whether somme params that are related to gpio are set up and load these params.
    *
-   * @param gpio_cfgs Params you want to check and load
+   * @param gpio_datas Params you want to check and load
    * @param robot_hw_nh A handle of a ROS node
    * @return True if all params are set up.
    */
-  bool parseGpioCfg(XmlRpc::XmlRpcValue& gpio_cfgs, ros::NodeHandle& robot_hw_nh);
+  bool parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& robot_hw_nh);
   /** \brief Load urdf of robot from param server.
    *
    * Load urdf of robot from param server.

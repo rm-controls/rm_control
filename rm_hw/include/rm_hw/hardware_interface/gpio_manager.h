@@ -15,7 +15,7 @@
 struct GpioData
 {
   std::string name;
-  int value;
+  bool value;
 };
 
 struct GpioDataStamp
@@ -29,16 +29,15 @@ class GpioMangager
 public:
   explicit GpioMangager();
   ~GpioMangager();
-  bool init(const ros::NodeHandle& module_nh);
   void writeOutput(int pin, bool IS_HIGH);
-  void writeOutput(std::vector<GpioDataStamp>& gpio_write_stamp);
+  void writeOutput(std::vector<GpioData>& gpio_write);
   void readInput(std::vector<GpioDataStamp>& gpio_read_stamp);
   void addInIo(int pin);
   void addOutIo(int pin);
   void ioDirectionSet(const std::string& pin, bool IS_OUT);
-  std::map<std::string, int> mapName2Pin_;
-  std::map<int, int> mapOutputIo_;
-  std::map<int, int> mapInputIo_;
+  std::map<std::string, int> map_name2pin_;
+  std::map<int, int> map_outputio_;
+  std::map<int, int> map_inputio_;
 
 private:
   std::string pin_;

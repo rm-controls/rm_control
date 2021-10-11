@@ -332,17 +332,17 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
   return true;
 }
 
-bool RmRobotHW::parseGpioCfg(XmlRpc::XmlRpcValue& gpio_cfgs, ros::NodeHandle& robot_hw_nh)
+bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& robot_hw_nh)
 {
   int i = 0;
-  for (auto it = gpio_cfgs.begin(); it != gpio_cfgs.end(); ++it)
+  for (auto it = gpio_datas.begin(); it != gpio_datas.end(); ++it)
   {
     if (it->second.hasMember("pin"))
     {
-      gpio_manager_.mapName2Pin_.insert(std::make_pair(it->first, gpio_cfgs[it->first]["pin"]));
+      gpio_manager_.map_name2pin_.insert(std::make_pair(it->first, gpio_datas[it->first]["pin"]));
       if (it->second.hasMember("direction"))
       {
-        std::string direction = gpio_cfgs[it->first]["direction"];
+        std::string direction = gpio_datas[it->first]["direction"];
         std::string::size_type idx;
         idx = direction.find("out");
         if (idx == std::string::npos)
@@ -352,7 +352,7 @@ bool RmRobotHW::parseGpioCfg(XmlRpc::XmlRpcValue& gpio_cfgs, ros::NodeHandle& ro
             ROS_ERROR("Module %s hasn't set direction.", it->first.data());
           else
           {
-            gpio_manager_.addInIo(gpio_cfgs[it->first]["pin"]);
+            gpio_manager_.addInIo(gpio_datas[it->first]["pin"]);
             GpioDataStamp gpio_data_stamp;
             gpio_data_stamp.data.name = it->first;
             gpio_read_stamp_.push_back(gpio_data_stamp);
@@ -362,7 +362,7 @@ bool RmRobotHW::parseGpioCfg(XmlRpc::XmlRpcValue& gpio_cfgs, ros::NodeHandle& ro
           }
         }
         else
-          gpio_manager_.addOutIo(gpio_cfgs[it->first]["pin"]);
+          gpio_manager_.addOutIo(gpio_datas[it->first]["pin"]);
       }
       else
       {
