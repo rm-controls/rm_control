@@ -100,7 +100,8 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 
   // Other Interface
   registerInterface(&robot_state_interface_);
-  registerInterface(&gpio_state_interface_);
+  registerInterface(&gpio_read_interface_);
+  registerInterface(&gpio_write_interface_);
 
   actuator_state_pub_.reset(
       new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_states", 100));
@@ -134,8 +135,8 @@ void RmRobotHW::read(const ros::Time& time, const ros::Duration& period)
   // Set all cmd to zero to avoid crazy soft limit oscillation when not controller loaded
   for (auto effort_joint_handle : effort_joint_handles_)
     effort_joint_handle.setCommand(0.);
-  // Gpio
-  gpio_manager_.readInput(gpio_read_stamp_);
+  // Gpio read
+  gpio_manager_.readInput();
 }
 
 void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
@@ -161,6 +162,8 @@ void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
   }
   for (auto& bus : can_buses_)
     bus->write();
+  // Gpio write
+  gpio_manager_.writeOutput();
   publishActuatorState(time);
 }
 

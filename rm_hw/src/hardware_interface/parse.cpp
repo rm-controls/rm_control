@@ -334,7 +334,6 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
 
 bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& robot_hw_nh)
 {
-  int i = 0;
   for (auto it = gpio_datas.begin(); it != gpio_datas.end(); ++it)
   {
     if (it->second.hasMember("pin"))
@@ -353,16 +352,22 @@ bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& 
           else
           {
             gpio_manager_.addInIo(gpio_datas[it->first]["pin"]);
-            GpioDataStamp gpio_data_stamp;
-            gpio_data_stamp.data.name = it->first;
-            gpio_read_stamp_.push_back(gpio_data_stamp);
-            rm_control::GpioStateHandle gpio_state_handle(it->first, &gpio_read_stamp_[i].data.value);
-            i++;
-            gpio_state_interface_.registerHandle(gpio_state_handle);
+            GpioData gpio_data;
+            gpio_data.name = it->first;
+            gpio_manager_.gpio_read_values.push_back(gpio_data);
+            rm_control::GpioReadHandle gpio_read_handle(it->first, &gpio_manager_.gpio_read_values.end()->value);
+            gpio_read_interface_.registerHandle(gpio_read_handle);
           }
         }
         else
+        {
           gpio_manager_.addOutIo(gpio_datas[it->first]["pin"]);
+          GpioData gpio_data;
+          gpio_data.name = it->first;
+          gpio_manager_.gpio_write_values.push_back(gpio_data);
+          rm_control::GpioWriteHandle gpio_write_handle(it->first, &gpio_manager_.gpio_write_values.end()->value);
+          gpio_write_interface_.registerHandle(gpio_write_handle);
+        }
       }
       else
       {

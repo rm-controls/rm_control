@@ -57,7 +57,7 @@
 
 #include <rm_common/hardware_interface/robot_state_interface.h>
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
-#include <rm_common/hardware_interface/gpio_state_interface.h>
+#include <rm_common/hardware_interface/gpio_interface.h>
 #include <rm_msgs/ActuatorState.h>
 
 #include "can_bus.h"
@@ -171,9 +171,9 @@ private:
   bool is_actuator_specified_ = false;
   // Interface
   std::vector<CanBus*> can_buses_{};
-  std::vector<GpioDataStamp> gpio_read_stamp_;
   GpioMangager gpio_manager_{};
-  rm_control::GpioStateInterface gpio_state_interface_;
+  rm_control::GpioReadInterface gpio_read_interface_;
+  rm_control::GpioWriteInterface gpio_write_interface_;
   hardware_interface::ActuatorStateInterface act_state_interface_;
   rm_control::ActuatorExtraInterface act_extra_interface_;
   hardware_interface::EffortActuatorInterface effort_act_interface_;

@@ -30,26 +30,9 @@ GpioMangager::~GpioMangager()
   map_outputio_.clear();
 }
 
-void GpioMangager::writeOutput(int pin, bool IS_HIGH)
+void GpioMangager::writeOutput()
 {
-  lseek(map_outputio_[pin], 0, SEEK_SET);
-  if (IS_HIGH)
-  {
-    int ref = write(map_outputio_[pin], "1", 1);
-    if (ref == -1)
-      ROS_ERROR("[GPIO]Failed to write to GPIO%d.", pin);
-  }
-  else
-  {
-    int ref = write(map_outputio_[pin], "0", 1);
-    if (ref == -1)
-      ROS_ERROR("[GPIO]Failed to write to GPIO%d.", pin);
-  }
-}
-
-void GpioMangager::writeOutput(std::vector<GpioData>& gpio_write)
-{
-  for (const auto& iter : gpio_write)
+  for (const auto& iter : gpio_write_values)
   {
     lseek(map_outputio_[map_name2pin_[iter.name]], 0, SEEK_SET);
     if (iter.value)
@@ -67,7 +50,7 @@ void GpioMangager::writeOutput(std::vector<GpioData>& gpio_write)
   }
 }
 
-void GpioMangager::readInput(std::vector<GpioDataStamp>& gpio_read_stamp)
+void GpioMangager::readInput()
 {
   int j = 0;
   for (auto iter : map_inputio_)
@@ -96,8 +79,7 @@ void GpioMangager::readInput(std::vector<GpioDataStamp>& gpio_read_stamp)
       }
     }
     bool value = (state == 0x31);
-    gpio_read_stamp[i].data.value = value;
-    gpio_read_stamp[i].stamp = ros::Time::now();
+    gpio_read_values[i].value = value;
   }
 }
 
