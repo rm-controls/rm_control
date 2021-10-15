@@ -80,6 +80,7 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     ROS_ERROR("Error occurred while setting up joint limit");
     return false;
   }
+
   // CAN Bus
   if (!robot_hw_nh.getParam("bus", xml_rpc_value))
     ROS_WARN("No bus specified");
