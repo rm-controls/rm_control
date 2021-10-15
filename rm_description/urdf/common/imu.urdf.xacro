@@ -11,9 +11,9 @@
         <!-- Imu link -->
         <link name="${imu_name}">
             <inertial>
-                <mass value="0.001"/>
+                <mass value="0.01"/>
                 <origin rpy="0 0 0" xyz="0 0 0"/>
-                <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001"/>
+                <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
             </inertial>
             <visual>
                 <origin rpy="0 0 0" xyz="0 0 0"/>

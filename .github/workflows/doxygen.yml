@@ -3,8 +3,9 @@ name: Doxygen-docs
 on:
   push:
     branches: [ master ]
-  pull_request:
+  pull_request_target:
     branches: [ master ]
+    types: [opened, synchronize, reopened]
 
 jobs:
   docs:
@@ -13,8 +14,31 @@ jobs:
       - uses: actions/checkout@v2
       - run: mkdir build
       - uses: mattnotmitt/doxygen-action@v1
-      - uses: peaceiris/actions-gh-pages@v3
+
+      - name: Get Branch Name
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+
+      - name: Get Deploy Name
+        if: github.event_name == 'push'
+        run: |
+          echo "DEPLOY_NAME=${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
+          echo "PRODUCTION=${{ env.BRANCH_NAME == 'master' }}" >> $GITHUB_ENV
+
+      - name: Get Deploy Name
+        if: github.event_name != 'push'
+        run: |
+          echo "DEPLOY_NAME=deploy-preview-${{ github.event.number }}" >> $GITHUB_ENV
+          echo "PRODUCTION=false" >> $GITHUB_ENV
+
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v1.1
         with:
-          github_token: ${{ secrets.BLOOM_GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./build/docs/html
+          publish-dir: './build/docs/html'
+          production-deploy: ${{ env.PRODUCTION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy ${{ env.DEPLOY_NAME }}@${{ github.sha }}'
+          enable-commit-comment: false
+          alias: ${{ env.DEPLOY_NAME }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

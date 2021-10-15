@@ -12,7 +12,6 @@
     <xacro:if value="$(arg load_chassis)">
         <xacro:include filename="$(find rm_description)/urdf/standard/chassis.urdf.xacro"/>
         <xacro:chassis roller_type="$(arg roller_type)"/>
-        <xacro:include filename="$(find rm_description)/urdf/common/imu.urdf.xacro"/>
 
         <xacro:if value="$(arg load_gimbal)">
             <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.urdf.xacro"/>

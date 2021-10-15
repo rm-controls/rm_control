@@ -8,6 +8,7 @@
     <xacro:if value="$(arg load_chassis)">
         <xacro:include filename="$(find rm_description)/urdf/balance/chassis.urdf.xacro"/>
         <xacro:chassis/>
+        <xacro:include filename="$(find rm_description)/urdf/common/imu.urdf.xacro"/>
         <xacro:IMU connected_to="base_link" imu_name="base_imu" xyz="0.08 0. 0.08" rpy="0 0 0"/>
         <xacro:if value="$(arg load_gimbal)">
 
