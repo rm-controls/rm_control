@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Add custom source
+        run: 
+          wget -O - https://rmsource.gdutelc.com/key/public.key | sudo apt-key add -
+          echo "deb https://rmsource.gdutelc.com/ focal main" | sudo tee -a /etc/apt/sources.list
+
       - uses: ros-tooling/setup-ros@v0.2
         with:
           required-ros-distributions: noetic
@@ -20,12 +25,12 @@ jobs:
           target-ros1-distro: noetic
       - name: Package deb
         run: ./.github/scripts/package.sh
-      - name: deploy file
+      - name: Deploy file
         uses: wlixcc/SFTP-Deploy-Action@v1.0
         with:
-          username: 'root'
-          server: '${{ secrets.REPO_URL }} '
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          username: '${{ secrets.SOURCE_SSH_NAME }}'
+          server: '${{ secrets.SOURCE_SSH_HOST }}'
+          ssh_private_key: ${{ secrets.SOURCE_SSH_KEYGEN }}
           local_path: './*.{deb,ddeb}'
-          remote_path: '/usr/local/web/rm-source/incoming'
+          remote_path: '/usr/local/web/rm-source/ubuntu/incoming'
           args: '-o ConnectTimeout=5'
