@@ -1,7 +1,7 @@
 #!/bin/bash
 ls
 source /opt/ros/noetic/setup.bash
-sudo apt-get install python1-bloom fakeroot dh-make
+sudo apt-get install python3-bloom fakeroot dh-make
 echo "yaml file://`pwd`/rosdep.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/rm_control.list
 rosdep update
 for file in rm_msgs rm_description
