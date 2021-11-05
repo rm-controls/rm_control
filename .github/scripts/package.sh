@@ -28,10 +28,7 @@ do
     bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
     fakeroot debian/rules binary
     cd ..
-    for newpack in `ls -t | head -n 2 | tac`
-    do
-      sudo dpkg -i $newpack
-    done
+    ls -t | head -n 2 | tac | sudo dpkg -i 
   fi
 done
 for file in rm_control
