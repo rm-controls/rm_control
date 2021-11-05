@@ -14,7 +14,7 @@ do
     bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
     fakeroot debian/rules binary
     cd ..
-    sudo dpkg -i `ls -t | head -n -1`
+    sudo dpkg -i `ls -t | head -n 1`
   fi
 done
 for file in rm_common rm_dbus rm_gazebo rm_hw
