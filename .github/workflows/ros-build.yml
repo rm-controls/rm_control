@@ -12,11 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Add custom source
-        run: 
-          wget -O - https://rmsource.gdutelc.com/key/public.key | sudo apt-key add -
-          echo "deb https://rmsource.gdutelc.com/ focal main" | sudo tee -a /etc/apt/sources.list
-
       - uses: ros-tooling/setup-ros@v0.2
         with:
           required-ros-distributions: noetic
