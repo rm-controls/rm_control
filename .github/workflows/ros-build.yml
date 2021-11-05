@@ -25,7 +25,7 @@ jobs:
         with:
           username: 'root'
           server: '${{ secrets.REPO_URL }} '
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} 
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           local_path: './*.{deb,ddeb}'
           remote_path: '/usr/local/web/rm-source/incoming'
           args: '-o ConnectTimeout=5'
