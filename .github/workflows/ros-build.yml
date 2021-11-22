@@ -2,8 +2,12 @@
 name: ros-build
 
 on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
   label:
-    types: [created, deleted]
+    types: [created]
   workflow_dispatch:
 jobs:
   build:
@@ -17,61 +21,23 @@ jobs:
         with:
           target-ros1-distro: noetic
       - name: Package deb
-        run: |
-          ls
-          source /opt/ros/noetic/setup.bash
-          sudo apt-get install python3-bloom fakeroot dh-make
-          sudo bash -c 'echo "yaml file://`pwd`/rosdep.yaml" > /etc/ros/rosdep/sources.list.d/rm_control.list'
-          rosdep update
-          for file in rm_msgs rm_description
-          do
-            if test -d $file
-            then
-              echo "Trying to package $file"
-              ls
-              cd $file
-              bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
-              fakeroot debian/rules binary
-              cd ..
-              newpackage=`ls -t | head -n 1`
-              sudo dpkg -i $newpackage
-            fi
-          done
-          for file in rm_common rm_dbus rm_gazebo rm_hw
-          do
-            if test -d $file
-            then
-              echo "Trying to package $file"
-              ls
-              cd $file
-              bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
-              fakeroot debian/rules binary
-              cd ..
-              for newpack in `ls -t | head -n 2 | tac`
-              do
-                sudo dpkg -i $newpack
-              done
-            fi
-          done
-          for file in rm_control
-          do
-            if test -d $file
-            then
-              echo "Trying to package $file"
-              ls
-              cd $file
-              bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
-              fakeroot debian/rules binary
-              cd ..
-            fi
-          done
-          ls
-      - name: deploy file
-        uses: wlixcc/SFTP-Deploy-Action@v1.0
+        run: ./.github/scripts/package.sh
+      - name: Upload deb package to source
+        uses: appleboy/scp-action@master
         with:
-          username: '${{ secrets.SOURCE_SSH_NAME }}'
-          server: '${{ secrets.SOURCE_SSH_HOST }}'
-          ssh_private_key: ${{ secrets.SOURCE_SSH_KEYGEN }}
-          local_path: './*.deb'
-          remote_path: '/usr/local/web/rm-source/incoming'
-          args: '-o ConnectTimeout=5'
+          host: ${{ secrets.SOURCE_SSH_HOST }}
+          username: ${{ secrets.SOURCE_SSH_NAME }}
+          key: ${{ secrets.SOURCE_SSH_KEYGEN }}
+          source: "*.deb"
+          target: "/usr/local/web/rm-source/ubuntu/incoming/"
+      - name: Deploy deb package to source
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SOURCE_SSH_HOST }}
+          username: ${{ secrets.SOURCE_SSH_NAME }}
+          key: ${{ secrets.SOURCE_SSH_KEYGEN }}
+          script: |
+                  cd /usr/local/web/rm-source/ubuntu/incoming/
+                  reprepro  -s  -b  /usr/local/web/rm-source/ubuntu/  --waitforlock  1000  includedeb focal /usr/local/web/rm-source/ubuntu/incoming/*.deb && \
+                  rm -f *.deb
+
