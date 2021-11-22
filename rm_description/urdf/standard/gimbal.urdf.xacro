@@ -7,10 +7,10 @@
 
         <link name="yaw">
             <inertial>
-                <mass value="0.592087"/>
-                <origin xyz="0 0 0.0127"/>
-                <inertia ixx="6.17e-4" ixy="0." ixz="0." iyy="6.182e-4"
-                         iyz="0." izz="1.07e-3"/>
+                <mass value="1.337"/>
+                <origin xyz="0.00072 0.000098 0.00976"/>
+                <inertia ixx="4.777e-3" ixy="-1.108e-5" ixz="1.574e-5" iyy="4.902e-3"
+                         iyz="-1.234e-5" izz="3.643e-3"/>
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -38,10 +38,10 @@
 
         <link name="pitch">
             <inertial>
-                <mass value="1.475"/>
-                <origin xyz="0.0168 -0.0028 0.0225"/>
-                <inertia ixx="5.619e-3" ixy="1.192e-4" ixz="-1.795e-4" iyy="6.577e-3"
-                         iyz="8.931e-5" izz="6.867e-3"/>
+                <mass value="1.175"/>
+                <origin xyz="-0.00439 0.0113 -0.00970"/>
+                <inertia ixx="4.716e-3" ixy="-1.511e-4" ixz="-1.134e-4" iyy="5.220e-3"
+                         iyz="1.192e-5" izz="6.046e-3"/>
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>

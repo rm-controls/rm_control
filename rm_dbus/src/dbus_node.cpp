@@ -39,14 +39,6 @@
 
 int main(int argc, char** argv)
 {
-  struct sched_param params
-  {
-  };
-  params.sched_priority = 95;
-  if (sched_setscheduler(0, SCHED_FIFO, &params) == -1)
-  {
-    ROS_ERROR("[dbus] Set scheduler failed, RUN THIS NODE AS SUPER USER.\n");
-  }
   ros::init(argc, argv, "rm_dbus");
   DBusNode dbus_node;
   ros::Rate loop_rate(60);
