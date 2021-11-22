@@ -1,7 +1,10 @@
 #!/bin/bash
 ls
 source /opt/ros/noetic/setup.bash
-sudo apt-get install python3-bloom fakeroot dh-make
+sudo apt-get install python3-bloom fakeroot dh-make apt-src
+pip install shyaml
+package_version=`curl -sL https://github.com/ros/rosdistro/raw/master/noetic/distribution.yaml | shyaml get-value repositories.rm_controllers.release.version`
+time_stamp=`date +%Y%m%d.%H%M%S`
 echo "yaml file://`pwd`/rosdep.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/rm_control.list
 rosdep update
 for file in rm_msgs rm_description
@@ -12,6 +15,7 @@ do
     ls
     cd $file
     bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
+    debchange -v $version$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
     fakeroot debian/rules binary
     cd ..
     sudo dpkg -i `ls -t | head -n 1`
@@ -25,6 +29,7 @@ do
     ls
     cd $file
     bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
+    debchange -v $version$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
     fakeroot debian/rules binary
     cd ..
     sudo dpkg -i `ls -t | head -n 2 | tac`
@@ -38,6 +43,7 @@ do
     ls
     cd $file
     bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
+    debchange -v $version$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
     fakeroot debian/rules binary
     cd ..
   fi
