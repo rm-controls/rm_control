@@ -3,7 +3,7 @@ ls
 source /opt/ros/noetic/setup.bash
 sudo apt-get install python3-bloom fakeroot dh-make devscripts
 pip install shyaml
-package_version=`curl -sL https://github.com/ros/rosdistro/raw/master/noetic/distribution.yaml | shyaml get-value repositories.rm_control.release.version`
+package_version=`curl -sL https://github.com/ros/rosdistro/raw/master/noetic/distribution.yaml | ~/.local/bin/shyaml get-value repositories.rm_control.release.version`
 time_stamp=`date +%Y%m%d.%H%M%S`
 echo "yaml file://`pwd`/rosdep.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/rm_control.list
 rosdep update
