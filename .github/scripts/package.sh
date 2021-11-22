@@ -15,7 +15,7 @@ do
     ls
     cd $file
     bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
-    debchange -v $version$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
+    debchange -v $version.$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
     fakeroot debian/rules binary
     cd ..
     sudo dpkg -i `ls -t | head -n 1`
@@ -29,7 +29,7 @@ do
     ls
     cd $file
     bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
-    debchange -v $version$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
+    debchange -v $version.$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
     fakeroot debian/rules binary
     cd ..
     sudo dpkg -i `ls -t | head -n 2 | tac`
@@ -43,7 +43,7 @@ do
     ls
     cd $file
     bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
-    debchange -v $version$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
+    debchange -v $version.$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
     fakeroot debian/rules binary
     cd ..
   fi
