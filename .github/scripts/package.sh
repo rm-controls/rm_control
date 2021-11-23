@@ -11,7 +11,6 @@ do
   if test -e $package/package.xml
   then
     echo "Trying to package $package"
-    ls
     cd $package
     bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
     debchange -v $package_version.$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
