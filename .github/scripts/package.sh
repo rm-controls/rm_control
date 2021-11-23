@@ -19,6 +19,6 @@ do
     cd ..
   fi
 done
-echo ''
-ls | grep *.deb
-ls | grep *.ddeb
+echo 'Package is Done.'
+ls | grep .deb
+ls | grep .ddeb
