@@ -16,6 +16,7 @@ do
     debchange -v $package_version.$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
     fakeroot debian/rules binary
     cd ..
+    sudo dpkg -i `ls -t | grep .deb | head -n 1`
   fi
 done
 echo 'Package is Done.'
