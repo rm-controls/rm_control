@@ -41,7 +41,7 @@
     </link>
 
     <joint name="trigger_joint" type="continuous">
-        <origin xyz="-0.068.666 -0.0145 0.0624" rpy="0 0 0"/>
+        <origin xyz="-0.068 -0.0145 0.0624" rpy="0 0 0"/>
         <dynamics damping="0.0" friction="0.01"/>
         <limit effort="1.0" velocity="43.54" lower="-1e16" upper="1e16"/>
         <parent link="yaw"/>
