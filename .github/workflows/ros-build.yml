@@ -11,6 +11,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
+    if: ${{ github.repository == 'rm-controls/rm_control' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -43,4 +44,3 @@ jobs:
                   cd /usr/local/web/rm-source/ubuntu/incoming/
                   reprepro  -s  -b  /usr/local/web/rm-source/ubuntu/  --waitforlock  1000  includedeb focal /usr/local/web/rm-source/ubuntu/incoming/*.deb && \
                   rm -f *.deb
-
