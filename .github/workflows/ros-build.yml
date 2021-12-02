@@ -11,6 +11,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
+    if: ${{ github.repository == 'rm-controls/rm_control' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
