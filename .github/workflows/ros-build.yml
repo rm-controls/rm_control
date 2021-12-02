@@ -19,11 +19,8 @@ jobs:
         with:
           required-ros-distributions: noetic
       - uses: ros-tooling/action-ros-ci@v0.2
-        id: action_ros_ci_step
         with:
           target-ros1-distro: noetic
-      - name: Install Binary
-        run: ${{ steps.action_ros_ci_step.outputs.ros-workspace-directory-name }}/install/local_setup.bash
       - name: Package deb
         run: ./.github/scripts/package.sh
       - name: Upload deb package to source
