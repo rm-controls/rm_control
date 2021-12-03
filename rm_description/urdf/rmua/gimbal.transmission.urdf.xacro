@@ -7,7 +7,7 @@
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
         <joint name="yaw_joint">
-            <offset>0.417</offset>
+            <offset>-3.675</offset>
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
@@ -18,7 +18,7 @@
             <mechanicalReduction>-1</mechanicalReduction>
         </actuator>
         <joint name="pitch_joint">
-            <offset>1.559</offset>
+            <offset>4.779</offset>
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
