@@ -4,8 +4,6 @@ name: ros-build
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
   label:
     types: [created]
   workflow_dispatch:
