@@ -2,14 +2,20 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.1.6 (2021-09-26)
+0.1.8 (2021-12-7)
 ------------------
+* Merge branch 'master' into gimbal/opti_or_simplify
+* Update CHANGELOG
+* Contributors: qiayuan
 
 0.1.7 (2021-09-26)
 ------------------
 * 0.1.6
 * Update CHANGELOG
 * Contributors: qiayuan
+
+0.1.6 (2021-09-26)
+------------------
 
 0.1.5 (2021-09-02)
 ------------------

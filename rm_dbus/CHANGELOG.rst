@@ -2,6 +2,14 @@
 Changelog for package rm_dbus
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.8 (2021-12-7)
+------------------
+* Merge branch 'master' into master
+* Remove priority from dbus_node
+* Merge branch 'master' into gimbal/opti_or_simplify
+* Update CHANGELOG
+* Contributors: YuuinIH, qiayuan
+
 0.1.6 (2021-09-26)
 ------------------
 
