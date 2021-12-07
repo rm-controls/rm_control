@@ -2,8 +2,28 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.1.6 (2021-09-26)
+0.1.8 (2021-12-7)
 ------------------
+* Fix End of files.
+* Merge branch 'master' into master
+* Update standard4.urdf.xacro and rm_hw/config/standard4.yaml.
+* Fix "sorry, unimplemented: non-trivial designated initializers not supported" under melodic
+* Merge branch 'master' into gimbal/opti_or_simplify
+* Update CHANGELOG
+* Set accel_coeff of imu to 6G's
+* Receive camera_trigger CAN frame
+* Add orientation to ImuExtraHandle
+* Update coefficient and standard5.yaml
+* Merge branch 'master' into gimbal/opti_or_simplify
+* Test can receive of imu2can successfully
+* Update CanBus::read() for new imu
+* Add ImuExtraInterface
+* Contributors: BruceLannn, YuuinIH, qiayuan
+
+0.1.7 (2021-09-26)
+------------------
+* 0.1.6
+* Update CHANGELOG
 * Fix some comment messed up by pre-commit
 * Merge branch 'namespace' into rm_gazebo/imu_sensor_interface
 * Merge pull request `#8 <https://github.com/rm-controls/rm_control/issues/8>`_ from ye-luo-xi-tui/namespace
@@ -11,10 +31,8 @@ Changelog for package rm_hw
 * Change name of namespace:from hardware_interface to rm_control.
 * Contributors: QiayuanLiao, qiayuan, yezi
 
-0.1.7 (2021-09-26)
+0.1.6 (2021-09-26)
 ------------------
-* 0.1.6
-* Update CHANGELOG
 * Fix some comment messed up by pre-commit
 * Merge branch 'namespace' into rm_gazebo/imu_sensor_interface
 * Merge pull request `#8 <https://github.com/rm-controls/rm_control/issues/8>`_ from ye-luo-xi-tui/namespace
