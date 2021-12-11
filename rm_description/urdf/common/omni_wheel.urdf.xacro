@@ -5,7 +5,7 @@
     <xacro:property name="wheel_joint_effort" value="10"/>
     <xacro:property name="wheel_joint_velocity" value="70"/>
 
-    <xacro:macro name="roller" params="prefix suffix theta roller_type">
+    <xacro:macro name="roller" params="prefix suffix theta">
         <xacro:if value="${suffix % 2 == 1}">
             <xacro:property name="joint_y_offset" value="0.009563"/>
         </xacro:if>
@@ -27,13 +27,10 @@
                 </geometry>
             </collision>
             <collision>
-                <xacro:if value="${roller_type=='realistic'}">
-                    <!--  quat_xyzw dosen't work ?! covert to rpy-->
                     <origin rpy="0 1.57 0" xyz="0 0 0"/>
                     <geometry>
                         <cylinder length="19e-3" radius="8.6e-3"/>
                     </geometry>
-                </xacro:if>
             </collision>
             <inertial>
                 <mass value="0.0058"/>
@@ -62,7 +59,7 @@
     </xacro:macro>
 
     <xacro:macro name="omni_wheel"
-                 params="prefix connected_to wheel_x_offset wheel_y_offset wheel_z_offset rotation_degree roller_type">
+                 params="prefix connected_to wheel_x_offset wheel_y_offset wheel_z_offset rotation_degree">
         <!--  link  -->
         <link name="${prefix}_wheel">
             <visual>
@@ -88,34 +85,33 @@
             <child link="${prefix}_wheel"/>
         </joint>
 
-        <xacro:unless value="${roller_type=='none'}">
-            <xacro:roller prefix="${prefix}" suffix="0" theta="${0*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="1" theta="${1*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="2" theta="${2*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="3" theta="${3*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="4" theta="${4*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="5" theta="${5*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="6" theta="${6*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="7" theta="${7*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="8" theta="${8*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="9" theta="${9*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="10" theta="${10*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="11" theta="${11*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="12" theta="${12*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="13" theta="${13*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="14" theta="${14*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="15" theta="${15*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="16" theta="${16*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="17" theta="${17*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="18" theta="${18*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="19" theta="${19*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="20" theta="${20*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="21" theta="${21*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="22" theta="${22*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="23" theta="${23*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="24" theta="${24*pi/13}" roller_type="${roller_type}"/>
-            <xacro:roller prefix="${prefix}" suffix="25" theta="${25*pi/13}" roller_type="${roller_type}"/>
-        </xacro:unless>
+        <xacro:roller prefix="${prefix}" suffix="0" theta="${0*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="1" theta="${1*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="2" theta="${2*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="3" theta="${3*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="4" theta="${4*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="5" theta="${5*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="6" theta="${6*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="7" theta="${7*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="8" theta="${8*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="9" theta="${9*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="10" theta="${10*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="11" theta="${11*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="12" theta="${12*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="13" theta="${13*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="14" theta="${14*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="15" theta="${15*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="16" theta="${16*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="17" theta="${17*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="18" theta="${18*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="19" theta="${19*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="20" theta="${20*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="21" theta="${21*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="22" theta="${22*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="23" theta="${23*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="24" theta="${24*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="25" theta="${25*pi/13}"/>
+
 
     </xacro:macro>
 
