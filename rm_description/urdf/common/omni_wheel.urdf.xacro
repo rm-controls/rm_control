@@ -1,0 +1,131 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="omni_wheel">
+
+    <xacro:property name="wheel_radius" value="0.0762"/>
+    <xacro:property name="roller_radius" value="0.009"/>
+    <xacro:property name="wheel_joint_effort" value="10"/>
+    <xacro:property name="wheel_joint_velocity" value="70"/>
+
+    <xacro:macro name="roller" params="prefix suffix theta">
+        <xacro:if value="${suffix % 2 == 1}">
+            <xacro:property name="joint_y_offset" value="0.009563"/>
+        </xacro:if>
+        <xacro:if value="${suffix % 2 == 0}">
+            <xacro:property name="joint_y_offset" value="-0.009563"/>
+        </xacro:if>
+
+        <!--  link  -->
+        <link name="${prefix}_roller_${suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/common/omni_roller.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <collision>
+                <geometry>
+                    <sphere radius="${roller_radius}"/>
+                </geometry>
+            </collision>
+            <collision>
+                    <origin rpy="0 1.57 0" xyz="0 0 0"/>
+                    <geometry>
+                        <cylinder length="19e-3" radius="8.6e-3"/>
+                    </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.0058"/>
+                <inertia ixx="270.867e-9" ixy="1.547e-19" ixz="2.133e-19" iyy="291.412e-9" iyz="0.0" izz="291.412e-9"/>
+            </inertial>
+        </link>
+
+        <joint name="${prefix}_roller_${suffix}_joint" type="continuous">
+            <origin
+                    xyz="${(wheel_radius-roller_radius)*cos(theta-pi/2)} ${joint_y_offset} ${(wheel_radius-roller_radius)*sin(theta-pi/2)}"
+                    rpy="0 ${-theta} 0"/>
+            <axis xyz="1 0 0"/>
+            <dynamics damping="0.0" friction="0.001"/>
+            <parent link="${prefix}_wheel"/>
+            <child link="${prefix}_roller_${suffix}"/>
+        </joint>
+
+        <gazebo reference="${prefix}_roller_${suffix}">
+            <mu1 value="2000.0"/>
+            <mu2 value="2000.0"/>
+            <kp value="1000000.0"/>
+            <kd value="100.0"/>
+            <material>Gazebo/Black</material>
+        </gazebo>
+
+    </xacro:macro>
+
+    <xacro:macro name="omni_wheel"
+                 params="prefix connected_to wheel_x_offset wheel_y_offset wheel_z_offset rotation_degree">
+        <!--  link  -->
+        <link name="${prefix}_wheel">
+            <visual>
+                <geometry>
+                    <mesh filename="package://rm_description/meshes/common/omni_wheel.stl"
+                          scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+            <inertial>
+                <mass value="0.59"/>
+                <inertia ixx="1.416e-3" ixy="0.0" ixz="0.0" iyy="2.749e-3" iyz="0.0" izz="1.416e-3"/>
+            </inertial>
+        </link>
+
+        <!--  joint  -->
+        <joint name="${prefix}_wheel_joint" type="revolute">
+            <axis xyz="0 1 0"/>
+            <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_offset_z}" rpy="0 0 ${rotation_degree}"/>
+            <!--      limit not work while type="continuous"-->
+            <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}" lower="-1e9" upper="1e9"/>
+            <dynamics damping="0.0" friction="0.05"/>
+            <parent link="${connected_to}"/>
+            <child link="${prefix}_wheel"/>
+        </joint>
+
+        <xacro:roller prefix="${prefix}" suffix="0" theta="${0*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="1" theta="${1*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="2" theta="${2*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="3" theta="${3*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="4" theta="${4*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="5" theta="${5*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="6" theta="${6*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="7" theta="${7*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="8" theta="${8*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="9" theta="${9*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="10" theta="${10*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="11" theta="${11*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="12" theta="${12*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="13" theta="${13*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="14" theta="${14*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="15" theta="${15*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="16" theta="${16*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="17" theta="${17*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="18" theta="${18*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="19" theta="${19*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="20" theta="${20*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="21" theta="${21*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="22" theta="${22*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="23" theta="${23*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="24" theta="${24*pi/13}"/>
+        <xacro:roller prefix="${prefix}" suffix="25" theta="${25*pi/13}"/>
+
+
+    </xacro:macro>
+
+    <xacro:macro name="wheel_transmission" params="prefix mechanical_reduction">
+        <transmission name="${prefix}_wheel_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${prefix}_wheel_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>${mechanical_reduction}</mechanicalReduction>
+            </actuator>
+            <joint name="${prefix}_wheel_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+    </xacro:macro>
+
+</robot>
