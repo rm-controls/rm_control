@@ -10,57 +10,56 @@
 
 namespace transmission_interface
 {
-    TransmissionSharedPtr MultiActuatorTransmissionLoader::load(const TransmissionInfo& transmission_info)
+TransmissionSharedPtr MultiActuatorTransmissionLoader::load(const TransmissionInfo& transmission_info)
+{
+
+    if (!checkActuatorDimension(transmission_info, multi_transmission_.numActuators()))
     {
-        // Transmission should contain only two actuator one joint
-        if (!checkActuatorDimension(transmission_info, 2))
-        {
-            return TransmissionSharedPtr();
-        }
-        if (!checkJointDimension(transmission_info, 1))
-        {
-            return TransmissionSharedPtr();
-        }
-
-        // Get actuator and joint configuration sorted by role: [actuator1, actuator2] and [joint1]
-        std::vector<double> act_reduction;
-        const bool act_config_ok = getActuatorConfig(transmission_info, act_reduction);
-        if (!act_config_ok)
-        {
-            return TransmissionSharedPtr();
-        }
-
-        double jnt_reduction, jnt_offset;
-        getJointConfig(transmission_info, jnt_reduction, jnt_offset);
-
-        // Transmission instance
-        try
-        {
-            TransmissionSharedPtr transmission(new MultiActuatorTransmission(act_reduction, jnt_reduction, jnt_offset));
-            return transmission;
-        }
-        catch (const TransmissionInterfaceException& ex)
-        {
-            using hardware_interface::internal::demangledTypeName;
-            ROS_ERROR_STREAM_NAMED("parser", "Failed to construct transmission '"
-            << transmission_info.name_ << "' of type '"
-            << demangledTypeName<MultiActuatorTransmissionLoader>() << "'. "
-            << ex.what());
-            return TransmissionSharedPtr();
-        }
+        return TransmissionSharedPtr();
     }
+    if (!checkJointDimension(transmission_info, 1))
+    {
+        return TransmissionSharedPtr();
+    }
+
+    // Get actuator and joint configuration sorted by role: [actuator1, actuator2] and [joint1]
+    std::vector<double> act_reduction;
+    const bool act_config_ok = getActuatorConfig(transmission_info, act_reduction);
+    if (!act_config_ok)
+    {
+        return TransmissionSharedPtr();
+    }
+
+    double jnt_reduction, jnt_offset;
+    getJointConfig(transmission_info, jnt_reduction, jnt_offset);
+
+    // Transmission instance
+    try
+    {
+        TransmissionSharedPtr transmission(new MultiActuatorTransmission(act_reduction, jnt_reduction, jnt_offset));
+        return transmission;
+    }
+    catch (const TransmissionInterfaceException& ex)
+    {
+        using hardware_interface::internal::demangledTypeName;
+        ROS_ERROR_STREAM_NAMED("parser", "Failed to construct transmission '"
+        << transmission_info.name_ << "' of type '"
+        << demangledTypeName<MultiActuatorTransmissionLoader>() << "'. "
+        << ex.what());
+        return TransmissionSharedPtr();
+    }
+}
 
 bool MultiActuatorTransmissionLoader::getActuatorConfig(const TransmissionInfo& transmission_info,
                                                         std::vector<double>& actuator_reduction)
 {
-    const std::string actuato_r1_role = "actuator1";
-    const std::string actuato_r2_role = "actuator2";
+    const std::string actuato_role = "main";
 
-    std::vector<TiXmlElement> act_elements(2, "");
-    std::vector<std::string> act_names(2);
-    std::vector<std::string> act_roles(2);
+    std::vector<TiXmlElement> act_elements(multi_transmission_.numActuators(), "");
+    std::vector<std::string> act_names(multi_transmission_.numActuators());
+    std::vector<std::string> act_roles(multi_transmission_.numActuators());
 
-    for (unsigned int i = 0; i < 2; ++i)
+    for (unsigned int i = 0; i < multi_transmission_.numActuators(); ++i)
     {
         // Actuator name
         act_names[i] = transmission_info.actuators_[i].name_;
@@ -72,45 +71,21 @@ bool MultiActuatorTransmissionLoader::getActuatorConfig(const TransmissionInfo& 
         std::string& act_role = act_roles[i];
         getActuatorRole(act_elements[i], act_names[i], transmission_info.name_, true,  // Required
                         act_role);
-        //    if (act_role_status != true) { return false; }
-
-        // Validate role string
-        if (actuato_r1_role != act_role && actuato_r2_role != act_role)
-        {
-            ROS_ERROR_STREAM_NAMED("parser", "Actuator '" << act_names[i] << "' of transmission '" << transmission_info.name_
-            << "' does not specify a valid <role> element. Got '" << act_role
-            << "', expected '" << actuato_r1_role << "' or '" << actuato_r2_role
-            << "'.");
-            return false;
-        }
     }
-
-    // Roles must be different
-    if (act_roles[0] == act_roles[1])
+    // Indices sorted according to role
+    std::vector<unsigned int> id_map(multi_transmission_.numActuators());
+    for (int i = 0; i < multi_transmission_.numActuators(); ++i)
     {
-        ROS_ERROR_STREAM_NAMED("parser", "Actuators '" << act_names[0] << "' and '" << act_names[1] << "' of transmission '"
-        << transmission_info.name_
-        << "' must have different roles. Both specify '" << act_roles[0]
-        << "'.");
+        id_map[i] = i;
+    }
+    if (!(actuato_role == act_roles[0]))
+    {
+        ROS_ERROR_STREAM_NAMED("parser", "Counld not find main actuator");
         return false;
     }
-
-    // Indices sorted according to role
-    std::vector<unsigned int> id_map(2);
-    if (actuato_r1_role == act_roles[0])
-    {
-        id_map[0] = 0;
-        id_map[1] = 1;
-    }
-    else
-    {
-        id_map[0] = 1;
-        id_map[1] = 0;
-    }
-
     // Parse required mechanical reductions
-    actuator_reduction.resize(2);
-    for (unsigned int i = 0; i < 2; ++i)
+    actuator_reduction.resize(multi_transmission_.numActuators());
+    for (unsigned int i = 0; i < multi_transmission_.numActuators(); ++i)
     {
         const unsigned int id = id_map[i];
         getActuatorReduction(act_elements[id], act_names[id], transmission_info.name_, true, actuator_reduction[i]);
