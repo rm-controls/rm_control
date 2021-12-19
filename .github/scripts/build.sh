@@ -13,4 +13,4 @@ done
 rosdep update
 rosdep install --from-paths $ros_workspace/src --ignore-packages-from-source --rosdistro $ros_distro -y
 catkin_make -C $ros_workspace
-echo "::set-output name=catkin-ws-directory::$(echo "$ros_workspace")"
+echo "::set-output name=catkin-ws-directory::$(echo $ros_workspace)"
