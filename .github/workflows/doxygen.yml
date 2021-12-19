@@ -37,6 +37,7 @@ jobs:
           production-deploy: ${{ env.PRODUCTION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: 'Deploy ${{ env.DEPLOY_NAME }}@${{ github.sha }}'
+          enable-pull-request-comment: false
           enable-commit-comment: false
           alias: ${{ env.DEPLOY_NAME }}
         env:
