@@ -6,10 +6,10 @@ pip install shyaml
 
 package_version=`curl -sL https://github.com/ros/rosdistro/raw/master/noetic/distribution.yaml | shyaml get-value repositories.$ros_package_name.release.version`
 time_stamp=`date +%Y%m%d.%H%M%S`
+root_directory=`pwd`
 
 for package_source in $package_list
 do
-  root_directory=`pwd`
   echo "Trying to package $package_source"
   cd $package_source
   bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
