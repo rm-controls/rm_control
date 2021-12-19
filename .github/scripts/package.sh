@@ -1,8 +1,9 @@
 #!/bin/bash
 ros_package_name=$1
 
-sudo apt-get install python3-bloom fakeroot dh-make devscripts
-pip install shyaml
+echo "Install packaging tool..."
+sudo apt-get install python3-bloom fakeroot dh-make devscripts > /dev/null
+pip install shyaml > /dev/null
 
 package_version=`curl -sL https://github.com/ros/rosdistro/raw/master/noetic/distribution.yaml | shyaml get-value repositories.$ros_package_name.release.version`
 time_stamp=`date +%Y%m%d.%H%M%S`
