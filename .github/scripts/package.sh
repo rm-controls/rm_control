@@ -9,7 +9,6 @@ pip install shyaml
 
 package_version=`curl -sL https://github.com/ros/rosdistro/raw/master/noetic/distribution.yaml | shyaml get-value repositories.$ros_package_name.release.version`
 time_stamp=`date +%Y%m%d.%H%M%S`
-
 source $ros_workspace/devel/setup.bash
 package_list=`find . -name package.xml | sed 's/package.xml//g' `
 
@@ -26,4 +25,4 @@ do
   fi
 done
 echo 'Package has been done.'
-find . -name *.deb
+find . -name '*.deb'
