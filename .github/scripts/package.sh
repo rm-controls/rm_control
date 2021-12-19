@@ -9,7 +9,7 @@ pip install shyaml
 
 package_version=`curl -sL https://github.com/ros/rosdistro/raw/master/noetic/distribution.yaml | shyaml get-value repositories.$ros_package_name.release.version`
 time_stamp=`date +%Y%m%d.%H%M%S`
-echo "source $ros_workspace/devel/setup.bash" | sudo tee -a /etc/profile.d
+echo "source $ros_workspace/devel/setup.bash" | sudo tee -a /etc/profile
 package_list=`find . -name package.xml | sed 's/package.xml//g' `
 
 for package_source in $package_list
