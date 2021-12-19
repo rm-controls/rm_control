@@ -21,7 +21,7 @@ do
     bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
     debchange -v $package_version.$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
     fakeroot debian/rules binary
-    cd ..
+    cd $GITHUB_WORKSPACE
   fi
 done
 echo 'Package has been done.'
