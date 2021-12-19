@@ -14,15 +14,13 @@ package_list=`find . -name package.xml | sed 's/package.xml//g' `
 
 for package_source in $package_list
 do
-  if test -d $file
-  then
-    echo "Trying to package $package_source"
-    cd $package_source
-    bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
-    debchange -v $package_version.$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
-    fakeroot debian/rules binary
-    cd $GITHUB_WORKSPACE
-  fi
+  root_directory=`pwd`
+  echo "Trying to package $package_source"
+  cd $package_source
+  bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
+  debchange -v $package_version.$time_stamp -p -D -u -m 'Append timestamp when binarydeb was built.'
+  fakeroot debian/rules binary
+  cd $root_directory
 done
 echo 'Package has been done.'
 find . -name '*.deb'
