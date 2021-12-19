@@ -1,16 +1,16 @@
 #!/bin/bash
 ros_distro=$1
-
+ros_workspace='/tmp/catkin_ws'
 source /opt/ros/$ros_distro/setup.bash
 
 package_list=`find $GITHUB_WORKSPACE/ -name package.xml | sed 's/package.xml//g' `  
-mkdir -p /tmp/catkin_ws/src && cd /tmp/catkin_ws 
-catkin_init_workspace /tmp/catkin_ws/src
+mkdir -p $ros_workspace/src && cd $ros_workspace 
+catkin_init_workspace $ros_workspace/src
 for package_source in $package_list
 do
-    cp -r $package_source /tmp/catkin_ws/src
+    cp -r $package_source $ros_workspace/src
 done
 rosdep update
-rosdep install --from-paths /tmp/catkin_ws/src --ignore-packages-from-source --rosdistro $ros_distro -y
-catkin_make -C /tmp/catkin_ws
-echo "::set-output name=catkin-ws-directory::$(echo /tmp/catkin_ws)"
+rosdep install --from-paths $ros_workspace/src --ignore-packages-from-source --rosdistro $ros_distro -y
+catkin_make -C $ros_workspace
+echo "::set-output name=catkin-ws-directory::$(echo "$ros_workspace")"
