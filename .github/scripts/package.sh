@@ -10,7 +10,10 @@ time_stamp=`date +%Y%m%d.%H%M%S`
 package_version="`curl -sL https://github.com/ros/rosdistro/raw/master/noetic/distribution.yaml | shyaml get-value repositories.$ros_package_name.release.version`.$time_stamp"
 run_directory=`pwd`
 package_list=`find $ros_workspace/src -name package.xml | sed 's/package.xml//g' `
+source /opt/ros/noetic/setup.bash
 source $ros_workspace/devel/setup.bash
+
+echo $CMAKE_PREFIX_PATH
 
 for package_source in $package_list
 do
