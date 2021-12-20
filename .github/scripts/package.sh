@@ -25,4 +25,4 @@ do
   cd $run_directory
 done
 echo 'Package has been done.'
-find $ros_workspace/src -name '*.deb'|xargs -I {} cp {} $run_directory/
+find $ros_workspace/src -name '*.deb' -name '*.ddeb'|xargs -I {} cp {} $run_directory/
