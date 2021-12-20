@@ -19,7 +19,7 @@ do
   cd $package_source
   bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
   debchange -v $package_version -p -D -u -m 'Append timestamp when binarydeb was built.'
-  sed -i "s:-DCMAKE_PREFIX_PATH=.*:-DCMAKE_PREFIX_PATH=\""$CMAKE_PREFIX_PATH"\":g" debian/rules
+  sed -e "s:-DCMAKE_PREFIX_PATH=.*:-DCMAKE_PREFIX_PATH=\""$CMAKE_PREFIX_PATH"\":g" -i debian/rules
   fakeroot debian/rules binary
   cd $run_directory
 done
