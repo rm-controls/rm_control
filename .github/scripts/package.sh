@@ -12,6 +12,7 @@ run_directory=`pwd`
 package_list=`find $ros_workspace/src -name package.xml | sed 's/package.xml//g' `
 source /opt/ros/noetic/setup.bash
 source $ros_workspace/devel/setup.bash
+$CM_PREFIX_PATH=sed 's/:/;/g' $CMAKE_PREFIX_PATH
 
 for package_source in $package_list
 do
@@ -19,7 +20,7 @@ do
   cd $package_source
   bloom-generate rosdebian --os-name ubuntu --ros-distro noetic
   debchange -v $package_version -p -D -u -m 'Append timestamp when binarydeb was built.'
-  sed -e "s|-DCMAKE_PREFIX_PATH=.*|-DCMAKE_PREFIX_PATH=\""$CMAKE_PREFIX_PATH"\"|g" -i debian/rules
+  sed -e "s|-DCMAKE_PREFIX_PATH=.*|-DCMAKE_PREFIX_PATH=\""$CM_PREFIX_PATH"\"|g" -i debian/rules
   fakeroot debian/rules binary
   cd $run_directory
 done
