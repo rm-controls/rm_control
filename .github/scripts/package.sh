@@ -12,7 +12,7 @@ run_directory=`pwd`
 package_list=`find $ros_workspace/src -name package.xml | sed 's/package.xml//g' `
 source /opt/ros/noetic/setup.bash
 source $ros_workspace/devel/setup.bash
-CM_PREFIX_PATH=`echo $CMAKE_PREFIX_PATH | sed 's/:/;/g'`
+CM_PREFIX_PATH=`sed 's/:/;/g' <<< $CMAKE_PREFIX_PATH`
 
 for package_source in $package_list
 do
