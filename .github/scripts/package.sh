@@ -23,7 +23,7 @@ do
   debchange -v $package_version -p -D -u -m 'Append timestamp when binarydeb was built.'
   sed -i "s:-DCMAKE_PREFIX_PATH=.*:-DCMAKE_PREFIX_PATH=\"$CMAKE_PREFIX_PATH\":g" debian/rules
   cat debian/rules |grep -DCMAKE_PREFIX_PATH
-  fakeroot make -f debian/rules binary
+  fakeroot debian/rules binary
   cd $run_directory
 done
 echo 'Package has been done.'
