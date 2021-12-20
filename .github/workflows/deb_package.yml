@@ -1,5 +1,4 @@
-
-name: ros-build
+name: deb-package
 
 on:
   push:
@@ -9,19 +8,20 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    if: ${{ github.repository == 'rm-controls/rm_control' }}
+    #if: ${{ github.repository == 'rm-controls/rm_control' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ros-tooling/setup-ros@v0.2
         with:
           required-ros-distributions: noetic
-      - uses: ros-tooling/action-ros-ci@v0.2
-        with:
-          target-ros1-distro: noetic
+      - name: Build and install from source
+        id: build-and-install
+        run: .github/scripts/build.sh noetic
       - name: Package deb
-        run: ./.github/scripts/package.sh
+        run: .github/scripts/package.sh noetic rm_control ${{ steps.build-and-install.outputs.catkin-ws-directory }}
       - name: Upload deb package to source
+        if: ${{ github.repository == 'rm-controls/rm_control' }}
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SOURCE_SSH_HOST }}
@@ -30,6 +30,7 @@ jobs:
           source: "*.deb"
           target: "/usr/local/web/rm-source/ubuntu/incoming/"
       - name: Deploy deb package to source
+        if: ${{ github.repository == 'rm-controls/rm_control' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SOURCE_SSH_HOST }}
