@@ -12,16 +12,6 @@ namespace transmission_interface
 {
 TransmissionSharedPtr MultiActuatorTransmissionLoader::load(const TransmissionInfo& transmission_info)
 {
-
-    if (!checkActuatorDimension(transmission_info, multi_transmission_.numActuators()))
-    {
-        return TransmissionSharedPtr();
-    }
-    if (!checkJointDimension(transmission_info, 1))
-    {
-        return TransmissionSharedPtr();
-    }
-
     // Get actuator and joint configuration sorted by role: [actuator1, actuator2] and [joint1]
     std::vector<double> act_reduction;
     const bool act_config_ok = getActuatorConfig(transmission_info, act_reduction);
@@ -36,7 +26,7 @@ TransmissionSharedPtr MultiActuatorTransmissionLoader::load(const TransmissionIn
     // Transmission instance
     try
     {
-        TransmissionSharedPtr transmission(new MultiActuatorTransmission(act_reduction, jnt_reduction, jnt_offset));
+        TransmissionSharedPtr transmission(new MultiActuatorTransmission(transmission_info, act_reduction, jnt_reduction, jnt_offset));
         return transmission;
     }
     catch (const TransmissionInterfaceException& ex)
@@ -53,13 +43,13 @@ TransmissionSharedPtr MultiActuatorTransmissionLoader::load(const TransmissionIn
 bool MultiActuatorTransmissionLoader::getActuatorConfig(const TransmissionInfo& transmission_info,
                                                         std::vector<double>& actuator_reduction)
 {
-    const std::string actuato_role = "main";
+    const std::string actuator_role = "main";
+    static unsigned int act_num = transmission_info.actuators_.size();
+    std::vector<TiXmlElement> act_elements(act_num, "");
+    std::vector<std::string> act_names(act_num);
+    std::vector<std::string> act_roles(act_num);
 
-    std::vector<TiXmlElement> act_elements(multi_transmission_.numActuators(), "");
-    std::vector<std::string> act_names(multi_transmission_.numActuators());
-    std::vector<std::string> act_roles(multi_transmission_.numActuators());
-
-    for (unsigned int i = 0; i < multi_transmission_.numActuators(); ++i)
+    for (unsigned int i = 0; i < act_num; ++i)
     {
         // Actuator name
         act_names[i] = transmission_info.actuators_[i].name_;
@@ -73,19 +63,19 @@ bool MultiActuatorTransmissionLoader::getActuatorConfig(const TransmissionInfo& 
                         act_role);
     }
     // Indices sorted according to role
-    std::vector<unsigned int> id_map(multi_transmission_.numActuators());
-    for (int i = 0; i < multi_transmission_.numActuators(); ++i)
+    std::vector<unsigned int> id_map(act_num);
+    for (unsigned int i = 0; i < act_num; ++i)
     {
         id_map[i] = i;
     }
-    if (!(actuato_role == act_roles[0]))
+    if (!(actuator_role == act_roles[0]))
     {
         ROS_ERROR_STREAM_NAMED("parser", "Counld not find main actuator");
         return false;
     }
     // Parse required mechanical reductions
-    actuator_reduction.resize(multi_transmission_.numActuators());
-    for (unsigned int i = 0; i < multi_transmission_.numActuators(); ++i)
+    actuator_reduction.resize(act_num);
+    for (unsigned int i = 0; i < act_num; ++i)
     {
         const unsigned int id = id_map[i];
         getActuatorReduction(act_elements[id], act_names[id], transmission_info.name_, true, actuator_reduction[i]);
@@ -110,7 +100,7 @@ bool MultiActuatorTransmissionLoader::getJointConfig(const TransmissionInfo& tra
     // Parse optional joint offset.
     getJointOffset(jnt_elements, jnt_names, transmission_info.name_, false, joint_offset);
     return true;
-                                                                                                                 }
+}
 
 }  // namespace transmission_interface
 

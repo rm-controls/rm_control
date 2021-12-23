@@ -17,7 +17,7 @@ class MultiActuatorTransmission : public Transmission
 {
 public:
 
-    MultiActuatorTransmission(std::vector<double> actuator_reduction, double joint_reduction, double joint_offset = 0.0);
+    MultiActuatorTransmission(const TransmissionInfo& transmission_info, std::vector<double> actuator_reduction, double joint_reduction, double joint_offset = 0.0);
 
     void actuatorToJointEffort(const ActuatorData& act_data, JointData& jnt_data) override;
     void actuatorToJointVelocity(const ActuatorData& act_data, JointData& jnt_data) override;
@@ -51,22 +51,17 @@ protected:
     std::vector<double> act_reduction_;
     double jnt_reduction_{};
     double jnt_offset_{};
-    std::vector<hardware_interface::ActuatorHandle> actuator_handles_{};
     int act_number_ = 0;
 };
 
-MultiActuatorTransmission::MultiActuatorTransmission(std::vector<double> actuator_reduction, double joint_reduction, double joint_offset)
+MultiActuatorTransmission::MultiActuatorTransmission(const TransmissionInfo& transmission_info, std::vector<double> actuator_reduction, double joint_reduction, double joint_offset)
  : act_reduction_(std::move(actuator_reduction)), jnt_reduction_(joint_reduction), jnt_offset_(joint_offset)
  {
-    for (const auto& actuator : actuator_handles_)
-    {
-        if (actuator .getName().find("joint2") != std::string::npos)
-            act_number_++;
-    }
+    act_number_ = transmission_info.actuators_.size();
     if (numActuators() != act_reduction_.size() || numJoints() != 1)
     {
         throw TransmissionInterfaceException(
-                "Joint reduction and offset vectors of a double transmission must have size 1, actuator must size 2");
+                "Joint reduction and offset vectors of a multiple transmission must have size 1, actuator must size more than 1");
     }
     if (0.0 == act_reduction_[0] || 0.0 == act_reduction_[1] || 0.0 == jnt_reduction_)
     {

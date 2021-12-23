@@ -7,5 +7,12 @@
             Load from a URDF description the configuration of a joint using two actuator transmission.
         </description>
     </class>
+    <class name="transmission_interface/MultiActuatorTransmission"
+           type="transmission_interface::MultiActuatorTransmissionLoader"
+           base_class_type="transmission_interface::TransmissionLoader">
+        <description>
+            Load from a URDF description the configuration of a joint using multiple actuator transmission.
+        </description>
+    </class>
 
 </library>
