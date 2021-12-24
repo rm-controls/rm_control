@@ -12,6 +12,7 @@
     <arg name="paused" default="false"/>
 
     <rosparam file="$(find rm_gazebo)/config/mimic_joint.yaml" command="load"/>
+    <rosparam file="$(find rm_gazebo)/config/imus.yaml" command="load" if="$(arg load_gimbal)"/>
 
     <param name="robot_description" command="$(find xacro)/xacro $(find rm_description)/urdf/$(arg robot_type)/$(arg robot_type).urdf.xacro
          load_chassis:=$(arg load_chassis) load_gimbal:=$(arg load_gimbal) load_shooter:=$(arg load_shooter)
