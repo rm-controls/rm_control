@@ -59,6 +59,10 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     ROS_WARN("No imu specified");
   else if (!parseImuData(xml_rpc_value, robot_hw_nh))
     return false;
+  if (!robot_hw_nh.getParam("tofs", xml_rpc_value))
+    ROS_WARN("No tof specified");
+  else if (!parseTofData(xml_rpc_value, robot_hw_nh))
+    return false;
   // CAN Bus
   if (!robot_hw_nh.getParam("bus", xml_rpc_value))
     ROS_WARN("No bus specified");
@@ -71,7 +75,8 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
       if (bus_name.find("can") != std::string::npos)
         can_buses_.push_back(new CanBus(bus_name, CanDataPtr{ .type2act_coeffs_ = &type2act_coeffs_,
                                                               .id2act_data_ = &bus_id2act_data_[bus_name],
-                                                              .id2imu_data_ = &bus_id2imu_data_[bus_name] }));
+                                                              .id2imu_data_ = &bus_id2imu_data_[bus_name],
+                                                              .id2tof_data_ = &bus_id2tof_data_[bus_name] }));
       else
         ROS_ERROR_STREAM("Unknown bus: " << bus_name);
     }
