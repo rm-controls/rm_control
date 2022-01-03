@@ -54,7 +54,7 @@ private:
 };
 
 class TofSensorInterface
-  : public hardware_interface::HardwareResourceManager<TofSensorHandle, hardware_interface::ClaimResources>
+  : public hardware_interface::HardwareResourceManager<TofSensorHandle, hardware_interface::DontClaimResources>
 {
 };
 

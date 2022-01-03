@@ -378,27 +378,6 @@ bool rm_hw::RmRobotHW::parseTofData(XmlRpc::XmlRpcValue& tof_datas, ros::NodeHan
         ROS_ERROR_STREAM("TOF " << it->first << " has no associated ID.");
         continue;
       }
-      else if (!it->second.hasMember("distance"))
-      {
-        ROS_ERROR_STREAM("TOF " << it->first << " has no associated distance.");
-        continue;
-      }
-      else if (!it->second.hasMember("dis_status"))
-      {
-        ROS_ERROR_STREAM("TOF " << it->first << " has no associated dis_status.");
-        continue;
-      }
-      else if (!it->second.hasMember("signal_strength"))
-      {
-        ROS_ERROR_STREAM("TOF " << it->first << " has no associated signal_strength.");
-        continue;
-      }
-      XmlRpc::XmlRpcValue distance = tof_datas[it->first]["distance"];
-      ROS_ASSERT(distance.getType() == XmlRpc::XmlRpcValue::TypeDouble);
-      XmlRpc::XmlRpcValue dis_status = tof_datas[it->first]["dis_status"];
-      ROS_ASSERT(dis_status.getType() == XmlRpc::XmlRpcValue::TypeInt);
-      XmlRpc::XmlRpcValue signal_strength = tof_datas[it->first]["signal_strength"];
-      ROS_ASSERT(signal_strength.getType() == XmlRpc::XmlRpcValue::TypeDouble);
 
       std::string bus = tof_datas[it->first]["bus"];
       int id = static_cast<int>(tof_datas[it->first]["id"]);
@@ -413,7 +392,8 @@ bool rm_hw::RmRobotHW::parseTofData(XmlRpc::XmlRpcValue& tof_datas, ros::NodeHan
         return false;
       }
       else
-        bus_id2tof_data_[bus].insert(std::make_pair(id, TofData{ .distance = {} }));
+        bus_id2tof_data_[bus].insert(
+            std::make_pair(id, TofData{ .distance = {}, .dis_status = {}, .signal_strength = {} }));
       // for ros_control interface
       rm_control::TofSensorHandle tof_sensor_handle(it->first, &bus_id2tof_data_[bus][id].distance,
                                                     &bus_id2tof_data_[bus][id].dis_status,
