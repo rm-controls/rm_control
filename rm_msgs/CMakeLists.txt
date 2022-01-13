@@ -29,6 +29,7 @@ add_service_files(
         FILES
         ContinousDetectorSwitch.srv
         StatusChange.srv
+        CameraStatus.srv
 )
 
 add_message_files(
