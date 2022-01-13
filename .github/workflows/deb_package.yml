@@ -1,0 +1,42 @@
+name: deb-package
+
+on:
+  push:
+    branches: [ master ]
+  label:
+    types: [created]
+  workflow_dispatch:
+jobs:
+  build:
+    #if: ${{ github.repository == 'rm-controls/rm_control' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ros-tooling/setup-ros@v0.2
+        with:
+          required-ros-distributions: noetic
+      - name: Build and install from source
+        id: build-and-install
+        run: .github/scripts/build.sh noetic
+      - name: Package deb
+        run: .github/scripts/package.sh noetic rm_control ${{ steps.build-and-install.outputs.catkin-ws-directory }}
+      - name: Upload deb package to source
+        if: ${{ github.repository == 'rm-controls/rm_control' }}
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SOURCE_SSH_HOST }}
+          username: ${{ secrets.SOURCE_SSH_NAME }}
+          key: ${{ secrets.SOURCE_SSH_KEYGEN }}
+          source: "*.deb"
+          target: "/usr/local/web/rm-source/ubuntu/incoming/"
+      - name: Deploy deb package to source
+        if: ${{ github.repository == 'rm-controls/rm_control' }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SOURCE_SSH_HOST }}
+          username: ${{ secrets.SOURCE_SSH_NAME }}
+          key: ${{ secrets.SOURCE_SSH_KEYGEN }}
+          script: |
+                  cd /usr/local/web/rm-source/ubuntu/incoming/
+                  reprepro  -s  -b  /usr/local/web/rm-source/ubuntu/  --waitforlock  1000  includedeb focal /usr/local/web/rm-source/ubuntu/incoming/*.deb && \
+                  rm -f *.deb
