@@ -239,7 +239,7 @@ void CanBus::read(ros::Time time)
     else if (data_ptr_.id2tof_data_->find(frame.can_id) != data_ptr_.id2tof_data_->end())
     {
       TofData& tof_data = data_ptr_.id2tof_data_->find(frame.can_id)->second;
-      tof_data.distance = ((int32_t)((frame.data[2]) << 24) | (frame.data[1] << 16) | frame.data[0]);
+      tof_data.distance = ((int32_t)((frame.data[2]) << 24) | (frame.data[1] << 16) | frame.data[0]) / 2000.0;
       tof_data.dis_status = frame.data[3];
       tof_data.signal_strength = ((int16_t)((frame.data[5]) << 8) | frame.data[4]);
       continue;
