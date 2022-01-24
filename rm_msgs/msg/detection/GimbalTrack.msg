@@ -1,0 +1,3 @@
+float64 bullet_speed
+geometry_msgs/PointStamped target_pos
+geometry_msgs/Vector3Stamped target_vel
