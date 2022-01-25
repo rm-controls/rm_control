@@ -2,28 +2,28 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:property name="threshold" value="0.1"/>
-    <xacro:property name="pitch_lower_limit" value="-0.7"/>
-    <xacro:property name="pitch_upper_limit" value="0.45"/>
+    <xacro:property name="pitch_lower_limit" value="-0.421"/>
+    <xacro:property name="pitch_upper_limit" value="0.39"/>
 
-        <link name="yaw">
-            <inertial>
-                <mass value="1.337"/>
-                <origin xyz="0.00072 0.000098 0.00976"/>
-                <inertia ixx="4.777e-3" ixy="-1.108e-5" ixz="1.574e-5" iyy="4.902e-3"
-                         iyz="-1.234e-5" izz="3.643e-3"/>
-            </inertial>
-            <visual>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <geometry>
-                    <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-            </visual>
-            <collision>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <geometry>
-                    <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001"/>
-                </geometry>
-            </collision>
+    <link name="yaw">
+        <inertial>
+            <mass value="1.337"/>
+            <origin xyz="0.00072 0.000098 0.00976"/>
+            <inertia ixx="4.777e-3" ixy="-1.108e-5" ixz="1.574e-5" iyy="4.902e-3"
+                     iyz="-1.234e-5" izz="3.643e-3"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://rm_description/meshes/standard/yaw.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
         </link>
 
         <joint name="yaw_joint" type="revolute">

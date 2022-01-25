@@ -28,13 +28,13 @@ rm_hw:
       lp_cutoff_frequency: 150
     yaw_joint_motor:
       bus: can0
-      id: 0x205
+      id: 0x209
       type: rm_6020
       lp_cutoff_frequency: 50
     pitch_joint_motor:
       bus: can1
-      id: 0x206
-      type: rm_6020
+      id: 0x204
+      type: rm_3508
       lp_cutoff_frequency: 50
     left_friction_wheel_joint_motor:
       bus: can1
@@ -47,14 +47,14 @@ rm_hw:
       type: rm_3508
       lp_cutoff_frequency: 60
     trigger_joint_motor:
-      bus: can1
-      id: 0x203
+      bus: can0
+      id: 0x206
       type: rm_2006
       lp_cutoff_frequency: 100
       need_calibration: true
     cover_joint_motor:
-      bus: can1
-      id: 0x204
+      bus: can0
+      id: 0x207
       type: rm_2006
       lp_cutoff_frequency: 100
       need_calibration: true

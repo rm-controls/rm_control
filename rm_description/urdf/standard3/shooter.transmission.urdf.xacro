@@ -14,7 +14,7 @@
     <transmission name="trans_left_friction_wheel_joint">
         <type>transmission_interface/SimpleTransmission</type>
         <actuator name="left_friction_wheel_joint_motor">
-            <mechanicalReduction>-1</mechanicalReduction>
+            <mechanicalReduction>1</mechanicalReduction>
         </actuator>
         <joint name="left_friction_wheel_joint">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -24,7 +24,7 @@
     <transmission name="trans_right_friction_wheel_joint">
         <type>transmission_interface/SimpleTransmission</type>
         <actuator name="right_friction_wheel_joint_motor">
-            <mechanicalReduction>-1</mechanicalReduction>
+            <mechanicalReduction>1</mechanicalReduction>
         </actuator>
         <joint name="right_friction_wheel_joint">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
