@@ -34,7 +34,7 @@ add_service_files(
 add_message_files(
         DIRECTORY msg/detection
         FILES
-        GimbalTrack.msg
+        TrackCmd.msg
         TargetDetection.msg
         TargetDetectionArray.msg
         TrackData.msg
