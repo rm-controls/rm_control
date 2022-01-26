@@ -22,7 +22,7 @@
             <xacro:camera_optical_frame xyz="0.2527 0.0071 -0.0984" rpy="1.5486 -0.0025 1.600"
                                         frame_id="$(arg camera_optical_frame)" parent="pitch"
                                         camera_sim="$(arg use_simulation)"/>
-            <xacro:IMU connected_to="pitch" imu_name="gimbal_imu" xyz="0.08 0. 0.08" rpy="0 0 -${pi/2}"/>
+            <xacro:IMU connected_to="pitch" imu_name="gimbal_imu" xyz="0.08 0. 0.08" rpy="${pi} ${pi} ${pi}"/>
 
             <xacro:if value="$(arg load_shooter)">
                 <xacro:include filename="$(find rm_description)/urdf/hero/shooter.urdf.xacro"/>
