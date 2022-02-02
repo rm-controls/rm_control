@@ -10,10 +10,10 @@
 
         <link name="base_link">
             <inertial>
-                <mass value="1.737"/>
-                <origin xyz="0.000425  -0.000733  0.00762"/>
-                <inertia ixx="4.088e-2" ixy="9.103e-5" ixz="-1.697e-4" iyy="4.498e-2"
-                         iyz="6.472e-5" izz="8.107e-2"/>
+                <mass value="8.472226"/>
+                <origin xyz="0.009872  0.010973  0.001286"/>
+                <inertia ixx="1.131e-1" ixy="-4.480e-4" ixz="-9.581e-3" iyy="1.473e-1"
+                         iyz="3.352e-3" izz="2.048e-1"/>
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>

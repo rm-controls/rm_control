@@ -1,12 +1,12 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:include filename="$(find rm_description)/urdf/common/friction.urdf.xacro"/>
-<!--    <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.urdf.xacro"/>-->
+    <!--    <xacro:include filename="$(find rm_description)/urdf/standard/gimbal.urdf.xacro"/>-->
 
 
-    <xacro:property name="wheel_offset_x" value="0.00884"/>
-    <xacro:property name="wheel_offset_y" value="0.036564"/>
-    <xacro:property name="wheel_offset_z" value="0.0"/>
+    <xacro:property name="wheel_offset_x" value="0.055"/>
+    <xacro:property name="wheel_offset_y" value="0.0365"/>
+    <xacro:property name="wheel_offset_z" value="0.022375"/>
 
 
     <xacro:friction_wheel prefixs="left" connected_to="pitch"
@@ -20,10 +20,10 @@
 
     <link name="trigger">
         <inertial>
-            <mass value="0.2972"/>
-            <origin xyz="-0.00549 -0.00233 0.00344"/>
-            <inertia ixx="1.955e-4" ixy="-2.402e-5" ixz="-2.718e-5" iyy="3.514e-4"
-                     iyz="-6.239e-6" izz="4.209e-4"/>
+            <mass value="0.952"/>
+            <origin xyz="-0.012227 -0.000055 0.010137"/>
+            <inertia ixx="8.90e-4" ixy="2.012e-6" ixz="1.911e-4" iyy="1.768e-3"
+                     iyz="-7.72e-7" izz="2.067e-3"/>
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -40,10 +40,10 @@
     </link>
 
     <joint name="trigger_joint" type="revolute">
-        <origin xyz="-0.064 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 -0.011" rpy="0 0 0"/>
         <dynamics damping="0.0" friction="0.01"/>
         <limit effort="3.0" velocity="43.54" lower="-1e16" upper="1e16"/>
-        <parent link="pitch"/>
+        <parent link="base_link"/>
         <child link="trigger"/>
         <axis xyz="0 0 1 "/>
 
@@ -51,9 +51,9 @@
 
     <link name="cover">
         <inertial>
-            <mass value="0.149"/>
-            <origin xyz="-0.008 -0.005 0.019"/>
-            <inertia ixx="2.366e-3" ixy="-2.372e-4" ixz="-7.983e-4" iyy="2.959e-3" iyz="-2.826e-4" izz="9.090e-4"/>
+            <mass value="0.0246"/>
+            <origin xyz="-0.064 -0.000225 0.02447"/>
+            <inertia ixx="5.40e-5" ixy="-1.30e-7" ixz="5.13e-5" iyy="1.54e-4" iyz="4.7e-8" izz="1.688e-4"/>
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -70,11 +70,11 @@
     </link>
 
     <joint name="cover_joint" type="revolute">
-        <axis xyz="0 0 1"/>
-        <origin xyz="0.037 0.042 0.122"/>
-        <limit effort="1.0" velocity="30" lower="-3.14" upper="3.14"/>
+        <axis xyz="0 1 0"/>
+        <origin xyz="0.187014 0 0.113269"/>
+        <limit effort="1.0" velocity="30" lower="0" upper="3.14"/>
         <dynamics damping="0.0" friction="0.1"/>
-        <parent link="pitch"/>
+        <parent link="base_link"/>
         <child link="cover"/>
     </joint>
 

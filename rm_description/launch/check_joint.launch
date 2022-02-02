@@ -8,9 +8,11 @@
 
     <rosparam file="$(find rm_gazebo)/config/mimic_joint.yaml" command="load"/>
 
-    <param name="robot_description" command="$(find xacro)/xacro $(find rm_description)/urdf/${robot_type}/${robot_type}.urdf.xacro
+    <param name="robot_description" command="$(find xacro)/xacro $(find rm_description)/urdf/$(arg robot_type)/$(arg robot_type).urdf.xacro
          load_chassis:=$(arg load_chassis) load_gimbal:=$(arg load_gimbal) load_shooter:=$(arg load_shooter)
-         load_arm:=$(arg load_arm) roller_type:=$(arg roller_type)"/>
+         load_arm:=$(arg load_arm)
+         use_simulation:=true roller_type:=$(arg roller_type)
+"/>
 
     <!-- send fake joint values -->
     <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
@@ -20,5 +22,7 @@
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
         <param name="publish_frequency" type="double" value="50.0"/>
     </node>
+
+    <node pkg="rviz" type="rviz" name="rviz"/>
 
 </launch>
