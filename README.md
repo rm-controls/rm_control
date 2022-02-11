@@ -6,6 +6,7 @@
 
 [![CI](https://github.com/rm-controls/rm_control/actions/workflows/industrial_ci.yml/badge.svg)](https://github.com/rm-controls/rm_control/actions/workflows/industrial_ci.yml)
 [![Format](https://github.com/rm-controls/rm_control/actions/workflows/format.yml/badge.svg)](https://github.com/rm-controls/rm_control/actions/workflows/format.yml)
+[![Doxygen-docs](https://github.com/rm-controls/rm_control/actions/workflows/doxygen.yml/badge.svg)](https://github.com/rm-controls/rm_control/actions/workflows/doxygen.yml)
 
 ### Licenses
 
@@ -14,4 +15,4 @@
 ## Documentation
 [rm-controls Documentation](https://rm-controls.github.io/)
 
-[rm-control Doxygen Documentation](https://rm-controls.github.io/rm_control/index.html)
+[rm-control Doxygen Documentation](https://rm-control.netlify.app/)

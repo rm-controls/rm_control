@@ -59,6 +59,28 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     ROS_WARN("No imu specified");
   else if (!parseImuData(xml_rpc_value, robot_hw_nh))
     return false;
+  if (!robot_hw_nh.getParam("gpios", xml_rpc_value))
+    ROS_WARN("No gpio specified");
+  else if (!parseGpioData(xml_rpc_value, robot_hw_nh))
+    return false;
+  if (!loadUrdf(root_nh))
+  {
+    ROS_ERROR("Error occurred while setting up urdf");
+    return false;
+  }
+  // Initialize transmission
+  if (!setupTransmission(root_nh))
+  {
+    ROS_ERROR("Error occurred while setting up transmission");
+    return false;
+  }
+  // Initialize joint limit
+  if (!setupJointLimit(root_nh))
+  {
+    ROS_ERROR("Error occurred while setting up joint limit");
+    return false;
+  }
+
   // CAN Bus
   if (!robot_hw_nh.getParam("bus", xml_rpc_value))
     ROS_WARN("No bus specified");
@@ -97,6 +119,8 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 
   // Other Interface
   registerInterface(&robot_state_interface_);
+  registerInterface(&gpio_read_interface_);
+  registerInterface(&gpio_write_interface_);
 
   actuator_state_pub_.reset(
       new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_states", 100));
@@ -130,6 +154,8 @@ void RmRobotHW::read(const ros::Time& time, const ros::Duration& period)
   // Set all cmd to zero to avoid crazy soft limit oscillation when not controller loaded
   for (auto effort_joint_handle : effort_joint_handles_)
     effort_joint_handle.setCommand(0.);
+  // Gpio read
+  gpio_manager_.readInput();
 }
 
 void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
@@ -155,6 +181,8 @@ void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
   }
   for (auto& bus : can_buses_)
     bus->write();
+  // Gpio write
+  gpio_manager_.writeOutput();
   publishActuatorState(time);
 }
 

@@ -80,6 +80,7 @@ add_executable(${PROJECT_NAME}
         src/hardware_interface/parse.cpp
         src/hardware_interface/socketcan.cpp
         src/hardware_interface/can_bus.cpp
+        src/hardware_interface/gpio_manager.cpp
         src/control_loop.cpp
         )
 
