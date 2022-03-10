@@ -55,10 +55,10 @@
 #include <transmission_interface/transmission_interface_loader.h>
 #include <joint_limits_interface/joint_limits_interface.h>
 
-#include <rm_common/hardware_interface/tof_sensor_interface.h>
 #include <rm_common/hardware_interface/robot_state_interface.h>
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
 #include <rm_common/hardware_interface/imu_extra_interface.h>
+#include <rm_common/hardware_interface/tof_sensor_interface.h>
 #include <rm_msgs/ActuatorState.h>
 
 #include "can_bus.h"
