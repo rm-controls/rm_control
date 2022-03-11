@@ -58,6 +58,7 @@
 #include <rm_common/hardware_interface/robot_state_interface.h>
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
 #include <rm_common/hardware_interface/imu_extra_interface.h>
+#include <rm_common/hardware_interface/tof_sensor_interface.h>
 #include <rm_msgs/ActuatorState.h>
 
 #include "can_bus.h"
@@ -134,6 +135,8 @@ private:
    * @return True if successful.
    */
   bool loadUrdf(ros::NodeHandle& root_nh);
+
+  bool parseTofData(XmlRpc::XmlRpcValue& tof_datas, ros::NodeHandle& robot_hw_nh);
   /** \brief Set up transmission.
    *
    * Set up transmission
@@ -174,6 +177,7 @@ private:
   joint_limits_interface::EffortJointSaturationInterface effort_jnt_saturation_interface_;
   joint_limits_interface::EffortJointSoftLimitsInterface effort_jnt_soft_limits_interface_;
   std::vector<hardware_interface::JointHandle> effort_joint_handles_{};
+  rm_control::TofSensorInterface tof_sensor_interface_;
 
   // URDF model of the robot
   std::string urdf_string_;                  // for transmission
@@ -185,6 +189,9 @@ private:
 
   // Imu
   std::unordered_map<std::string, std::unordered_map<int, ImuData>> bus_id2imu_data_{};
+
+  // TOF
+  std::unordered_map<std::string, std::unordered_map<int, TofData>> bus_id2tof_data_{};
 
   ros::Time last_publish_time_;
   std::shared_ptr<realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>> actuator_state_pub_;

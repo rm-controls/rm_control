@@ -23,6 +23,7 @@ add_message_files(
         KalmanData.msg
         MovingAverageData.msg
         SuperCapacitor.msg
+        TofSensor.msg
 )
 
 add_service_files(
