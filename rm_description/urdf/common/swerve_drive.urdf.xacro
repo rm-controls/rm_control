@@ -7,7 +7,7 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://rm_description/meshes/common/right_front_swerve_pivot.stl"
+                    <mesh filename="package://rm_description/meshes/common/swerve_pivot.stl"
                           scale="0.001 0.001 0.001"/>
                 </geometry>
             </visual>
@@ -20,8 +20,8 @@
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                        <mesh filename="package://rm_description/meshes/common/right_front_swerve_pivot.stl"
-                              scale="0.001 0.001 0.001"/>
+                    <mesh filename="package://rm_description/meshes/common/swerve_pivot.stl"
+                          scale="0.001 0.001 0.001"/>
                 </geometry>
             </collision>
         </link>
