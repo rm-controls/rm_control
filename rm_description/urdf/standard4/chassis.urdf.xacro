@@ -33,16 +33,16 @@
 
         <xacro:swerve_drive prefix="left_front" connected_to="base_link"
                             wheel_x_offset="${wheel_track/2}" wheel_y_offset="${wheel_base/2}"
-                            wheel_z_offset="${wheel_offset_z}" reflect="-1" mirror="1"/>
+                            wheel_z_offset="${wheel_offset_z}"/>
         <xacro:swerve_drive prefix="right_front" connected_to="base_link"
                             wheel_x_offset="${wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
-                            wheel_z_offset="${wheel_offset_z}" reflect="1" mirror="1"/>
+                            wheel_z_offset="${wheel_offset_z}"/>
         <xacro:swerve_drive prefix="left_back" connected_to="base_link"
                             wheel_x_offset="${-wheel_track/2}" wheel_y_offset="${wheel_base/2}"
-                            wheel_z_offset="${wheel_offset_z}" reflect="1" mirror="-1"/>
+                            wheel_z_offset="${wheel_offset_z}"/>
         <xacro:swerve_drive prefix="right_back" connected_to="base_link"
                             wheel_x_offset="${-wheel_track/2}" wheel_y_offset="${-wheel_base/2}"
-                            wheel_z_offset="${wheel_offset_z}" reflect="-1" mirror="-1"/>
+                            wheel_z_offset="${wheel_offset_z}"/>
 
         <xacro:swerve_transmission prefix="left_front" wheel_reduction="13.733" pivot_offset="0"/>
         <xacro:swerve_transmission prefix="right_front" wheel_reduction="-13.733" pivot_offset="1.861"/>
