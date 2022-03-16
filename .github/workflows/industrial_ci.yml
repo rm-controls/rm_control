@@ -17,6 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       # This step will fetch/store the directory used by ccache before/after the ci run
+      - uses: actions/checkout@v2
+        with:
+          repository: 'rm-controls/rm_description'
+          path: 'rm_description'
       - uses: actions/cache@v2
         with:
           path: ${{ env.CCACHE_DIR }}
