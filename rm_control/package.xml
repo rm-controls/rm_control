@@ -17,6 +17,7 @@
     <exec_depend>rm_common</exec_depend>
     <exec_depend>rm_hw</exec_depend>
     <exec_depend>rm_gazebo</exec_depend>
+    <exec_depend>rm_description</exec_depend>
 
     <export>
         <metapackage/>
