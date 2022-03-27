@@ -7,7 +7,6 @@
             <mechanicalReduction>76.8128</mechanicalReduction>
         </actuator>
         <joint name="trigger_joint">
-            <offset>-0.036</offset>>
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
     </transmission>
