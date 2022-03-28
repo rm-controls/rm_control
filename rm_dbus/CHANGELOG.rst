@@ -2,6 +2,11 @@
 Changelog for package rm_dbus
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.9 (2022-3-28)
+------------------
+* Merge remote-tracking branch 'origin/master'
+* Contributors: Jie j
+
 0.1.8 (2021-12-7)
 ------------------
 * Merge branch 'master' into master

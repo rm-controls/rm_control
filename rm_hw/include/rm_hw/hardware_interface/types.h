@@ -39,6 +39,7 @@
 
 #include <string>
 #include <rm_common/filters/lp_filter.h>
+#include <rm_common/filters/imu_filter_base.h>
 #include <unordered_map>
 
 namespace rm_hw
@@ -76,6 +77,7 @@ struct ImuData
   double ori_cov[9], angular_vel_cov[9], linear_acc_cov[9];
   double temperature, angular_vel_coeff, accel_coeff, temp_coeff, temp_offset;
   bool accel_updated, gyro_updated, camera_trigger;
+  rm_common::ImuFilterBase* imu_filter;
 };
 
 struct TofData

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
     <name>rm_common</name>
-    <version>0.1.8</version>
+    <version>0.1.9</version>
     <description>The rm_common package</description>
 
     <maintainer email="liaoqiayuan@gmail.com">qiayuan</maintainer>
@@ -16,6 +16,8 @@
     <depend>geometry_msgs</depend>
     <depend>realtime_tools</depend>
     <depend>rm_msgs</depend>
+    <depend>imu_complementary_filter</depend>
+    <depend>imu_filter_madgwick</depend>
     <depend>dynamic_reconfigure</depend>
     <depend>eigen</depend>
     <depend>control_msgs</depend>
