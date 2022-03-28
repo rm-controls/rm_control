@@ -2,6 +2,24 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.9 (2022-3-28)
+------------------
+* Deprecated imu_extra_handle and add imu_filter into hardware resource layer.(Since the update frequency of the control
+  loop is not stable, some of the camera trigger signals of imu will be lost. We put the imu filter down to the hardware
+  resource layer, so imu_extra_handle is breaking. )
+* Merge pull request `#32 <https://github.com/ye-luo-xi-tui/rm_control/issues/32>`_ from Edwinlinks/tof_sensor_interface
+  Delete contents in brackets
+* Delete contents in brackets
+* Merge pull request `#29 <https://github.com/ye-luo-xi-tui/rm_control/issues/29>`_ from Edwinlinks/tof_sensor_interface
+  Completed tof_sensor_interface
+* Modified the reference order of header files and packet parsing of tof sensor, data type of dis_status
+* Add tof sensor interface in rm_common, add parsing can frame in can_bus.cpp, and add TofSensor.msg in rm_msgs.
+* Merge remote-tracking branch 'origin/master'
+* Merge pull request `#26 <https://github.com/ye-luo-xi-tui/rm_control/issues/26>`_ from ye-luo-xi-tui/master
+  Fix a bug in parse imu
+* Fix a stupid bug.
+* Contributors: Edwinlinks, Jie j, QiayuanLiao, yezi
+
 0.1.8 (2021-12-7)
 ------------------
 * Fix End of files.

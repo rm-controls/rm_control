@@ -2,6 +2,14 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.9 (2022-3-28)
+------------------
+* Add imu_filter and deprecated imu_extra_handle(Since the update frequency of the control loop is not stable, some of
+  the camera trigger signals of imu will be lost. We put the imu filter down to the hardware resource layer, so
+  imu_extra_handle is breaking. )
+* Add tof sensor interface
+* Contributors: Edwinlinks, Jie j, QiayuanLiao, yezi
+
 0.1.8 (2021-12-7)
 ------------------
 * Merge branch 'master' into master
