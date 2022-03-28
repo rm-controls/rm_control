@@ -20,6 +20,8 @@ find_package(catkin REQUIRED
         geometry_msgs
         control_msgs
         controller_manager_msgs
+        imu_complementary_filter
+        imu_filter_madgwick
         realtime_tools
         dynamic_reconfigure
         )
@@ -34,6 +36,8 @@ catkin_package(
         geometry_msgs
         control_msgs
         controller_manager_msgs
+        imu_complementary_filter
+        imu_filter_madgwick
         roscpp
         dynamic_reconfigure
         DEPENDS
@@ -47,7 +51,7 @@ include_directories(
         ${EIGEN3_INCLUDE_DIR}
 )
 
-file(GLOB_RECURSE sources "src/*.cpp" "src/decision/*.cpp")
+file(GLOB_RECURSE sources "src/*.cpp" "src/decision/*.cpp" "src/filter/*.cpp")
 
 add_library(rm_common SHARED ${sources} include/rm_common/referee/data.h)
 #add_executable(test_traj test/test_traj.cpp)
