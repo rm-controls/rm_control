@@ -21,13 +21,12 @@ bool ImuComplementaryFilter::getFilterParam(XmlRpc::XmlRpcValue& imu_data)
   bool do_bias_estimation;
   double bias_alpha;
   bool do_adaptive_gain;
-  auto it = imu_data.begin();
-  use_mag_ = imu_data.hasMember("use_mag") && (bool)imu_data[it->first]["use_mag"];
-  gain_acc = imu_data.hasMember("gain_acc") ? (double)imu_data[it->first]["gain_acc"] : 0.01;
-  gain_mag = imu_data.hasMember("gain_mag") ? (double)imu_data[it->first]["gain_mag"] : 0.01;
-  do_bias_estimation = !imu_data.hasMember("do_bias_estimation") || (bool)imu_data[it->first]["do_bias_estimation"];
-  bias_alpha = imu_data.hasMember("bias_alpha") ? (double)imu_data[it->first]["bias_alpha"] : 0.01;
-  do_adaptive_gain = !imu_data.hasMember("do_adaptive_gain") || (bool)imu_data[it->first]["do_adaptive_gain"];
+  use_mag_ = imu_data.hasMember("use_mag") && (bool)imu_data["use_mag"];
+  gain_acc = imu_data.hasMember("gain_acc") ? (double)imu_data["gain_acc"] : 0.01;
+  gain_mag = imu_data.hasMember("gain_mag") ? (double)imu_data["gain_mag"] : 0.01;
+  do_bias_estimation = !imu_data.hasMember("do_bias_estimation") || (bool)imu_data["do_bias_estimation"];
+  bias_alpha = imu_data.hasMember("bias_alpha") ? (double)imu_data["bias_alpha"] : 0.01;
+  do_adaptive_gain = !imu_data.hasMember("do_adaptive_gain") || (bool)imu_data["do_adaptive_gain"];
   filter_.setDoBiasEstimation(do_bias_estimation);
   filter_.setDoAdaptiveGain(do_adaptive_gain);
   if (!filter_.setGainAcc(gain_acc))
