@@ -1,0 +1,3 @@
+string imu_name
+---
+bool switch_success
