@@ -106,7 +106,7 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
   actuator_state_pub_.reset(
       new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_states", 100));
 
-  service_server_ = robot_hw_nh.advertiseService("switch_imu_trigger", &RmRobotHW::switchImuTrigger, this);
+  service_server_ = robot_hw_nh.advertiseService("enable_imu_trigger", &RmRobotHW::enableImuTrigger, this);
   return true;
 }
 
@@ -205,7 +205,7 @@ void RmRobotHW::publishActuatorState(const ros::Time& time)
     }
   }
 }
-bool RmRobotHW::switchImuTrigger(rm_msgs::ImuTriggerSwitch::Request& req, rm_msgs::ImuTriggerSwitch::Response& res)
+bool RmRobotHW::enableImuTrigger(rm_msgs::EnableImuTrigger::Request& req, rm_msgs::EnableImuTrigger::Response& res)
 {
   for (const auto& it_1 : bus_id2imu_data_)
   {
@@ -216,20 +216,20 @@ bool RmRobotHW::switchImuTrigger(rm_msgs::ImuTriggerSwitch::Request& req, rm_msg
         can_frame frame{};
         frame.can_id = (canid_t)(it_2.first + 2);
         frame.can_dlc = 1;
-        frame.data[0] = !it_2.second.enabled_trigger;
+        frame.data[0] = req.enable_trigger;
         for (auto& bus : can_buses_)
         {
           if (bus->bus_name_ == it_1.first)
           {
             bus->write(&frame);
-            res.switch_success = true;
+            res.is_success = true;
             return true;
           }
         }
       }
     }
   }
-  res.switch_success = false;
+  res.is_success = false;
   return false;
 }
 
