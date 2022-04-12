@@ -355,6 +355,7 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
                          .accel_updated = false,
                          .gyro_updated = false,
                          .camera_trigger = false,
+                         .enabled_trigger = false,
                          .imu_filter = imu_filter }));
       // for ros_control interface
       hardware_interface::ImuSensorHandle imu_sensor_handle(
