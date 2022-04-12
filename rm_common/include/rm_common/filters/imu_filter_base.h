@@ -26,8 +26,11 @@ protected:
   ros::Time last_update_;
   bool initialized_filter_{ false };
   std::string frame_id_;
-  std::shared_ptr<realtime_tools::RealtimePublisher<sensor_msgs::Imu> > imu_data_pub_;
-  std::shared_ptr<realtime_tools::RealtimePublisher<sensor_msgs::Temperature> > imu_temp_pub_;
-  std::shared_ptr<realtime_tools::RealtimePublisher<sensor_msgs::TimeReference> > trigger_time_pub_;
+  ros::Publisher imu_data_pub_;
+  ros::Publisher imu_temp_pub_;
+  ros::Publisher trigger_time_pub_;
+  sensor_msgs::Imu imu_pub_data_;
+  sensor_msgs::Temperature temp_pub_data_;
+  sensor_msgs::TimeReference trigger_time_pub_data_;
 };
 }  // namespace rm_common

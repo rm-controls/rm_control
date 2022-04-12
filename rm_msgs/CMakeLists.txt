@@ -31,6 +31,7 @@ add_service_files(
         ContinousDetectorSwitch.srv
         StatusChange.srv
         CameraStatus.srv
+        EnableImuTrigger.srv
 )
 
 add_message_files(

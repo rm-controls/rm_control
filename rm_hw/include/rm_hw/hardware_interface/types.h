@@ -72,11 +72,13 @@ struct ActData
 
 struct ImuData
 {
+  std::string imu_name;
   double ori[4];
   double angular_vel[3], linear_acc[3];
   double ori_cov[9], angular_vel_cov[9], linear_acc_cov[9];
   double temperature, angular_vel_coeff, accel_coeff, temp_coeff, temp_offset;
   bool accel_updated, gyro_updated, camera_trigger;
+  bool enabled_trigger;
   rm_common::ImuFilterBase* imu_filter;
 };
 

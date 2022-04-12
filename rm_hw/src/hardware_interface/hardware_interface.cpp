@@ -105,6 +105,8 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 
   actuator_state_pub_.reset(
       new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_states", 100));
+
+  service_server_ = robot_hw_nh.advertiseService("enable_imu_trigger", &RmRobotHW::enableImuTrigger, this);
   return true;
 }
 
@@ -203,4 +205,32 @@ void RmRobotHW::publishActuatorState(const ros::Time& time)
     }
   }
 }
+bool RmRobotHW::enableImuTrigger(rm_msgs::EnableImuTrigger::Request& req, rm_msgs::EnableImuTrigger::Response& res)
+{
+  for (const auto& it_1 : bus_id2imu_data_)
+  {
+    for (const auto& it_2 : it_1.second)
+    {
+      if (it_2.second.imu_name == req.imu_name)
+      {
+        can_frame frame{};
+        frame.can_id = (canid_t)(it_2.first + 2);
+        frame.can_dlc = 1;
+        frame.data[0] = req.enable_trigger;
+        for (auto& bus : can_buses_)
+        {
+          if (bus->bus_name_ == it_1.first)
+          {
+            bus->write(&frame);
+            res.is_success = true;
+            return true;
+          }
+        }
+      }
+    }
+  }
+  res.is_success = false;
+  return false;
+}
+
 }  // namespace rm_hw
