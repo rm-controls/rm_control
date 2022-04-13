@@ -1,0 +1,2 @@
+geometry_msgs/PointStamped target_pos
+geometry_msgs/Vector3Stamped target_vel
