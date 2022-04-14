@@ -39,6 +39,7 @@ add_message_files(
         FILES
         TargetDetection.msg
         TargetDetectionArray.msg
+        TrackCmd.msg
         TrackData.msg
         TrackDataArray.msg
 )
