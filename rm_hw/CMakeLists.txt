@@ -71,7 +71,7 @@ include_directories(
         ${catkin_INCLUDE_DIRS}
 )
 add_library(${PROJECT_NAME}_loader_plugins
-        src/transmission/double_actuator_transmission_loader.cpp
+        src/transmission/multi_actuator_transmission_loader.cpp
         )
 ## Declare cpp executables
 add_executable(${PROJECT_NAME}
