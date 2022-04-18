@@ -58,6 +58,7 @@
 #include <rm_common/hardware_interface/robot_state_interface.h>
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
 #include <rm_common/hardware_interface/imu_extra_interface.h>
+#include <rm_common/hardware_interface/tf_radar_interface.h>
 #include <rm_msgs/ActuatorState.h>
 
 #include "can_bus.h"
@@ -68,6 +69,7 @@ class RmRobotHW : public hardware_interface::RobotHW
 {
 public:
   RmRobotHW() = default;
+
   /** \brief Get necessary params from param server. Init hardware_interface.
    *
    * Get params from param server and check whether these params are set. Load urdf of robot. Set up transmission and
@@ -78,6 +80,7 @@ public:
    * @return True when init successful, False when failed.
    */
   bool init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) override;
+
   /** \brief Comunicate with hardware. Get datas, status of robot.
    *
    * Call @ref rm_hw::CanBus::read(). Check whether temperature of actuator is too high and whether actuator is offline.
@@ -108,6 +111,7 @@ private:
    * @return True if all coefficients are set up.
    */
   bool parseActCoeffs(XmlRpc::XmlRpcValue& act_coeffs);
+
   /** \brief Check whether actuator is specified and load specified params.
    *
    * Check whether actuator is specified and load specified params.
@@ -117,6 +121,7 @@ private:
    * @return True if all params are set up.
    */
   bool parseActData(XmlRpc::XmlRpcValue& act_datas, ros::NodeHandle& robot_hw_nh);
+
   /** \brief Check whether some params that are related to imu are set up and load these params.
    *
    * Check whether some params that are related to imu are set up and load these params.
@@ -126,6 +131,7 @@ private:
    * @return True if all params are set up.
    */
   bool parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHandle& robot_hw_nh);
+
   /** \brief Load urdf of robot from param server.
    *
    * Load urdf of robot from param server.
@@ -133,7 +139,11 @@ private:
    * @param root_nh Root node-handle of a ROS node
    * @return True if successful.
    */
+
+  bool parseTfData(XmlRpc::XmlRpcValue& tf_datas, ros::NodeHandle& robot_hw_nh);
+
   bool loadUrdf(ros::NodeHandle& root_nh);
+
   /** \brief Set up transmission.
    *
    * Set up transmission
@@ -142,6 +152,7 @@ private:
    * @return True if successful.
    */
   bool setupTransmission(ros::NodeHandle& root_nh);
+
   /** \brief Set up joint limit.
    *
    * Set up joint limit.
@@ -150,6 +161,7 @@ private:
    * @return True if successful.
    */
   bool setupJointLimit(ros::NodeHandle& root_nh);
+
   /** \brief Publish actuator's state to a topic named "/actuator_states".
    *
    * Publish actuator's state to a topic named "/actuator_states".
@@ -167,6 +179,7 @@ private:
   rm_control::RobotStateInterface robot_state_interface_;
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
   rm_control::ImuExtraInterface imu_extra_interface_;
+  rm_control::TfRadarInterface tf_radar_interface_;
   std::unique_ptr<transmission_interface::TransmissionInterfaceLoader> transmission_loader_{};
   transmission_interface::RobotTransmissions robot_transmissions_;
   transmission_interface::ActuatorToJointStateInterface* act_to_jnt_state_{};
@@ -188,6 +201,9 @@ private:
 
   ros::Time last_publish_time_;
   std::shared_ptr<realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>> actuator_state_pub_;
+
+  // tf_radar
+  std::unordered_map<std::string, std::unordered_map<int, TfData>> bus_id2tf_data_{};
 };
 
 }  // namespace rm_hw

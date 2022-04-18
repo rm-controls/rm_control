@@ -361,6 +361,55 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
   return true;
 }
 
+bool rm_hw::RmRobotHW::parseTfData(XmlRpc::XmlRpcValue& tf_datas, ros::NodeHandle& robot_hw_nh)
+{
+  ROS_ASSERT(tf_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
+  try
+  {
+    for (auto it = tf_datas.begin(); it != tf_datas.end(); ++it)
+    {
+      if (!it->second.hasMember("bus"))
+      {
+        ROS_ERROR_STREAM("TF02 " << it->first << " has no associated bus.");
+        continue;
+      }
+      else if (!it->second.hasMember("id"))
+      {
+        ROS_ERROR_STREAM("TF02 " << it->first << " has no associated ID.");
+        continue;
+      }
+
+      std::string bus = tf_datas[it->first]["bus"];
+      int id = static_cast<int>(tf_datas[it->first]["id"]);
+
+      // for bus interface
+      if (bus_id2tf_data_.find(bus) == bus_id2tf_data_.end())
+        bus_id2tf_data_.insert(std::make_pair(bus, std::unordered_map<int, TfData>()));
+
+      if (!(bus_id2tf_data_[bus].find(id) == bus_id2tf_data_[bus].end()))
+      {
+        ROS_ERROR_STREAM("Repeat TOF on bus " << bus << " and ID " << id);
+        return false;
+      }
+      else
+        bus_id2tf_data_[bus].insert(std::make_pair(id, TfData{ .strength = {}, .signal = {}, .distance = {} }));
+      // for ros_control interface
+      rm_control::TfRadarHandle tf_radar_handle(it->first, &bus_id2tf_data_[bus][id].strength,
+                                                &bus_id2tf_data_[bus][id].signal, &bus_id2tf_data_[bus][id].distance);
+      tf_radar_interface_.registerHandle(tf_radar_handle);
+    }
+    registerInterface(&tf_radar_interface_);
+  }
+  catch (XmlRpc::XmlRpcException& e)
+  {
+    ROS_FATAL_STREAM("Exception raised by XmlRpc while reading the "
+                     << "configuration: " << e.getMessage() << ".\n"
+                     << "Please check the configuration, particularly parameter types.");
+    return false;
+  }
+  return true;
+}
+
 bool RmRobotHW::loadUrdf(ros::NodeHandle& root_nh)
 {
   if (urdf_model_ == nullptr)

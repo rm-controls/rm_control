@@ -78,10 +78,18 @@ struct ImuData
   bool accel_updated, gyro_updated, camera_trigger;
 };
 
+struct TfData
+{
+  double strength;
+  int signal;
+  double distance;
+};
+
 struct CanDataPtr
 {
   std::unordered_map<std::string, ActCoeff>* type2act_coeffs_;
   std::unordered_map<int, ActData>* id2act_data_;
   std::unordered_map<int, ImuData>* id2imu_data_;
+  std::unordered_map<int, TfData>* id2tf_data_;
 };
 }  // namespace rm_hw

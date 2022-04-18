@@ -39,6 +39,7 @@
 #include <string>
 #include <ros/ros.h>
 #include <rm_common/math_utilities.h>
+
 namespace rm_hw
 {
 CanBus::CanBus(const std::string& bus_name, CanDataPtr data_ptr) : data_ptr_(data_ptr), bus_name_(bus_name)
@@ -70,8 +71,8 @@ void CanBus::write()
         continue;
       const ActCoeff& act_coeff = data_ptr_.type2act_coeffs_->find(item.second.type)->second;
       int id = item.first - 0x201;
-      double cmd =
-          minAbs(act_coeff.effort2act * item.second.exe_effort, act_coeff.max_out);  // add max_range to act_data
+      double cmd = minAbs(act_coeff.effort2act * item.second.exe_effort,
+                          act_coeff.max_out);  // add max_range to act_data
       if (-1 < id && id < 4)
       {
         rm_frame0_.data[2 * id] = (uint8_t)(static_cast<int16_t>(cmd) >> 8u);
@@ -235,6 +236,13 @@ void CanBus::read(ros::Time time)
       imu_data.linear_acc[2] = ((int16_t)((frame.data[5]) << 8) | frame.data[4]) * imu_data.accel_coeff;
       imu_data.camera_trigger = frame.data[6];
       continue;
+    }
+    else if (data_ptr_.id2tf_data_->find(frame.can_id - 1) != data_ptr_.id2tf_data_->end())
+    {
+      TfData& tf_data = data_ptr_.id2tf_data_->find(frame.can_id)->second;
+      tf_data.distance = ((int16_t)((frame.data[3]) << 8) | frame.data[2]);
+      tf_data.signal = frame.data[6];
+      tf_data.strength = ((int16_t)((frame.data[5]) << 8) | frame.data[4]);
     }
     if (frame.can_id != 0x0)
       ROS_ERROR_STREAM_ONCE("Can not find defined device, id: 0x" << std::hex << frame.can_id
