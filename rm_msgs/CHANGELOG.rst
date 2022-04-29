@@ -2,16 +2,36 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.1.6 (2021-09-26)
+0.1.9 (2022-3-28)
 ------------------
-* Merge branch 'gimbal/opti_or_simplify'
-* Modified GimbalCmd.msg, and delete moving_average_filter
+* Update rm_msgs cmake minimum required. (`#36 <https://github.com/ye-luo-xi-tui/rm_control/issues/36>`_)
+* Merge pull request `#27 <https://github.com/ye-luo-xi-tui/rm_control/issues/27>`_ from Zhouzhenjie/master
+  Add the service for the conversation between a camera and a imu.
+* Merge pull request `#29 <https://github.com/ye-luo-xi-tui/rm_control/issues/29>`_ from Edwinlinks/tof_sensor_interface
+  Completed tof_sensor_interface
+* Modified the reference order of header files and packet parsing of tof sensor, data type of dis_status
+* Add tof sensor interface in rm_common, add parsing can frame in can_bus.cpp, and add TofSensor.msg in rm_msgs.
+* Merge remote-tracking branch 'origin/master'
+* Add the service for the conversation between a camera and a imu.
+* Contributors: Edwinlinks, Jie j, QiayuanLiao, YuuinIH
+
+0.1.8 (2021-12-7)
+------------------
+* Merge branch 'master' into gimbal/opti_or_simplify
+* Update CHANGELOG
+* Remove cover of ShooterCmd
 * Contributors: qiayuan
 
 0.1.7 (2021-09-26)
 ------------------
 * 0.1.6
 * Update CHANGELOG
+* Merge branch 'gimbal/opti_or_simplify'
+* Modified GimbalCmd.msg, and delete moving_average_filter
+* Contributors: qiayuan
+
+0.1.6 (2021-09-26)
+------------------
 * Merge branch 'gimbal/opti_or_simplify'
 * Modified GimbalCmd.msg, and delete moving_average_filter
 * Contributors: qiayuan

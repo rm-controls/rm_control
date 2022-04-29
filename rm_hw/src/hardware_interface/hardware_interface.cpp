@@ -59,28 +59,14 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     ROS_WARN("No imu specified");
   else if (!parseImuData(xml_rpc_value, robot_hw_nh))
     return false;
+  if (!robot_hw_nh.getParam("tofs", xml_rpc_value))
+    ROS_WARN("No tof specified");
+  else if (!parseTofData(xml_rpc_value, robot_hw_nh))
+    return false;
   if (!robot_hw_nh.getParam("gpios", xml_rpc_value))
     ROS_WARN("No gpio specified");
   else if (!parseGpioData(xml_rpc_value, robot_hw_nh))
     return false;
-  if (!loadUrdf(root_nh))
-  {
-    ROS_ERROR("Error occurred while setting up urdf");
-    return false;
-  }
-  // Initialize transmission
-  if (!setupTransmission(root_nh))
-  {
-    ROS_ERROR("Error occurred while setting up transmission");
-    return false;
-  }
-  // Initialize joint limit
-  if (!setupJointLimit(root_nh))
-  {
-    ROS_ERROR("Error occurred while setting up joint limit");
-    return false;
-  }
-
   // CAN Bus
   if (!robot_hw_nh.getParam("bus", xml_rpc_value))
     ROS_WARN("No bus specified");
@@ -93,7 +79,8 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
       if (bus_name.find("can") != std::string::npos)
         can_buses_.push_back(new CanBus(bus_name, CanDataPtr{ .type2act_coeffs_ = &type2act_coeffs_,
                                                               .id2act_data_ = &bus_id2act_data_[bus_name],
-                                                              .id2imu_data_ = &bus_id2imu_data_[bus_name] }));
+                                                              .id2imu_data_ = &bus_id2imu_data_[bus_name],
+                                                              .id2tof_data_ = &bus_id2tof_data_[bus_name] }));
       else
         ROS_ERROR_STREAM("Unknown bus: " << bus_name);
     }
@@ -124,6 +111,8 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 
   actuator_state_pub_.reset(
       new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_states", 100));
+
+  service_server_ = robot_hw_nh.advertiseService("enable_imu_trigger", &RmRobotHW::enableImuTrigger, this);
   return true;
 }
 
@@ -226,4 +215,32 @@ void RmRobotHW::publishActuatorState(const ros::Time& time)
     }
   }
 }
+bool RmRobotHW::enableImuTrigger(rm_msgs::EnableImuTrigger::Request& req, rm_msgs::EnableImuTrigger::Response& res)
+{
+  for (const auto& it_1 : bus_id2imu_data_)
+  {
+    for (const auto& it_2 : it_1.second)
+    {
+      if (it_2.second.imu_name == req.imu_name)
+      {
+        can_frame frame{};
+        frame.can_id = (canid_t)(it_2.first + 2);
+        frame.can_dlc = 1;
+        frame.data[0] = req.enable_trigger;
+        for (auto& bus : can_buses_)
+        {
+          if (bus->bus_name_ == it_1.first)
+          {
+            bus->write(&frame);
+            res.is_success = true;
+            return true;
+          }
+        }
+      }
+    }
+  }
+  res.is_success = false;
+  return false;
+}
+
 }  // namespace rm_hw

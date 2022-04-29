@@ -2,8 +2,31 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.1.6 (2021-09-26)
+0.1.9 (2022-3-28)
 ------------------
+* Revert "Update package.xml"
+  This reverts commit 835659c320b5e1219ea9c61d04b4017a0c9a850a.
+* Update package.xml
+* Merge remote-tracking branch 'origin/master'
+* Merge branch 'master' of github.com:ye-luo-xi-tui/rm_control
+* Merge pull request `#24 <https://github.com/ye-luo-xi-tui/rm_control/issues/24>`_ from ye-luo-xi-tui/gazebo
+  Load imu params into gazebo
+* Load imu params into gazebo.
+* Contributors: Jie j, QiayuanLiao, YuuinIH, yezi
+
+0.1.8 (2021-12-7)
+------------------
+* Fix imu inertia and add imu to balance
+* Merge branch 'master' into gimbal/opti_or_simplify
+* Update CHANGELOG
+* Merge branch 'master' into gimbal/opti_or_simplify
+* Update URDF of imu
+* Contributors: qiayuan
+
+0.1.7 (2021-09-26)
+------------------
+* 0.1.6
+* Update CHANGELOG
 * Update URDF of imu
 * Merge branch 'namespace' into rm_gazebo/imu_sensor_interface
 * Merge pull request `#8 <https://github.com/rm-controls/rm_control/issues/8>`_ from ye-luo-xi-tui/namespace
@@ -15,10 +38,8 @@ Changelog for package rm_gazebo
 * Add imu_sensor_interface without test.
 * Contributors: QiayuanLiao, qiayuan, yezi
 
-0.1.7 (2021-09-26)
+0.1.6 (2021-09-26)
 ------------------
-* 0.1.6
-* Update CHANGELOG
 * Update URDF of imu
 * Merge branch 'namespace' into rm_gazebo/imu_sensor_interface
 * Merge pull request `#8 <https://github.com/rm-controls/rm_control/issues/8>`_ from ye-luo-xi-tui/namespace

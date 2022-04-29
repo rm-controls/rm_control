@@ -2,14 +2,29 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.1.6 (2021-09-26)
+0.1.9 (2022-3-28)
 ------------------
+* Separate rm_description out of rm_control
+* Revert "Update package.xml"
+  This reverts commit a46a8b40dffc0c5fa61981d9ca862a7f1da7e559.
+* Update package.xml
+* Merge remote-tracking branch 'origin/master'
+* Contributors: Jie j, YuuinIH
+
+0.1.8 (2021-12-7)
+------------------
+* Merge branch 'master' into gimbal/opti_or_simplify
+* Update CHANGELOG
+* Contributors: qiayuan
 
 0.1.7 (2021-09-26)
 ------------------
 * 0.1.6
 * Update CHANGELOG
 * Contributors: qiayuan
+
+0.1.6 (2021-09-26)
+------------------
 
 0.1.5 (2021-09-02)
 ------------------

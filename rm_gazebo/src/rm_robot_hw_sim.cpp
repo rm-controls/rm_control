@@ -113,6 +113,13 @@ void RmRobotHWSim::parseImu(XmlRpc::XmlRpcValue& imu_datas, const gazebo::physic
       ROS_ERROR_STREAM("Imu " << it->first << " has no associated linear acceleration covariance.");
       continue;
     }
+    std::string frame_id = imu_datas[it->first]["frame_id"];
+    gazebo::physics::LinkPtr link_ptr = parent_model->GetLink(frame_id);
+    if (link_ptr == nullptr)
+    {
+      ROS_WARN("Imu %s is not specified in urdf.", it->first.c_str());
+      continue;
+    }
     XmlRpc::XmlRpcValue ori_cov = imu_datas[it->first]["orientation_covariance_diagonal"];
     ROS_ASSERT(ori_cov.getType() == XmlRpc::XmlRpcValue::TypeArray);
     ROS_ASSERT(ori_cov.size() == 3);
@@ -129,9 +136,6 @@ void RmRobotHWSim::parseImu(XmlRpc::XmlRpcValue& imu_datas, const gazebo::physic
     for (int i = 0; i < linear_cov.size(); ++i)
       ROS_ASSERT(linear_cov[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
 
-    std::string frame_id = imu_datas[it->first]["frame_id"];
-    gazebo::physics::LinkPtr link_ptr = parent_model->GetLink(frame_id);
-    ROS_ASSERT(link_ptr != nullptr);
     imu_datas_.push_back((ImuData{
         .link_prt = link_ptr,
         .ori = { 0., 0., 0., 0. },

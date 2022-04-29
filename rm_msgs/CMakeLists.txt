@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.10)
 project(rm_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
@@ -23,12 +23,15 @@ add_message_files(
         KalmanData.msg
         MovingAverageData.msg
         SuperCapacitor.msg
+        TofSensor.msg
 )
 
 add_service_files(
         FILES
         ContinousDetectorSwitch.srv
         StatusChange.srv
+        CameraStatus.srv
+        EnableImuTrigger.srv
 )
 
 add_message_files(
@@ -36,6 +39,7 @@ add_message_files(
         FILES
         TargetDetection.msg
         TargetDetectionArray.msg
+        TrackCmd.msg
         TrackData.msg
         TrackDataArray.msg
 )

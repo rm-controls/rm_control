@@ -38,6 +38,7 @@
 #include "rm_hw/hardware_interface/hardware_interface.h"
 
 #include <rm_common/ros_utilities.h>
+#include <rm_common/filters/imu_complementary_filter.h>
 #include <transmission_interface/transmission_interface_loader.h>
 #include <joint_limits_interface/joint_limits_urdf.h>
 #include <joint_limits_interface/joint_limits_rosparam.h>
@@ -241,69 +242,87 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
   {
     for (auto it = imu_datas.begin(); it != imu_datas.end(); ++it)
     {
+      std::string name = it->first;
       if (!it->second.hasMember("frame_id"))
       {
-        ROS_ERROR_STREAM("Imu " << it->first << " has no associated frame id.");
+        ROS_ERROR_STREAM("Imu " << name << " has no associated frame id.");
         continue;
       }
       else if (!it->second.hasMember("bus"))
       {
-        ROS_ERROR_STREAM("Imu " << it->first << " has no associated bus.");
+        ROS_ERROR_STREAM("Imu " << name << " has no associated bus.");
         continue;
       }
       else if (!it->second.hasMember("id"))
       {
-        ROS_ERROR_STREAM("Imu " << it->first << " has no associated ID.");
+        ROS_ERROR_STREAM("Imu " << name << " has no associated ID.");
         continue;
       }
       else if (!it->second.hasMember("orientation_covariance_diagonal"))
       {
-        ROS_ERROR_STREAM("Imu " << it->first << " has no associated orientation covariance diagonal.");
+        ROS_ERROR_STREAM("Imu " << name << " has no associated orientation covariance diagonal.");
         continue;
       }
       else if (!it->second.hasMember("angular_velocity_covariance"))
       {
-        ROS_ERROR_STREAM("Imu " << it->first << " has no associated angular velocity covariance.");
+        ROS_ERROR_STREAM("Imu " << name << " has no associated angular velocity covariance.");
         continue;
       }
       else if (!it->second.hasMember("linear_acceleration_covariance"))
       {
-        ROS_ERROR_STREAM("Imu " << it->first << " has no associated linear acceleration covariance.");
+        ROS_ERROR_STREAM("Imu " << name << " has no associated linear acceleration covariance.");
         continue;
       }
       else if (!it->second.hasMember("angular_vel_coeff"))
       {
-        ROS_ERROR_STREAM("Imu " << it->first << " has no associated angular velocity coefficient.");
+        ROS_ERROR_STREAM("Imu " << name << " has no associated angular velocity coefficient.");
         continue;
       }
       else if (!it->second.hasMember("accel_coeff"))
       {
-        ROS_ERROR_STREAM("Imu " << it->first << " has no associated linear acceleration coefficient.");
+        ROS_ERROR_STREAM("Imu " << name << " has no associated linear acceleration coefficient.");
         continue;
       }
       else if (!it->second.hasMember("temp_coeff"))
       {
-        ROS_ERROR_STREAM("Imu " << it->first << " has no associated temperate coefficient.");
+        ROS_ERROR_STREAM("Imu " << name << " has no associated temperate coefficient.");
         continue;
       }
-      XmlRpc::XmlRpcValue ori_cov = imu_datas[it->first]["orientation_covariance_diagonal"];
+      else if (!it->second.hasMember("filter"))
+      {
+        ROS_ERROR_STREAM("Imu " << name << " has no associated filter type");
+        continue;
+      }
+      XmlRpc::XmlRpcValue ori_cov = imu_datas[name]["orientation_covariance_diagonal"];
       ROS_ASSERT(ori_cov.getType() == XmlRpc::XmlRpcValue::TypeArray);
       ROS_ASSERT(ori_cov.size() == 3);
       for (int i = 0; i < ori_cov.size(); ++i)
         ROS_ASSERT(ori_cov[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-      XmlRpc::XmlRpcValue angular_cov = imu_datas[it->first]["orientation_covariance_diagonal"];
+      XmlRpc::XmlRpcValue angular_cov = imu_datas[name]["angular_velocity_covariance"];
       ROS_ASSERT(angular_cov.getType() == XmlRpc::XmlRpcValue::TypeArray);
       ROS_ASSERT(angular_cov.size() == 3);
       for (int i = 0; i < angular_cov.size(); ++i)
         ROS_ASSERT(angular_cov[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-      XmlRpc::XmlRpcValue linear_cov = imu_datas[it->first]["linear_acceleration_covariance"];
+      XmlRpc::XmlRpcValue linear_cov = imu_datas[name]["linear_acceleration_covariance"];
       ROS_ASSERT(linear_cov.getType() == XmlRpc::XmlRpcValue::TypeArray);
       ROS_ASSERT(linear_cov.size() == 3);
       for (int i = 0; i < linear_cov.size(); ++i)
         ROS_ASSERT(linear_cov[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
 
-      std::string frame_id = imu_datas[it->first]["frame_id"], bus = imu_datas[it->first]["bus"];
-      int id = static_cast<int>(imu_datas[it->first]["id"]);
+      std::string filter_type = imu_datas[name]["filter"];
+      // TODO(Zhenyu Ye): Add more types of filter.
+      rm_common::ImuFilterBase* imu_filter;
+      if (filter_type.find("complementary") != std::string::npos)
+        imu_filter = new rm_common::ImuComplementaryFilter;
+      else
+      {
+        ROS_ERROR_STREAM("Imu " << name << " doesn't has filter type " << filter_type);
+        return false;
+      }
+      imu_filter->init(it->second, name);
+
+      std::string frame_id = imu_datas[name]["frame_id"], bus = imu_datas[name]["bus"];
+      int id = static_cast<int>(imu_datas[name]["id"]);
 
       // for bus interface
       if (bus_id2imu_data_.find(bus) == bus_id2imu_data_.end())
@@ -316,7 +335,8 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
       }
       else
         bus_id2imu_data_[bus].insert(std::make_pair(
-            id, ImuData{ .ori = {},
+            id, ImuData{ .imu_name = name,
+                         .ori = {},
                          .angular_vel = {},
                          .linear_acc = {},
                          .ori_cov = { static_cast<double>(ori_cov[0]), 0., 0., 0., static_cast<double>(ori_cov[1]), 0.,
@@ -328,28 +348,74 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
                                              static_cast<double>(linear_cov[1]), 0., 0., 0.,
                                              static_cast<double>(linear_cov[2]) },
                          .temperature = 0.0,
-                         .angular_vel_coeff = xmlRpcGetDouble(imu_datas[it->first], "angular_vel_coeff", 0.),
-                         .accel_coeff = xmlRpcGetDouble(imu_datas[it->first], "accel_coeff", 0.),
-                         .temp_coeff = xmlRpcGetDouble(imu_datas[it->first], "temp_coeff", 0.),
-                         .temp_offset = xmlRpcGetDouble(imu_datas[it->first], "temp_offset", 0.),
+                         .angular_vel_coeff = xmlRpcGetDouble(imu_datas[name], "angular_vel_coeff", 0.),
+                         .accel_coeff = xmlRpcGetDouble(imu_datas[name], "accel_coeff", 0.),
+                         .temp_coeff = xmlRpcGetDouble(imu_datas[name], "temp_coeff", 0.),
+                         .temp_offset = xmlRpcGetDouble(imu_datas[name], "temp_offset", 0.),
                          .accel_updated = false,
                          .gyro_updated = false,
-                         .camera_trigger = false }));
+                         .camera_trigger = false,
+                         .enabled_trigger = false,
+                         .imu_filter = imu_filter }));
       // for ros_control interface
       hardware_interface::ImuSensorHandle imu_sensor_handle(
-          it->first, frame_id, bus_id2imu_data_[bus][id].ori, bus_id2imu_data_[bus][id].ori_cov,
+          name, frame_id, bus_id2imu_data_[bus][id].ori, bus_id2imu_data_[bus][id].ori_cov,
           bus_id2imu_data_[bus][id].angular_vel, bus_id2imu_data_[bus][id].angular_vel_cov,
           bus_id2imu_data_[bus][id].linear_acc, bus_id2imu_data_[bus][id].linear_acc_cov);
       imu_sensor_interface_.registerHandle(imu_sensor_handle);
-      rm_control::ImuExtraHandle imu_extra_handle(it->first, bus_id2imu_data_[bus][id].ori,
-                                                  &bus_id2imu_data_[bus][id].accel_updated,
-                                                  &bus_id2imu_data_[bus][id].gyro_updated,
-                                                  &bus_id2imu_data_[bus][id].camera_trigger,
-                                                  &bus_id2imu_data_[bus][id].temperature);
-      imu_extra_interface_.registerHandle(imu_extra_handle);
     }
     registerInterface(&imu_sensor_interface_);
-    registerInterface(&imu_extra_interface_);
+  }
+  catch (XmlRpc::XmlRpcException& e)
+  {
+    ROS_FATAL_STREAM("Exception raised by XmlRpc while reading the "
+                     << "configuration: " << e.getMessage() << ".\n"
+                     << "Please check the configuration, particularly parameter types.");
+    return false;
+  }
+  return true;
+}
+
+bool rm_hw::RmRobotHW::parseTofData(XmlRpc::XmlRpcValue& tof_datas, ros::NodeHandle& robot_hw_nh)
+{
+  ROS_ASSERT(tof_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
+  try
+  {
+    for (auto it = tof_datas.begin(); it != tof_datas.end(); ++it)
+    {
+      if (!it->second.hasMember("bus"))
+      {
+        ROS_ERROR_STREAM("TOF " << it->first << " has no associated bus.");
+        continue;
+      }
+      else if (!it->second.hasMember("id"))
+      {
+        ROS_ERROR_STREAM("TOF " << it->first << " has no associated ID.");
+        continue;
+      }
+
+      std::string bus = tof_datas[it->first]["bus"];
+      int id = static_cast<int>(tof_datas[it->first]["id"]);
+
+      // for bus interface
+      if (bus_id2tof_data_.find(bus) == bus_id2tof_data_.end())
+        bus_id2tof_data_.insert(std::make_pair(bus, std::unordered_map<int, TofData>()));
+
+      if (!(bus_id2tof_data_[bus].find(id) == bus_id2tof_data_[bus].end()))
+      {
+        ROS_ERROR_STREAM("Repeat TOF on bus " << bus << " and ID " << id);
+        return false;
+      }
+      else
+        bus_id2tof_data_[bus].insert(
+            std::make_pair(id, TofData{ .distance = {}, .dis_status = {}, .signal_strength = {} }));
+      // for ros_control interface
+      rm_control::TofSensorHandle tof_sensor_handle(it->first, &bus_id2tof_data_[bus][id].distance,
+                                                    &bus_id2tof_data_[bus][id].dis_status,
+                                                    &bus_id2tof_data_[bus][id].signal_strength);
+      tof_sensor_interface_.registerHandle(tof_sensor_handle);
+    }
+    registerInterface(&tof_sensor_interface_);
   }
   catch (XmlRpc::XmlRpcException& e)
   {
