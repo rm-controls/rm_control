@@ -388,14 +388,14 @@ bool rm_hw::RmRobotHW::parseTfData(XmlRpc::XmlRpcValue& tf_datas, ros::NodeHandl
 
       if (!(bus_id2tf_data_[bus].find(id) == bus_id2tf_data_[bus].end()))
       {
-        ROS_ERROR_STREAM("Repeat TOF on bus " << bus << " and ID " << id);
+        ROS_ERROR_STREAM("Repeat TF02 on bus " << bus << " and ID " << id);
         return false;
       }
       else
-        bus_id2tf_data_[bus].insert(std::make_pair(id, TfData{ .strength = {}, .signal = {}, .distance = {} }));
+        bus_id2tf_data_[bus].insert(std::make_pair(id, TfData{ .strength = {}, .distance = {} }));
       // for ros_control interface
-      rm_control::TfRadarHandle tf_radar_handle(it->first, &bus_id2tf_data_[bus][id].strength,
-                                                &bus_id2tf_data_[bus][id].signal, &bus_id2tf_data_[bus][id].distance);
+      rm_control::TfRadarHandle tf_radar_handle(it->first, &bus_id2tf_data_[bus][id].distance,
+                                                &bus_id2tf_data_[bus][id].strength);
       tf_radar_interface_.registerHandle(tf_radar_handle);
     }
     registerInterface(&tf_radar_interface_);

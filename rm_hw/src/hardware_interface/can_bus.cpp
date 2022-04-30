@@ -237,12 +237,11 @@ void CanBus::read(ros::Time time)
       imu_data.camera_trigger = frame.data[6];
       continue;
     }
-    else if (data_ptr_.id2tf_data_->find(frame.can_id - 1) != data_ptr_.id2tf_data_->end())
+    else if (data_ptr_.id2tf_data_->find(frame.can_id) != data_ptr_.id2tf_data_->end())
     {
       TfData& tf_data = data_ptr_.id2tf_data_->find(frame.can_id)->second;
-      tf_data.distance = ((int16_t)((frame.data[3]) << 8) | frame.data[2]);
-      tf_data.signal = frame.data[6];
-      tf_data.strength = ((int16_t)((frame.data[5]) << 8) | frame.data[4]);
+      tf_data.distance = ((int16_t)((frame.data[1]) << 8) | frame.data[0]);
+      tf_data.strength = ((int16_t)((frame.data[3]) << 8) | frame.data[2]);
     }
     if (frame.can_id != 0x0)
       ROS_ERROR_STREAM_ONCE("Can not find defined device, id: 0x" << std::hex << frame.can_id

@@ -81,7 +81,6 @@ struct ImuData
 struct TfData
 {
   double strength;
-  int signal;
   double distance;
 };
 

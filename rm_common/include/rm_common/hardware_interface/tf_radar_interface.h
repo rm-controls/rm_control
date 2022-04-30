@@ -14,8 +14,8 @@ class TfRadarHandle
 public:
   TfRadarHandle() = default;
 
-  TfRadarHandle(std::string name, double* distance, int* strength, double* signal)
-    : name_(std::move(name)), distance_(distance), strength_(strength), signal_(signal)
+  TfRadarHandle(std::string name, double* distance, double* strength)
+    : name_(std::move(name)), distance_(distance), strength_(strength)
   {
     if (!distance_)
       throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
@@ -23,9 +23,6 @@ public:
     if (!strength_)
       throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
                                                            "'. strength_ pointer is null.");
-    if (!signal_)
-      throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
-                                                           "'. signal_ pointer is null.");
   }
 
   std::string getName() const
@@ -45,17 +42,10 @@ public:
     return *strength_;
   }
 
-  double getSignal() const
-  {
-    assert(signal_);
-    return *signal_;
-  }
-
 private:
   std::string name_;
   double* distance_;
-  int* strength_;
-  double* signal_;
+  double* strength_;
 };
 
 class TfRadarInterface
