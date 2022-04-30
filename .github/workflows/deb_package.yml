@@ -3,7 +3,7 @@ name: deb-package
 on:
   push:
     tags:
-      - 'v*'
+      - '*'
   workflow_dispatch:
 jobs:
   build:
