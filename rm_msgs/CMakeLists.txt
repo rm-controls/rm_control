@@ -24,6 +24,8 @@ add_message_files(
         MovingAverageData.msg
         SuperCapacitor.msg
         TofSensor.msg
+        GpioRead.msg
+        GpioWrite.msg
 )
 
 add_service_files(
