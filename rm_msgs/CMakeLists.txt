@@ -25,6 +25,7 @@ add_message_files(
         SuperCapacitor.msg
         TofSensor.msg
         GpioRead.msg
+        GpioReadArray.msg
         GpioWrite.msg
 )
 
