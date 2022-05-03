@@ -53,6 +53,12 @@ public:
     return *cmd_;
   }
 
+  void setCommand(bool value) const
+  {
+    assert(cmd_);
+    *cmd_ = value;
+  }
+
 private:
   std::string name_;
   bool* cmd_ = { nullptr };
