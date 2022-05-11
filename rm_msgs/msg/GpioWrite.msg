@@ -1,2 +1,0 @@
-string gpio_name
-bool gpio_state
