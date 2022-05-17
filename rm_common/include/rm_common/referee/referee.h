@@ -34,8 +34,7 @@
 //
 // Created by peter on 2021/5/17.
 //
-#ifndef RM_COMMON_REFEREE_H_
-#define RM_COMMON_REFEREE_H_
+#pragma once
 
 #include <cstdint>
 #include <ros/ros.h>
@@ -92,6 +91,9 @@ public:
 
   ros::Publisher referee_pub_;
   ros::Publisher super_capacitor_pub_;
+  ros::Publisher game_robot_status_pub_;
+  ros::Publisher game_status_pub_;
+  ros::Publisher capacity_data_pub_;
   rm_common::RefereeData referee_data_{};
   std::vector<uint8_t> rx_buffer_;
   uint8_t tx_buffer_[128];
@@ -122,5 +124,3 @@ uint16_t getCRC16CheckSum(uint8_t* pch_message, uint32_t dw_length, uint16_t w_c
 uint32_t verifyCRC16CheckSum(uint8_t* pch_message, uint32_t dw_length);
 void appendCRC16CheckSum(unsigned char* pch_message, unsigned int dw_length);
 }  // namespace rm_common
-
-#endif  // RM_COMMON_REFEREE_H_
