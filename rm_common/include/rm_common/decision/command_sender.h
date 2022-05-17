@@ -45,6 +45,7 @@
 #include <rm_msgs/GimbalCmd.h>
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/GimbalDesError.h>
+#include <rm_msgs/StateCmd.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
@@ -185,6 +186,7 @@ public:
   void sendCommand(const ros::Time& time) override
   {
     msg_.power_limit = power_limit_->getLimitPower();
+    msg_.power_limit_state = power_limit_->getState();
     TimeStampCommandSenderBase<rm_msgs::ChassisCmd>::sendCommand(time);
   }
   void setZero() override{};
@@ -243,6 +245,7 @@ public:
   void setEject(bool flag)
   {
     eject_flag_ = flag;
+    msg_.eject_flag = flag;
   }
   bool getEject() const
   {
@@ -303,6 +306,7 @@ public:
   void setBurstMode(bool burst_flag)
   {
     heat_limit_->setMode(burst_flag);
+    msg_.burst_flag = burst_flag;
   }
   bool getBurstMode()
   {
@@ -383,6 +387,40 @@ public:
   void sendCommand(const ros::Time& time) override
   {
     CommandSenderBase<std_msgs::Float64>::sendCommand(time);
+  }
+  void setZero() override{};
+
+private:
+  bool state{};
+  double on_pos_{}, off_pos_{};
+};
+
+class StateCommandSender : public CommandSenderBase<rm_msgs::StateCmd>
+{
+public:
+  explicit StateCommandSender(ros::NodeHandle& nh) : CommandSenderBase<rm_msgs::StateCmd>(nh)
+  {
+    ROS_ASSERT(nh.getParam("on_pos", on_pos_) && nh.getParam("off_pos", off_pos_));
+  }
+  void on()
+  {
+    msg_.data = on_pos_;
+    state = true;
+    msg_.mode = state;
+  }
+  void off()
+  {
+    msg_.data = off_pos_;
+    state = false;
+    msg_.mode = state;
+  }
+  bool getState() const
+  {
+    return state;
+  }
+  void sendCommand(const ros::Time& time) override
+  {
+    CommandSenderBase<rm_msgs::StateCmd>::sendCommand(time);
   }
   void setZero() override{};
 
