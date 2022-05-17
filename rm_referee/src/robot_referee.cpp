@@ -13,6 +13,10 @@ RobotReferee::RobotReferee(ros::NodeHandle& nh) : RefereeBase(nh)
   time_change_ui_ = new TimeChangeUi(ui_nh, data_);
   flash_ui_ = new FlashUi(ui_nh, data_);
   fixed_ui_ = new FixedUi(ui_nh, data_);
+
+  trigger_change_ui_->add();
+  time_change_ui_->add();
+  fixed_ui_->add();
 }
 
 void RobotReferee::drawUi(const ros::Time& time)
