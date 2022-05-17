@@ -32,10 +32,10 @@ GpioMangager::~GpioMangager()
 
 void GpioMangager::writeOutput()
 {
-  for (const auto& iter : gpio_write_values)
+  for (auto iter : gpio_write_values)
   {
     lseek(map_outputio_[map_name2pin_[iter.name]], 0, SEEK_SET);
-    if (iter.value)
+    if (*iter.value)
     {
       int ref = write(map_outputio_[map_name2pin_[iter.name]], "1", 1);
       if (ref == -1)
@@ -79,7 +79,7 @@ void GpioMangager::readInput()
       }
     }
     bool value = (state == 0x31);
-    gpio_read_values[i].value = value;
+    gpio_read_values[i].value = &value;
   }
 }
 

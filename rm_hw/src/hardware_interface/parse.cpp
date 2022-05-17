@@ -450,7 +450,7 @@ bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& 
             GpioData gpio_data;
             gpio_data.name = it->first;
             gpio_manager_.gpio_read_values.push_back(gpio_data);
-            rm_control::GpioReadHandle gpio_read_handle(it->first, &gpio_manager_.gpio_read_values.end()->value);
+            rm_control::GpioReadHandle gpio_read_handle(it->first, gpio_data.value);
             gpio_read_interface_.registerHandle(gpio_read_handle);
           }
         }
@@ -460,7 +460,7 @@ bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& 
           GpioData gpio_data;
           gpio_data.name = it->first;
           gpio_manager_.gpio_write_values.push_back(gpio_data);
-          rm_control::GpioWriteHandle gpio_write_handle(it->first, &gpio_manager_.gpio_write_values.end()->value);
+          rm_control::GpioWriteHandle gpio_write_handle(it->first, gpio_manager_.gpio_write_values.back().value);
           gpio_write_interface_.registerHandle(gpio_write_handle);
         }
       }

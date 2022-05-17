@@ -14,7 +14,7 @@
 struct GpioData
 {
   std::string name;
-  bool value;
+  bool* value;
 };
 
 class GpioMangager

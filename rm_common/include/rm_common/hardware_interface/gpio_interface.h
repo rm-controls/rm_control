@@ -53,7 +53,7 @@ public:
     return *cmd_;
   }
 
-  void setCommand(bool value) const
+  void setCommand(bool value)
   {
     assert(cmd_);
     *cmd_ = value;
