@@ -1,0 +1,17 @@
+uint8 robot_id_
+uint8 robot_level_
+uint16 remain_hp_
+uint16 max_hp_
+uint16 shooter_id_1_17_mm_cooling_rate_
+uint16 shooter_id_1_17_mm_cooling_limit_
+uint16 shooter_id_1_17_mm_speed_limit_
+uint16 shooter_id_2_17_mm_cooling_rate_
+uint16 shooter_id_2_17_mm_cooling_limit_
+uint16 shooter_id_2_17_mm_speed_limit_
+uint16 shooter_id_1_42_mm_cooling_rate_
+uint16 shooter_id_1_42_mm_cooling_limit_
+uint16 shooter_id_1_42_mm_speed_limit_
+uint16 chassis_power_limit_
+uint8 mains_power_gimbal_output_
+uint8 mains_power_chassis_output_ = 1
+uint8 mains_power_shooter_output_

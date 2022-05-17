@@ -44,6 +44,18 @@ add_message_files(
         TrackDataArray.msg
 )
 
+add_message_files(
+        DIRECTORY msg/referee
+        FILES
+        CapacityData.msg
+        GameRobotStatus.msg
+        GameStatus.msg
+        StateCmd.msg
+        DetectionStatus.msg
+        CalibrationStatus.msg
+        EngineerCmd.msg
+)
+
 add_action_files(
         FILES
         Engineer.action

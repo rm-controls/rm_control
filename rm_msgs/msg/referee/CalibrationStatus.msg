@@ -1,0 +1,1 @@
+bool calibration_state
