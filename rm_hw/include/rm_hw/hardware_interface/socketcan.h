@@ -68,8 +68,6 @@ public:
 
   /** \brief Open and bind socket.
    *
-   *
-   *
    * \param interface bus's name(example: can0).
    * \param handler Pointer to a function which shall be called when frames are being received from the CAN bus.
    *
@@ -84,7 +82,7 @@ public:
    *
    * \returns \c True if socket has opened.
    */
-  bool is_open() const;
+  bool isOpen() const;
   /** \brief Sends the referenced frame to the bus.
    *
    * \param frame referenced frame which you want to send.
@@ -93,7 +91,7 @@ public:
   /** \brief Starts a new thread, that will wait for socket events.
    *
    */
-  bool start_receiver_thread();
+  bool startReceiverThread();
   /**
    * Pointer to a function which shall be called
    * when frames are being received from the CAN bus
