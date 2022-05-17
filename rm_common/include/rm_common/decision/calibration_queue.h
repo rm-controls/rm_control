@@ -71,6 +71,7 @@ public:
     last_query_ = ros::Time::now();
     calibration_itr_ = calibration_services_.end();
     // Start with calibrated, you should use reset() to start calibration.
+    calibration_status_pub_ = nh.advertise<rm_msgs::DetectionStatus>("/calibration_status", 1);
   }
   void reset()
   {
@@ -117,6 +118,8 @@ public:
   void update(const ros::Time& time)
   {
     update(time, true);
+    calibration_status_data_.calibration_state = calibration_itr_ == calibration_services_.end();
+    calibration_status_pub_.publish(calibration_status_data_);
   }
   bool isCalibrated()
   {
@@ -144,5 +147,7 @@ private:
   std::vector<CalibrationService>::iterator calibration_itr_;
   ControllerManager& controller_manager_;
   bool switched_;
+  ros::Publisher calibration_status_pub_;
+  rm_msgs::CalibrationStatus calibration_status_data_;
 };
 }  // namespace rm_common
