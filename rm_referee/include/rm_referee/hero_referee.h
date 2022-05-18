@@ -5,8 +5,6 @@
 #pragma once
 
 #include "rm_referee/robot_referee.h"
-#include <rm_common/decision/calibration_queue.h>
-
 #include <rm_msgs/StatusChange.h>
 
 namespace rm_referee

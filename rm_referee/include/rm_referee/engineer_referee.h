@@ -8,7 +8,6 @@
 
 #include <std_srvs/Empty.h>
 #include <actionlib/client/simple_action_client.h>
-#include <rm_common/decision/calibration_queue.h>
 #include <std_msgs/Float64.h>
 #include <rm_msgs/EngineerAction.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
