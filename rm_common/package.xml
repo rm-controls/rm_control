@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
     <name>rm_common</name>
-    <version>0.1.9</version>
+    <version>0.1.10</version>
     <description>The rm_common package</description>
 
     <maintainer email="liaoqiayuan@gmail.com">qiayuan</maintainer>

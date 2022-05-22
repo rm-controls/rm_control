@@ -2,8 +2,8 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.10 (2022-05-22)
+-------------------
 * Merge pull request `#45 <https://github.com/rm-controls/rm_control/issues/45>`_ from ye-luo-xi-tui/master
   Add rm_dbus to metapackage's package.xml
 * Add rm_dbus to metapackage's package.xml.

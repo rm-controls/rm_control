@@ -2,8 +2,8 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.10 (2022-05-22)
+-------------------
 * Merge pull request `#43 <https://github.com/rm-controls/rm_control/issues/43>`_ from ye-luo-xi-tui/track_msg
   Add TrackCmd.msg
 * Modifier TrackCmd.msg format.

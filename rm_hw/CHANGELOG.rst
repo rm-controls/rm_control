@@ -2,8 +2,8 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.10 (2022-05-22)
+-------------------
 * Merge branch 'rm-controls:master' into master
 * Code style
 * Merge pull request `#41 <https://github.com/rm-controls/rm_control/issues/41>`_ from Edwinlinks/multi_actuator_transmission

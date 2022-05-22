@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
     <name>rm_hw</name>
-    <version>0.1.9</version>
+    <version>0.1.10</version>
     <description>ROS control warped interface for RoboMaster motor and some robot hardware</description>
     <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
     <name>rm_control</name>
-    <version>0.1.9</version>
+    <version>0.1.10</version>
     <description>Meta package that contains package of rm_control.</description>
     <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
 
