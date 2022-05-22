@@ -2,6 +2,9 @@
 Changelog for package rm_dbus
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.1.9 (2022-3-28)
 ------------------
 * Merge remote-tracking branch 'origin/master'

@@ -2,6 +2,9 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.1.9 (2022-3-28)
 ------------------
 * Revert "Update package.xml"
