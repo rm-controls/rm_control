@@ -54,6 +54,8 @@ add_message_files(
         DetectionStatus.msg
         CalibrationStatus.msg
         EngineerCmd.msg
+        GameRobotHp.msg
+        PowerHeatData.msg
 )
 
 add_action_files(

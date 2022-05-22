@@ -6,7 +6,7 @@
 #include <ros/ros.h>
 #include <serial/serial.h>
 #include <rm_common/decision/target_cost_function.h>
-#include <rm_common/referee/referee.h>
+#include <rm_referee/referee/referee.h>
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/JointState.h>
 #include <rm_msgs/ActuatorState.h>
@@ -22,6 +22,8 @@
 #include <rm_msgs/DetectionStatus.h>
 #include <rm_msgs/CalibrationStatus.h>
 #include <rm_msgs/EngineerCmd.h>
+#include <rm_msgs/PowerHeatData.h>
+#include <rm_msgs/GameRobotHp.h>
 
 namespace rm_referee
 {
@@ -58,7 +60,8 @@ public:
     referee_.game_robot_status_pub_ = root_nh.advertise<rm_msgs::GameRobotStatus>("/game_robot_status_pub", 1);
     referee_.game_status_pub_ = root_nh.advertise<rm_msgs::GameStatus>("/game_status", 1);
     referee_.capacity_data_pub_ = root_nh.advertise<rm_msgs::CapacityData>("/capacity_data", 1);
-
+    referee_.power_heat_data_pub_ = root_nh.advertise<rm_msgs::PowerHeatData>("/power_heat_data", 1);
+    referee_.game_robot_hp_pub_ = root_nh.advertise<rm_msgs::GameRobotHp>("/game_robot_hp", 1);
     // service
     initSerial();
   }
@@ -155,7 +158,7 @@ public:
   rm_msgs::CalibrationStatus calibration_status_data_;
   rm_msgs::EngineerCmd engineer_cmd_data_;
 
-  rm_common::Referee referee_;
+  Referee referee_;
   serial::Serial serial_;
 
   tf2_ros::Buffer tf_buffer_;

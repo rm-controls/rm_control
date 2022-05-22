@@ -46,7 +46,13 @@
 #include <rm_msgs/ShootCmd.h>
 #include "rm_common/referee/data.h"
 
-namespace rm_common
+#include <rm_msgs/GameRobotStatus.h>
+#include <rm_msgs/GameRobotHp.h>
+#include <rm_msgs/GameStatus.h>
+#include <rm_msgs/PowerHeatData.h>
+#include <rm_msgs/CapacityData.h>
+
+namespace rm_referee
 {
 class SuperCapacitor
 {
@@ -94,6 +100,8 @@ public:
   ros::Publisher game_robot_status_pub_;
   ros::Publisher game_status_pub_;
   ros::Publisher capacity_data_pub_;
+  ros::Publisher power_heat_data_pub_;
+  ros::Publisher game_robot_hp_pub_;
   rm_common::RefereeData referee_data_{};
   std::vector<uint8_t> rx_buffer_;
   uint8_t tx_buffer_[128];
@@ -109,6 +117,10 @@ private:
   ros::Time last_get_, last_send_;
   rm_msgs::Referee referee_pub_data_;
   rm_msgs::SuperCapacitor super_capacitor_pub_data_;
+  rm_msgs::GameRobotStatus game_robot_status_data_;
+  rm_msgs::PowerHeatData power_heat_data_data_;
+  rm_msgs::GameRobotHp game_robot_hp_data_;
+  rm_msgs::CapacityData capacity_data_data_;
   std::vector<std::pair<rm_common::GraphConfig, std::string>> ui_queue_;
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
   const int k_unpack_buffer_length_ = 256;
@@ -123,4 +135,4 @@ void appendCRC8CheckSum(unsigned char* pch_message, unsigned int dw_length);
 uint16_t getCRC16CheckSum(uint8_t* pch_message, uint32_t dw_length, uint16_t w_crc);
 uint32_t verifyCRC16CheckSum(uint8_t* pch_message, uint32_t dw_length);
 void appendCRC16CheckSum(unsigned char* pch_message, unsigned int dw_length);
-}  // namespace rm_common
+}  // namespace rm_referee

@@ -34,9 +34,9 @@
 //
 // Created by peter on 2021/5/17.
 //
-#include "rm_common/referee/referee.h"
+#include "rm_referee/referee/referee.h"
 
-namespace rm_common
+namespace rm_referee
 {
 // read data from referee
 void Referee::read()
@@ -271,8 +271,62 @@ void Referee::publishData()
   super_capacitor_pub_data_.chassis_power = (float)referee_data_.capacity_data.chassis_power_;
   super_capacitor_pub_data_.stamp = super_capacitor_.last_get_data_;
 
+  game_robot_status_data_.mains_power_chassis_output_ = referee_data_.game_robot_status_.mains_power_chassis_output_;
+  game_robot_status_data_.mains_power_gimbal_output_ = referee_data_.game_robot_status_.mains_power_gimbal_output_;
+  game_robot_status_data_.mains_power_shooter_output_ = referee_data_.game_robot_status_.mains_power_shooter_output_;
+  game_robot_status_data_.chassis_power_limit_ = referee_data_.game_robot_status_.chassis_power_limit_;
+  game_robot_status_data_.shooter_id_1_17_mm_cooling_limit_ =
+      referee_data_.game_robot_status_.shooter_id_1_17_mm_cooling_limit_;
+  game_robot_status_data_.shooter_id_1_17_mm_cooling_rate_ =
+      referee_data_.game_robot_status_.shooter_id_1_17_mm_cooling_rate_;
+  game_robot_status_data_.shooter_id_2_17_mm_cooling_limit_ =
+      referee_data_.game_robot_status_.shooter_id_2_17_mm_cooling_limit_;
+  game_robot_status_data_.shooter_id_2_17_mm_cooling_rate_ =
+      referee_data_.game_robot_status_.shooter_id_2_17_mm_cooling_rate_;
+  game_robot_status_data_.shooter_id_1_42_mm_cooling_limit_ =
+      referee_data_.game_robot_status_.shooter_id_1_42_mm_cooling_limit_;
+  game_robot_status_data_.shooter_id_1_42_mm_cooling_rate_ =
+      referee_data_.game_robot_status_.shooter_id_1_42_mm_cooling_rate_;
+  game_robot_status_data_.shooter_id_1_17_mm_speed_limit_ =
+      referee_data_.game_robot_status_.shooter_id_1_17_mm_speed_limit_;
+  game_robot_status_data_.shooter_id_2_17_mm_speed_limit_ =
+      referee_data_.game_robot_status_.shooter_id_2_17_mm_speed_limit_;
+  game_robot_status_data_.shooter_id_1_42_mm_speed_limit_ =
+      referee_data_.game_robot_status_.shooter_id_1_42_mm_speed_limit_;
+  game_robot_status_data_.robot_id_ = referee_data_.game_robot_status_.robot_id_;
+  game_robot_status_data_.robot_level_ = referee_data_.game_robot_status_.robot_level_;
+
+  power_heat_data_data_.shooter_id_1_17_mm_cooling_heat_ =
+      referee_data_.power_heat_data_.shooter_id_1_17_mm_cooling_heat_;
+  power_heat_data_data_.shooter_id_1_42_mm_cooling_heat_ =
+      referee_data_.power_heat_data_.shooter_id_1_42_mm_cooling_heat_;
+  power_heat_data_data_.shooter_id_2_17_mm_cooling_heat_ =
+      referee_data_.power_heat_data_.shooter_id_2_17_mm_cooling_heat_;
+
+  game_robot_hp_data_.blue_1_robot_hp_ = referee_data_.game_robot_hp_.blue_1_robot_hp_;
+  game_robot_hp_data_.blue_2_robot_hp_ = referee_data_.game_robot_hp_.blue_2_robot_hp_;
+  game_robot_hp_data_.blue_3_robot_hp_ = referee_data_.game_robot_hp_.blue_3_robot_hp_;
+  game_robot_hp_data_.blue_4_robot_hp_ = referee_data_.game_robot_hp_.blue_4_robot_hp_;
+  game_robot_hp_data_.blue_5_robot_hp_ = referee_data_.game_robot_hp_.blue_5_robot_hp_;
+  game_robot_hp_data_.blue_7_robot_hp_ = referee_data_.game_robot_hp_.blue_7_robot_hp_;
+  game_robot_hp_data_.red_1_robot_hp_ = referee_data_.game_robot_hp_.red_1_robot_hp_;
+  game_robot_hp_data_.red_2_robot_hp_ = referee_data_.game_robot_hp_.red_2_robot_hp_;
+  game_robot_hp_data_.red_3_robot_hp_ = referee_data_.game_robot_hp_.red_3_robot_hp_;
+  game_robot_hp_data_.red_4_robot_hp_ = referee_data_.game_robot_hp_.red_4_robot_hp_;
+  game_robot_hp_data_.red_5_robot_hp_ = referee_data_.game_robot_hp_.red_5_robot_hp_;
+  game_robot_hp_data_.red_7_robot_hp_ = referee_data_.game_robot_hp_.red_7_robot_hp_;
+
+  capacity_data_data_.buffer_power_ = referee_data_.capacity_data.buffer_power_;
+  capacity_data_data_.is_online_ = referee_data_.capacity_data.is_online_;
+  capacity_data_data_.cap_power_ = referee_data_.capacity_data.cap_power_;
+  capacity_data_data_.chassis_power_ = referee_data_.capacity_data.chassis_power_;
+  capacity_data_data_.limit_power_ = referee_data_.capacity_data.limit_power_;
+
   referee_pub_.publish(referee_pub_data_);
   super_capacitor_pub_.publish(super_capacitor_pub_data_);
+  game_robot_status_pub_.publish(game_robot_status_data_);
+  power_heat_data_pub_.publish(power_heat_data_data_);
+  capacity_data_pub_.publish(capacity_data_data_);
 }
 
 void Referee::sendInteractiveData(int data_cmd_id, int receiver_id, uint8_t data)
