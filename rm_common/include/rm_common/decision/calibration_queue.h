@@ -84,6 +84,8 @@ public:
   }
   void update(const ros::Time& time, bool flip_controllers)
   {
+    calibration_status_data_.calibration_state = calibration_itr_ == calibration_services_.end();
+    calibration_status_pub_.publish(calibration_status_data_);
     if (calibration_services_.empty())
       return;
     if (isCalibrated())
@@ -118,8 +120,6 @@ public:
   void update(const ros::Time& time)
   {
     update(time, true);
-    calibration_status_data_.calibration_state = calibration_itr_ == calibration_services_.end();
-    calibration_status_pub_.publish(calibration_status_data_);
   }
   bool isCalibrated()
   {
