@@ -1,31 +1,29 @@
 cmake_minimum_required(VERSION 3.10)
-project(rm_hw)
+project(rm_referee)
 
 ## Use C++14
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Optimize
-# set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-
 ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
 ## enforcing cleaner code.
-add_definitions(-Wall -Werror -Wno-inconsistent-missing-override)
+add_definitions(-Wall -Werror -Wno-address-of-packed-member)
+
 ## Find catkin macros and libraries
+find_package(serial REQUIRED)
+
 find_package(catkin REQUIRED
         COMPONENTS
         roscpp
+        sensor_msgs
         roslint
-
-        rm_common
         rm_msgs
-        hardware_interface
-        controller_interface
-        transmission_interface
-        joint_limits_interface
-        controller_manager
-        urdf
-        realtime_tools
+        rm_common
+        tf2_geometry_msgs
+        serial
+        std_msgs
+        actionlib
+        nav_msgs
         )
 
 ## Find system libraries
@@ -44,20 +42,16 @@ catkin_package(
         INCLUDE_DIRS
         include
         LIBRARIES
-        ${PROJECT_NAME}_loader_plugins
+        ${PROJECT_NAME}
         CATKIN_DEPENDS
-        roscpp
+        sensor_msgs
         roslint
-
-        rm_common
         rm_msgs
-        hardware_interface
-        controller_interface
-        transmission_interface
-        joint_limits_interface
-        controller_manager
-        urdf
-        realtime_tools
+        rm_common
+        tf2_geometry_msgs
+        std_msgs
+        actionlib
+        nav_msgs
         DEPENDS
 )
 
@@ -66,27 +60,22 @@ catkin_package(
 ###########
 
 ## Specify additional locations of header files
+## Your package locations should be listed before other locations
 include_directories(
         include
         ${catkin_INCLUDE_DIRS}
 )
-add_library(${PROJECT_NAME}_loader_plugins
-        src/transmission/multi_actuator_transmission_loader.cpp
-        )
+
 ## Declare cpp executables
-add_executable(${PROJECT_NAME}
-        src/${PROJECT_NAME}.cpp
-        src/hardware_interface/hardware_interface.cpp
-        src/hardware_interface/parse.cpp
-        src/hardware_interface/socketcan.cpp
-        src/hardware_interface/can_bus.cpp
-        src/control_loop.cpp
+FILE(GLOB ALL_SOURCES "src/*.cpp" "src/common/*.cpp" "src/referee/*.cpp")
+add_executable(${PROJECT_NAME} ${ALL_SOURCES} include/rm_referee/common/referee_base.h include/rm_referee/common/data.h src/main.cpp src/standard_referee.cpp include/rm_referee/standard_referee.h include/rm_referee/engineer_referee.h src/engineer_referee.cpp src/hero_referee.cpp include/rm_referee/hero_referee.h src/common/referee_base.cpp include/rm_referee/robot_referee.h src/robot_referee.cpp)
+
+## Add dependencies to exported targets, like ROS msgs or srvs
+add_dependencies(${PROJECT_NAME}
+        ${catkin_EXPORTED_TARGETS}
         )
 
 ## Specify libraries to link executable targets against
-target_link_libraries(${PROJECT_NAME}_loader_plugins
-        ${catkin_LIBRARIES}
-        )
 target_link_libraries(${PROJECT_NAME}
         ${catkin_LIBRARIES}
         )
@@ -96,24 +85,23 @@ target_link_libraries(${PROJECT_NAME}
 #############
 
 # Mark executables and/or libraries for installation
-install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_loader_plugins
+install(
+        TARGETS ${PROJECT_NAME}
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-        )
+)
 
 # Mark cpp header files for installation
-install(DIRECTORY include/${PROJECT_NAME}/
+install(
+        DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
         FILES_MATCHING PATTERN "*.h"
-        )
+)
 
-# Mark other files for installation
-install(DIRECTORY config launch
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-        )
+## Mark other files for installation
 install(
-        FILES rm_hw_loader_plugins.xml
+        DIRECTORY config launch
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 

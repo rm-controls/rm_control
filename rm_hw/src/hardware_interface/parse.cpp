@@ -335,7 +335,8 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
       }
       else
         bus_id2imu_data_[bus].insert(std::make_pair(
-            id, ImuData{ .ori = {},
+            id, ImuData{ .imu_name = name,
+                         .ori = {},
                          .angular_vel = {},
                          .linear_acc = {},
                          .ori_cov = { static_cast<double>(ori_cov[0]), 0., 0., 0., static_cast<double>(ori_cov[1]), 0.,
@@ -354,6 +355,7 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
                          .accel_updated = false,
                          .gyro_updated = false,
                          .camera_trigger = false,
+                         .enabled_trigger = false,
                          .imu_filter = imu_filter }));
       // for ros_control interface
       hardware_interface::ImuSensorHandle imu_sensor_handle(
