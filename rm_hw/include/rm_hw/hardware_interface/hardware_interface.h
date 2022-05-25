@@ -59,6 +59,7 @@
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
 #include <rm_common/hardware_interface/tof_sensor_interface.h>
 #include <rm_msgs/ActuatorState.h>
+#include <rm_msgs/EnableImuTrigger.h>
 
 #include "can_bus.h"
 
@@ -159,6 +160,10 @@ private:
    * @param time Current time
    */
   void publishActuatorState(const ros::Time& time);
+
+  bool enableImuTrigger(rm_msgs::EnableImuTrigger::Request& req, rm_msgs::EnableImuTrigger::Response& res);
+
+  ros::ServiceServer service_server_;
 
   bool is_actuator_specified_ = false;
   // Interface

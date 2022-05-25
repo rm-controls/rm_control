@@ -1,0 +1,3 @@
+uint16 shooter_id_1_17_mm_cooling_heat_
+uint16 shooter_id_2_17_mm_cooling_heat_
+uint16 shooter_id_1_42_mm_cooling_heat_

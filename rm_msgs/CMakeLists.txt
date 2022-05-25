@@ -31,6 +31,7 @@ add_service_files(
         ContinousDetectorSwitch.srv
         StatusChange.srv
         CameraStatus.srv
+        EnableImuTrigger.srv
 )
 
 add_message_files(
@@ -38,8 +39,23 @@ add_message_files(
         FILES
         TargetDetection.msg
         TargetDetectionArray.msg
+        TrackCmd.msg
         TrackData.msg
         TrackDataArray.msg
+)
+
+add_message_files(
+        DIRECTORY msg/referee
+        FILES
+        CapacityData.msg
+        GameRobotStatus.msg
+        GameStatus.msg
+        StateCmd.msg
+        DetectionStatus.msg
+        CalibrationStatus.msg
+        EngineerCmd.msg
+        GameRobotHp.msg
+        PowerHeatData.msg
 )
 
 add_action_files(

@@ -46,6 +46,9 @@
 #include <controller_manager_msgs/SwitchController.h>
 #include <control_msgs/QueryCalibrationState.h>
 #include <rm_msgs/StatusChange.h>
+#include <rm_common/decision/controller_manager.h>
+
+#include <rm_msgs/DetectionStatus.h>
 
 namespace rm_common
 {
@@ -182,6 +185,11 @@ public:
     service_.request.exposure = rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0;
     service_.request.armor_target = rm_msgs::StatusChangeRequest::ARMOR_ALL;
     callService();
+    detection_pub_ = nh.advertise<rm_msgs::DetectionStatus>("/detection_status", 1);
+    detection_data_.target = service_.request.target;
+    detection_data_.exposure = service_.request.exposure;
+    detection_data_.armor_target = service_.request.armor_target;
+    detection_pub_.publish(detection_data_);
   }
   void setEnemyColor(const RefereeData& referee_data)
   {
@@ -193,28 +201,40 @@ public:
       if (getIsSwitch())
         is_set_ = true;
     }
+    detection_data_.color = service_.request.color;
+    detection_pub_.publish(detection_data_);
   }
   void switchEnemyColor()
   {
     service_.request.color = service_.request.color == rm_msgs::StatusChangeRequest::RED;
+    detection_data_.color = service_.request.color;
+    detection_pub_.publish(detection_data_);
   }
   void switchTargetType()
   {
     service_.request.target = service_.request.target == rm_msgs::StatusChangeRequest::ARMOR;
+    detection_data_.target = service_.request.target;
+    detection_pub_.publish(detection_data_);
   }
   void switchArmorTargetType()
   {
     service_.request.armor_target = service_.request.armor_target == rm_msgs::StatusChangeRequest::ARMOR_ALL;
+    detection_data_.armor_target = service_.request.armor_target;
+    detection_pub_.publish(detection_data_);
   }
   void setArmorTargetType(uint8_t armor_target)
   {
     service_.request.armor_target = armor_target;
+    detection_data_.armor_target = service_.request.armor_target;
+    detection_pub_.publish(detection_data_);
   }
   void switchExposureLevel()
   {
     service_.request.exposure = service_.request.exposure == rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_4 ?
                                     rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0 :
                                     service_.request.exposure + 1;
+    detection_data_.exposure = service_.request.exposure;
+    detection_pub_.publish(detection_data_);
   }
   int getColor()
   {
@@ -241,5 +261,7 @@ public:
 
 private:
   bool is_set_{};
+  ros::Publisher detection_pub_;
+  rm_msgs::DetectionStatus detection_data_;
 };
 }  // namespace rm_common
