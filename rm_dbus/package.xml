@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
     <name>rm_dbus</name>
-    <version>0.1.9</version>
+    <version>0.1.10</version>
     <description>A package that uses dbus to read remote control information</description>
     <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
 

@@ -54,6 +54,7 @@
 #include "rm_common/decision/heat_limit.h"
 #include "rm_common/decision/power_limit.h"
 #include "rm_common/decision/target_cost_function.h"
+#include "rm_common/linear_interpolation.h"
 
 namespace rm_common
 {
@@ -127,25 +128,36 @@ class Vel2DCommandSender : public CommandSenderBase<geometry_msgs::Twist>
 public:
   explicit Vel2DCommandSender(ros::NodeHandle& nh) : CommandSenderBase<geometry_msgs::Twist>(nh)
   {
-    if (!nh.getParam("max_linear_x", max_linear_x_))
+    XmlRpc::XmlRpcValue xml_rpc_value;
+    if (!nh.getParam("max_linear_x", xml_rpc_value))
       ROS_ERROR("Max X linear velocity no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("max_linear_y", max_linear_y_))
+    else
+      max_linear_x_.init(xml_rpc_value);
+    if (!nh.getParam("max_linear_y", xml_rpc_value))
       ROS_ERROR("Max Y linear velocity no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("max_angular_z", max_angular_z_))
+    else
+      max_linear_y_.init(xml_rpc_value);
+    if (!nh.getParam("max_angular_z", xml_rpc_value))
       ROS_ERROR("Max Z angular velocity no defined (namespace: %s)", nh.getNamespace().c_str());
+    else
+      max_angular_z_.init(xml_rpc_value);
+    std::string topic;
+    nh.getParam("power_limit_topic", topic);
+    power_limit_subscriber_ =
+        nh.subscribe<rm_msgs::ChassisCmd>(topic, 1, &Vel2DCommandSender::powerLimitCallback, this);
   }
 
   void setLinearXVel(double scale)
   {
-    msg_.linear.x = scale * max_linear_x_;
+    msg_.linear.x = scale * max_linear_x_.output(power_limit_);
   };
   void setLinearYVel(double scale)
   {
-    msg_.linear.y = scale * max_linear_y_;
+    msg_.linear.y = scale * max_linear_y_.output(power_limit_);
   };
   void setAngularZVel(double scale)
   {
-    msg_.angular.z = scale * max_angular_z_;
+    msg_.angular.z = scale * max_angular_z_.output(power_limit_);
   };
   void set2DVel(double scale_x, double scale_y, double scale_z)
   {
@@ -161,7 +173,13 @@ public:
   }
 
 protected:
-  double max_linear_x_{}, max_linear_y_{}, max_angular_z_{};
+  void powerLimitCallback(const rm_msgs::ChassisCmd::ConstPtr& msg)
+  {
+    power_limit_ = msg->power_limit;
+  }
+  LinearInterp max_linear_x_, max_linear_y_, max_angular_z_;
+  double power_limit_ = 0;
+  ros::Subscriber power_limit_subscriber_;
 };
 
 class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisCmd>
@@ -170,25 +188,34 @@ public:
   explicit ChassisCommandSender(ros::NodeHandle& nh, const RefereeData& referee_data)
     : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh, referee_data)
   {
-    double accel_x, accel_y, accel_z;
+    XmlRpc::XmlRpcValue xml_rpc_value;
     power_limit_ = new PowerLimit(nh, referee_data, msg_);
-    if (!nh.getParam("accel_x", accel_x))
+    if (!nh.getParam("accel_x", xml_rpc_value))
       ROS_ERROR("Accel X no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("accel_y", accel_y))
+    else
+      accel_x_.init(xml_rpc_value);
+    if (!nh.getParam("accel_y", xml_rpc_value))
       ROS_ERROR("Accel Y no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("accel_z", accel_z))
+    else
+      accel_y_.init(xml_rpc_value);
+    if (!nh.getParam("accel_z", xml_rpc_value))
       ROS_ERROR("Accel Z no defined (namespace: %s)", nh.getNamespace().c_str());
-    msg_.accel.linear.x = accel_x;
-    msg_.accel.linear.y = accel_y;
-    msg_.accel.angular.z = accel_z;
+    else
+      accel_z_.init(xml_rpc_value);
   }
   void sendCommand(const ros::Time& time) override
   {
     msg_.power_limit = power_limit_->getLimitPower();
+    msg_.accel.linear.x = accel_x_.output(msg_.power_limit);
+    msg_.accel.linear.y = accel_y_.output(msg_.power_limit);
+    msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
     TimeStampCommandSenderBase<rm_msgs::ChassisCmd>::sendCommand(time);
   }
   void setZero() override{};
   PowerLimit* power_limit_;
+
+private:
+  LinearInterp accel_x_, accel_y_, accel_z_;
 };
 
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd>

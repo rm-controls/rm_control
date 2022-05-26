@@ -2,6 +2,16 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.10 (2022-05-22)
+-------------------
+* Merge pull request `#42 <https://github.com/rm-controls/rm_control/issues/42>`_ from ye-luo-xi-tui/service
+  Add enable_imu_trigger service
+* Use publisher instead of real-time publisher.
+* Merge pull request `#40 <https://github.com/rm-controls/rm_control/issues/40>`_ from ye-luo-xi-tui/master
+  Fix a bug in loading params of imu filter
+* Fix a bug in loading param.
+* Contributors: QiayuanLiao, yezi
+
 0.1.9 (2022-3-28)
 ------------------
 * Add imu_filter and deprecated imu_extra_handle(Since the update frequency of the control loop is not stable, some of
