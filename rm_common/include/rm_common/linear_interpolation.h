@@ -40,7 +40,7 @@ public:
       return output_vector_.back();
     else if (input <= input_vector_.front())
       return output_vector_.front();
-    for (int i = 0; i < (size_t)input_vector_.size(); i++)
+    for (size_t i = 0; i < input_vector_.size(); i++)
     {
       if (input >= input_vector_[i] && input <= input_vector_[i + 1])
         return output_vector_[i] +
