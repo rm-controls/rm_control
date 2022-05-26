@@ -273,6 +273,11 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
         ROS_ERROR_STREAM("Imu " << name << " has no associated linear acceleration covariance.");
         continue;
       }
+      else if (!it->second.hasMember("angular_vel_offset"))
+      {
+        ROS_ERROR_STREAM("Imu " << name << " has no associated angular_vel_offset type");
+        continue;
+      }
       else if (!it->second.hasMember("angular_vel_coeff"))
       {
         ROS_ERROR_STREAM("Imu " << name << " has no associated angular velocity coefficient.");
@@ -293,6 +298,16 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
         ROS_ERROR_STREAM("Imu " << name << " has no associated filter type");
         continue;
       }
+      else if (!it->second.hasMember("angular_vel_offset"))
+      {
+        ROS_ERROR_STREAM("Imu " << name << " has no associated angular_vel_offset type");
+        continue;
+      }
+      XmlRpc::XmlRpcValue angular_vel_offsets = imu_datas[name]["angular_vel_offset"];
+      ROS_ASSERT(angular_vel_offsets.getType() == XmlRpc::XmlRpcValue::TypeArray);
+      ROS_ASSERT(angular_vel_offsets.size() == 3);
+      for (int i = 0; i < angular_vel_offsets.size(); ++i)
+        ROS_ASSERT(angular_vel_offsets[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
       XmlRpc::XmlRpcValue ori_cov = imu_datas[name]["orientation_covariance_diagonal"];
       ROS_ASSERT(ori_cov.getType() == XmlRpc::XmlRpcValue::TypeArray);
       ROS_ASSERT(ori_cov.size() == 3);
@@ -308,7 +323,6 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
       ROS_ASSERT(linear_cov.size() == 3);
       for (int i = 0; i < linear_cov.size(); ++i)
         ROS_ASSERT(linear_cov[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-
       std::string filter_type = imu_datas[name]["filter"];
       // TODO(Zhenyu Ye): Add more types of filter.
       rm_common::ImuFilterBase* imu_filter;
@@ -339,6 +353,9 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
                          .ori = {},
                          .angular_vel = {},
                          .linear_acc = {},
+                         .angular_vel_offset = { static_cast<double>(angular_vel_offsets[0]),
+                                                 static_cast<double>(angular_vel_offsets[1]),
+                                                 static_cast<double>(angular_vel_offsets[2]) },
                          .ori_cov = { static_cast<double>(ori_cov[0]), 0., 0., 0., static_cast<double>(ori_cov[1]), 0.,
                                       0., 0., static_cast<double>(ori_cov[2]) },
                          .angular_vel_cov = { static_cast<double>(angular_cov[0]), 0., 0., 0.,
