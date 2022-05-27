@@ -87,6 +87,7 @@ protected:
   bool gimbal_eject;
   int chassis_mode, power_limit_state;
   // rm_common::SwitchDetectionCaller* switch_detection_srv_{};
+
   TimeChangeUi* time_change_ui_{};
   FlashUi* flash_ui_{};
   TriggerChangeUi* trigger_change_ui_{};
@@ -96,3 +97,4 @@ private:
   double capacitor_threshold, extra_power, burst_power;
 };
 }  // namespace rm_referee
+

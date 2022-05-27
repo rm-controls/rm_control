@@ -4,6 +4,7 @@ uint8 GYRO = 2
 uint8 TWIST = 3
 
 uint8 mode
+uint8 power_limit_state
 geometry_msgs/Accel accel
 float64 power_limit
 string follow_source_frame

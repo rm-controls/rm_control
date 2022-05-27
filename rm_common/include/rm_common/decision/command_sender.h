@@ -186,6 +186,7 @@ public:
   void sendCommand(const ros::Time& time) override
   {
     msg_.power_limit = power_limit_->getLimitPower();
+    msg_.power_limit_state = power_limit_->getState();
     TimeStampCommandSenderBase<rm_msgs::ChassisCmd>::sendCommand(time);
   }
   void setZero() override{};
@@ -244,6 +245,7 @@ public:
   void setEject(bool flag)
   {
     eject_flag_ = flag;
+    msg_.eject_flag = flag;
   }
   bool getEject() const
   {
@@ -304,6 +306,7 @@ public:
   void setBurstMode(bool burst_flag)
   {
     heat_limit_->setMode(burst_flag);
+    msg_.burst_flag = burst_flag;
   }
   bool getBurstMode()
   {

@@ -583,4 +583,5 @@ float SuperCapacitor::int16ToFloat(unsigned short data0)
   fp32 = (float*)&fInt32;
   return *fp32;
 }
+
 }  // namespace rm_referee

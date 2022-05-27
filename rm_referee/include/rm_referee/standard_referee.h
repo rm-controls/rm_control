@@ -17,4 +17,5 @@ public:
 protected:
   void drawUi(const ros::Time& time) override;
 };
+
 }  // namespace rm_referee

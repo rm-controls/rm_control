@@ -27,4 +27,5 @@ protected:
   Data data_;
   ros::NodeHandle nh_;
 };
+
 }  // namespace rm_referee

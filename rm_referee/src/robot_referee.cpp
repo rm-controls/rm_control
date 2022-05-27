@@ -45,6 +45,7 @@ void RobotReferee::drawUi(const ros::Time& time)
   RobotReferee::checkDbusMsg(data_.dbus_data_);
   getPowerLimitStatus(data_.referee_.referee_data_.capacity_data.limit_power_,
                       data_.referee_.referee_data_.game_robot_status_.chassis_power_limit_);
+
   time_change_ui_->update("capacitor", time);
   if (data_.dbus_data_.s_l == rm_msgs::DbusData::MID && data_.dbus_data_.s_r == rm_msgs::DbusData::UP)
   {
@@ -59,9 +60,11 @@ void RobotReferee::drawUi(const ros::Time& time)
   }
   flash_ui_->update("spin", time,
                     power_limit_state == rm_msgs::ChassisCmd::GYRO && data_.vel2d_cmd_data_.angular.z != 0.);
+
   flash_ui_->update("armor0", time);
   flash_ui_->update("armor1", time);
   flash_ui_->update("armor2", time);
   flash_ui_->update("armor3", time);
 }
+
 }  // namespace rm_referee
