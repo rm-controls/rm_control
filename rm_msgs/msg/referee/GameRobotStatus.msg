@@ -15,3 +15,5 @@ uint16 chassis_power_limit_
 uint8 mains_power_gimbal_output_
 uint8 mains_power_chassis_output_
 uint8 mains_power_shooter_output_
+
+time stamp

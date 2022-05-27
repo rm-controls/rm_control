@@ -295,6 +295,7 @@ void Referee::publishData()
       referee_data_.game_robot_status_.shooter_id_1_42_mm_speed_limit_;
   game_robot_status_data_.robot_id_ = referee_data_.game_robot_status_.robot_id_;
   game_robot_status_data_.robot_level_ = referee_data_.game_robot_status_.robot_level_;
+  game_robot_status_data_.stamp = last_get_;
 
   power_heat_data_data_.shooter_id_1_17_mm_cooling_heat_ =
       referee_data_.power_heat_data_.shooter_id_1_17_mm_cooling_heat_;
@@ -302,6 +303,7 @@ void Referee::publishData()
       referee_data_.power_heat_data_.shooter_id_1_42_mm_cooling_heat_;
   power_heat_data_data_.shooter_id_2_17_mm_cooling_heat_ =
       referee_data_.power_heat_data_.shooter_id_2_17_mm_cooling_heat_;
+  power_heat_data_data_.stamp = last_get_;
 
   game_robot_hp_data_.blue_1_robot_hp_ = referee_data_.game_robot_hp_.blue_1_robot_hp_;
   game_robot_hp_data_.blue_2_robot_hp_ = referee_data_.game_robot_hp_.blue_2_robot_hp_;
@@ -315,12 +317,14 @@ void Referee::publishData()
   game_robot_hp_data_.red_4_robot_hp_ = referee_data_.game_robot_hp_.red_4_robot_hp_;
   game_robot_hp_data_.red_5_robot_hp_ = referee_data_.game_robot_hp_.red_5_robot_hp_;
   game_robot_hp_data_.red_7_robot_hp_ = referee_data_.game_robot_hp_.red_7_robot_hp_;
+  game_robot_hp_data_.stamp = last_get_;
 
   capacity_data_data_.buffer_power_ = referee_data_.capacity_data.buffer_power_;
   capacity_data_data_.is_online_ = referee_data_.capacity_data.is_online_;
   capacity_data_data_.cap_power_ = referee_data_.capacity_data.cap_power_;
   capacity_data_data_.chassis_power_ = referee_data_.capacity_data.chassis_power_;
   capacity_data_data_.limit_power_ = referee_data_.capacity_data.limit_power_;
+  capacity_data_data_.stamp = last_get_;
 
   referee_pub_.publish(referee_pub_data_);
   super_capacitor_pub_.publish(super_capacitor_pub_data_);

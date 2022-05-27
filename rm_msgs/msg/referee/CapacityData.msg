@@ -4,3 +4,4 @@ uint8 limit_power_
 uint8 cap_power_
 
 bool is_online_
+time stamp

@@ -1,4 +1,5 @@
 rm_referee:
+  robot_type: standard3
   ui:
     trigger_change:
       - name: "step"

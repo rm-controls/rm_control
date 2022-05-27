@@ -11,3 +11,5 @@ uint16 blue_3_robot_hp_
 uint16 blue_4_robot_hp_
 uint16 blue_5_robot_hp_
 uint16 blue_7_robot_hp_
+
+time stamp

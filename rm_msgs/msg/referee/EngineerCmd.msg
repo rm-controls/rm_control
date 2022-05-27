@@ -4,3 +4,4 @@ uint32 total_steps
 
 string step_queue_name
 bool symbol
+time stamp
