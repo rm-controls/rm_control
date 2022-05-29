@@ -2,6 +2,18 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.10 (2022-05-22)
+-------------------
+* Merge pull request `#43 <https://github.com/rm-controls/rm_control/issues/43>`_ from ye-luo-xi-tui/track_msg
+  Add TrackCmd.msg
+* Modifier TrackCmd.msg format.
+* Add TrackCmd.msg.
+* Merge pull request `#42 <https://github.com/rm-controls/rm_control/issues/42>`_ from ye-luo-xi-tui/service
+  Add enable_imu_trigger service
+* Rename ImuTriggerSwitch.srv to EnableImuTrigger.srv and add something.
+* Add ImuTriggerSwitch.srv.
+* Contributors: QiayuanLiao, yezi
+
 0.1.9 (2022-3-28)
 ------------------
 * Update rm_msgs cmake minimum required. (`#36 <https://github.com/ye-luo-xi-tui/rm_control/issues/36>`_)

@@ -2,6 +2,20 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.10 (2022-05-22)
+-------------------
+* Merge branch 'rm-controls:master' into master
+* Code style
+* Merge pull request `#41 <https://github.com/rm-controls/rm_control/issues/41>`_ from Edwinlinks/multi_actuator_transmission
+  Update multi_actuator_transmission and delete the double_actuator_tra…
+* Merge pull request `#42 <https://github.com/rm-controls/rm_control/issues/42>`_ from ye-luo-xi-tui/service
+  Add enable_imu_trigger service
+* Initialize structure members in sequence.
+* Rename service switch_imu_trigger to enable_imu_trigger.
+* Add switch_imu_trigger service.
+* Update multi_actuator_transmission and delete the double_actuator_transmission
+* Contributors: Edwinlinks, QiayuanLiao, qiayuan, ye-luo-xi-tui, yezi
+
 0.1.9 (2022-3-28)
 ------------------
 * Deprecated imu_extra_handle and add imu_filter into hardware resource layer.(Since the update frequency of the control

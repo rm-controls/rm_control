@@ -50,7 +50,7 @@ namespace can
 
 SocketCAN::~SocketCAN()
 {
-  if (this->is_open())
+  if (this->isOpen())
     this->close();
 }
 
@@ -86,7 +86,7 @@ bool SocketCAN::open(const std::string& interface, boost::function<void(const ca
     return false;
   }
   // Start a separate, event-driven thread for frame reception
-  return start_receiver_thread();
+  return startReceiverThread();
 }
 
 void SocketCAN::close()
@@ -95,21 +95,21 @@ void SocketCAN::close()
   while (receiver_thread_running_)
     ;
 
-  if (!is_open())
+  if (!isOpen())
     return;
   // Close the file descriptor for our socket
   ::close(sock_fd_);
   sock_fd_ = -1;
 }
 
-bool SocketCAN::is_open() const
+bool SocketCAN::isOpen() const
 {
   return (sock_fd_ != -1);
 }
 
 void SocketCAN::write(can_frame* frame) const
 {
-  if (!is_open())
+  if (!isOpen())
   {
     ROS_ERROR_THROTTLE(5., "Unable to write: Socket %s not open", interface_request_.ifr_name);
     return;
@@ -158,7 +158,7 @@ static void* socketcan_receiver_thread(void* argv)
   return nullptr;
 }
 
-bool SocketCAN::start_receiver_thread()
+bool SocketCAN::startReceiverThread()
 {
   // Frame reception is accomplished in a separate, event-driven thread.
   // See also: https://www.thegeekstuff.com/2012/04/create-threads-in-linux/

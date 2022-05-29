@@ -2,9 +2,10 @@ name: deb-package
 
 on:
   push:
-    branches: [ master ]
-  label:
-    types: [created]
+    tags:
+      - '*'
+    branches:
+      - master
   workflow_dispatch:
 jobs:
   build:
@@ -15,11 +16,11 @@ jobs:
       - uses: ros-tooling/setup-ros@v0.2
         with:
           required-ros-distributions: noetic
-      - name: Build and install from source
-        id: build-and-install
-        run: .github/scripts/build.sh noetic
       - name: Package deb
-        run: .github/scripts/package.sh noetic rm_control ${{ steps.build-and-install.outputs.catkin-ws-directory }}
+        uses: gdut-dynamic-x/ros-build-deb-action@v1
+        with:
+          ros_distro: noetic
+          timestamp: true
       - name: Upload deb package to source
         if: ${{ github.repository == 'rm-controls/rm_control' }}
         uses: appleboy/scp-action@master
