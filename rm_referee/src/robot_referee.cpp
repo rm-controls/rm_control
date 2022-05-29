@@ -46,6 +46,7 @@ void RobotReferee::drawUi(const ros::Time& time)
   getPowerLimitStatus(data_.referee_.referee_data_.capacity_data.limit_power_,
                       data_.referee_.referee_data_.game_robot_status_.chassis_power_limit_);
   time_change_ui_->update("capacitor", time);
+  time_change_ui_->update("ore", time);
   if (data_.dbus_data_.s_l == rm_msgs::DbusData::MID && data_.dbus_data_.s_r == rm_msgs::DbusData::UP)
   {
     //    chassis_cmd_sender_->power_limit_->updateState(rm_common::PowerLimit::TEST);

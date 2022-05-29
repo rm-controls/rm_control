@@ -40,8 +40,8 @@ public:
     chassis_cmd_sub_ = nh.subscribe<rm_msgs::ChassisCmd>("/controllers/chassis_controller/command", 10,
                                                          &Data::chassisCmdDataCallback, this);
     vel2D_cmd_sub_ = nh.subscribe<geometry_msgs::Twist>("/cmd_vel", 10, &Data::vel2DCmdDataCallback, this);
-    cover_cmd_sub_ =
-        nh.subscribe<rm_msgs::StateCmd>("/controllers/cover_controller/command", 10, &Data::coverCmdDataCallback, this);
+//    cover_cmd_sub_ =
+//        nh.subscribe<rm_msgs::StateCmd>("/controllers/cover_controller/command", 10, &Data::coverCmdDataCallback, this);
     shoot_cmd_sub_ = nh.subscribe<rm_msgs::ShootCmd>("/controllers/shooter_controller/command", 10,
                                                      &Data::shootCmdDataCallback, this);
     gimbal_cmd_sub_ = nh.subscribe<rm_msgs::GimbalCmd>("/controllers/gimbal_controller/command", 10,
@@ -86,10 +86,10 @@ public:
   {
     vel2d_cmd_data_ = *data;
   }
-  void coverCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
-  {
-    cover_cmd_data_ = *data;
-  }
+//  void coverCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
+//  {
+//    cover_cmd_data_ = *data;
+//  }
   void shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data)
   {
     shoot_cmd_data_ = *data;

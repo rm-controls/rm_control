@@ -54,6 +54,8 @@ private:
   void setEffortData(Graph& graph);
   void setTemperatureData(Graph& graph);
   static void setProgressData(Graph& graph, double data);
+  void setOreRemindData(Graph& graph);
+  void setDartStatusData(Graph& graph);
 };
 
 class FixedUi : public UiBase

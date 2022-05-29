@@ -319,8 +319,50 @@ void TimeChangeUi::update(const std::string& name, const ros::Time& time, double
       setProgressData(*graph->second, data);
     if (name == "temperature")
       setTemperatureData(*graph->second);
+    if (name == "dart_status")
+      setDartStatusData(*graph->second);
+    if (name == "ore" && data_.referee_.referee_data_.game_status_.game_type_ == 4)
+      setOreRemindData(*graph->second);
     graph->second->display(time);
   }
+}
+
+void TimeChangeUi::setOreRemindData(Graph& graph)
+{
+  char data_str[30] = { ' ' };
+  int time = data_.referee_.referee_data_.game_status_.stage_remain_time_;
+  if (time < 420 && time > 417)
+    sprintf(data_str, "Ore will release after 15s");
+  else if (time < 272 && time > 269)
+    sprintf(data_str, "Ore will release after 30s");
+  else if (time < 252 && time > 249)
+    sprintf(data_str, "Ore will release after 10s");
+  else
+    return;
+  graph.setContent(data_str);
+  graph.setOperation(rm_common::GraphOperation::UPDATE);
+}
+
+void TimeChangeUi::setDartStatusData(Graph& graph)
+{
+  char data_str[30] = { ' ' };
+  if (data_.referee_.referee_data_.dart_client_cmd_.dart_launch_opening_status_ == 1)
+  {
+    sprintf(data_str, "Dart Status: Close");
+    graph.setColor(rm_common::GraphColor::YELLOW);
+  }
+  else if (data_.referee_.referee_data_.dart_client_cmd_.dart_launch_opening_status_ == 2)
+  {
+    sprintf(data_str, "Dart Status: Changing");
+    graph.setColor(rm_common::GraphColor::ORANGE);
+  }
+  else if (data_.referee_.referee_data_.dart_client_cmd_.dart_launch_opening_status_ == 0)
+  {
+    sprintf(data_str, "Dart Open!");
+    graph.setColor(rm_common::GraphColor::GREEN);
+  }
+  graph.setContent(data_str);
+  graph.setOperation(rm_common::GraphOperation::UPDATE);
 }
 
 void TimeChangeUi::setCapacitorData(Graph& graph)
