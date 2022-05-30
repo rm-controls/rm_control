@@ -106,8 +106,8 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 
   // Other Interface
   registerInterface(&robot_state_interface_);
-  registerInterface(&gpio_read_interface_);
-  registerInterface(&gpio_write_interface_);
+  registerInterface(&gpio_state_interface_);
+  registerInterface(&gpio_command_interface_);
 
   actuator_state_pub_.reset(
       new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_states", 100));

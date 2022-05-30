@@ -14,7 +14,8 @@
 struct GpioData
 {
   std::string name;
-  bool* value;
+  std::string type;
+  bool value;
 };
 
 class GpioMangager
@@ -30,8 +31,8 @@ public:
   std::map<std::string, int> map_name2pin_;
   std::map<int, int> map_outputio_;
   std::map<int, int> map_inputio_;
-  std::vector<GpioData> gpio_read_values;
-  std::vector<GpioData> gpio_write_values;
+  std::vector<GpioData> gpio_state_values;
+  std::vector<GpioData> gpio_command_values;
 
 private:
   std::string pin_;

@@ -449,19 +449,32 @@ bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& 
             gpio_manager_.addInIo(gpio_datas[it->first]["pin"]);
             GpioData gpio_data;
             gpio_data.name = it->first;
-            gpio_manager_.gpio_read_values.push_back(gpio_data);
-            rm_control::GpioReadHandle gpio_read_handle(it->first, gpio_data.value);
-            gpio_read_interface_.registerHandle(gpio_read_handle);
+            gpio_data.type = direction;
+            gpio_manager_.gpio_state_values.push_back(gpio_data);
+            rm_control::GpioStateHandle gpio_state_handle(it->first, direction,
+                                                          &gpio_manager_.gpio_state_values.back().value);
+            gpio_state_interface_.registerHandle(gpio_state_handle);
           }
         }
         else
         {
+          // direction == out
           gpio_manager_.addOutIo(gpio_datas[it->first]["pin"]);
           GpioData gpio_data;
+          ROS_INFO("get gpio****");
           gpio_data.name = it->first;
-          gpio_manager_.gpio_write_values.push_back(gpio_data);
-          rm_control::GpioWriteHandle gpio_write_handle(it->first, gpio_manager_.gpio_write_values.back().value);
-          gpio_write_interface_.registerHandle(gpio_write_handle);
+          gpio_data.type = direction;
+          gpio_data.value = false;
+          gpio_manager_.gpio_state_values.push_back(gpio_data);
+          rm_control::GpioStateHandle gpio_state_handle(it->first, direction,
+                                                        &gpio_manager_.gpio_state_values.back().value);
+          gpio_state_interface_.registerHandle(gpio_state_handle);
+          ROS_INFO("registerHandle state_handle");
+          gpio_manager_.gpio_command_values.push_back(gpio_data);
+          rm_control::GpioCommandHandle gpio_command_handle(it->first, direction,
+                                                            &gpio_manager_.gpio_command_values.back().value);
+          gpio_command_interface_.registerHandle(gpio_command_handle);
+          ROS_INFO("registerHandle command_handle");
         }
       }
       else
