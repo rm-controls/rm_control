@@ -29,7 +29,7 @@ rm_referee:
       - name: "progress"
         config: { start_position: [ 400, 650 ], size: 15, width: 2, delay: 0.3, color: "green", title: "progress:" }
       - name: "ore"
-          config: { start_position: [ 960, 720 ], size: 15, width: 2, delay: 0.5 }
+        config: { start_position: [ 960, 720 ], size: 15, width: 2, delay: 0.5 }
     flash:
       - name: "calibration"
         config: { start_position: [ 850, 700 ], size: 15, width: 2,

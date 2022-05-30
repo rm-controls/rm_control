@@ -14,7 +14,6 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "rm_referee");  // rm_referee
   ros::NodeHandle nh("~");
   robot = getParam(nh, "robot_type", (std::string) "error");
-  // std::cout << robot;
   if (robot == "standard3")
     referee = new rm_referee::StandardReferee(nh);
   else if (robot == "hero")

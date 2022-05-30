@@ -265,6 +265,12 @@ void Referee::publishData()
   referee_pub_data_.bullet_speed = referee_data_.shoot_data_.bullet_speed_;
   referee_pub_data_.stamp = last_get_;
 
+  game_status_data_.game_type_ = referee_data_.game_status_.game_type_;
+  game_status_data_.game_progress_ = referee_data_.game_status_.game_progress_;
+  game_status_data_.stage_remain_time_ = referee_data_.game_status_.stage_remain_time_;
+  game_status_data_.sync_time_stamp_ = referee_data_.game_status_.sync_time_stamp_;
+  game_status_data_.stamp = last_get_;
+
   super_capacitor_pub_data_.capacity = (float)referee_data_.capacity_data.cap_power_;
   super_capacitor_pub_data_.chassis_power_buffer = (uint16_t)referee_data_.capacity_data.buffer_power_;
   super_capacitor_pub_data_.limit_power = (float)referee_data_.capacity_data.limit_power_;
@@ -328,6 +334,8 @@ void Referee::publishData()
 
   referee_pub_.publish(referee_pub_data_);
   super_capacitor_pub_.publish(super_capacitor_pub_data_);
+  game_robot_hp_pub_.publish(game_robot_hp_data_);
+  game_status_pub_.publish(game_status_data_);
   game_robot_status_pub_.publish(game_robot_status_data_);
   power_heat_data_pub_.publish(power_heat_data_data_);
   capacity_data_pub_.publish(capacity_data_data_);

@@ -12,6 +12,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh) : data_(nh), nh_(nh)
 
 void RefereeBase::run()
 {
+  ros::Time time = ros::Time::now();
   try
   {
     if (data_.serial_.available())
@@ -24,6 +25,7 @@ void RefereeBase::run()
   {
   }
   data_.referee_.read();
+  drawUi(time);
   try
   {
     data_.serial_.write(data_.referee_.tx_buffer_, data_.referee_.tx_len_);

@@ -120,6 +120,7 @@ private:
   rm_msgs::GameRobotStatus game_robot_status_data_;
   rm_msgs::PowerHeatData power_heat_data_data_;
   rm_msgs::GameRobotHp game_robot_hp_data_;
+  rm_msgs::GameStatus game_status_data_;
   rm_msgs::CapacityData capacity_data_data_;
   std::vector<std::pair<rm_common::GraphConfig, std::string>> ui_queue_;
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
