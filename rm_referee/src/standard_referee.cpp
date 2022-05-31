@@ -13,7 +13,7 @@ void StandardReferee::run()
 
 void StandardReferee::drawUi(const ros::Time& time)
 {
-  RobotReferee::drawUi(time);
+  HeroReferee::drawUi(time);
   flash_ui_->update("cover", time, !data_.cover_cmd_data_.mode);
 }
 }  // namespace rm_referee

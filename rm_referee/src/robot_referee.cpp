@@ -13,10 +13,6 @@ RobotReferee::RobotReferee(ros::NodeHandle& nh) : RefereeBase(nh)
   time_change_ui_ = new TimeChangeUi(ui_nh, data_);
   flash_ui_ = new FlashUi(ui_nh, data_);
   fixed_ui_ = new FixedUi(ui_nh, data_);
-
-  trigger_change_ui_->add();
-  time_change_ui_->add();
-  fixed_ui_->add();
 }
 
 void RobotReferee::getPowerLimitStatus(double limit_power_, int referee_power_limit)
@@ -58,11 +54,17 @@ void RobotReferee::drawUi(const ros::Time& time)
                                power_limit_state == rm_common::PowerLimit::BURST, 0,
                                power_limit_state == rm_common::PowerLimit::CHARGE);
   }
-  flash_ui_->update("spin", time,
-                    power_limit_state == rm_msgs::ChassisCmd::GYRO && data_.vel2d_cmd_data_.angular.z != 0.);
+  flash_ui_->update("spin", time, data_.chassis_cmd_data_.mode == rm_msgs::ChassisCmd::GYRO && data_.vel2d_cmd_data_.angular.z != 0.);
   flash_ui_->update("armor0", time);
   flash_ui_->update("armor1", time);
   flash_ui_->update("armor2", time);
   flash_ui_->update("armor3", time);
+
+  if (data_.dbus_data_.s_r == rm_msgs::DbusData::UP)
+  {
+    trigger_change_ui_->add();
+    time_change_ui_->add();
+    fixed_ui_->add();
+  }
 }
 }  // namespace rm_referee

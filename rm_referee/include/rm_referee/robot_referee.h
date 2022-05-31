@@ -78,8 +78,6 @@ protected:
         chassis_mode = rm_msgs::ChassisCmd::GYRO;
       }
     }
-    else
-      chassis_mode = rm_msgs::ChassisCmd::FOLLOW;
   }
 
   void getPowerLimitStatus(double limit_power_, int referee_power_limit);
