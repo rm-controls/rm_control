@@ -40,8 +40,8 @@ public:
     chassis_cmd_sub_ = nh.subscribe<rm_msgs::ChassisCmd>("/controllers/chassis_controller/command", 10,
                                                          &Data::chassisCmdDataCallback, this);
     vel2D_cmd_sub_ = nh.subscribe<geometry_msgs::Twist>("/cmd_vel", 10, &Data::vel2DCmdDataCallback, this);
-//    cover_cmd_sub_ =
-//        nh.subscribe<rm_msgs::StateCmd>("/controllers/cover_controller/command", 10, &Data::coverCmdDataCallback, this);
+    cover_cmd_sub_ =
+        nh.subscribe<rm_msgs::StateCmd>("/controllers/cover_controller/command", 10, &Data::coverCmdDataCallback, this);
     shoot_cmd_sub_ = nh.subscribe<rm_msgs::ShootCmd>("/controllers/shooter_controller/command", 10,
                                                      &Data::shootCmdDataCallback, this);
     gimbal_cmd_sub_ = nh.subscribe<rm_msgs::GimbalCmd>("/controllers/gimbal_controller/command", 10,
@@ -57,7 +57,7 @@ public:
     ros::NodeHandle root_nh;
     referee_.referee_pub_ = root_nh.advertise<rm_msgs::Referee>("/referee", 1);
     referee_.super_capacitor_pub_ = root_nh.advertise<rm_msgs::SuperCapacitor>("/super_capacitor", 1);
-    referee_.game_robot_status_pub_ = root_nh.advertise<rm_msgs::GameRobotStatus>("/game_robot_status", 1);
+    referee_.game_robot_status_pub_ = root_nh.advertise<rm_msgs::GameRobotStatus>("/game_robot_status_pub", 1);
     referee_.game_status_pub_ = root_nh.advertise<rm_msgs::GameStatus>("/game_status", 1);
     referee_.capacity_data_pub_ = root_nh.advertise<rm_msgs::CapacityData>("/capacity_data", 1);
     referee_.power_heat_data_pub_ = root_nh.advertise<rm_msgs::PowerHeatData>("/power_heat_data", 1);
@@ -86,10 +86,10 @@ public:
   {
     vel2d_cmd_data_ = *data;
   }
-//  void coverCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
-//  {
-//    cover_cmd_data_ = *data;
-//  }
+  void coverCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
+  {
+    cover_cmd_data_ = *data;
+  }
   void shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data)
   {
     shoot_cmd_data_ = *data;

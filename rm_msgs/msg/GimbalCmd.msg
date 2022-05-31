@@ -4,6 +4,7 @@ uint8 DIRECT = 2
 
 time stamp
 uint8 mode
+uint8 eject_flag
 
 # RATE
 float64 rate_yaw

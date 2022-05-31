@@ -49,6 +49,7 @@
 #include <rm_common/decision/controller_manager.h>
 
 #include <rm_msgs/DetectionStatus.h>
+#include <rm_msgs/CalibrationStatus.h>
 
 namespace rm_common
 {
