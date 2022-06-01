@@ -34,7 +34,7 @@ void RobotReferee::getPowerLimitStatus(double limit_power_, int referee_power_li
   else
     ROS_INFO("Not get power limit status,ignorable if Infrequently.");
 
-  ROS_INFO("Power limit state: %d", power_limit_state);
+  ROS_INFO("Power limit state: %d,Ture: %d", power_limit_state, data_.chassis_cmd_data_.power_limit_state);
 }
 
 void RobotReferee::drawUi(const ros::Time& time)
@@ -53,8 +53,8 @@ void RobotReferee::drawUi(const ros::Time& time)
   else
   {
     trigger_change_ui_->update("chassis", data_.chassis_cmd_data_.mode,
-                               power_limit_state == rm_common::PowerLimit::BURST, 0,
-                               power_limit_state == rm_common::PowerLimit::CHARGE);
+                               data_.chassis_cmd_data_.power_limit_state == rm_common::PowerLimit::BURST, 0,
+                               data_.chassis_cmd_data_.power_limit_state == rm_common::PowerLimit::CHARGE);
   }
   // flash_ui_->update("spin", time,
   // data_.chassis_cmd_data_.mode == rm_msgs::ChassisCmd::GYRO && data_.vel2d_cmd_data_.angular.z != 0.);
