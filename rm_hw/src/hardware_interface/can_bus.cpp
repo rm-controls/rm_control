@@ -217,9 +217,12 @@ void CanBus::read(ros::Time time)
     {
       ImuData& imu_data = data_ptr_.id2imu_data_->find(frame.can_id)->second;
       imu_data.gyro_updated = true;
-      imu_data.angular_vel[0] = ((int16_t)((frame.data[1]) << 8) | frame.data[0]) * imu_data.angular_vel_coeff;
-      imu_data.angular_vel[1] = ((int16_t)((frame.data[3]) << 8) | frame.data[2]) * imu_data.angular_vel_coeff;
-      imu_data.angular_vel[2] = ((int16_t)((frame.data[5]) << 8) | frame.data[4]) * imu_data.angular_vel_coeff;
+      imu_data.angular_vel[0] = (((int16_t)((frame.data[1]) << 8) | frame.data[0]) * imu_data.angular_vel_coeff) +
+                                imu_data.angular_vel_offset[0];
+      imu_data.angular_vel[1] = (((int16_t)((frame.data[3]) << 8) | frame.data[2]) * imu_data.angular_vel_coeff) +
+                                imu_data.angular_vel_offset[1];
+      imu_data.angular_vel[2] = (((int16_t)((frame.data[5]) << 8) | frame.data[4]) * imu_data.angular_vel_coeff) +
+                                imu_data.angular_vel_offset[2];
       int16_t temp = (int16_t)((frame.data[6] << 3) | (frame.data[7] >> 5));
       if (temp > 1023)
         temp -= 2048;
