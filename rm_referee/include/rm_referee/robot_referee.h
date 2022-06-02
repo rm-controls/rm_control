@@ -5,6 +5,7 @@
 #pragma once
 
 #include "rm_referee/common/referee_base.h"
+#include "time.h"
 
 namespace rm_referee
 {
@@ -80,11 +81,8 @@ protected:
     }
   }
 
-  void getPowerLimitStatus(double limit_power_, int referee_power_limit);
-
-  bool gimbal_eject;
-  int chassis_mode, power_limit_state;
-  // rm_common::SwitchDetectionCaller* switch_detection_srv_{};
+  bool gimbal_eject, add_ui_flag;
+  int chassis_mode;
   TimeChangeUi* time_change_ui_{};
   FlashUi* flash_ui_{};
   TriggerChangeUi* trigger_change_ui_{};

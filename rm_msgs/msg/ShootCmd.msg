@@ -11,6 +11,5 @@ uint8 SPEED_30M_PER_SECOND = 5
 
 uint8 mode
 uint8 speed
-uint8 burst_flag
 float64 hz
 time stamp

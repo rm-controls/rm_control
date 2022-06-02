@@ -321,8 +321,6 @@ void TimeChangeUi::update(const std::string& name, const ros::Time& time, double
       setTemperatureData(*graph->second);
     if (name == "dart_status")
       setDartStatusData(*graph->second);
-    if (name == "ore" && data_.referee_.referee_data_.game_status_.game_type_ == 4)
-      setOreRemindData(*graph->second);
     graph->second->display(time);
   }
 }
@@ -332,11 +330,11 @@ void TimeChangeUi::setOreRemindData(Graph& graph)
   char data_str[30] = { ' ' };
   int time = data_.referee_.referee_data_.game_status_.stage_remain_time_;
   if (time < 420 && time > 417)
-    sprintf(data_str, "Ore will release after 15s");
+    sprintf(data_str, "Ore will released after 15s");
   else if (time < 272 && time > 269)
-    sprintf(data_str, "Ore will release after 30s");
+    sprintf(data_str, "Ore will released after 30s");
   else if (time < 252 && time > 249)
-    sprintf(data_str, "Ore will release after 10s");
+    sprintf(data_str, "Ore will released after 10s");
   else
     return;
   graph.setContent(data_str);
