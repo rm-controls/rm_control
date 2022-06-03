@@ -54,7 +54,6 @@
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
 #include "rm_common/decision/power_limit.h"
-#include "rm_common/decision/target_cost_function.h"
 #include "rm_common/linear_interpolation.h"
 
 namespace rm_common
@@ -233,12 +232,8 @@ public:
       ROS_ERROR("Track timeout no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("eject_sensitivity", eject_sensitivity_))
       eject_sensitivity_ = 1.;
-    cost_function_ = new TargetCostFunction(nh, referee_data);
   }
-  ~GimbalCommandSender()
-  {
-    delete cost_function_;
-  };
+  ~GimbalCommandSender() = default;
   void setRate(double scale_yaw, double scale_pitch)
   {
     msg_.rate_yaw = scale_yaw * max_yaw_rate_;
@@ -258,16 +253,6 @@ public:
   {
     msg_.bullet_speed = bullet_speed;
   }
-  void updateCost(const rm_msgs::TrackDataArray& track_data_array)
-  {
-    double cost = cost_function_->costFunction(track_data_array);
-    if (!track_data_array.tracks.empty())
-      last_track_ = ros::Time::now();
-    if (cost == 1e9 && (ros::Time::now() - last_track_).toSec() > track_timeout_)
-      setMode(rm_msgs::GimbalCmd::RATE);
-    else
-      setMode(rm_msgs::GimbalCmd::TRACK);
-  }
   void setEject(bool flag)
   {
     eject_flag_ = flag;
@@ -278,7 +263,6 @@ public:
   }
 
 private:
-  TargetCostFunction* cost_function_;
   ros::Time last_track_;
   double max_yaw_rate_{}, max_pitch_vel_{}, track_timeout_{}, eject_sensitivity_ = 1.;
   bool eject_flag_{};
