@@ -15,7 +15,8 @@ struct GpioData
 {
   std::string name;
   std::string type;
-  bool value;
+  int pin;
+  bool* value;
 };
 
 class GpioMangager
@@ -23,18 +24,11 @@ class GpioMangager
 public:
   explicit GpioMangager();
   ~GpioMangager();
-  void writeOutput();
-  void readInput();
-  void addInIo(int pin);
-  void addOutIo(int pin);
-  void ioDirectionSet(const std::string& pin, bool IS_OUT);
-  std::map<std::string, int> map_name2pin_;
-  std::map<int, int> map_outputio_;
-  std::map<int, int> map_inputio_;
+
+  void setGpioDirection(GpioData gpioData);
+  void readGpio();
+  void writeGpio();
+
   std::vector<GpioData> gpio_state_values;
   std::vector<GpioData> gpio_command_values;
-
-private:
-  std::string pin_;
-  struct pollfd fds[20]{};
 };

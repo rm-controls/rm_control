@@ -27,7 +27,7 @@ public:
   {
     return type_;
   }
-  int getValue() const
+  bool getValue() const
   {
     assert(value_);
     return *value_;
@@ -54,7 +54,7 @@ public:
   {
     return name_;
   }
-  int getCommand() const
+  bool getCommand() const
   {
     assert(cmd_);
     return *cmd_;

@@ -144,7 +144,7 @@ void RmRobotHW::read(const ros::Time& time, const ros::Duration& period)
   for (auto effort_joint_handle : effort_joint_handles_)
     effort_joint_handle.setCommand(0.);
   // Gpio read
-  gpio_manager_.readInput();
+  gpio_manager_.readGpio();
 }
 
 void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
@@ -171,7 +171,7 @@ void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
   for (auto& bus : can_buses_)
     bus->write();
   // Gpio write
-  gpio_manager_.writeOutput();
+  gpio_manager_.writeGpio();
   publishActuatorState(time);
 }
 

@@ -433,53 +433,23 @@ bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& 
   {
     if (it->second.hasMember("pin"))
     {
-      gpio_manager_.map_name2pin_.insert(std::make_pair(it->first, gpio_datas[it->first]["pin"]));
-      if (it->second.hasMember("direction"))
+      GpioData gpio_data;
+      gpio_data.name = it->first;
+      gpio_data.type = std::string(gpio_datas[it->first]["direction"]);
+      gpio_data.pin = gpio_datas[it->first]["pin"];
+      gpio_data.value = new bool(false);
+      gpio_manager_.setGpioDirection(gpio_data);
+      gpio_manager_.gpio_state_values.push_back(gpio_data);
+      rm_control::GpioStateHandle gpio_state_handle(it->first, gpio_data.type,
+                                                    gpio_manager_.gpio_state_values.back().value);
+      gpio_state_interface_.registerHandle(gpio_state_handle);
+
+      if (gpio_data.type == "out")
       {
-        std::string direction = gpio_datas[it->first]["direction"];
-        std::string::size_type idx;
-        idx = direction.find("out");
-        if (idx == std::string::npos)
-        {
-          idx = direction.find("in");
-          if (idx == std::string::npos)
-            ROS_ERROR("Module %s hasn't set direction.", it->first.data());
-          else
-          {
-            gpio_manager_.addInIo(gpio_datas[it->first]["pin"]);
-            GpioData gpio_data;
-            gpio_data.name = it->first;
-            gpio_data.type = direction;
-            gpio_manager_.gpio_state_values.push_back(gpio_data);
-            rm_control::GpioStateHandle gpio_state_handle(it->first, direction,
-                                                          &gpio_manager_.gpio_state_values.back().value);
-            gpio_state_interface_.registerHandle(gpio_state_handle);
-          }
-        }
-        else
-        {
-          // direction == out
-          gpio_manager_.addOutIo(gpio_datas[it->first]["pin"]);
-          GpioData gpio_data;
-          ROS_INFO("get gpio****");
-          gpio_data.name = it->first;
-          gpio_data.type = direction;
-          gpio_data.value = false;
-          gpio_manager_.gpio_state_values.push_back(gpio_data);
-          rm_control::GpioStateHandle gpio_state_handle(it->first, direction,
-                                                        &gpio_manager_.gpio_state_values.back().value);
-          gpio_state_interface_.registerHandle(gpio_state_handle);
-          ROS_INFO("registerHandle state_handle");
-          gpio_manager_.gpio_command_values.push_back(gpio_data);
-          rm_control::GpioCommandHandle gpio_command_handle(it->first, direction,
-                                                            &gpio_manager_.gpio_command_values.back().value);
-          gpio_command_interface_.registerHandle(gpio_command_handle);
-          ROS_INFO("registerHandle command_handle");
-        }
-      }
-      else
-      {
-        ROS_ERROR("Module %s hasn't set direction.", it->first.data());
+        gpio_manager_.gpio_command_values.push_back(gpio_data);
+        rm_control::GpioCommandHandle gpio_command_handle(it->first, gpio_data.type,
+                                                          gpio_manager_.gpio_command_values.back().value);
+        gpio_command_interface_.registerHandle(gpio_command_handle);
       }
     }
     else
