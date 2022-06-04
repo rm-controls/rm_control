@@ -252,10 +252,26 @@ void FlashUi::update(const std::string& name, const ros::Time& time, bool state)
   }
   else
   {
+    if (name == "aux")
+      updateChassisGimbalDate(data_.joint_state_.position[8], graph->second);
     if (state)
       graph->second->setOperation(rm_common::GraphOperation::DELETE);
     graph->second->display(time, !state);
   }
+}
+
+void FlashUi::updateChassisGimbalDate(const double yaw_joint_, Graph* graph)
+{
+  double cover_yaw_joint_ = yaw_joint_;
+  while (abs(cover_yaw_joint_) > 2 * M_PI)
+  {
+    cover_yaw_joint_ += cover_yaw_joint_ > 0 ? -2 * M_PI : 2 * M_PI;
+  }
+  graph->setStartX(960 - 50 * sin(cover_yaw_joint_));
+  graph->setStartY(540 + 50 * cos(cover_yaw_joint_));
+
+  graph->setEndX(960 - 100 * sin(cover_yaw_joint_));
+  graph->setEndY(540 + 100 * cos(cover_yaw_joint_));
 }
 
 void FlashUi::updateArmorPosition(const std::string& name, Graph* graph)

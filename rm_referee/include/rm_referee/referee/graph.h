@@ -32,6 +32,14 @@ public:
   {
     content_ = content;
   }
+  void setEndX(int end_x)
+  {
+    config_.end_x_ = end_x;
+  }
+  void setEndY(int end_y)
+  {
+    config_.end_y_ = end_y;
+  }
   void setStartX(int start_x)
   {
     config_.start_x_ = start_x;

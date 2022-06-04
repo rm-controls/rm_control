@@ -27,6 +27,7 @@ void HeroReferee::drawUi(const ros::Time& time)
                                  data_.detection_status_data_.color == rm_msgs::StatusChangeRequest::RED);
     trigger_change_ui_->update("exposure", data_.detection_status_data_.exposure, false);
     fixed_ui_->update();
+    //flash_ui_->update("aux", time, false);
   }
 }
 }  // namespace rm_referee

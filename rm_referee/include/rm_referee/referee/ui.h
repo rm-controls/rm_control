@@ -76,6 +76,7 @@ public:
 
 private:
   void updateArmorPosition(const std::string& name, Graph* graph);
+  void updateChassisGimbalDate(const double yaw_joint, Graph* graph);
   static uint8_t getArmorId(const std::string& name);
 };
 
