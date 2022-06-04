@@ -206,6 +206,7 @@ public:
   void sendCommand(const ros::Time& time) override
   {
     msg_.power_limit = power_limit_->getLimitPower();
+    msg_.power_limit_state = power_limit_->getState();
     msg_.accel.linear.x = accel_x_.output(msg_.power_limit);
     msg_.accel.linear.y = accel_y_.output(msg_.power_limit);
     msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
