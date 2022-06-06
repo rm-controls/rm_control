@@ -11,10 +11,16 @@
 #include <ros/ros.h>
 #include <string>
 
+enum GpioType
+{
+  GPIO_INPUT,
+  GPIO_OUTPUT
+};
+
 struct GpioData
 {
   std::string name;
-  std::string type;
+  GpioType type;
   int pin;
   bool* value;
 };

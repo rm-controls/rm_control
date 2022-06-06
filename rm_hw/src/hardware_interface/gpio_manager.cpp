@@ -3,7 +3,6 @@
 //
 
 #include <rm_hw/hardware_interface/gpio_manager.h>
-#include <errno.h>
 
 GpioMangager::GpioMangager()
 {
@@ -23,7 +22,7 @@ void GpioMangager::setGpioDirection(GpioData gpioData)
   }
   else
   {
-    if (gpioData.type == "out")
+    if (gpioData.type == GPIO_OUTPUT)
     {
       if (write(fd, "out", 3) != 3)
       {
@@ -45,7 +44,7 @@ void GpioMangager::readGpio()
 {
   for (auto iter = gpio_state_values.begin(); iter != gpio_state_values.end(); iter++)
   {
-    if (iter->type == "in")
+    if (iter->type == GPIO_INPUT)
     {
       std::string file = "/sys/class/gpio/gpio" + std::to_string(iter->pin) + "/value";
       FILE* fp = fopen(file.c_str(), "r");
