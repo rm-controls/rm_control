@@ -1,0 +1,46 @@
+rm_referee:
+  robot_type: hero
+  ui:
+    trigger_change:
+      - name: "chassis"
+        config: { start_position: [ 400, 750 ], size: 15, width: 2, title: "chassis: " }
+      - name: "target"
+        config: { start_position: [ 400, 700 ], size: 15, width: 2, title: "target:  " }
+      - name: "exposure"
+        config: { start_position: [ 400, 650 ], size: 15, width: 2, title: "exposure:" }
+    time_change:
+      - name: "capacitor"
+        config: { start_position: [ 900, 100 ], size: 15, width: 2, delay: 0.5 }
+    fixed:
+      - name: "2m"
+        config: { type: "line", width: 2, color: "yellow",
+                  start_position: [ 925, 435 ], end_position: [ 995, 435 ] }
+      - name: "3m"
+        config: { type: "line", width: 2, color: "yellow",
+                  start_position: [ 935, 420 ], end_position: [ 985, 420 ] }
+      - name: "5m"
+        config: { type: "line", width: 2, color: "yellow",
+                  start_position: [ 948, 400 ], end_position: [ 972, 400 ] }
+      - name: "mid"
+        config: { type: "line", width: 2, color: "yellow",
+                  start_position: [ 960, 400 ], end_position: [ 960, 540 ] }
+    flash:
+      - name: "spin"
+        config: { start_position: [ 850, 750 ], size: 20, width: 2,
+                  color: "yellow", content: "please spin!!", delay: 1.0 }
+      - name: "cover"
+        config: { start_position: [ 830, 700 ], size: 25, width: 2,
+                  color: "green", content: "cover open!!", delay: 0.8 }
+      - name: "ore"
+        config: { start_position: [ 960, 720 ], size: 15, width: 2,
+                  color: "yellow", content: "Ore will released after 10s", delay: 0.4 }
+      - name: "armor0"
+        config: { type: "circle", width: 3, radius: 50, color: "yellow", delay: 0.75 }
+      - name: "armor1"
+        config: { type: "circle", width: 3, radius: 50, color: "yellow", delay: 0.75 }
+      - name: "armor2"
+        config: { type: "circle", width: 3, radius: 50, color: "yellow", delay: 0.75 }
+      - name: "armor3"
+        config: { type: "circle", width: 3, radius: 50, color: "yellow", delay: 0.75 }
+      - name: "aux"
+        config: { type: "line", width: 2, color: "cyan", delay: 0.1 }
