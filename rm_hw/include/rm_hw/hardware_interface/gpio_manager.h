@@ -12,6 +12,8 @@
 #include <string>
 #include <rm_common/hardware_interface/gpio_interface.h>
 
+namespace rm_hw
+{
 class GpioMangager
 {
 public:
@@ -25,3 +27,4 @@ public:
   std::vector<rm_control::GpioData> gpio_state_values;
   std::vector<rm_control::GpioData> gpio_command_values;
 };
+}  // namespace rm_hw

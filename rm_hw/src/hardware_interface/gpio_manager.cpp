@@ -4,6 +4,8 @@
 
 #include <rm_hw/hardware_interface/gpio_manager.h>
 
+namespace rm_hw
+{
 GpioMangager::GpioMangager()
 {
 }
@@ -95,3 +97,4 @@ void GpioMangager::writeGpio()
     close(fd);
   }
 }
+}  // namespace rm_hw
