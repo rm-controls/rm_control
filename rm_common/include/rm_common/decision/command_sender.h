@@ -402,6 +402,44 @@ private:
   double on_pos_{}, off_pos_{};
 };
 
+class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
+{
+public:
+  explicit CardCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
+  {
+    ROS_ASSERT(nh.getParam("long_pos", long_pos_) && nh.getParam("short_pos", short_pos_) &&
+               nh.getParam("off_pos", off_pos_));
+  }
+  void long_off()
+  {
+    msg_.data = long_pos_;
+    state = true;
+  }
+  void short_on()
+  {
+    msg_.data = short_pos_;
+    state = true;
+  }
+  void off()
+  {
+    msg_.data = off_pos_;
+    state = false;
+  }
+  bool getState() const
+  {
+    return state;
+  }
+  void sendCommand(const ros::Time& time) override
+  {
+    CommandSenderBase<std_msgs::Float64>::sendCommand(time);
+  }
+  void setZero() override{};
+
+private:
+  bool state{};
+  double long_pos_{}, short_pos_{}, off_pos_{};
+};
+
 class JointJogCommandSender : public CommandSenderBase<std_msgs::Float64>
 {
 public:
