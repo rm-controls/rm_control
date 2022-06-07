@@ -10,25 +10,21 @@
 #include <poll.h>
 #include <ros/ros.h>
 #include <string>
+#include <rm_common/hardware_interface/gpio_interface.h>
 
-struct GpioData
+namespace rm_hw
 {
-  std::string name;
-  std::string type;
-  int pin;
-  bool* value;
-};
-
 class GpioMangager
 {
 public:
   explicit GpioMangager();
   ~GpioMangager();
 
-  void setGpioDirection(GpioData gpioData);
+  void setGpioDirection(rm_control::GpioData gpioData);
   void readGpio();
   void writeGpio();
 
-  std::vector<GpioData> gpio_state_values;
-  std::vector<GpioData> gpio_command_values;
+  std::vector<rm_control::GpioData> gpio_state_values;
+  std::vector<rm_control::GpioData> gpio_command_values;
 };
+}  // namespace rm_hw

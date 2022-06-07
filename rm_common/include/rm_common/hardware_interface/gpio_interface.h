@@ -8,12 +8,25 @@
 
 namespace rm_control
 {
+enum GpioType
+{
+  INPUT,
+  OUTPUT
+};
+
+struct GpioData
+{
+  std::string name;
+  GpioType type;
+  int pin;
+  bool* value;
+};
+
 class GpioStateHandle
 {
 public:
   GpioStateHandle() = default;
-  GpioStateHandle(std::string name, std::string type, bool* value)
-    : name_(std::move(name)), type_(std::move(type)), value_(value)
+  GpioStateHandle(std::string name, GpioType type, bool* value) : name_(std::move(name)), type_(type), value_(value)
   {
     if (!value)
       throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
@@ -23,7 +36,7 @@ public:
   {
     return name_;
   }
-  std::string getType() const
+  GpioType getType() const
   {
     return type_;
   }
@@ -35,7 +48,7 @@ public:
 
 private:
   std::string name_;
-  std::string type_;
+  GpioType type_;
   bool* value_ = { nullptr };
 };
 
@@ -43,8 +56,7 @@ class GpioCommandHandle
 {
 public:
   GpioCommandHandle() = default;
-  GpioCommandHandle(std::string name, std::string type, bool* cmd)
-    : name_(std::move(name)), type_(std::move(type)), cmd_(cmd)
+  GpioCommandHandle(std::string name, GpioType type, bool* cmd) : name_(std::move(name)), type_(type), cmd_(cmd)
   {
     if (!cmd)
       throw hardware_interface::HardwareInterfaceException("Cannot create handle '" + name +
@@ -68,7 +80,7 @@ public:
 
 private:
   std::string name_;
-  std::string type_;
+  GpioType type_;
   bool* cmd_ = { nullptr };
 };
 
