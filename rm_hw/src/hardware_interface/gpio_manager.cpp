@@ -11,7 +11,7 @@ GpioMangager::GpioMangager()
 GpioMangager::~GpioMangager()
 {
 }
-void GpioMangager::setGpioDirection(GpioData gpioData)
+void GpioMangager::setGpioDirection(rm_control::GpioData gpioData)
 {
   std::string file = "/sys/class/gpio/gpio" + std::to_string(gpioData.pin) + "/direction";
   int fd;
@@ -22,7 +22,7 @@ void GpioMangager::setGpioDirection(GpioData gpioData)
   }
   else
   {
-    if (gpioData.type == GPIO_OUTPUT)
+    if (gpioData.type == rm_control::OUTPUT)
     {
       if (write(fd, "out", 3) != 3)
       {
@@ -44,7 +44,7 @@ void GpioMangager::readGpio()
 {
   for (auto iter = gpio_state_values.begin(); iter != gpio_state_values.end(); iter++)
   {
-    if (iter->type == GPIO_INPUT)
+    if (iter->type == rm_control::INPUT)
     {
       std::string file = "/sys/class/gpio/gpio" + std::to_string(iter->pin) + "/value";
       FILE* fp = fopen(file.c_str(), "r");

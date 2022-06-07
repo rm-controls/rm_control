@@ -5,10 +5,23 @@
 #pragma once
 
 #include <hardware_interface/internal/hardware_resource_manager.h>
-#include <rm_hw/hardware_interface/gpio_manager.h>
 
 namespace rm_control
 {
+enum GpioType
+{
+  INPUT,
+  OUTPUT
+};
+
+struct GpioData
+{
+  std::string name;
+  GpioType type;
+  int pin;
+  bool* value;
+};
+
 class GpioStateHandle
 {
 public:

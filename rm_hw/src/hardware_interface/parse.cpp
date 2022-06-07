@@ -450,15 +450,15 @@ bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& 
   {
     if (it->second.hasMember("pin"))
     {
-      GpioData gpio_data;
+      rm_control::GpioData gpio_data;
       gpio_data.name = it->first;
       if (std::string(gpio_datas[it->first]["direction"]) == "in")
       {
-        gpio_data.type = GPIO_INPUT;
+        gpio_data.type = rm_control::INPUT;
       }
       else if (std::string(gpio_datas[it->first]["direction"]) == "out")
       {
-        gpio_data.type = GPIO_OUTPUT;
+        gpio_data.type = rm_control::OUTPUT;
       }
       else
       {
@@ -473,7 +473,7 @@ bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& 
                                                     gpio_manager_.gpio_state_values.back().value);
       gpio_state_interface_.registerHandle(gpio_state_handle);
 
-      if (gpio_data.type == GPIO_OUTPUT)
+      if (gpio_data.type == rm_control::OUTPUT)
       {
         gpio_manager_.gpio_command_values.push_back(gpio_data);
         rm_control::GpioCommandHandle gpio_command_handle(it->first, gpio_data.type,
