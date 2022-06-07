@@ -41,10 +41,54 @@
 
 namespace rm_common
 {
-struct CalibrationService
+class CalibrationService
 {
-  std::string start_controller, stop_controller;
-  QueryCalibrationServiceCaller* query_services;
+public:
+  CalibrationService(XmlRpc::XmlRpcValue& rpc_value, ros::NodeHandle& nh)
+  {
+    ROS_ASSERT(rpc_value.hasMember("start_controllers"));
+    ROS_ASSERT(rpc_value.hasMember("stop_controllers"));
+    ROS_ASSERT(rpc_value.hasMember("services_name"));
+    ROS_ASSERT(rpc_value["start_controllers"].getType() == XmlRpc::XmlRpcValue::TypeArray);
+    ROS_ASSERT(rpc_value["stop_controllers"].getType() == XmlRpc::XmlRpcValue::TypeArray);
+    ROS_ASSERT(rpc_value["services_name"].getType() == XmlRpc::XmlRpcValue::TypeArray);
+    start_controllers = getControllersName(rpc_value["start_controllers"]);
+    stop_controllers = getControllersName(rpc_value["stop_controllers"]);
+    for (int i = 0; i < rpc_value["services_name"].size(); ++i)
+    {
+      query_services.push_back(new QueryCalibrationServiceCaller(nh, rpc_value["services_name"][i]));
+    }
+  }
+  void setCalibratedFalse()
+  {
+    for (auto& service : query_services)
+      service->getService().response.is_calibrated = false;
+  }
+  bool isCalibrated()
+  {
+    bool is_calibrated = true;
+    for (auto& service : query_services)
+      is_calibrated &= service->isCalibrated();
+    return is_calibrated;
+  }
+  void callService()
+  {
+    for (auto& service : query_services)
+      service->callService();
+  }
+  std::vector<std::string> start_controllers, stop_controllers;
+  std::vector<QueryCalibrationServiceCaller*> query_services;
+
+private:
+  std::vector<std::string> getControllersName(XmlRpc::XmlRpcValue& rpc_value)
+  {
+    std::vector<std::string> controllers;
+    for (int i = 0; i < rpc_value.size(); ++i)
+    {
+      controllers.push_back(rpc_value[i]);
+    }
+    return controllers;
+  }
 };
 
 class CalibrationQueue
@@ -60,14 +104,7 @@ public:
     if (use_sim_time || rpc_value.getType() != XmlRpc::XmlRpcValue::TypeArray)
       return;
     for (int i = 0; i < rpc_value.size(); ++i)
-    {
-      ROS_ASSERT(rpc_value[i].hasMember("start_controller"));
-      ROS_ASSERT(rpc_value[i].hasMember("stop_controller"));
-      calibration_services_.push_back(
-          CalibrationService{ .start_controller = rpc_value[i]["start_controller"],
-                              .stop_controller = rpc_value[i]["stop_controller"],
-                              .query_services = new QueryCalibrationServiceCaller(rpc_value[i], nh) });
-    }
+      calibration_services_.push_back(CalibrationService(rpc_value[i], nh));
     last_query_ = ros::Time::now();
     calibration_itr_ = calibration_services_.end();
     // Start with calibrated, you should use reset() to start calibration.
@@ -79,7 +116,7 @@ public:
     calibration_itr_ = calibration_services_.begin();
     switched_ = false;
     for (auto service : calibration_services_)
-      service.query_services->getService().response.is_calibrated = false;
+      service.setCalibratedFalse();
   }
   void update(const ros::Time& time, bool flip_controllers)
   {
@@ -89,18 +126,18 @@ public:
       return;
     if (switched_)
     {
-      if (calibration_itr_->query_services->isCalibrated())
+      if (calibration_itr_->isCalibrated())
       {
         if (flip_controllers)
-          controller_manager_.startController(calibration_itr_->stop_controller);
-        controller_manager_.stopController(calibration_itr_->start_controller);
+          controller_manager_.startControllers(calibration_itr_->stop_controllers);
+        controller_manager_.stopControllers(calibration_itr_->start_controllers);
         calibration_itr_++;
         switched_ = false;
       }
       else if ((time - last_query_).toSec() > .2)
       {
         last_query_ = time;
-        calibration_itr_->query_services->callService();
+        calibration_itr_->callService();
       }
     }
     else
@@ -109,8 +146,8 @@ public:
       switched_ = true;
       if (calibration_itr_ != calibration_services_.end())
       {
-        controller_manager_.startController(calibration_itr_->start_controller);
-        controller_manager_.stopController(calibration_itr_->stop_controller);
+        controller_manager_.startControllers(calibration_itr_->start_controllers);
+        controller_manager_.stopControllers(calibration_itr_->stop_controllers);
       }
     }
   }
@@ -127,7 +164,7 @@ public:
     if (calibration_services_.empty())
       return;
     if (calibration_itr_ != calibration_services_.end() && switched_)
-      controller_manager_.stopController(calibration_itr_->stop_controller);
+      controller_manager_.stopControllers(calibration_itr_->stop_controllers);
   }
   void stop()
   {
