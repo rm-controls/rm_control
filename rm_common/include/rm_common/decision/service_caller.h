@@ -63,6 +63,11 @@ public:
     }
     client_ = nh.serviceClient<ServiceType>(service_name_);
   }
+  ServiceCallerBase(ros::NodeHandle& nh, std::string& service_name) : fail_count_(0), fail_limit_(0)
+  {
+    service_name_ = service_name;
+    client_ = nh.serviceClient<ServiceType>(service_name_);
+  }
   ServiceCallerBase(XmlRpc::XmlRpcValue& controllers, ros::NodeHandle& nh, const std::string& service_name = "")
     : fail_count_(0), fail_limit_(0)
   {
@@ -158,6 +163,10 @@ class QueryCalibrationServiceCaller : public ServiceCallerBase<control_msgs::Que
 public:
   explicit QueryCalibrationServiceCaller(ros::NodeHandle& nh)
     : ServiceCallerBase<control_msgs::QueryCalibrationState>(nh)
+  {
+  }
+  QueryCalibrationServiceCaller(ros::NodeHandle& nh, std::string& service_name)
+    : ServiceCallerBase<control_msgs::QueryCalibrationState>(nh, service_name)
   {
   }
   QueryCalibrationServiceCaller(XmlRpc::XmlRpcValue& controllers, ros::NodeHandle& nh)
