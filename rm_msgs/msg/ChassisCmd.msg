@@ -7,4 +7,5 @@ uint8 mode
 geometry_msgs/Accel accel
 float64 power_limit
 string follow_source_frame
+string command_source_frame
 time stamp

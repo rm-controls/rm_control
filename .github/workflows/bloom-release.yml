@@ -6,6 +6,7 @@ on:
       - '*/package.xml'
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   bloom-release:

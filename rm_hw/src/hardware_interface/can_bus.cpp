@@ -42,7 +42,7 @@
 
 namespace rm_hw
 {
-CanBus::CanBus(const std::string& bus_name, CanDataPtr data_ptr) : data_ptr_(data_ptr), bus_name_(bus_name)
+CanBus::CanBus(const std::string& bus_name, CanDataPtr data_ptr) : bus_name_(bus_name), data_ptr_(data_ptr)
 {
   // Initialize device at can_device, false for no loop back.
   while (!socket_can_.open(bus_name, boost::bind(&CanBus::frameCallback, this, _1)) && ros::ok())
@@ -218,9 +218,12 @@ void CanBus::read(ros::Time time)
     {
       ImuData& imu_data = data_ptr_.id2imu_data_->find(frame.can_id)->second;
       imu_data.gyro_updated = true;
-      imu_data.angular_vel[0] = ((int16_t)((frame.data[1]) << 8) | frame.data[0]) * imu_data.angular_vel_coeff;
-      imu_data.angular_vel[1] = ((int16_t)((frame.data[3]) << 8) | frame.data[2]) * imu_data.angular_vel_coeff;
-      imu_data.angular_vel[2] = ((int16_t)((frame.data[5]) << 8) | frame.data[4]) * imu_data.angular_vel_coeff;
+      imu_data.angular_vel[0] = (((int16_t)((frame.data[1]) << 8) | frame.data[0]) * imu_data.angular_vel_coeff) +
+                                imu_data.angular_vel_offset[0];
+      imu_data.angular_vel[1] = (((int16_t)((frame.data[3]) << 8) | frame.data[2]) * imu_data.angular_vel_coeff) +
+                                imu_data.angular_vel_offset[1];
+      imu_data.angular_vel[2] = (((int16_t)((frame.data[5]) << 8) | frame.data[4]) * imu_data.angular_vel_coeff) +
+                                imu_data.angular_vel_offset[2];
       int16_t temp = (int16_t)((frame.data[6] << 3) | (frame.data[7] >> 5));
       if (temp > 1023)
         temp -= 2048;
@@ -234,7 +237,19 @@ void CanBus::read(ros::Time time)
       imu_data.linear_acc[0] = ((int16_t)((frame.data[1]) << 8) | frame.data[0]) * imu_data.accel_coeff;
       imu_data.linear_acc[1] = ((int16_t)((frame.data[3]) << 8) | frame.data[2]) * imu_data.accel_coeff;
       imu_data.linear_acc[2] = ((int16_t)((frame.data[5]) << 8) | frame.data[4]) * imu_data.accel_coeff;
-      imu_data.camera_trigger = frame.data[6];
+      imu_data.camera_trigger = frame.data[6] & 1;
+      imu_data.enabled_trigger = frame.data[6] & 2;
+      imu_data.imu_filter->update(frame_stamp.stamp, imu_data.linear_acc, imu_data.angular_vel, imu_data.ori,
+                                  imu_data.linear_acc_cov, imu_data.angular_vel_cov, imu_data.ori_cov,
+                                  imu_data.temperature, imu_data.camera_trigger && imu_data.enabled_trigger);
+      continue;
+    }
+    else if (data_ptr_.id2tof_data_->find(frame.can_id) != data_ptr_.id2tof_data_->end())
+    {
+      TofData& tof_data = data_ptr_.id2tof_data_->find(frame.can_id)->second;
+      tof_data.distance = (((frame.data[2]) << 16) | (frame.data[1] << 8) | frame.data[0]) / 1000.;
+      tof_data.dis_status = frame.data[3];
+      tof_data.signal_strength = ((int16_t)((frame.data[5]) << 8) | frame.data[4]);
       continue;
     }
     else if (data_ptr_.id2tf_data_->find(frame.can_id) != data_ptr_.id2tf_data_->end())
@@ -248,6 +263,11 @@ void CanBus::read(ros::Time time)
                                                                   << " on bus: " << bus_name_);
   }
   read_buffer_.clear();
+}
+
+void CanBus::write(can_frame* frame)
+{
+  socket_can_.write(frame);
 }
 
 void CanBus::frameCallback(const can_frame& frame)

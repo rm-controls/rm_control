@@ -1,5 +1,4 @@
+std_msgs/Header header
 uint8 id
-time stamp
-bool is_gyro
-geometry_msgs/Point camera2detection
-geometry_msgs/Vector3 detection_vel
+geometry_msgs/Point target_pos
+geometry_msgs/Vector3 target_vel

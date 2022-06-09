@@ -39,6 +39,7 @@
 
 #include <string>
 #include <rm_common/filters/lp_filter.h>
+#include <rm_common/filters/imu_filter_base.h>
 #include <unordered_map>
 
 namespace rm_hw
@@ -71,11 +72,22 @@ struct ActData
 
 struct ImuData
 {
+  std::string imu_name;
   double ori[4];
   double angular_vel[3], linear_acc[3];
+  double angular_vel_offset[3];
   double ori_cov[9], angular_vel_cov[9], linear_acc_cov[9];
   double temperature, angular_vel_coeff, accel_coeff, temp_coeff, temp_offset;
   bool accel_updated, gyro_updated, camera_trigger;
+  bool enabled_trigger;
+  rm_common::ImuFilterBase* imu_filter;
+};
+
+struct TofData
+{
+  double distance;
+  int dis_status;
+  double signal_strength;
 };
 
 struct TfData
@@ -90,5 +102,6 @@ struct CanDataPtr
   std::unordered_map<int, ActData>* id2act_data_;
   std::unordered_map<int, ImuData>* id2imu_data_;
   std::unordered_map<int, TfData>* id2tf_data_;
+  std::unordered_map<int, TofData>* id2tof_data_;
 };
 }  // namespace rm_hw

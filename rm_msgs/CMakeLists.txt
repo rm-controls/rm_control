@@ -24,12 +24,16 @@ add_message_files(
         MovingAverageData.msg
         SuperCapacitor.msg
         TfRadarData.msg
+        TofSensor.msg
+        GpioData.msg
 )
 
 add_service_files(
         FILES
         ContinousDetectorSwitch.srv
         StatusChange.srv
+        CameraStatus.srv
+        EnableImuTrigger.srv
 )
 
 add_message_files(
@@ -38,7 +42,6 @@ add_message_files(
         TargetDetection.msg
         TargetDetectionArray.msg
         TrackData.msg
-        TrackDataArray.msg
 )
 
 add_action_files(

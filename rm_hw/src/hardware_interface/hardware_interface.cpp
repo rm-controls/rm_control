@@ -62,6 +62,13 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
   if (!robot_hw_nh.getParam("tf_radars", xml_rpc_value))
     ROS_WARN("No tf_radars specified");
   else if (!parseTfData(xml_rpc_value, robot_hw_nh))
+  if (!robot_hw_nh.getParam("tofs", xml_rpc_value))
+    ROS_WARN("No tof specified");
+  else if (!parseTofData(xml_rpc_value, robot_hw_nh))
+    return false;
+  if (!robot_hw_nh.getParam("gpios", xml_rpc_value))
+    ROS_WARN("No gpio specified");
+  else if (!parseGpioData(xml_rpc_value, robot_hw_nh))
     return false;
   // CAN Bus
   if (!robot_hw_nh.getParam("bus", xml_rpc_value))
@@ -77,6 +84,7 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
                                                               .id2act_data_ = &bus_id2act_data_[bus_name],
                                                               .id2imu_data_ = &bus_id2imu_data_[bus_name],
                                                               .id2tf_data_ = &bus_id2tf_data_[bus_name] }));
+                                                              .id2tof_data_ = &bus_id2tof_data_[bus_name] }));
       else
         ROS_ERROR_STREAM("Unknown bus: " << bus_name);
     }
@@ -102,9 +110,13 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 
   // Other Interface
   registerInterface(&robot_state_interface_);
+  registerInterface(&gpio_state_interface_);
+  registerInterface(&gpio_command_interface_);
 
   actuator_state_pub_.reset(
       new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_states", 100));
+
+  service_server_ = robot_hw_nh.advertiseService("enable_imu_trigger", &RmRobotHW::enableImuTrigger, this);
   return true;
 }
 
@@ -135,6 +147,8 @@ void RmRobotHW::read(const ros::Time& time, const ros::Duration& period)
   // Set all cmd to zero to avoid crazy soft limit oscillation when not controller loaded
   for (auto effort_joint_handle : effort_joint_handles_)
     effort_joint_handle.setCommand(0.);
+  // Gpio read
+  gpio_manager_.readGpio();
 }
 
 void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
@@ -160,6 +174,8 @@ void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
   }
   for (auto& bus : can_buses_)
     bus->write();
+  // Gpio write
+  gpio_manager_.writeGpio();
   publishActuatorState(time);
 }
 
@@ -203,4 +219,32 @@ void RmRobotHW::publishActuatorState(const ros::Time& time)
     }
   }
 }
+bool RmRobotHW::enableImuTrigger(rm_msgs::EnableImuTrigger::Request& req, rm_msgs::EnableImuTrigger::Response& res)
+{
+  for (const auto& it_1 : bus_id2imu_data_)
+  {
+    for (const auto& it_2 : it_1.second)
+    {
+      if (it_2.second.imu_name == req.imu_name)
+      {
+        can_frame frame{};
+        frame.can_id = (canid_t)(it_2.first + 2);
+        frame.can_dlc = 1;
+        frame.data[0] = req.enable_trigger;
+        for (auto& bus : can_buses_)
+        {
+          if (bus->bus_name_ == it_1.first)
+          {
+            bus->write(&frame);
+            res.is_success = true;
+            return true;
+          }
+        }
+      }
+    }
+  }
+  res.is_success = false;
+  return false;
+}
+
 }  // namespace rm_hw
