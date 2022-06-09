@@ -410,7 +410,7 @@ public:
     ROS_ASSERT(nh.getParam("long_pos", long_pos_) && nh.getParam("short_pos", short_pos_) &&
                nh.getParam("off_pos", off_pos_));
   }
-  void long_off()
+  void long_on()
   {
     msg_.data = long_pos_;
     state = true;
