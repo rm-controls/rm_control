@@ -58,6 +58,7 @@
 #include <rm_common/hardware_interface/robot_state_interface.h>
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
 #include <rm_common/hardware_interface/tof_sensor_interface.h>
+#include <rm_common/hardware_interface/tf_radar_interface.h>
 #include <rm_common/hardware_interface/gpio_interface.h>
 #include <rm_msgs/ActuatorState.h>
 #include <rm_msgs/EnableImuTrigger.h>
@@ -148,6 +149,8 @@ private:
   bool loadUrdf(ros::NodeHandle& root_nh);
 
   bool parseTofData(XmlRpc::XmlRpcValue& tof_datas, ros::NodeHandle& robot_hw_nh);
+
+  bool parseTfData(XmlRpc::XmlRpcValue& tf_datas, ros::NodeHandle& robot_hw_nh);
   /** \brief Set up transmission.
    *
    * Set up transmission
@@ -209,6 +212,9 @@ private:
 
   // TOF
   std::unordered_map<std::string, std::unordered_map<int, TofData>> bus_id2tof_data_{};
+
+  // TF radar
+  std::unordered_map<std::string, std::unordered_map<int, TfData>> bus_id2tf_data_{};
 
   ros::Time last_publish_time_;
   std::shared_ptr<realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>> actuator_state_pub_;

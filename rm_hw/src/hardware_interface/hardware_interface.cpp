@@ -63,6 +63,10 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     ROS_WARN("No tof specified");
   else if (!parseTofData(xml_rpc_value, robot_hw_nh))
     return false;
+  if (!robot_hw_nh.getParam("tf_radars", xml_rpc_value))
+    ROS_WARN("No tf_radars specified");
+  else if (!parseTfData(xml_rpc_value, robot_hw_nh))
+    return false;
   if (!robot_hw_nh.getParam("gpios", xml_rpc_value))
     ROS_WARN("No gpio specified");
   else if (!parseGpioData(xml_rpc_value, robot_hw_nh))
@@ -80,7 +84,8 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
         can_buses_.push_back(new CanBus(bus_name, CanDataPtr{ .type2act_coeffs_ = &type2act_coeffs_,
                                                               .id2act_data_ = &bus_id2act_data_[bus_name],
                                                               .id2imu_data_ = &bus_id2imu_data_[bus_name],
-                                                              .id2tof_data_ = &bus_id2tof_data_[bus_name] }));
+                                                              .id2tof_data_ = &bus_id2tof_data_[bus_name],
+                                                              .id2tf_data_ = &bus_id2tf_data_[bus_name] }));
       else
         ROS_ERROR_STREAM("Unknown bus: " << bus_name);
     }

@@ -90,11 +90,18 @@ struct TofData
   double signal_strength;
 };
 
+struct TfData
+{
+  double strength;
+  double distance;
+};
+
 struct CanDataPtr
 {
   std::unordered_map<std::string, ActCoeff>* type2act_coeffs_;
   std::unordered_map<int, ActData>* id2act_data_;
   std::unordered_map<int, ImuData>* id2imu_data_;
   std::unordered_map<int, TofData>* id2tof_data_;
+  std::unordered_map<int, TfData>* id2tf_data_;
 };
 }  // namespace rm_hw
