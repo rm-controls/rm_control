@@ -6,6 +6,7 @@
 #include "rm_referee/hero_referee.h"
 #include "rm_referee/standard_referee.h"
 #include "rm_referee/engineer_referee.h"
+#include "rm_referee/radar_referee.h"
 
 int main(int argc, char** argv)
 {
@@ -20,6 +21,8 @@ int main(int argc, char** argv)
     referee = new rm_referee::HeroReferee(nh);
   else if (robot == "engineer")
     referee = new rm_referee::EngineerReferee(nh);
+  else if (robot == "radar")
+    referee = new rm_referee::RadarReferee(nh);
   else
   {
     ROS_ERROR("no robot type ");

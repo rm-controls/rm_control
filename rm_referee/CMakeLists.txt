@@ -68,7 +68,7 @@ include_directories(
 
 ## Declare cpp executables
 FILE(GLOB ALL_SOURCES "src/*.cpp" "src/common/*.cpp" "src/referee/*.cpp")
-add_executable(${PROJECT_NAME} ${ALL_SOURCES} include/rm_referee/common/referee_base.h include/rm_referee/common/data.h src/main.cpp src/standard_referee.cpp include/rm_referee/standard_referee.h include/rm_referee/engineer_referee.h src/engineer_referee.cpp src/hero_referee.cpp include/rm_referee/hero_referee.h src/common/referee_base.cpp include/rm_referee/robot_referee.h src/robot_referee.cpp)
+add_executable(${PROJECT_NAME} ${ALL_SOURCES} include/rm_referee/common/referee_base.h include/rm_referee/common/data.h src/main.cpp src/standard_referee.cpp include/rm_referee/standard_referee.h include/rm_referee/engineer_referee.h src/engineer_referee.cpp src/hero_referee.cpp include/rm_referee/hero_referee.h src/common/referee_base.cpp include/rm_referee/robot_referee.h src/robot_referee.cpp include/rm_referee/radar_referee.h src/radar_referee.cpp)
 
 ## Add dependencies to exported targets, like ROS msgs or srvs
 add_dependencies(${PROJECT_NAME}

@@ -5,7 +5,6 @@
 #pragma once
 
 #include "rm_referee/common/referee_base.h"
-#include "time.h"
 
 namespace rm_referee
 {
