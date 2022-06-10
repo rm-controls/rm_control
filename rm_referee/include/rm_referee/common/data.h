@@ -10,6 +10,8 @@
 #include <tf2_ros/transform_listener.h>
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/JointState.h>
+#include <std_msgs/Int8MultiArray.h>
+
 #include <rm_msgs/ActuatorState.h>
 #include <rm_msgs/DbusData.h>
 #include <rm_msgs/GimbalDesError.h>
@@ -54,6 +56,9 @@ public:
     calibration_status_sub_ =
         nh.subscribe<rm_msgs::CalibrationStatus>("/calibration_status", 10, &Data::calibrationStatusDataCallback, this);
     engineer_cmd_sub_ = nh.subscribe<rm_msgs::EngineerCmd>("/engineer_cmd", 10, &Data::engineerCmdDataCallback, this);
+    if (referee_.referee_data_.robot_id_ == rm_common::RobotId::RED_RADAR ||
+        referee_.referee_data_.robot_id_ == rm_common::RobotId::BLUE_RADAR)
+      radar_date_sub_ = nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &Data::radarDataCallBack, this);
     // pub
     ros::NodeHandle root_nh;
     referee_.referee_pub_ = root_nh.advertise<rm_msgs::Referee>("/referee", 1);
@@ -115,6 +120,10 @@ public:
   {
     engineer_cmd_data_ = *data;
   }
+  void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
+  {
+    radar_data_ = data->data[0] * 10 + data->data[1];
+  }
   void initSerial()
   {
     serial::Timeout timeout = serial::Timeout::simpleTimeout(50);
@@ -145,7 +154,9 @@ public:
   ros::Subscriber card_cmd_sub_;
   ros::Subscriber calibration_status_sub_;
   ros::Subscriber engineer_cmd_sub_;
+  ros::Subscriber radar_date_sub_;
 
+  uint8_t radar_data_;
   sensor_msgs::JointState joint_state_;
   rm_msgs::ActuatorState actuator_state_;
   rm_msgs::DbusData dbus_data_;

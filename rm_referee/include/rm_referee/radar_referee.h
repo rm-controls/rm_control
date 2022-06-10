@@ -13,15 +13,9 @@ class RadarReferee : public RefereeBase
 {
 public:
   explicit RadarReferee(ros::NodeHandle& nh);
-  void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
-  {
-    radar_data_ = *data;
-  }
   void run() override;
 
 private:
-  std_msgs::Int8MultiArray radar_data_;
-  ros::Subscriber radar_date_sub_;
   std::vector<int> red_receiver = {
     1,  // hero
     2,  // engineer

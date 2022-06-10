@@ -1,4 +1,2 @@
 rm_referee:
   robot_type: radar
-  blue_receiver:
-    -

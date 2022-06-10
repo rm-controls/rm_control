@@ -9,10 +9,14 @@ namespace rm_referee
 RadarReferee::RadarReferee(ros::NodeHandle& nh) : RefereeBase(nh)
 {
   ros::NodeHandle ui_nh(nh, "radar");
-  radar_date_sub_ = nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RadarReferee::radarDataCallBack, this);
 }
 void RadarReferee::run()
 {
   RefereeBase::run();
+  for (int target :
+       data_.referee_.referee_data_.robot_id_ == rm_common::RobotId::RED_RADAR ? red_receiver : blue_receiver)
+  {
+    data_.referee_.sendInteractiveData(0x0202, target, data_.radar_data_);
+  }
 }
 }  // namespace rm_referee
