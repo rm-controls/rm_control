@@ -2,6 +2,11 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.11 (2022-06-10)
+-------------------
+* Merge remote-tracking branch 'origin/master'
+* Contributors: QiayuanLiao, YuuinIH, qiayuan, yezi
+
 0.1.10 (2022-05-22)
 -------------------
 * Merge pull request `#45 <https://github.com/rm-controls/rm_control/issues/45>`_ from ye-luo-xi-tui/master

@@ -2,6 +2,11 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.11 (2022-06-10)
+-------------------
+* Merge remote-tracking branch 'origin/master'
+* Contributors: QiayuanLiao, YuuinIH, qiayuan
+
 0.1.10 (2022-05-22)
 -------------------
 
