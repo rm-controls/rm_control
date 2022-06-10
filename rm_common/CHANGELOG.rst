@@ -2,6 +2,45 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.11 (2022-06-10)
+-------------------
+* Add synchronized calibration.
+* Changed gpio type in gpio interface to enum.
+* Move gpio type from rm_hw to rm_common.
+* Changed gpio type in gpio interface to enum.
+* Gpio interface 2 (`#51 <https://github.com/ye-luo-xi-tui/rm_control/issues/51>`_)
+  * Write a gpio_manager, it can initialize with pin ID and direction, and write output or read Input.
+  * Modifier readInput().
+  * Write gpio_state_interface.h(read only)
+  * write gpio_state_interface.h(read only)
+  * Modifier gpio manager. Write a new writeOutput() function.
+  * Add gpio_state_interface in robotHW
+  * Solve a error
+  * Modifier names of variables.
+  * Set GpioReadHandle and GpioWriteHandle. Register GpioReadInterface and GpioWriteInterface. Improve the code about gpio and delete unnecessary things.
+  * Add GpioRead.msg GpioWrite.msg.
+  * Add Gpio controller.
+  * Update Gpio controller.
+  * Update Gpio controller.
+  * Update gpio controller.
+  * Update gpio_controller.
+  * Update gpio_controller to version 2.0.
+  * Update gpio_interface to version2.0.
+  Co-authored-by: yezi <1536117624@qq.com>
+  Co-authored-by: ye-luo-xi-tui <74857762+ye-luo-xi-tui@users.noreply.github.com>
+  Co-authored-by: QiayuanLiao <liaoqiayuan@gmail.com>
+* Merge pull request `#49 <https://github.com/ye-luo-xi-tui/rm_control/issues/49>`_ from ChenZheng29/master
+  Delete cost function and modify the track topic
+* Delete target_cost_function.cpp and target_cost_function.h
+* Merge pull request `#48 <https://github.com/ye-luo-xi-tui/rm_control/issues/48>`_ from ye-luo-xi-tui/master
+  Fix a stupid bug
+* Fix a stupid bug.
+* Merge remote-tracking branch 'origin/master'
+* Merge pull request `#47 <https://github.com/ye-luo-xi-tui/rm_control/issues/47>`_ from ye-luo-xi-tui/master
+  Decide acceleration and max_vel by power limit
+* Decide acceleration and max_vel by power limit.
+* Contributors: QiayuanLiao, XYM-github, Yuexin Mu, YuuinIH, chenzheng, qiayuan, yezi
+
 0.1.10 (2022-05-22)
 -------------------
 * Merge pull request `#42 <https://github.com/rm-controls/rm_control/issues/42>`_ from ye-luo-xi-tui/service
