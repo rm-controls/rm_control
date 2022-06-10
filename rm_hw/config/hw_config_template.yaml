@@ -11,7 +11,7 @@ rm_hw:
       id: 0x201
       type: rm_3508
       lp_cutoff_frequency: 150
-#     need calibration: true  #set to true when this actuator need to be calibrated and it defaults to false when it is not been set.
+  #     need calibration: true  #set to true when this actuator need to be calibrated and it defaults to false when it is not been set.
   imus:
     gimbal_imu:
       frame_id: gimbal_imu
@@ -28,3 +28,10 @@ rm_hw:
       do_bias_estimation: false
       do_adaptive_gain: true
       gain_acc: 0.0003
+  gpios:
+    front_lamp:
+      pin: 245
+      direction: out
+    back_lamp:
+      pin: 246
+      direction: out

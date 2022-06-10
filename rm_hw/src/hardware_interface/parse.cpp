@@ -444,6 +444,51 @@ bool rm_hw::RmRobotHW::parseTofData(XmlRpc::XmlRpcValue& tof_datas, ros::NodeHan
   return true;
 }
 
+bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& robot_hw_nh)
+{
+  for (auto it = gpio_datas.begin(); it != gpio_datas.end(); ++it)
+  {
+    if (it->second.hasMember("pin"))
+    {
+      rm_control::GpioData gpio_data;
+      gpio_data.name = it->first;
+      if (std::string(gpio_datas[it->first]["direction"]) == "in")
+      {
+        gpio_data.type = rm_control::INPUT;
+      }
+      else if (std::string(gpio_datas[it->first]["direction"]) == "out")
+      {
+        gpio_data.type = rm_control::OUTPUT;
+      }
+      else
+      {
+        ROS_ERROR("Type set error of %s!", it->first.data());
+        continue;
+      }
+      gpio_data.pin = gpio_datas[it->first]["pin"];
+      gpio_data.value = new bool(false);
+      gpio_manager_.setGpioDirection(gpio_data);
+      gpio_manager_.gpio_state_values.push_back(gpio_data);
+      rm_control::GpioStateHandle gpio_state_handle(it->first, gpio_data.type,
+                                                    gpio_manager_.gpio_state_values.back().value);
+      gpio_state_interface_.registerHandle(gpio_state_handle);
+
+      if (gpio_data.type == rm_control::OUTPUT)
+      {
+        gpio_manager_.gpio_command_values.push_back(gpio_data);
+        rm_control::GpioCommandHandle gpio_command_handle(it->first, gpio_data.type,
+                                                          gpio_manager_.gpio_command_values.back().value);
+        gpio_command_interface_.registerHandle(gpio_command_handle);
+      }
+    }
+    else
+    {
+      ROS_ERROR("Module %s hasn't set pin ID", it->first.data());
+    }
+  }
+  return true;
+}
+
 bool RmRobotHW::loadUrdf(ros::NodeHandle& root_nh)
 {
   if (urdf_model_ == nullptr)
