@@ -2,8 +2,8 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.13 (2022-06-12)
+-------------------
 * Update key function and ui.
 * Contributors: BruceLannn
 
