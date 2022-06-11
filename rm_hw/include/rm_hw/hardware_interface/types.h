@@ -85,9 +85,8 @@ struct ImuData
 
 struct TofData
 {
+  double strength;
   double distance;
-  int dis_status;
-  double signal_strength;
 };
 
 struct CanDataPtr

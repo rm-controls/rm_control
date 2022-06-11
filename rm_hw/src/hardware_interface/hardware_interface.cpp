@@ -59,8 +59,8 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     ROS_WARN("No imu specified");
   else if (!parseImuData(xml_rpc_value, robot_hw_nh))
     return false;
-  if (!robot_hw_nh.getParam("tofs", xml_rpc_value))
-    ROS_WARN("No tof specified");
+  if (!robot_hw_nh.getParam("tof_radars", xml_rpc_value))
+    ROS_WARN("No tof_radars specified");
   else if (!parseTofData(xml_rpc_value, robot_hw_nh))
     return false;
   if (!robot_hw_nh.getParam("gpios", xml_rpc_value))
