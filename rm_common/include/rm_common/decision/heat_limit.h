@@ -45,13 +45,9 @@ class HeatLimit
 public:
   HeatLimit(ros::NodeHandle& nh, const RefereeData& referee_data) : referee_data_(referee_data)
   {
-    if (!nh.getParam("expect_shoot_frequency_1", expect_shoot_frequency_1_))
+    if (!nh.getParam("low_shoot_frequency", low_shoot_frequency_))
       ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("expect_shoot_frequency_2", expect_shoot_frequency_2_))
-      ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("expect_shoot_frequency_3", expect_shoot_frequency_3_))
-      ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("burst_shoot_frequency", burst_shoot_frequency_))
+    if (!nh.getParam("high_shoot_frequency", high_shoot_frequency_))
       ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("safe_shoot_frequency", safe_shoot_frequency_))
       ROS_ERROR("Safe shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
@@ -65,9 +61,16 @@ public:
       bullet_heat_ = 10.;
   }
 
-  double getHz() const
+  typedef enum
   {
-    if (burst_flag_)
+    LOW = 0,
+    HIGH = 1,
+    BURST = 2,
+  } ShootHz;
+
+  double getShootFrequency() const
+  {
+    if (state_ == BURST)
       return shoot_frequency_;
     if (!referee_data_.is_online_)
       return safe_shoot_frequency_;
@@ -143,34 +146,34 @@ public:
     return -1;  // TODO unsafe!
   }
 
+  void setShootFrequency(uint8_t mode)
+  {
+    state_ = mode;
+  }
+
+  bool getShootFrequencyMode() const
+  {
+    return state_;
+  }
+
+private:
   void updateExpectShootFrequency()
   {
-    if (burst_flag_)
-      shoot_frequency_ = burst_shoot_frequency_;
-    else if (referee_data_.game_robot_status_.robot_level_ == 1)
-      shoot_frequency_ = expect_shoot_frequency_1_;
-    else if (referee_data_.game_robot_status_.robot_level_ == 2)
-      shoot_frequency_ = expect_shoot_frequency_2_;
-    else if (referee_data_.game_robot_status_.robot_level_ == 3)
-      shoot_frequency_ = expect_shoot_frequency_3_;
+    if (state_ == HeatLimit::BURST)
+      shoot_frequency_ = high_shoot_frequency_;
+    else if (state_ == HeatLimit::LOW)
+      shoot_frequency_ = low_shoot_frequency_;
+    else if (state_ == HeatLimit::HIGH)
+      shoot_frequency_ = high_shoot_frequency_;
     else
       shoot_frequency_ = safe_shoot_frequency_;
   }
 
-  void setMode(bool burst_flag)
-  {
-    burst_flag_ = burst_flag;
-  }
-  bool getMode() const
-  {
-    return burst_flag_;
-  }
-
-private:
   std::string type_{};
   const RefereeData& referee_data_;
-  double bullet_heat_, safe_shoot_frequency_{}, heat_coeff_{}, shoot_frequency_{}, expect_shoot_frequency_1_{},
-      expect_shoot_frequency_2_{}, expect_shoot_frequency_3_{}, burst_shoot_frequency_{};
+  double bullet_heat_, safe_shoot_frequency_{}, heat_coeff_{}, shoot_frequency_{}, low_shoot_frequency_{},
+      high_shoot_frequency_{};
+  uint8_t state_{};
   bool burst_flag_ = false;
 };
 

@@ -291,7 +291,7 @@ public:
   void sendCommand(const ros::Time& time) override
   {
     msg_.speed = heat_limit_->getSpeedLimit();
-    msg_.hz = heat_limit_->getHz();
+    msg_.hz = heat_limit_->getShootFrequency();
     TimeStampCommandSenderBase<rm_msgs::ShootCmd>::sendCommand(time);
   }
   double getSpeed()
@@ -311,13 +311,13 @@ public:
     }
     return 0.;
   }
-  void setBurstMode(bool burst_flag)
+  void setShootFrequency(uint8_t mode)
   {
-    heat_limit_->setMode(burst_flag);
+    heat_limit_->setShootFrequency(mode);
   }
-  bool getBurstMode()
+  uint8_t getShootFrequency()
   {
-    return heat_limit_->getMode();
+    return heat_limit_->getShootFrequencyMode();
   }
   void setZero() override{};
 
