@@ -194,7 +194,6 @@ private:
   joint_limits_interface::EffortJointSaturationInterface effort_jnt_saturation_interface_;
   joint_limits_interface::EffortJointSoftLimitsInterface effort_jnt_soft_limits_interface_;
   std::vector<hardware_interface::JointHandle> effort_joint_handles_{};
-  rm_control::TofSensorInterface tof_sensor_interface_;
   rm_control::TofRadarInterface tof_radar_interface_;
 
   // URDF model of the robot
@@ -208,11 +207,8 @@ private:
   // Imu
   std::unordered_map<std::string, std::unordered_map<int, ImuData>> bus_id2imu_data_{};
 
-  // TOF
-  std::unordered_map<std::string, std::unordered_map<int, TofData>> bus_id2tof_data_{};
-
   // TF radar
-  std::unordered_map<std::string, std::unordered_map<int, RadarData>> bus_id2radar_data_{};
+  std::unordered_map<std::string, std::unordered_map<int, TofData>> bus_id2tof_data_{};
 
   ros::Time last_publish_time_;
   std::shared_ptr<realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>> actuator_state_pub_;
