@@ -49,6 +49,8 @@ public:
       ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("high_shoot_frequency", high_shoot_frequency_))
       ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("burst_shoot_frequency", burst_shoot_frequency_))
+      ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("safe_shoot_frequency", safe_shoot_frequency_))
       ROS_ERROR("Safe shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("heat_coeff", heat_coeff_))
@@ -160,19 +162,31 @@ private:
   void updateExpectShootFrequency()
   {
     if (state_ == HeatLimit::BURST)
+    {
       shoot_frequency_ = high_shoot_frequency_;
+      burst_flag_ = true;
+    }
     else if (state_ == HeatLimit::LOW)
+    {
       shoot_frequency_ = low_shoot_frequency_;
+      burst_flag_ = false;
+    }
     else if (state_ == HeatLimit::HIGH)
+    {
       shoot_frequency_ = high_shoot_frequency_;
+      burst_flag_ = false;
+    }
     else
+    {
       shoot_frequency_ = safe_shoot_frequency_;
+      burst_flag_ = false;
+    }
   }
 
   std::string type_{};
   const RefereeData& referee_data_;
   double bullet_heat_, safe_shoot_frequency_{}, heat_coeff_{}, shoot_frequency_{}, low_shoot_frequency_{},
-      high_shoot_frequency_{};
+      high_shoot_frequency_{}, burst_shoot_frequency_{};
   uint8_t state_{};
   bool burst_flag_ = false;
 };
