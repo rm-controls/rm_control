@@ -25,7 +25,7 @@ add_message_files(
         SuperCapacitor.msg
         TofSensor.msg
         GpioData.msg
-        TfRadarData.msg
+        TofRadarData.msg
 )
 
 add_service_files(

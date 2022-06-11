@@ -489,44 +489,44 @@ bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& 
   return true;
 }
 
-bool rm_hw::RmRobotHW::parseTfData(XmlRpc::XmlRpcValue& tf_datas, ros::NodeHandle& robot_hw_nh)
+bool rm_hw::RmRobotHW::parseRadarData(XmlRpc::XmlRpcValue& radar_datas, ros::NodeHandle& robot_hw_nh)
 {
-  ROS_ASSERT(tf_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
+  ROS_ASSERT(radar_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
   try
   {
-    for (auto it = tf_datas.begin(); it != tf_datas.end(); ++it)
+    for (auto it = radar_datas.begin(); it != radar_datas.end(); ++it)
     {
       if (!it->second.hasMember("bus"))
       {
-        ROS_ERROR_STREAM("TF02 " << it->first << " has no associated bus.");
+        ROS_ERROR_STREAM("TOF Radar " << it->first << " has no associated bus.");
         continue;
       }
       else if (!it->second.hasMember("id"))
       {
-        ROS_ERROR_STREAM("TF02 " << it->first << " has no associated ID.");
+        ROS_ERROR_STREAM("TOF Radar " << it->first << " has no associated ID.");
         continue;
       }
 
-      std::string bus = tf_datas[it->first]["bus"];
-      int id = static_cast<int>(tf_datas[it->first]["id"]);
+      std::string bus = radar_datas[it->first]["bus"];
+      int id = static_cast<int>(radar_datas[it->first]["id"]);
 
       // for bus interface
-      if (bus_id2tf_data_.find(bus) == bus_id2tf_data_.end())
-        bus_id2tf_data_.insert(std::make_pair(bus, std::unordered_map<int, TfData>()));
+      if (bus_id2radar_data_.find(bus) == bus_id2radar_data_.end())
+        bus_id2radar_data_.insert(std::make_pair(bus, std::unordered_map<int, RadarData>()));
 
-      if (!(bus_id2tf_data_[bus].find(id) == bus_id2tf_data_[bus].end()))
+      if (!(bus_id2radar_data_[bus].find(id) == bus_id2radar_data_[bus].end()))
       {
         ROS_ERROR_STREAM("Repeat TF02 on bus " << bus << " and ID " << id);
         return false;
       }
       else
-        bus_id2tf_data_[bus].insert(std::make_pair(id, TfData{ .strength = {}, .distance = {} }));
+        bus_id2radar_data_[bus].insert(std::make_pair(id, RadarData{ .strength = {}, .distance = {} }));
       // for ros_control interface
-      rm_control::TfRadarHandle tf_radar_handle(it->first, &bus_id2tf_data_[bus][id].distance,
-                                                &bus_id2tf_data_[bus][id].strength);
-      tf_radar_interface_.registerHandle(tf_radar_handle);
+      rm_control::TofRadarHandle tof_radar_handle(it->first, &bus_id2radar_data_[bus][id].distance,
+                                                  &bus_id2radar_data_[bus][id].strength);
+      tof_radar_interface_.registerHandle(tof_radar_handle);
     }
-    registerInterface(&tf_radar_interface_);
+    registerInterface(&tof_radar_interface_);
   }
   catch (XmlRpc::XmlRpcException& e)
   {

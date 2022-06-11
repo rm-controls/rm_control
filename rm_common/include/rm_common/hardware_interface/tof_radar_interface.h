@@ -1,5 +1,5 @@
 //
-// Created by luotinkai on 2022/6/9.
+// Created by luotinkai on 2022/6/12.
 //
 
 #pragma once
@@ -9,12 +9,12 @@
 
 namespace rm_control
 {
-class TfRadarHandle
+class TofRadarHandle
 {
 public:
-  TfRadarHandle() = default;
+  TofRadarHandle() = default;
 
-  TfRadarHandle(std::string name, double* distance, double* strength)
+  TofRadarHandle(std::string name, double* distance, double* strength)
     : name_(std::move(name)), distance_(distance), strength_(strength)
   {
     if (!distance_)
@@ -48,8 +48,8 @@ private:
   double* strength_;
 };
 
-class TfRadarInterface
-  : public hardware_interface::HardwareResourceManager<TfRadarHandle, hardware_interface::DontClaimResources>
+class TofRadarInterface
+  : public hardware_interface::HardwareResourceManager<TofRadarHandle, hardware_interface::DontClaimResources>
 {
 };
 

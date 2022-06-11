@@ -58,7 +58,7 @@
 #include <rm_common/hardware_interface/robot_state_interface.h>
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
 #include <rm_common/hardware_interface/tof_sensor_interface.h>
-#include <rm_common/hardware_interface/tf_radar_interface.h>
+#include <rm_common/hardware_interface/tof_radar_interface.h>
 #include <rm_common/hardware_interface/gpio_interface.h>
 #include <rm_msgs/ActuatorState.h>
 #include <rm_msgs/EnableImuTrigger.h>
@@ -150,7 +150,7 @@ private:
 
   bool parseTofData(XmlRpc::XmlRpcValue& tof_datas, ros::NodeHandle& robot_hw_nh);
 
-  bool parseTfData(XmlRpc::XmlRpcValue& tf_datas, ros::NodeHandle& robot_hw_nh);
+  bool parseRadarData(XmlRpc::XmlRpcValue& tf_datas, ros::NodeHandle& robot_hw_nh);
   /** \brief Set up transmission.
    *
    * Set up transmission
@@ -198,7 +198,7 @@ private:
   joint_limits_interface::EffortJointSoftLimitsInterface effort_jnt_soft_limits_interface_;
   std::vector<hardware_interface::JointHandle> effort_joint_handles_{};
   rm_control::TofSensorInterface tof_sensor_interface_;
-  rm_control::TfRadarInterface tf_radar_interface_;
+  rm_control::TofRadarInterface tof_radar_interface_;
 
   // URDF model of the robot
   std::string urdf_string_;                  // for transmission
@@ -215,7 +215,7 @@ private:
   std::unordered_map<std::string, std::unordered_map<int, TofData>> bus_id2tof_data_{};
 
   // TF radar
-  std::unordered_map<std::string, std::unordered_map<int, TfData>> bus_id2tf_data_{};
+  std::unordered_map<std::string, std::unordered_map<int, RadarData>> bus_id2radar_data_{};
 
   ros::Time last_publish_time_;
   std::shared_ptr<realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>> actuator_state_pub_;
