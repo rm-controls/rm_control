@@ -2,6 +2,11 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update key function and ui.
+* Contributors: BruceLannn
+
 0.1.12 (2022-06-11)
 -------------------
 * Update logic of changing enemy color.
