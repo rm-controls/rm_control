@@ -57,7 +57,6 @@
 
 #include <rm_common/hardware_interface/robot_state_interface.h>
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
-#include <rm_common/hardware_interface/tof_sensor_interface.h>
 #include <rm_common/hardware_interface/tof_radar_interface.h>
 #include <rm_common/hardware_interface/gpio_interface.h>
 #include <rm_msgs/ActuatorState.h>
@@ -149,8 +148,6 @@ private:
   bool loadUrdf(ros::NodeHandle& root_nh);
 
   bool parseTofData(XmlRpc::XmlRpcValue& tof_datas, ros::NodeHandle& robot_hw_nh);
-
-  bool parseRadarData(XmlRpc::XmlRpcValue& tf_datas, ros::NodeHandle& robot_hw_nh);
   /** \brief Set up transmission.
    *
    * Set up transmission
