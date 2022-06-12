@@ -2,6 +2,17 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#58 <https://github.com/rm-controls/rm_control/issues/58>`_ from Edwinlinks/tf-radar-interface
+  Update tof radar interface and Add tof radar msg to rm_msgs
+* Delete tof sensor interface, modify radar_data to tof_data
+* Delete tof sensor interface, TofSensor.msg.
+* Change tf_radar_interface to tof_radar_interface and change TfRadarData.msg to TofRadarData.msg
+* Add member tf_radar_interface\_ to hardware_interface.h
+* Update tf radar interface and Add tf radar msg to rm_msgs
+* Contributors: Edwinlinks, ye-luo-xi-tui
+
 0.1.12 (2022-06-11)
 -------------------
 * Merge pull request `#59 <https://github.com/ye-luo-xi-tui/rm_control/issues/59>`_ from ye-luo-xi-tui/master

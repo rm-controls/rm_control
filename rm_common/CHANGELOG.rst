@@ -2,6 +2,16 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#58 <https://github.com/rm-controls/rm_control/issues/58>`_ from Edwinlinks/tf-radar-interface
+  Update tof radar interface and Add tof radar msg to rm_msgs
+* Delete tof sensor interface, TofSensor.msg.
+* Change tf_radar_interface to tof_radar_interface and change TfRadarData.msg to TofRadarData.msg
+* Update key function and ui.
+* Update tf radar interface and Add tf radar msg to rm_msgs
+* Contributors: BruceLannn, Edwinlinks, ye-luo-xi-tui
+
 0.1.12 (2022-06-11)
 -------------------
 * Update logic of changing enemy color.
