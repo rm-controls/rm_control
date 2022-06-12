@@ -202,17 +202,6 @@ void DBus::getData(rm_msgs::DbusData* d_bus_data) const
     d_bus_data->key_c = (d_bus_data_.key >> 8) & 0x20 ? true : false;
     d_bus_data->key_v = (d_bus_data_.key >> 8) & 0x40 ? true : false;
     d_bus_data->key_b = (d_bus_data_.key >> 8) & 0x80 ? true : false;
-    d_bus_data->key_n = (d_bus_data_.key >> 16) & 0x01 ? true : false;
-    d_bus_data->key_j = (d_bus_data_.key >> 16) & 0x02 ? true : false;
-    d_bus_data->key_k = (d_bus_data_.key >> 16) & 0x04 ? true : false;
-    d_bus_data->key_l = (d_bus_data_.key >> 16) & 0x08 ? true : false;
-    d_bus_data->key_u = (d_bus_data_.key >> 16) & 0x10 ? true : false;
-    d_bus_data->key_i = (d_bus_data_.key >> 16) & 0x20 ? true : false;
-    d_bus_data->key_o = (d_bus_data_.key >> 16) & 0x40 ? true : false;
-    d_bus_data->key_p = (d_bus_data_.key >> 16) & 0x80 ? true : false;
-    d_bus_data->key_m = (d_bus_data_.key >> 24) & 0x01 ? true : false;
-    d_bus_data->key_t = (d_bus_data_.key >> 24) & 0x02 ? true : false;
-
     if (is_update_)
       d_bus_data->stamp = ros::Time::now();
   }

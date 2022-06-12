@@ -34,15 +34,4 @@ bool key_c
 bool key_v
 bool key_b
 
-bool key_n
-bool key_j
-bool key_k
-bool key_l
-bool key_u
-bool key_i
-bool key_o
-bool key_p
-bool key_m
-bool key_t
-
 time stamp
