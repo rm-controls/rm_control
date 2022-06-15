@@ -1,2 +1,2 @@
-uint32 event_data_
+uint32 event_data
 time stamp
