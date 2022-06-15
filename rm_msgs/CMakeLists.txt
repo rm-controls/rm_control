@@ -43,6 +43,14 @@ add_message_files(
         TrackData.msg
 )
 
+add_message_files(
+        DIRECTORY msg/referee
+        FILES
+        GameRobotStatus.msg
+        GameStatus.msg
+        EventData.msg
+)
+
 add_action_files(
         FILES
         Engineer.action
