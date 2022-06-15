@@ -2,6 +2,24 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#65 <https://github.com/rm-controls/rm_control/issues/65>`_ from ye-luo-xi-tui/param
+  Add param to set actual bullet speed
+* Modifier variables name.
+* Merge branch 'master' into param
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+* Add params to set actual bullet speed.
+* Merge pull request `#63 <https://github.com/rm-controls/rm_control/issues/63>`_ from ye-luo-xi-tui/acceleration
+  Don't shoot when target's acceleration is large
+* Fix bug.
+* Remove a implicit bug and some warning in calibration_queue.h
+* Modifier some variables name.
+* Put computing acceleration into rm_common.
+* Don't shoot when target's acceleration is large,not have moving average.
+* Contributors: BruceLannn, QiayuanLiao, qiayuan, yezi
+
 0.1.13 (2022-06-12)
 -------------------
 * Merge pull request `#58 <https://github.com/rm-controls/rm_control/issues/58>`_ from Edwinlinks/tf-radar-interface
