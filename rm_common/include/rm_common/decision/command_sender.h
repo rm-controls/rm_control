@@ -277,11 +277,11 @@ public:
   {
     ros::NodeHandle limit_nh(nh, "heat_limit");
     heat_limit_ = new HeatLimit(limit_nh, referee_data);
-    nh.param("speed_10m_per_speed", speed_10m_per_speed_, 10.);
-    nh.param("speed_15m_per_speed", speed_15m_per_speed_, 15.);
-    nh.param("speed_16m_per_speed", speed_16m_per_speed_, 16.);
-    nh.param("speed_18m_per_speed", speed_18m_per_speed_, 18.);
-    nh.param("speed_30m_per_speed", speed_30m_per_speed_, 30.);
+    nh.param("speed_10m_per_speed", speed_10_, 10.);
+    nh.param("speed_15m_per_speed", speed_15_, 15.);
+    nh.param("speed_16m_per_speed", speed_16_, 16.);
+    nh.param("speed_18m_per_speed", speed_18_, 18.);
+    nh.param("speed_30m_per_speed", speed_30_, 30.);
     if (!nh.getParam("gimbal_error_tolerance", gimbal_error_tolerance_))
       ROS_ERROR("gimbal error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
@@ -328,15 +328,15 @@ public:
     switch (msg_.speed)
     {
       case rm_msgs::ShootCmd::SPEED_10M_PER_SECOND:
-        return speed_10m_per_speed_;
+        return speed_10_;
       case rm_msgs::ShootCmd::SPEED_15M_PER_SECOND:
-        return speed_15m_per_speed_;
+        return speed_15_;
       case rm_msgs::ShootCmd::SPEED_16M_PER_SECOND:
-        return speed_16m_per_speed_;
+        return speed_16_;
       case rm_msgs::ShootCmd::SPEED_18M_PER_SECOND:
-        return speed_18m_per_speed_;
+        return speed_18_;
       case rm_msgs::ShootCmd::SPEED_30M_PER_SECOND:
-        return speed_30m_per_speed_;
+        return speed_30_;
     }
     return 0.;
   }
@@ -351,7 +351,7 @@ public:
   void setZero() override{};
 
 private:
-  double speed_10m_per_speed_, speed_15m_per_speed_, speed_16m_per_speed_, speed_18m_per_speed_, speed_30m_per_speed_;
+  double speed_10_, speed_15_, speed_16_, speed_18_, speed_30_;
   double gimbal_error_tolerance_{};
   double target_acceleration_tolerance_{};
   double track_target_acceleration_;
