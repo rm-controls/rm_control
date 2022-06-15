@@ -46,15 +46,8 @@ add_message_files(
 add_message_files(
         DIRECTORY msg/referee
         FILES
-        CapacityData.msg
         GameRobotStatus.msg
         GameStatus.msg
-        StateCmd.msg
-        DetectionStatus.msg
-        CalibrationStatus.msg
-        EngineerCmd.msg
-        GameRobotHp.msg
-        PowerHeatData.msg
         EventData.msg
 )
 
