@@ -277,11 +277,11 @@ public:
   {
     ros::NodeHandle limit_nh(nh, "heat_limit");
     heat_limit_ = new HeatLimit(limit_nh, referee_data);
-    if (!nh.getParam("gimbal_error_limit", gimbal_error_limit_))
+    if (!nh.getParam("gimbal_error_tolerance", gimbal_error_tolerance_))
       ROS_ERROR("gimbal error limit no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("target_acceleration_limit", target_acceleration_limit_))
+    if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
     {
-      target_acceleration_limit_ = 0.;
+      target_acceleration_tolerance_ = 0.;
       ROS_INFO("target_acceleration_limit no defined(namespace: %s), set to zero.", nh.getNamespace().c_str());
     }
     double moving_average_num;
@@ -307,8 +307,8 @@ public:
   }
   void checkError(const rm_msgs::GimbalDesError& gimbal_des_error, const ros::Time& time)
   {
-    if (gimbal_des_error.error > gimbal_error_limit_ && time - gimbal_des_error.stamp < ros::Duration(0.1) &&
-        track_target_acceleration_ > target_acceleration_limit_)
+    if (gimbal_des_error.error > gimbal_error_tolerance_ && time - gimbal_des_error.stamp < ros::Duration(0.1) &&
+        track_target_acceleration_ > target_acceleration_tolerance_)
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
         setMode(rm_msgs::ShootCmd::READY);
   }
@@ -346,8 +346,8 @@ public:
   void setZero() override{};
 
 private:
-  double gimbal_error_limit_{};
-  double target_acceleration_limit_{};
+  double gimbal_error_tolerance_{};
+  double target_acceleration_tolerance_{};
   double track_target_acceleration_;
   MovingAverageFilter<double>* acceleration_filter_;
   double last_target_vel_ = 0.;
