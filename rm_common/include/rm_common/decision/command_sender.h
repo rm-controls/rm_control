@@ -54,6 +54,7 @@
 #include "rm_common/decision/heat_limit.h"
 #include "rm_common/decision/power_limit.h"
 #include "rm_common/linear_interpolation.h"
+#include "rm_common/filters/filters.h"
 
 namespace rm_common
 {
@@ -270,8 +271,9 @@ private:
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd>
 {
 public:
-  explicit ShooterCommandSender(ros::NodeHandle& nh, const RefereeData& referee_data)
-    : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh, referee_data)
+  explicit ShooterCommandSender(ros::NodeHandle& nh, const RefereeData& referee_data,
+                                const rm_msgs::TrackData& track_data)
+    : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh, referee_data), track_data_(track_data)
   {
     ros::NodeHandle limit_nh(nh, "heat_limit");
     heat_limit_ = new HeatLimit(limit_nh, referee_data);
@@ -282,16 +284,31 @@ public:
       target_acceleration_limit_ = 0.;
       ROS_INFO("target_acceleration_limit no defined(namespace: %s), set to zero.", nh.getNamespace().c_str());
     }
+    double moving_average_num;
+    nh.param("accleration_moving_average_num", moving_average_num, 1.);
+    acceleration_filter_ = new MovingAverageFilter<double>(moving_average_num);
   }
   ~ShooterCommandSender()
   {
     delete heat_limit_;
   }
-  void checkError(const rm_msgs::GimbalDesError& gimbal_des_error, const double target_acceleration,
-                  const ros::Time& time)
+  void couputeTargetAcceleration()
+  {
+    auto target_vel = track_data_.target_vel;
+    double current_target_vel = sqrt(pow(target_vel.x, 2) + pow(target_vel.y, 2) + pow(target_vel.z, 2));
+    double current_time = track_data_.header.stamp.toSec();
+    if (current_time == last_target_time_)
+      return;
+    track_target_acceleration_ = (current_target_vel - last_target_vel_) / (current_time - last_target_time_);
+    last_target_vel_ = current_target_vel;
+    last_target_time_ = current_time;
+    acceleration_filter_->input(track_target_acceleration_);
+    track_target_acceleration_ = acceleration_filter_->output();
+  }
+  void checkError(const rm_msgs::GimbalDesError& gimbal_des_error, const ros::Time& time)
   {
     if (gimbal_des_error.error > gimbal_error_limit_ && time - gimbal_des_error.stamp < ros::Duration(0.1) &&
-        target_acceleration > target_acceleration_limit_)
+        track_target_acceleration_ > target_acceleration_limit_)
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
         setMode(rm_msgs::ShootCmd::READY);
   }
@@ -331,6 +348,11 @@ public:
 private:
   double gimbal_error_limit_{};
   double target_acceleration_limit_{};
+  double track_target_acceleration_;
+  MovingAverageFilter<double>* acceleration_filter_;
+  double last_target_vel_ = 0.;
+  double last_target_time_ = 0.;
+  const rm_msgs::TrackData& track_data_;
   HeatLimit* heat_limit_{};
 };
 
