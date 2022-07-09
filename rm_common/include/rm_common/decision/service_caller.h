@@ -203,14 +203,16 @@ public:
   }
   void setEnemyColor(const RefereeData& referee_data)
   {
-    if (referee_data.robot_id_ != 0 && !is_set_)
+    if (referee_data.robot_id_ != 0)
     {
       service_.request.color =
           referee_data.robot_color_ == "blue" ? rm_msgs::StatusChangeRequest::RED : rm_msgs::StatusChangeRequest::BLUE;
+      ROS_INFO_STREAM("Set enemy color: " << (service_.request.color == service_.request.RED ? "red" : "blue"));
+
       callService();
-      if (getIsSwitch())
-        is_set_ = true;
     }
+    else
+      ROS_INFO_STREAM("Set enemy color failed: referee offline");
     detection_data_.color = service_.request.color;
     detection_pub_.publish(detection_data_);
   }

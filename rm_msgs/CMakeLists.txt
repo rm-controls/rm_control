@@ -25,6 +25,7 @@ add_message_files(
         SuperCapacitor.msg
         TofSensor.msg
         GpioData.msg
+        TofRadarData.msg
 )
 
 add_service_files(
@@ -55,6 +56,7 @@ add_message_files(
         EngineerCmd.msg
         GameRobotHp.msg
         PowerHeatData.msg
+        EventData.msg
 )
 
 add_action_files(

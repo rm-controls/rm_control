@@ -57,7 +57,7 @@
 
 #include <rm_common/hardware_interface/robot_state_interface.h>
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
-#include <rm_common/hardware_interface/tof_sensor_interface.h>
+#include <rm_common/hardware_interface/tof_radar_interface.h>
 #include <rm_common/hardware_interface/gpio_interface.h>
 #include <rm_msgs/ActuatorState.h>
 #include <rm_msgs/EnableImuTrigger.h>
@@ -194,7 +194,7 @@ private:
   joint_limits_interface::EffortJointSaturationInterface effort_jnt_saturation_interface_;
   joint_limits_interface::EffortJointSoftLimitsInterface effort_jnt_soft_limits_interface_;
   std::vector<hardware_interface::JointHandle> effort_joint_handles_{};
-  rm_control::TofSensorInterface tof_sensor_interface_;
+  rm_control::TofRadarInterface tof_radar_interface_;
 
   // URDF model of the robot
   std::string urdf_string_;                  // for transmission
@@ -207,7 +207,7 @@ private:
   // Imu
   std::unordered_map<std::string, std::unordered_map<int, ImuData>> bus_id2imu_data_{};
 
-  // TOF
+  // TF radar
   std::unordered_map<std::string, std::unordered_map<int, TofData>> bus_id2tof_data_{};
 
   ros::Time last_publish_time_;
