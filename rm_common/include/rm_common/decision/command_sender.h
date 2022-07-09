@@ -46,6 +46,7 @@
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/GimbalDesError.h>
 #include <rm_msgs/StateCmd.h>
+#include <rm_msgs/TrackData.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>

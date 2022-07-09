@@ -265,10 +265,10 @@ void Referee::publishData()
   referee_pub_data_.bullet_speed = referee_data_.shoot_data_.bullet_speed_;
   referee_pub_data_.stamp = last_get_;
 
-  game_status_data_.game_type_ = referee_data_.game_status_.game_type_;
-  game_status_data_.game_progress_ = referee_data_.game_status_.game_progress_;
-  game_status_data_.stage_remain_time_ = referee_data_.game_status_.stage_remain_time_;
-  game_status_data_.sync_time_stamp_ = referee_data_.game_status_.sync_time_stamp_;
+  game_status_data_.game_type = referee_data_.game_status_.game_type_;
+  game_status_data_.game_progress = referee_data_.game_status_.game_progress_;
+  game_status_data_.stage_remain_time = referee_data_.game_status_.stage_remain_time_;
+  game_status_data_.sync_time_stamp = referee_data_.game_status_.sync_time_stamp_;
   game_status_data_.stamp = last_get_;
 
   super_capacitor_pub_data_.capacity = (float)referee_data_.capacity_data.cap_power_;
@@ -277,30 +277,30 @@ void Referee::publishData()
   super_capacitor_pub_data_.chassis_power = (float)referee_data_.capacity_data.chassis_power_;
   super_capacitor_pub_data_.stamp = super_capacitor_.last_get_data_;
 
-  game_robot_status_data_.mains_power_chassis_output_ = referee_data_.game_robot_status_.mains_power_chassis_output_;
-  game_robot_status_data_.mains_power_gimbal_output_ = referee_data_.game_robot_status_.mains_power_gimbal_output_;
-  game_robot_status_data_.mains_power_shooter_output_ = referee_data_.game_robot_status_.mains_power_shooter_output_;
-  game_robot_status_data_.chassis_power_limit_ = referee_data_.game_robot_status_.chassis_power_limit_;
-  game_robot_status_data_.shooter_id_1_17_mm_cooling_limit_ =
+  game_robot_status_data_.mains_power_chassis_output = referee_data_.game_robot_status_.mains_power_chassis_output_;
+  game_robot_status_data_.mains_power_gimbal_output = referee_data_.game_robot_status_.mains_power_gimbal_output_;
+  game_robot_status_data_.mains_power_shooter_output = referee_data_.game_robot_status_.mains_power_shooter_output_;
+  game_robot_status_data_.chassis_power_limit = referee_data_.game_robot_status_.chassis_power_limit_;
+  game_robot_status_data_.shooter_id_1_17_mm_cooling_limit =
       referee_data_.game_robot_status_.shooter_id_1_17_mm_cooling_limit_;
-  game_robot_status_data_.shooter_id_1_17_mm_cooling_rate_ =
+  game_robot_status_data_.shooter_id_1_17_mm_cooling_rate =
       referee_data_.game_robot_status_.shooter_id_1_17_mm_cooling_rate_;
-  game_robot_status_data_.shooter_id_2_17_mm_cooling_limit_ =
+  game_robot_status_data_.shooter_id_2_17_mm_cooling_limit =
       referee_data_.game_robot_status_.shooter_id_2_17_mm_cooling_limit_;
-  game_robot_status_data_.shooter_id_2_17_mm_cooling_rate_ =
+  game_robot_status_data_.shooter_id_2_17_mm_cooling_rate =
       referee_data_.game_robot_status_.shooter_id_2_17_mm_cooling_rate_;
-  game_robot_status_data_.shooter_id_1_42_mm_cooling_limit_ =
+  game_robot_status_data_.shooter_id_1_42_mm_cooling_limit =
       referee_data_.game_robot_status_.shooter_id_1_42_mm_cooling_limit_;
-  game_robot_status_data_.shooter_id_1_42_mm_cooling_rate_ =
+  game_robot_status_data_.shooter_id_1_42_mm_cooling_rate =
       referee_data_.game_robot_status_.shooter_id_1_42_mm_cooling_rate_;
-  game_robot_status_data_.shooter_id_1_17_mm_speed_limit_ =
+  game_robot_status_data_.shooter_id_1_17_mm_speed_limit =
       referee_data_.game_robot_status_.shooter_id_1_17_mm_speed_limit_;
-  game_robot_status_data_.shooter_id_2_17_mm_speed_limit_ =
+  game_robot_status_data_.shooter_id_2_17_mm_speed_limit =
       referee_data_.game_robot_status_.shooter_id_2_17_mm_speed_limit_;
-  game_robot_status_data_.shooter_id_1_42_mm_speed_limit_ =
+  game_robot_status_data_.shooter_id_1_42_mm_speed_limit =
       referee_data_.game_robot_status_.shooter_id_1_42_mm_speed_limit_;
-  game_robot_status_data_.robot_id_ = referee_data_.game_robot_status_.robot_id_;
-  game_robot_status_data_.robot_level_ = referee_data_.game_robot_status_.robot_level_;
+  game_robot_status_data_.robot_id = referee_data_.game_robot_status_.robot_id_;
+  game_robot_status_data_.robot_level = referee_data_.game_robot_status_.robot_level_;
   game_robot_status_data_.stamp = last_get_;
 
   power_heat_data_data_.shooter_id_1_17_mm_cooling_heat_ =
