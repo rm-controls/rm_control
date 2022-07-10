@@ -393,57 +393,6 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
   return true;
 }
 
-bool rm_hw::RmRobotHW::parseTofData(XmlRpc::XmlRpcValue& tof_datas, ros::NodeHandle& robot_hw_nh)
-{
-  ROS_ASSERT(tof_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
-  try
-  {
-    for (auto it = tof_datas.begin(); it != tof_datas.end(); ++it)
-    {
-      if (!it->second.hasMember("bus"))
-      {
-        ROS_ERROR_STREAM("TOF " << it->first << " has no associated bus.");
-        continue;
-      }
-      else if (!it->second.hasMember("id"))
-      {
-        ROS_ERROR_STREAM("TOF " << it->first << " has no associated ID.");
-        continue;
-      }
-
-      std::string bus = tof_datas[it->first]["bus"];
-      int id = static_cast<int>(tof_datas[it->first]["id"]);
-
-      // for bus interface
-      if (bus_id2tof_data_.find(bus) == bus_id2tof_data_.end())
-        bus_id2tof_data_.insert(std::make_pair(bus, std::unordered_map<int, TofData>()));
-
-      if (!(bus_id2tof_data_[bus].find(id) == bus_id2tof_data_[bus].end()))
-      {
-        ROS_ERROR_STREAM("Repeat TOF on bus " << bus << " and ID " << id);
-        return false;
-      }
-      else
-        bus_id2tof_data_[bus].insert(
-            std::make_pair(id, TofData{ .distance = {}, .dis_status = {}, .signal_strength = {} }));
-      // for ros_control interface
-      rm_control::TofSensorHandle tof_sensor_handle(it->first, &bus_id2tof_data_[bus][id].distance,
-                                                    &bus_id2tof_data_[bus][id].dis_status,
-                                                    &bus_id2tof_data_[bus][id].signal_strength);
-      tof_sensor_interface_.registerHandle(tof_sensor_handle);
-    }
-    registerInterface(&tof_sensor_interface_);
-  }
-  catch (XmlRpc::XmlRpcException& e)
-  {
-    ROS_FATAL_STREAM("Exception raised by XmlRpc while reading the "
-                     << "configuration: " << e.getMessage() << ".\n"
-                     << "Please check the configuration, particularly parameter types.");
-    return false;
-  }
-  return true;
-}
-
 bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& robot_hw_nh)
 {
   for (auto it = gpio_datas.begin(); it != gpio_datas.end(); ++it)
@@ -485,6 +434,55 @@ bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& 
     {
       ROS_ERROR("Module %s hasn't set pin ID", it->first.data());
     }
+  }
+  return true;
+}
+
+bool rm_hw::RmRobotHW::parseTofData(XmlRpc::XmlRpcValue& tof_datas, ros::NodeHandle& robot_hw_nh)
+{
+  ROS_ASSERT(tof_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
+  try
+  {
+    for (auto it = tof_datas.begin(); it != tof_datas.end(); ++it)
+    {
+      if (!it->second.hasMember("bus"))
+      {
+        ROS_ERROR_STREAM("TOF02-i " << it->first << " has no associated bus.");
+        continue;
+      }
+      else if (!it->second.hasMember("id"))
+      {
+        ROS_ERROR_STREAM("TOF02-i " << it->first << " has no associated ID.");
+        continue;
+      }
+
+      std::string bus = tof_datas[it->first]["bus"];
+      int id = static_cast<int>(tof_datas[it->first]["id"]);
+
+      // for bus interface
+      if (bus_id2tof_data_.find(bus) == bus_id2tof_data_.end())
+        bus_id2tof_data_.insert(std::make_pair(bus, std::unordered_map<int, TofData>()));
+
+      if (!(bus_id2tof_data_[bus].find(id) == bus_id2tof_data_[bus].end()))
+      {
+        ROS_ERROR_STREAM("Repeat TF02 on bus " << bus << " and ID " << id);
+        return false;
+      }
+      else
+        bus_id2tof_data_[bus].insert(std::make_pair(id, TofData{ .strength = {}, .distance = {} }));
+      // for ros_control interface
+      rm_control::TofRadarHandle tof_radar_handle(it->first, &bus_id2tof_data_[bus][id].distance,
+                                                  &bus_id2tof_data_[bus][id].strength);
+      tof_radar_interface_.registerHandle(tof_radar_handle);
+    }
+    registerInterface(&tof_radar_interface_);
+  }
+  catch (XmlRpc::XmlRpcException& e)
+  {
+    ROS_FATAL_STREAM("Exception raised by XmlRpc while reading the "
+                     << "configuration: " << e.getMessage() << ".\n"
+                     << "Please check the configuration, particularly parameter types.");
+    return false;
   }
   return true;
 }

@@ -246,10 +246,8 @@ void CanBus::read(ros::Time time)
     else if (data_ptr_.id2tof_data_->find(frame.can_id) != data_ptr_.id2tof_data_->end())
     {
       TofData& tof_data = data_ptr_.id2tof_data_->find(frame.can_id)->second;
-      tof_data.distance = (((frame.data[2]) << 16) | (frame.data[1] << 8) | frame.data[0]) / 1000.;
-      tof_data.dis_status = frame.data[3];
-      tof_data.signal_strength = ((int16_t)((frame.data[5]) << 8) | frame.data[4]);
-      continue;
+      tof_data.distance = ((int16_t)((frame.data[1]) << 8) | frame.data[0]);
+      tof_data.strength = ((int16_t)((frame.data[3]) << 8) | frame.data[2]);
     }
     if (frame.can_id != 0x0)
       ROS_ERROR_STREAM_ONCE("Can not find defined device, id: 0x" << std::hex << frame.can_id

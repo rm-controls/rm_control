@@ -23,8 +23,8 @@ add_message_files(
         KalmanData.msg
         MovingAverageData.msg
         SuperCapacitor.msg
-        TofSensor.msg
         GpioData.msg
+        TofRadarData.msg
 )
 
 add_service_files(
@@ -41,6 +41,14 @@ add_message_files(
         TargetDetection.msg
         TargetDetectionArray.msg
         TrackData.msg
+)
+
+add_message_files(
+        DIRECTORY msg/referee
+        FILES
+        GameRobotStatus.msg
+        GameStatus.msg
+        EventData.msg
 )
 
 add_action_files(

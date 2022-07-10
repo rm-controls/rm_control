@@ -2,6 +2,61 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.14 (2022-06-16)
+-------------------
+
+0.1.13 (2022-06-12)
+-------------------
+* Merge pull request `#58 <https://github.com/rm-controls/rm_control/issues/58>`_ from Edwinlinks/tf-radar-interface
+  Update tof radar interface and Add tof radar msg to rm_msgs
+* Delete tof sensor interface, modify radar_data to tof_data
+* Delete tof sensor interface, TofSensor.msg.
+* Change tf_radar_interface to tof_radar_interface and change TfRadarData.msg to TofRadarData.msg
+* Add member tf_radar_interface\_ to hardware_interface.h
+* Update tf radar interface and Add tf radar msg to rm_msgs
+* Contributors: Edwinlinks, ye-luo-xi-tui
+
+0.1.12 (2022-06-11)
+-------------------
+* Merge pull request `#59 <https://github.com/ye-luo-xi-tui/rm_control/issues/59>`_ from ye-luo-xi-tui/master
+  0.1.11
+* Contributors: QiayuanLiao
+
+0.1.11 (2022-06-10)
+-------------------
+* Merge pull request `#52 <https://github.com/ye-luo-xi-tui/rm_control/issues/52>`_ from XYM-github/gpio_interface_2.0
+  Changed gpio type in gpio interface to enum.
+* Add the namespace of gpio_manager.
+* Move gpio type from rm_hw to rm_common.
+* Changed gpio type in gpio interface to enum.
+* Gpio interface 2 (`#51 <https://github.com/ye-luo-xi-tui/rm_control/issues/51>`_)
+  * Write a gpio_manager, it can initialize with pin ID and direction, and write output or read Input.
+  * Modifier readInput().
+  * Write gpio_state_interface.h(read only)
+  * write gpio_state_interface.h(read only)
+  * Modifier gpio manager. Write a new writeOutput() function.
+  * Add gpio_state_interface in robotHW
+  * Solve a error
+  * Modifier names of variables.
+  * Set GpioReadHandle and GpioWriteHandle. Register GpioReadInterface and GpioWriteInterface. Improve the code about gpio and delete unnecessary things.
+  * Add GpioRead.msg GpioWrite.msg.
+  * Add Gpio controller.
+  * Update Gpio controller.
+  * Update Gpio controller.
+  * Update gpio controller.
+  * Update gpio_controller.
+  * Update gpio_controller to version 2.0.
+  * Update gpio_interface to version2.0.
+  Co-authored-by: yezi <1536117624@qq.com>
+  Co-authored-by: ye-luo-xi-tui <74857762+ye-luo-xi-tui@users.noreply.github.com>
+  Co-authored-by: QiayuanLiao <liaoqiayuan@gmail.com>
+* Merge remote-tracking branch 'origin/master'
+* Merge pull request `#46 <https://github.com/ye-luo-xi-tui/rm_control/issues/46>`_ from XYM-github/imu_angular_offset
+  Add imu angular_vel_offset.
+* Add imu angular_vel_offset.
+* Merge remote-tracking branch 'origin/master'
+* Contributors: Edwinlinks, QiayuanLiao, XYM-github, Yuexin Mu, YuuinIH, chenzheng, qiayuan, ye-luo-xi-tui, yezi
+
 0.1.10 (2022-05-22)
 -------------------
 * Merge branch 'rm-controls:master' into master

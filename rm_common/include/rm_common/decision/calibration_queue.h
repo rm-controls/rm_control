@@ -38,6 +38,7 @@
 #pragma once
 
 #include "rm_common/decision/service_caller.h"
+#include "rm_common/decision/controller_manager.h"
 
 namespace rm_common
 {
@@ -80,7 +81,7 @@ public:
   std::vector<QueryCalibrationServiceCaller*> query_services;
 
 private:
-  std::vector<std::string> getControllersName(XmlRpc::XmlRpcValue& rpc_value)
+  static std::vector<std::string> getControllersName(XmlRpc::XmlRpcValue& rpc_value)
   {
     std::vector<std::string> controllers;
     for (int i = 0; i < rpc_value.size(); ++i)
@@ -104,7 +105,7 @@ public:
     if (use_sim_time || rpc_value.getType() != XmlRpc::XmlRpcValue::TypeArray)
       return;
     for (int i = 0; i < rpc_value.size(); ++i)
-      calibration_services_.push_back(CalibrationService(rpc_value[i], nh));
+      calibration_services_.emplace_back(rpc_value[i], nh);
     last_query_ = ros::Time::now();
     calibration_itr_ = calibration_services_.end();
     // Start with calibrated, you should use reset() to start calibration.

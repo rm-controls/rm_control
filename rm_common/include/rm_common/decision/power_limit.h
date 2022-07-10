@@ -111,8 +111,8 @@ public:
                 charge();
                 break;
             }
-            if (!(state_ == Mode::BURST) && (abs(referee_data_.capacity_data.limit_power_ -
-                                                 referee_data_.game_robot_status_.chassis_power_limit_) < 0.05))
+            if (state_ != Mode::BURST && (abs(referee_data_.capacity_data.limit_power_ -
+                                              referee_data_.game_robot_status_.chassis_power_limit_) < 0.05))
               normal();
           }
         }
