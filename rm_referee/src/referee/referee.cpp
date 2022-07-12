@@ -303,11 +303,11 @@ void Referee::publishData()
   game_robot_status_data_.robot_level = referee_data_.game_robot_status_.robot_level_;
   game_robot_status_data_.stamp = last_get_;
 
-  power_heat_data_data_.shooter_id_1_17_mm_cooling_heat_ =
+  power_heat_data_data_.shooter_id_1_17_mm_cooling_heat =
       referee_data_.power_heat_data_.shooter_id_1_17_mm_cooling_heat_;
-  power_heat_data_data_.shooter_id_1_42_mm_cooling_heat_ =
+  power_heat_data_data_.shooter_id_1_42_mm_cooling_heat =
       referee_data_.power_heat_data_.shooter_id_1_42_mm_cooling_heat_;
-  power_heat_data_data_.shooter_id_2_17_mm_cooling_heat_ =
+  power_heat_data_data_.shooter_id_2_17_mm_cooling_heat =
       referee_data_.power_heat_data_.shooter_id_2_17_mm_cooling_heat_;
   power_heat_data_data_.stamp = last_get_;
 

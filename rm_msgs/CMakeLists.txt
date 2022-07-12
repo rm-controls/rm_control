@@ -56,6 +56,15 @@ add_message_files(
         GameRobotHp.msg
         PowerHeatData.msg
         EventData.msg
+        DartStatus.msg
+        IcraBuffDebuffZoneStatus.msg
+        SupplyProjectileAction.msg
+        DartRemainingTime.msg
+        RobotHurt.msg
+        ShootData.msg
+        BulletRemaining.msg
+        RfidStatus.msg
+        DartClientCmd.msg
 )
 
 add_action_files(
