@@ -440,24 +440,29 @@ private:
   double on_pos_{}, off_pos_{};
 };
 
-class StateCommandSender : public CommandSenderBase<rm_msgs::StateCmd>
+
+class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
 {
 public:
-  explicit StateCommandSender(ros::NodeHandle& nh) : CommandSenderBase<rm_msgs::StateCmd>(nh)
+  explicit CardCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
   {
-    ROS_ASSERT(nh.getParam("on_pos", on_pos_) && nh.getParam("off_pos", off_pos_));
+    ROS_ASSERT(nh.getParam("long_pos", long_pos_) && nh.getParam("short_pos", short_pos_) &&
+               nh.getParam("off_pos", off_pos_));
   }
-  void on()
+  void long_on()
   {
-    msg_.data = on_pos_;
+    msg_.data = long_pos_;
     state = true;
-    msg_.mode = state;
+  }
+  void short_on()
+  {
+    msg_.data = short_pos_;
+    state = true;
   }
   void off()
   {
     msg_.data = off_pos_;
     state = false;
-    msg_.mode = state;
   }
   bool getState() const
   {
@@ -465,13 +470,13 @@ public:
   }
   void sendCommand(const ros::Time& time) override
   {
-    CommandSenderBase<rm_msgs::StateCmd>::sendCommand(time);
+    CommandSenderBase<std_msgs::Float64>::sendCommand(time);
   }
   void setZero() override{};
 
 private:
   bool state{};
-  double on_pos_{}, off_pos_{};
+  double long_pos_{}, short_pos_{}, off_pos_{};
 };
 
 class JointJogCommandSender : public CommandSenderBase<std_msgs::Float64>
