@@ -261,6 +261,8 @@ int Referee::unpack(uint8_t* rx_data)
           referee_pub_data_.shooter_heat_cooling_limit =
               referee_data_.game_robot_status_.shooter_id_1_17_mm_cooling_limit_;
           referee_pub_data_.robot_hp = referee_data_.game_robot_status_.remain_hp_;
+          referee_pub_data_.is_online = referee_data_.is_online_;
+
           referee_pub_data_.stamp = last_get_;
 
           game_robot_status_pub_.publish(game_robot_status_data);
@@ -291,6 +293,7 @@ int Referee::unpack(uint8_t* rx_data)
           referee_pub_data_.chassis_volt = power_heat_data.chassis_volt;
           referee_pub_data_.chassis_power_buffer = power_heat_data.chassis_power_buffer;
 
+          referee_pub_data_.is_online = referee_data_.is_online_;
           referee_pub_data_.stamp = last_get_;
           power_heat_data.stamp = last_get_;
 
@@ -324,6 +327,8 @@ int Referee::unpack(uint8_t* rx_data)
 
           referee_pub_data_.hurt_armor_id = referee_data_.robot_hurt_.armor_id_;
           referee_pub_data_.hurt_type = referee_data_.robot_hurt_.hurt_type_;
+          referee_pub_data_.is_online = referee_data_.is_online_;
+          referee_pub_data_.stamp = last_get_;
 
           robot_hurt_pub_.publish(robot_hurt_data);
           referee_pub_.publish(referee_pub_data_);
@@ -341,6 +346,8 @@ int Referee::unpack(uint8_t* rx_data)
           shoot_data.stamp = last_get_;
 
           referee_pub_data_.bullet_speed = referee_data_.shoot_data_.bullet_speed_;
+          referee_pub_data_.is_online = referee_data_.is_online_;
+          referee_pub_data_.stamp = last_get_;
 
           shoot_data_pub_.publish(shoot_data);
           referee_pub_.publish(referee_pub_data_);

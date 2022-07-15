@@ -8,7 +8,7 @@ uint16 robot_hp
 float32 bullet_speed
 uint16 hurt_armor_id
 uint16 hurt_type
-
+bool is_online
 
 
 time stamp
