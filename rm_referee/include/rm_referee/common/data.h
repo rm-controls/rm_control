@@ -27,6 +27,8 @@
 #include <rm_msgs/EngineerCmd.h>
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/GameRobotHp.h>
+#include <rm_msgs/DartRemainingTime.h>
+#include <rm_msgs/ManualToReferee.h>
 
 namespace rm_referee
 {
@@ -56,6 +58,8 @@ public:
     calibration_status_sub_ =
         nh.subscribe<rm_msgs::CalibrationStatus>("/calibration_status", 10, &Data::calibrationStatusDataCallback, this);
     engineer_cmd_sub_ = nh.subscribe<rm_msgs::EngineerCmd>("/engineer_cmd", 10, &Data::engineerCmdDataCallback, this);
+    manual_data_sub_ =
+        nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &Data::manualDataCallBack, this);
     if (referee_.referee_data_.robot_id_ == rm_common::RobotId::RED_RADAR ||
         referee_.referee_data_.robot_id_ == rm_common::RobotId::BLUE_RADAR)
       radar_date_sub_ = nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &Data::radarDataCallBack, this);
@@ -68,6 +72,18 @@ public:
     referee_.capacity_data_pub_ = root_nh.advertise<rm_msgs::CapacityData>("/capacity_data", 1);
     referee_.power_heat_data_pub_ = root_nh.advertise<rm_msgs::PowerHeatData>("/power_heat_data", 1);
     referee_.game_robot_hp_pub_ = root_nh.advertise<rm_msgs::GameRobotHp>("/game_robot_hp", 1);
+    referee_.event_data_pub_ = root_nh.advertise<rm_msgs::EventData>("/event_data", 1);
+    referee_.dart_status_pub_ = root_nh.advertise<rm_msgs::DartStatus>("/dart_status_data", 1);
+    referee_.icra_buff_debuff_zone_status_pub_ =
+        root_nh.advertise<rm_msgs::IcraBuffDebuffZoneStatus>("/icra_buff_debuff_zone_status_data", 1);
+    referee_.supply_projectile_action_pub_ =
+        root_nh.advertise<rm_msgs::SupplyProjectileAction>("/supply_projectile_action_data", 1);
+    referee_.dart_remaining_time_pub_ = root_nh.advertise<rm_msgs::DartRemainingTime>("/dart_remaining_time_data", 1);
+    referee_.robot_hurt_pub_ = root_nh.advertise<rm_msgs::RobotHurt>("/robot_hurt_data", 1);
+    referee_.shoot_data_pub_ = root_nh.advertise<rm_msgs::ShootData>("/shoot_data", 1);
+    referee_.bullet_remaining_pub_ = root_nh.advertise<rm_msgs::BulletRemaining>("/bullet_remaining_data", 1);
+    referee_.rfid_status_pub_ = root_nh.advertise<rm_msgs::RfidStatus>("/rfid_status_data", 1);
+    referee_.dart_client_cmd_pub_ = root_nh.advertise<rm_msgs::DartClientCmd>("/dart_client_cmd_data", 1);
     // service
     initSerial();
   }
@@ -120,6 +136,10 @@ public:
   {
     engineer_cmd_data_ = *data;
   }
+  void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
+  {
+    manual_to_referee_data_ = *data;
+  }
   void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
   {
     radar_data_ = data->data[0] * 10 + data->data[1];
@@ -155,6 +175,7 @@ public:
   ros::Subscriber calibration_status_sub_;
   ros::Subscriber engineer_cmd_sub_;
   ros::Subscriber radar_date_sub_;
+  ros::Subscriber manual_data_sub_;
 
   uint8_t radar_data_;
   sensor_msgs::JointState joint_state_;
@@ -169,6 +190,7 @@ public:
   rm_msgs::StateCmd card_cmd_data_;
   rm_msgs::CalibrationStatus calibration_status_data_;
   rm_msgs::EngineerCmd engineer_cmd_data_;
+  rm_msgs::ManualToReferee manual_to_referee_data_;
 
   Referee referee_;
   serial::Serial serial_;

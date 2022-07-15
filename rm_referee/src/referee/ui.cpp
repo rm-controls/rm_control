@@ -96,7 +96,7 @@ void TriggerChangeUi::update(const std::string& graph_name, uint8_t main_mode, b
   {
     updateConfig(graph_name, graph->second, main_mode, main_flag, sub_mode, sub_flag);
     graph->second->setOperation(rm_common::GraphOperation::UPDATE);
-    if (graph->first == "chassis")
+    if (graph->first == "chassis" || graph->first == "gimbal")
       graph->second->displayTwice(true);
     else
       graph->second->display();
@@ -108,6 +108,12 @@ void TriggerChangeUi::updateConfig(const std::string& name, Graph* graph, uint8_
 {
   if (name == "chassis")
   {
+    if (main_mode == 254)
+    {
+      graph->setContent("Cap reset");
+      graph->setColor(rm_common::GraphColor::YELLOW);
+      return;
+    }
     graph->setContent(getChassisState(main_mode));
     if (main_flag)
       graph->setColor(rm_common::GraphColor::ORANGE);
@@ -115,6 +121,24 @@ void TriggerChangeUi::updateConfig(const std::string& name, Graph* graph, uint8_
       graph->setColor(rm_common::GraphColor::GREEN);
     else if (sub_mode == 1)
       graph->setColor(rm_common::GraphColor::PINK);
+    else
+      graph->setColor(rm_common::GraphColor::WHITE);
+  }
+  else if (name == "shooter")
+  {
+    graph->setContent(getShooterState(main_mode));
+    if (sub_mode == rm_common::HeatLimit::LOW)
+      graph->setColor(rm_common::GraphColor::WHITE);
+    else if (sub_mode == rm_common::HeatLimit::HIGH)
+      graph->setColor(rm_common::GraphColor::YELLOW);
+    else if (sub_mode == rm_common::HeatLimit::BURST)
+      graph->setColor(rm_common::GraphColor::ORANGE);
+  }
+  else if (name == "gimbal")
+  {
+    graph->setContent(getGimbalState(main_mode));
+    if (main_flag)
+      graph->setColor(rm_common::GraphColor::ORANGE);
     else
       graph->setColor(rm_common::GraphColor::WHITE);
   }
@@ -142,10 +166,18 @@ void TriggerChangeUi::updateConfig(const std::string& name, Graph* graph, uint8_
     else
       graph->setContent("move");
   }
-  else if (name == "exposure")
-  {
-    graph->setContent(getExposureState(main_mode));
-  }
+}
+
+std::string TriggerChangeUi::getShooterState(uint8_t mode)
+{
+  if (mode == rm_msgs::ShootCmd::READY)
+    return "ready";
+  else if (mode == rm_msgs::ShootCmd::PUSH)
+    return "push";
+  else if (mode == rm_msgs::ShootCmd::STOP)
+    return "stop";
+  else
+    return "error";
 }
 
 std::string TriggerChangeUi::getChassisState(uint8_t mode)
@@ -190,18 +222,14 @@ std::string TriggerChangeUi::getTargetState(uint8_t target, uint8_t armor_target
   }
 }
 
-std::string TriggerChangeUi::getExposureState(uint8_t level)
+std::string TriggerChangeUi::getGimbalState(uint8_t mode)
 {
-  if (level == rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0)
-    return "0";
-  else if (level == rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_1)
-    return "1";
-  else if (level == rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_2)
-    return "2";
-  else if (level == rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_3)
-    return "3";
-  else if (level == rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_4)
-    return "4";
+  if (mode == rm_msgs::GimbalCmd::DIRECT)
+    return "direct";
+  else if (mode == rm_msgs::GimbalCmd::RATE)
+    return "rate";
+  else if (mode == rm_msgs::GimbalCmd::TRACK)
+    return "track";
   else
     return "error";
 }
@@ -262,16 +290,16 @@ void FlashUi::update(const std::string& name, const ros::Time& time, bool state)
 
 void FlashUi::updateChassisGimbalDate(const double yaw_joint_, Graph* graph)
 {
-  double cover_yaw_joint_ = yaw_joint_;
-  while (abs(cover_yaw_joint_) > 2 * M_PI)
+  double cover_yaw_joint = yaw_joint_;
+  while (abs(cover_yaw_joint) > 2 * M_PI)
   {
-    cover_yaw_joint_ += cover_yaw_joint_ > 0 ? -2 * M_PI : 2 * M_PI;
+    cover_yaw_joint += cover_yaw_joint > 0 ? -2 * M_PI : 2 * M_PI;
   }
-  graph->setStartX(960 - 50 * sin(cover_yaw_joint_));
-  graph->setStartY(540 + 50 * cos(cover_yaw_joint_));
+  graph->setStartX(960 - 50 * sin(cover_yaw_joint));
+  graph->setStartY(540 + 50 * cos(cover_yaw_joint));
 
-  graph->setEndX(960 - 100 * sin(cover_yaw_joint_));
-  graph->setEndY(540 + 100 * cos(cover_yaw_joint_));
+  graph->setEndX(960 - 100 * sin(cover_yaw_joint));
+  graph->setEndY(540 + 100 * cos(cover_yaw_joint));
 }
 
 void FlashUi::updateArmorPosition(const std::string& name, Graph* graph)

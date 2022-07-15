@@ -46,11 +46,22 @@
 #include <rm_msgs/ShootCmd.h>
 #include "rm_common/referee/data.h"
 
+#include <rm_msgs/IcraBuffDebuffZoneStatus.h>
 #include <rm_msgs/GameRobotStatus.h>
 #include <rm_msgs/GameRobotHp.h>
 #include <rm_msgs/GameStatus.h>
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/CapacityData.h>
+#include <rm_msgs/EventData.h>
+#include <rm_msgs/DartStatus.h>
+#include <rm_msgs/SupplyProjectileAction.h>
+#include <rm_msgs/DartRemainingTime.h>
+#include <rm_msgs/RobotHurt.h>
+#include <rm_msgs/ShootData.h>
+#include <rm_msgs/BulletRemaining.h>
+#include <rm_msgs/RfidStatus.h>
+#include <rm_msgs/DartClientCmd.h>
+#include <rm_msgs/ManualToReferee.h>
 
 namespace rm_referee
 {
@@ -102,6 +113,17 @@ public:
   ros::Publisher capacity_data_pub_;
   ros::Publisher power_heat_data_pub_;
   ros::Publisher game_robot_hp_pub_;
+  ros::Publisher event_data_pub_;
+  ros::Publisher dart_status_pub_;
+  ros::Publisher icra_buff_debuff_zone_status_pub_;
+  ros::Publisher supply_projectile_action_pub_;
+  ros::Publisher dart_remaining_time_pub_;
+  ros::Publisher robot_hurt_pub_;
+  ros::Publisher shoot_data_pub_;
+  ros::Publisher bullet_remaining_pub_;
+  ros::Publisher rfid_status_pub_;
+  ros::Publisher dart_client_cmd_pub_;
+
   rm_common::RefereeData referee_data_{};
   std::vector<uint8_t> rx_buffer_;
   uint8_t tx_buffer_[128];
@@ -111,17 +133,11 @@ private:
   int unpack(uint8_t* rx_data);
   void pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const;
   void getRobotInfo();
-  void publishData();
+  void publishCapacityData();
 
   SuperCapacitor super_capacitor_;
   ros::Time last_get_, last_send_;
-  rm_msgs::Referee referee_pub_data_;
-  rm_msgs::SuperCapacitor super_capacitor_pub_data_;
-  rm_msgs::GameRobotStatus game_robot_status_data_;
-  rm_msgs::PowerHeatData power_heat_data_data_;
-  rm_msgs::GameRobotHp game_robot_hp_data_;
-  rm_msgs::GameStatus game_status_data_;
-  rm_msgs::CapacityData capacity_data_data_;
+  rm_msgs::Referee referee_pub_data_ = {};
   std::vector<std::pair<rm_common::GraphConfig, std::string>> ui_queue_;
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
   const int k_unpack_buffer_length_ = 256;

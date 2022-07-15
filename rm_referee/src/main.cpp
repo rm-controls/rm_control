@@ -15,7 +15,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "rm_referee");  // rm_referee
   ros::NodeHandle nh("~");
   robot = getParam(nh, "robot_type", (std::string) "error");
-  if (robot == "standard3")
+  if (robot == "standard")
     referee = new rm_referee::StandardReferee(nh);
   else if (robot == "hero")
     referee = new rm_referee::HeroReferee(nh);
@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     ROS_ERROR("no robot type ");
     return 0;
   }
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(60);
   while (ros::ok())
   {
     ros::spinOnce();

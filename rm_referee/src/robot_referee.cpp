@@ -40,8 +40,8 @@ void RobotReferee::drawUi(const ros::Time& time)
       else
       {
         trigger_change_ui_->update("chassis", data_.chassis_cmd_data_.mode,
-                                   data_.chassis_cmd_data_.power_limit_state == rm_common::PowerLimit::BURST, 0,
-                                   data_.chassis_cmd_data_.power_limit_state == rm_common::PowerLimit::CHARGE);
+                                   data_.manual_to_referee_data_.power_limit_state == rm_common::PowerLimit::BURST, 0,
+                                   data_.manual_to_referee_data_.power_limit_state == rm_common::PowerLimit::CHARGE);
       }
     }
   }
@@ -50,10 +50,10 @@ void RobotReferee::drawUi(const ros::Time& time)
 
   flash_ui_->update("spin", time,
                     data_.chassis_cmd_data_.mode == rm_msgs::ChassisCmd::GYRO && data_.vel2d_cmd_data_.angular.z != 0.);
-  if (data_.dbus_data_.wheel == 0.)
-    flash_ui_->update("ore", time, data_.dbus_data_.wheel == 0.);
-  if (data_.dbus_data_.wheel != 0.)
-    flash_ui_->update("ore", time, data_.dbus_data_.wheel == 0.);
+  //  if (data_.dbus_data_.wheel == 0.)
+  //    flash_ui_->update("ore", time, data_.dbus_data_.wheel == 0.);
+  //  if (data_.dbus_data_.wheel != 0.)
+  //    flash_ui_->update("ore", time, data_.dbus_data_.wheel == 0.);
 
   flash_ui_->update("armor0", time);
   flash_ui_->update("armor1", time);

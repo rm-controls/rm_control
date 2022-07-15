@@ -14,13 +14,13 @@ find_package(serial REQUIRED)
 
 find_package(catkin REQUIRED
         COMPONENTS
-        roscpp
         sensor_msgs
         roslint
+        roscpp
         rm_msgs
+        serial
         rm_common
         tf2_geometry_msgs
-        serial
         std_msgs
         actionlib
         nav_msgs
@@ -42,8 +42,8 @@ catkin_package(
         INCLUDE_DIRS
         include
         LIBRARIES
-        ${PROJECT_NAME}
         CATKIN_DEPENDS
+        roscpp
         sensor_msgs
         roslint
         rm_msgs
