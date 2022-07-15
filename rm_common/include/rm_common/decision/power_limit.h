@@ -83,7 +83,7 @@ public:
       limit_power_ = 30;
     else if (referee_data_.robot_id_ == rm_common::RobotId::RED_ENGINEER ||
              referee_data_.robot_id_ == rm_common::RobotId::BLUE_ENGINEER)
-      limit_power_ = 300;
+      limit_power_ = 400;
     else
     {  // standard and hero
       if (referee_data_.is_online_)
