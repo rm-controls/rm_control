@@ -65,6 +65,7 @@ add_message_files(
         BulletRemaining.msg
         RfidStatus.msg
         DartClientCmd.msg
+        ManualToReferee.msg
 )
 
 add_action_files(
