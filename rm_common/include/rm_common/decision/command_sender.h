@@ -440,7 +440,6 @@ private:
   double on_pos_{}, off_pos_{};
 };
 
-
 class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
 {
 public:

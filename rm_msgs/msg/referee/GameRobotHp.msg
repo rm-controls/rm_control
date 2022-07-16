@@ -4,7 +4,6 @@ uint16 red_3_robot_hp_
 uint16 red_4_robot_hp_
 uint16 red_5_robot_hp_
 uint16 red_7_robot_hp_
-
 uint16 blue_1_robot_hp_
 uint16 blue_2_robot_hp_
 uint16 blue_3_robot_hp_
