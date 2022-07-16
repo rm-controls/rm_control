@@ -109,7 +109,7 @@ public:
     last_query_ = ros::Time::now();
     calibration_itr_ = calibration_services_.end();
     // Start with calibrated, you should use reset() to start calibration.
-    calibration_status_pub_ = nh.advertise<rm_msgs::DetectionStatus>("/calibration_status", 1);
+    calibration_status_pub_ = nh.advertise<rm_msgs::CalibrationStatus>("/calibration_status", 1);
   }
   void reset()
   {

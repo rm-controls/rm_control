@@ -14,6 +14,6 @@ void StandardReferee::run()
 void StandardReferee::drawUi(const ros::Time& time)
 {
   HeroReferee::drawUi(time);
-  flash_ui_->update("cover", time, !data_.cover_cmd_data_.mode);
+  flash_ui_->update("cover", time, !data_.manual_to_referee_data_.cover_state);
 }
 }  // namespace rm_referee
