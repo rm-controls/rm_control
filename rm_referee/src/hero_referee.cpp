@@ -23,10 +23,15 @@ void HeroReferee::drawUi(const ros::Time& time)
                                  data_.detection_status_data_.armor_target,
                                  data_.detection_status_data_.color == rm_msgs::StatusChangeRequest::RED);
     else
-      trigger_change_ui_->update("target", gimbal_eject ? 1 : 0, data_.manual_to_referee_data_.shoot_frequency,
+      trigger_change_ui_->update("target", data_.manual_to_referee_data_.hero_eject_flag ? 1 : 0,
+                                 data_.manual_to_referee_data_.shoot_frequency,
                                  data_.detection_status_data_.armor_target,
                                  data_.detection_status_data_.color == rm_msgs::StatusChangeRequest::RED);
-    trigger_change_ui_->update("gimbal", data_.gimbal_cmd_data_.mode, gimbal_eject);
+    if (data_.dbus_data_.key_ctrl && data_.dbus_data_.key_shift && data_.dbus_data_.key_b)
+    {
+      trigger_change_ui_->update("chassis", 254, 0);
+    }
+    trigger_change_ui_->update("gimbal", data_.gimbal_cmd_data_.mode, data_.manual_to_referee_data_.hero_eject_flag);
     trigger_change_ui_->update("shooter", data_.shoot_cmd_data_.mode, 0, data_.manual_to_referee_data_.shoot_frequency,
                                false);
     fixed_ui_->update();

@@ -19,7 +19,6 @@ RobotReferee::RobotReferee(ros::NodeHandle& nh) : RefereeBase(nh)
 void RobotReferee::drawUi(const ros::Time& time)
 {
   RefereeBase::drawUi(time);
-  RobotReferee::checkDbusMsg(data_.dbus_data_);
   if (data_.dbus_data_.s_r == rm_msgs::DbusData::UP)
   {
     if (add_ui_flag)
