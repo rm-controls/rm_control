@@ -6,57 +6,88 @@
 
 namespace rm_referee
 {
-RobotReferee::RobotReferee(ros::NodeHandle& nh) : RefereeBase(nh)
+RobotReferee::RobotReferee(ros::NodeHandle& nh, Data& data) : RefereeBase(nh, data)
 {
   ros::NodeHandle ui_nh(nh, "ui");
+  RobotReferee::chassis_cmd_sub_ = nh.subscribe<rm_msgs::ChassisCmd>("/controllers/chassis_controller/command", 10,
+                                                                     &RobotReferee::chassisCmdDataCallback, this);
+  RobotReferee::gimbal_cmd_sub_ = nh.subscribe<rm_msgs::GimbalCmd>("/controllers/gimbal_controller/command", 10,
+                                                                   &RobotReferee::gimbalCmdDataCallback, this);
+  RobotReferee::cover_cmd_sub_ = nh.subscribe<std_msgs::Float64>("/controllers/cover_controller/command", 10,
+                                                                 &RobotReferee::coverCmdDataCallBack, this);
   trigger_change_ui_ = new TriggerChangeUi(ui_nh, data_);
   time_change_ui_ = new TimeChangeUi(ui_nh, data_);
   flash_ui_ = new FlashUi(ui_nh, data_);
   fixed_ui_ = new FixedUi(ui_nh, data_);
-  add_ui_flag = true;
+  add_ui_flag_ = true;
 }
 
-void RobotReferee::drawUi(const ros::Time& time)
+void RobotReferee::addUi()
 {
-  RefereeBase::drawUi(time);
-  if (data_.dbus_data_.s_r == rm_msgs::DbusData::UP)
+  RefereeBase::addUi();
+  ROS_INFO("time ui");
+  time_change_ui_->add();
+  usleep(200000);
+  ROS_INFO("trigger ui");
+  trigger_change_ui_->add();
+  usleep(200000);
+  ROS_INFO("fixed ui");
+  fixed_ui_->add();
+  usleep(200000);
+}
+
+void RobotReferee::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data_,
+                                           const ros::Time& last_get_)
+{
+  RefereeBase::robotStatusDataCallBack(game_robot_status_data_, last_get_);
+  fixed_ui_->update();
+}
+
+void RobotReferee::powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data_, const ros::Time& last_get_)
+{
+  RefereeBase::powerHeatDataCallBack(power_heat_data_, last_get_);
+}
+
+void RobotReferee::robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data_, const ros::Time& last_get_)
+{
+  RefereeBase::robotHurtDataCallBack(robot_hurt_data_, last_get_);
+  flash_ui_->update("armor0", last_get_);
+  flash_ui_->update("armor1", last_get_);
+  flash_ui_->update("armor2", last_get_);
+  flash_ui_->update("armor3", last_get_);
+}
+
+void RobotReferee::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
+{
+  RefereeBase::chassisCmdDataCallback(data);
+
+  flash_ui_->update("spin", ros::Time::now(), data_.chassis_cmd_data_.mode == rm_msgs::ChassisCmd::GYRO);
+
+  if (data_.dbus_data_.s_l == rm_msgs::DbusData::MID && data_.dbus_data_.s_r == rm_msgs::DbusData::UP)
   {
-    if (add_ui_flag)
-    {
-      trigger_change_ui_->add();
-      time_change_ui_->add();
-      fixed_ui_->add();
-      ROS_INFO("Add ui");
-      add_ui_flag = false;
-    }
-    else
-    {
-      time_change_ui_->update("capacitor", time);
-      if (data_.dbus_data_.s_l == rm_msgs::DbusData::MID && data_.dbus_data_.s_r == rm_msgs::DbusData::UP)
-      {
-        trigger_change_ui_->update("chassis", data_.chassis_cmd_data_.mode, false, 1, false);
-      }
-      else
-      {
-        trigger_change_ui_->update("chassis", data_.chassis_cmd_data_.mode,
-                                   data_.manual_to_referee_data_.power_limit_state == rm_common::PowerLimit::BURST, 0,
-                                   data_.manual_to_referee_data_.power_limit_state == rm_common::PowerLimit::CHARGE);
-      }
-    }
+    trigger_change_ui_->update("chassis", data->mode, false, 1, false);
   }
   else
-    add_ui_flag = true;
-
-  flash_ui_->update("spin", time,
-                    data_.chassis_cmd_data_.mode == rm_msgs::ChassisCmd::GYRO && data_.vel2d_cmd_data_.angular.z != 0.);
-  //  if (data_.dbus_data_.wheel == 0.)
-  //    flash_ui_->update("ore", time, data_.dbus_data_.wheel == 0.);
-  //  if (data_.dbus_data_.wheel != 0.)
-  //    flash_ui_->update("ore", time, data_.dbus_data_.wheel == 0.);
-
-  flash_ui_->update("armor0", time);
-  flash_ui_->update("armor1", time);
-  flash_ui_->update("armor2", time);
-  flash_ui_->update("armor3", time);
+  {
+    trigger_change_ui_->update("chassis", data->mode,
+                               data_.manual_to_referee_data_.power_limit_state == rm_common::PowerLimit::BURST, 0,
+                               data_.manual_to_referee_data_.power_limit_state == rm_common::PowerLimit::CHARGE);
+  }
 }
+
+void RobotReferee::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data)
+{
+  RefereeBase::gimbalCmdDataCallback(data);
+}
+
+void RobotReferee::shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data)
+{
+  RefereeBase::shootCmdDataCallback(data);
+}
+
+void RobotReferee::coverCmdDataCallBack(const std_msgs::Float64::ConstPtr& data)
+{
+  RefereeBase::coverCmdDataCallBack(data);
+}
+
 }  // namespace rm_referee

@@ -5,7 +5,6 @@
 #pragma once
 
 #include "rm_referee/referee/ui.h"
-#include "rm_referee/common/data.h"
 
 #include <rm_common/ros_utilities.h>
 #include <rm_common/decision/command_sender.h>
@@ -15,16 +14,48 @@ namespace rm_referee
 class RefereeBase
 {
 public:
-  explicit RefereeBase(ros::NodeHandle& nh);
+  explicit RefereeBase(ros::NodeHandle& nh, Data& data);
   virtual void run();
+  virtual void addUi();
 
-protected:
-  virtual void drawUi(const ros::Time& time)
-  {
-    data_.referee_.sendUi(time);
-  }
+  // unpack call back
+  virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data_,
+                                       const ros::Time& last_get_);
+  virtual void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data_, const ros::Time& last_get_);
+  virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data_, const ros::Time& last_get_);
+  virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data_, const ros::Time& last_get_);
 
-  Data data_;
+  // sub call back
+  virtual void jointStateCallback(const sensor_msgs::JointState::ConstPtr& joint_state);
+  virtual void actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data);
+  virtual void dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data);
+  virtual void chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data);
+  virtual void vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data);
+  virtual void shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data);
+  virtual void gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data);
+  virtual void coverCmdDataCallBack(const std_msgs::Float64::ConstPtr& data);
+  virtual void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data);
+  virtual void engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data);
+  virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
+  virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
+
+  ros::Subscriber joint_state_sub_;
+  ros::Subscriber actuator_state_sub_;
+  ros::Subscriber dbus_sub_;
+  ros::Subscriber chassis_cmd_sub_;
+  ros::Subscriber vel2D_cmd_sub_;
+  ros::Subscriber cover_cmd_sub_;
+  ros::Subscriber shoot_cmd_sub_;
+  ros::Subscriber gimbal_cmd_sub_;
+  ros::Subscriber detection_status_sub_;
+  ros::Subscriber card_cmd_sub_;
+  ros::Subscriber calibration_status_sub_;
+  ros::Subscriber engineer_cmd_sub_;
+  ros::Subscriber radar_date_sub_;
+  ros::Subscriber manual_data_sub_;
+
+  Data& data_;
+  bool add_ui_flag_ = false;
   ros::NodeHandle nh_;
 };
 }  // namespace rm_referee

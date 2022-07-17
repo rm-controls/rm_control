@@ -18,12 +18,12 @@ namespace rm_referee
 class EngineerReferee : public RobotReferee
 {
 public:
-  explicit EngineerReferee(ros::NodeHandle& nh);
+  explicit EngineerReferee(ros::NodeHandle& nh, Data& data);
   void run() override;
 
 private:
-  void drawUi(const ros::Time& time) override;
-  void drawProcess(const ros::Time& time);
+  //  void drawUi(const ros::Time& time) override;
+  //  void drawProcess(const ros::Time& time);
   bool symbol;
 };
 

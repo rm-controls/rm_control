@@ -4,7 +4,7 @@
 #include "rm_referee/referee/graph.h"
 namespace rm_referee
 {
-Graph::Graph(const XmlRpc::XmlRpcValue& config, Referee& referee, int id) : referee_(referee)
+Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base), last_send_(ros::Time::now())
 {
   config_.graphic_id_[0] = (uint8_t)(id >> 0 & 0xFF);
   config_.graphic_id_[1] = (uint8_t)(id >> 8 & 0xFF);
@@ -71,7 +71,7 @@ void Graph::display(bool priority_flag)
     return;
   if (!title_.empty() && !content_.empty())
     config_.end_angle_ = (int)(title_ + content_).size();
-  referee_.addUi(config_, title_ + content_, priority_flag);
+  addUi(config_, title_ + content_, priority_flag);
   last_content_ = content_;
   last_title_ = title_;
   last_config_ = config_;
@@ -84,7 +84,7 @@ void Graph::displayTwice(bool priority_flag)
   if (!title_.empty() && !content_.empty())
     config_.end_angle_ = (int)(title_ + content_).size();
   for (int i = 0; i < 2; ++i)
-    referee_.addUi(config_, title_ + content_, priority_flag);
+    addUi(config_, title_ + content_, priority_flag);
   last_content_ = content_;
   last_title_ = title_;
   last_config_ = config_;
@@ -183,6 +183,87 @@ rm_common::GraphType Graph::getType(const std::string& type)
     return rm_common::GraphType::STRING;
   else
     return rm_common::GraphType::LINE;
+}
+
+void Graph::pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const
+{
+  memset(tx_buffer, 0, k_frame_length_);
+  auto* frame_header = (rm_common::FrameHeader*)tx_buffer;
+
+  frame_header->sof_ = 0xA5;
+  frame_header->data_length_ = len;
+  memcpy(&tx_buffer[k_header_length_], (uint8_t*)&cmd_id, k_cmd_id_length_);
+  base_.appendCRC8CheckSum(tx_buffer, k_header_length_);
+  memcpy(&tx_buffer[k_header_length_ + k_cmd_id_length_], data, len);
+  base_.appendCRC16CheckSum(tx_buffer, k_header_length_ + k_cmd_id_length_ + len + k_tail_length_);
+}
+
+void Graph::sendInteractiveData(int data_cmd_id, int receiver_id, uint8_t data)
+{
+  uint8_t tx_data[sizeof(rm_common::InteractiveData)] = { 0 };
+  auto student_interactive_data = (rm_common::InteractiveData*)tx_data;
+
+  for (int i = 0; i < 128; i++)
+    tx_buffer_[i] = 0;
+  student_interactive_data->header_data_.data_cmd_id_ = data_cmd_id;
+  student_interactive_data->header_data_.sender_id_ = base_.robot_id_;
+  student_interactive_data->header_data_.receiver_id_ = receiver_id;
+  student_interactive_data->data_ = data;
+  pack(tx_buffer_, tx_data, rm_common::RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(rm_common::InteractiveData));
+  tx_len_ = k_header_length_ + k_cmd_id_length_ + (int)sizeof(rm_common::InteractiveData) + k_tail_length_;
+}
+
+void Graph::addUi(const rm_common::GraphConfig& config, const std::string& content, bool priority_flag)
+{
+  for (int i = 0; i < (int)ui_queue_.size() - 20; i++)
+    ui_queue_.erase(ui_queue_.begin());
+  if (priority_flag)
+    ui_queue_.push_back(std::pair<rm_common::GraphConfig, std::string>(config, content));
+  else
+    ui_queue_.insert(ui_queue_.begin(), std::pair<rm_common::GraphConfig, std::string>(config, content));
+}
+
+void Graph::sendUi(const ros::Time& time)
+{
+  if (ui_queue_.empty() || time - last_send_ < ros::Duration(0.05))
+    return;
+  rm_common::GraphData tx_data;
+  int data_len = (int)sizeof(rm_common::GraphData);
+  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+    return;
+  tx_data.header_.sender_id_ = base_.robot_id_;
+  tx_data.header_.receiver_id_ = base_.client_id_;
+  tx_data.config_ = ui_queue_.back().first;
+  if (ui_queue_.back().second.empty())
+  {
+    tx_data.header_.data_cmd_id_ = rm_common::DataCmdId::CLIENT_GRAPH_SINGLE_CMD;
+    data_len -= 30;
+  }
+  else
+  {
+    tx_data.header_.data_cmd_id_ = rm_common::DataCmdId::CLIENT_CHARACTER_CMD;
+    for (int i = 0; i < 30; i++)
+    {
+      if (i < (int)ui_queue_.back().second.size())
+        tx_data.content_[i] = ui_queue_.back().second[i];
+      else
+        tx_data.content_[i] = ' ';
+    }
+  }
+  pack(tx_buffer_, (uint8_t*)&tx_data, rm_common::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
+  tx_len_ = k_header_length_ + k_cmd_id_length_ + k_tail_length_ + data_len;
+  ui_queue_.pop_back();
+  last_send_ = time;
+
+  try
+  {
+    base_.serial_.write(tx_buffer_, tx_len_);
+  }
+  catch (serial::PortNotOpenedException& e)
+  {
+  }
+
+  clearTxBuffer();
 }
 
 }  // namespace rm_referee

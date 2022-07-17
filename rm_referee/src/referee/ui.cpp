@@ -21,10 +21,10 @@ UiBase::UiBase(ros::NodeHandle& nh, Data& data, const std::string& ui_type) : da
     {
       if (rpc_value[i]["name"] == "chassis")
         graph_vector_.insert(
-            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], data_.referee_, 1)));
+            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], data_.base_, 1)));
       else
         graph_vector_.insert(std::pair<std::string, Graph*>(rpc_value[i]["name"],
-                                                            new Graph(rpc_value[i]["config"], data_.referee_, id_++)));
+                                                            new Graph(rpc_value[i]["config"], data_.base_, id_++)));
     }
   }
   catch (XmlRpc::XmlRpcException& e)
@@ -40,7 +40,8 @@ void UiBase::add()
   for (auto graph : graph_vector_)
   {
     graph.second->setOperation(rm_common::GraphOperation::ADD);
-    graph.second->display();
+    graph.second->display(true);
+    graph.second->sendUi(ros::Time::now());
   }
 }
 
@@ -50,8 +51,8 @@ TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, Data& data) : UiBase(nh, d
   {
     if (graph.first == "chassis")
     {
-      if (data.referee_.referee_data_.robot_id_ == rm_common::RobotId::RED_ENGINEER ||
-          data.referee_.referee_data_.robot_id_ == rm_common::RobotId::BLUE_ENGINEER)
+      if (data_.base_.robot_id_ == rm_common::RobotId::RED_ENGINEER ||
+          data_.base_.robot_id_ == rm_common::RobotId::BLUE_ENGINEER)
         graph.second->setContent("raw");
       else
         graph.second->setContent("follow");
@@ -59,7 +60,7 @@ TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, Data& data) : UiBase(nh, d
     else if (graph.first == "target")
     {
       graph.second->setContent("armor");
-      if (data.referee_.referee_data_.robot_color_ == "red")
+      if (data_.base_.robot_color_ == "red")
         graph.second->setColor(rm_common::GraphColor::CYAN);
       else
         graph.second->setColor(rm_common::GraphColor::PINK);
@@ -85,6 +86,7 @@ void TriggerChangeUi::update(const std::string& graph_name, const std::string& c
       graph->second->setContent(content);
     graph->second->setOperation(rm_common::GraphOperation::UPDATE);
     graph->second->display();
+    graph->second->sendUi(ros::Time::now());
   }
 }
 
@@ -97,9 +99,15 @@ void TriggerChangeUi::update(const std::string& graph_name, uint8_t main_mode, b
     updateConfig(graph_name, graph->second, main_mode, main_flag, sub_mode, sub_flag);
     graph->second->setOperation(rm_common::GraphOperation::UPDATE);
     if (graph->first == "chassis" || graph->first == "gimbal")
+    {
       graph->second->displayTwice(true);
+      graph->second->sendUi(ros::Time::now());
+    }
     else
+    {
       graph->second->display();
+      graph->second->sendUi(ros::Time::now());
+    }
   }
 }
 
@@ -196,8 +204,7 @@ std::string TriggerChangeUi::getChassisState(uint8_t mode)
 
 std::string TriggerChangeUi::getTargetState(uint8_t target, uint8_t armor_target)
 {
-  if (data_.referee_.referee_data_.robot_id_ != rm_common::RobotId::BLUE_HERO &&
-      data_.referee_.referee_data_.robot_id_ != rm_common::RobotId::RED_HERO)
+  if (data_.base_.robot_id_ != rm_common::RobotId::BLUE_HERO && data_.base_.robot_id_ != rm_common::RobotId::RED_HERO)
   {
     if (target == rm_msgs::StatusChangeRequest::BUFF)
       return "buff";
@@ -241,16 +248,16 @@ void FixedUi::update()
     graph.second->updatePosition(getShootSpeedIndex());
     graph.second->setOperation(rm_common::GraphOperation::UPDATE);
     graph.second->display();
+    graph.second->sendUi(ros::Time::now());
   }
 }
 
 int FixedUi::getShootSpeedIndex()
 {
   uint16_t speed_limit;
-  if (data_.referee_.referee_data_.robot_id_ != rm_common::RobotId::BLUE_HERO &&
-      data_.referee_.referee_data_.robot_id_ != rm_common::RobotId::RED_HERO)
+  if (data_.base_.robot_id_ != rm_common::RobotId::BLUE_HERO && data_.base_.robot_id_ != rm_common::RobotId::RED_HERO)
   {
-    speed_limit = data_.referee_.referee_data_.game_robot_status_.shooter_id_1_17_mm_speed_limit_;
+    speed_limit = data_.base_.game_robot_status_data_.shooter_id_1_17_mm_speed_limit;
     if (speed_limit == 15)
       return 0;
     else if (speed_limit == 18)
@@ -268,15 +275,19 @@ void FlashUi::update(const std::string& name, const ros::Time& time, bool state)
     return;
   if (name.find("armor") != std::string::npos)
   {
-    if (data_.referee_.referee_data_.robot_hurt_.hurt_type_ == 0x00 &&
-        data_.referee_.referee_data_.robot_hurt_.armor_id_ == getArmorId(graph->first))
+    if (data_.base_.robot_hurt_data_.hurt_type == 0x00 &&
+        data_.base_.robot_hurt_data_.armor_id == getArmorId(graph->first))
     {
       updateArmorPosition(graph->first, graph->second);
       graph->second->display(time, true, true);
-      data_.referee_.referee_data_.robot_hurt_.hurt_type_ = 9;
+      graph->second->sendUi(time);
+      data_.base_.robot_hurt_data_.hurt_type = 9;
     }
     else
+    {
       graph->second->display(time, false, true);
+      graph->second->sendUi(time);
+    }
   }
   else
   {
@@ -284,7 +295,12 @@ void FlashUi::update(const std::string& name, const ros::Time& time, bool state)
       updateChassisGimbalDate(data_.joint_state_.position[8], graph->second);
     if (state)
       graph->second->setOperation(rm_common::GraphOperation::DELETE);
-    graph->second->display(time, !state);
+
+    if (name == "cover")
+      graph->second->display(time, !state, true);
+    else
+      graph->second->display(time, !state);
+    graph->second->sendUi(time);
   }
 }
 
@@ -343,10 +359,11 @@ void TimeChangeUi::add()
 {
   for (auto graph : graph_vector_)
   {
-    if (graph.first == "capacitor" && data_.referee_.referee_data_.capacity_data.cap_power_ == 0.)
+    if (graph.first == "capacitor" && data_.base_.capacity_data_.cap_power == 0.)
       continue;
     graph.second->setOperation(rm_common::GraphOperation::ADD);
-    graph.second->display();
+    graph.second->display(true);
+    graph.second->sendUi(ros::Time::now());
   }
 }
 
@@ -366,13 +383,14 @@ void TimeChangeUi::update(const std::string& name, const ros::Time& time, double
     if (name == "dart_status")
       setDartStatusData(*graph->second);
     graph->second->display(time);
+    graph->second->sendUi(ros::Time::now());
   }
 }
 
 void TimeChangeUi::setOreRemindData(Graph& graph)
 {
   char data_str[30] = { ' ' };
-  int time = data_.referee_.referee_data_.game_status_.stage_remain_time_;
+  int time = data_.base_.game_status_data_.stage_remain_time;
   if (time < 420 && time > 417)
     sprintf(data_str, "Ore will released after 15s");
   else if (time < 272 && time > 269)
@@ -388,17 +406,17 @@ void TimeChangeUi::setOreRemindData(Graph& graph)
 void TimeChangeUi::setDartStatusData(Graph& graph)
 {
   char data_str[30] = { ' ' };
-  if (data_.referee_.referee_data_.dart_client_cmd_.dart_launch_opening_status_ == 1)
+  if (data_.base_.dart_client_cmd_data_.dart_launch_opening_status == 1)
   {
     sprintf(data_str, "Dart Status: Close");
     graph.setColor(rm_common::GraphColor::YELLOW);
   }
-  else if (data_.referee_.referee_data_.dart_client_cmd_.dart_launch_opening_status_ == 2)
+  else if (data_.base_.dart_client_cmd_data_.dart_launch_opening_status == 2)
   {
     sprintf(data_str, "Dart Status: Changing");
     graph.setColor(rm_common::GraphColor::ORANGE);
   }
-  else if (data_.referee_.referee_data_.dart_client_cmd_.dart_launch_opening_status_ == 0)
+  else if (data_.base_.dart_client_cmd_data_.dart_launch_opening_status == 0)
   {
     sprintf(data_str, "Dart Open!");
     graph.setColor(rm_common::GraphColor::GREEN);
@@ -409,10 +427,10 @@ void TimeChangeUi::setDartStatusData(Graph& graph)
 
 void TimeChangeUi::setCapacitorData(Graph& graph)
 {
-  if (data_.referee_.referee_data_.capacity_data.cap_power_ != 0.)
+  if (data_.base_.capacity_data_.cap_power != 0.)
   {
     char data_str[30] = { ' ' };
-    double cap_power = data_.referee_.referee_data_.capacity_data.cap_power_ * 100.;
+    double cap_power = data_.base_.capacity_data_.cap_power * 100.;
     if (cap_power > 0.)
       sprintf(data_str, "cap:%1.0f%%", cap_power);
     else
