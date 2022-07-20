@@ -379,18 +379,25 @@ public:
       ROS_ERROR("Max Y angular velocity no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("max_angular_z", max_angular_z_))
       ROS_ERROR("Max Z angular velocity no defined (namespace: %s)", nh.getNamespace().c_str());
+
+    linear_x_offset_ = getParam(nh, "linear_x_offset", 0.);
+    linear_y_offset_ = getParam(nh, "linear_y_offset", 0.);
+    linear_z_offset_ = getParam(nh, "linear_z_offset", 0.);
+    angular_x_offset_ = getParam(nh, "angular_x_offset", 0.);
+    angular_y_offset_ = getParam(nh, "angular_y_offset", 0.);
+    angular_z_offset_ = getParam(nh, "angular_z_offset", 0.);
   }
   void setLinearVel(double scale_x, double scale_y, double scale_z)
   {
-    msg_.twist.linear.x = max_linear_x_ * scale_x;
-    msg_.twist.linear.y = max_linear_y_ * scale_y;
-    msg_.twist.linear.z = max_linear_z_ * scale_z;
+    msg_.twist.linear.x = max_linear_x_ * scale_x + linear_x_offset_;
+    msg_.twist.linear.y = max_linear_y_ * scale_y + linear_y_offset_;
+    msg_.twist.linear.z = max_linear_z_ * scale_z + linear_z_offset_;
   }
   void setAngularVel(double scale_x, double scale_y, double scale_z)
   {
-    msg_.twist.angular.x = max_angular_x_ * scale_x;
-    msg_.twist.angular.y = max_angular_y_ * scale_y;
-    msg_.twist.angular.z = max_angular_z_ * scale_z;
+    msg_.twist.angular.x = max_angular_x_ * scale_x + angular_x_offset_;
+    msg_.twist.angular.y = max_angular_y_ * scale_y + angular_y_offset_;
+    msg_.twist.angular.z = max_angular_z_ * scale_z + angular_z_offset_;
   }
   void setZero() override
   {
@@ -404,6 +411,8 @@ public:
 
 private:
   double max_linear_x_{}, max_linear_y_{}, max_linear_z_{}, max_angular_x_{}, max_angular_y_{}, max_angular_z_{};
+  double linear_x_offset_{}, linear_y_offset_{}, linear_z_offset_{}, angular_x_offset_{}, angular_y_offset_{},
+      angular_z_offset_{};
 };
 
 class JointPositionBinaryCommandSender : public CommandSenderBase<std_msgs::Float64>
