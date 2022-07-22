@@ -32,14 +32,14 @@ UiBase::UiBase(ros::NodeHandle& nh, Data& data, const std::string& ui_type) : da
     ROS_ERROR("Wrong ui parameter: %s", e.getMessage().c_str());
   }
   for (auto graph : graph_vector_)
-    graph.second->setOperation(rm_common::GraphOperation::DELETE);
+    graph.second->setOperation(rm_referee::GraphOperation::DELETE);
 }
 
 void UiBase::add()
 {
   for (auto graph : graph_vector_)
   {
-    graph.second->setOperation(rm_common::GraphOperation::ADD);
+    graph.second->setOperation(rm_referee::GraphOperation::ADD);
     graph.second->display(true);
     graph.second->sendUi(ros::Time::now());
   }
@@ -51,8 +51,8 @@ TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, Data& data) : UiBase(nh, d
   {
     if (graph.first == "chassis")
     {
-      if (data_.base_.robot_id_ == rm_common::RobotId::RED_ENGINEER ||
-          data_.base_.robot_id_ == rm_common::RobotId::BLUE_ENGINEER)
+      if (data_.base_.robot_id_ == rm_referee::RobotId::RED_ENGINEER ||
+          data_.base_.robot_id_ == rm_referee::RobotId::BLUE_ENGINEER)
         graph.second->setContent("raw");
       else
         graph.second->setContent("follow");
@@ -61,9 +61,9 @@ TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, Data& data) : UiBase(nh, d
     {
       graph.second->setContent("armor");
       if (data_.base_.robot_color_ == "red")
-        graph.second->setColor(rm_common::GraphColor::CYAN);
+        graph.second->setColor(rm_referee::GraphColor::CYAN);
       else
-        graph.second->setColor(rm_common::GraphColor::PINK);
+        graph.second->setColor(rm_referee::GraphColor::PINK);
     }
     else
       graph.second->setContent("0");
@@ -84,7 +84,7 @@ void TriggerChangeUi::update(const std::string& graph_name, const std::string& c
     }
     else
       graph->second->setContent(content);
-    graph->second->setOperation(rm_common::GraphOperation::UPDATE);
+    graph->second->setOperation(rm_referee::GraphOperation::UPDATE);
     graph->second->display();
     graph->second->sendUi(ros::Time::now());
   }
@@ -97,7 +97,7 @@ void TriggerChangeUi::update(const std::string& graph_name, uint8_t main_mode, b
   if (graph != graph_vector_.end())
   {
     updateConfig(graph_name, graph->second, main_mode, main_flag, sub_mode, sub_flag);
-    graph->second->setOperation(rm_common::GraphOperation::UPDATE);
+    graph->second->setOperation(rm_referee::GraphOperation::UPDATE);
     if (graph->first == "chassis" || graph->first == "gimbal")
     {
       graph->second->displayTwice(true);
@@ -119,46 +119,46 @@ void TriggerChangeUi::updateConfig(const std::string& name, Graph* graph, uint8_
     if (main_mode == 254)
     {
       graph->setContent("Cap reset");
-      graph->setColor(rm_common::GraphColor::YELLOW);
+      graph->setColor(rm_referee::GraphColor::YELLOW);
       return;
     }
     graph->setContent(getChassisState(main_mode));
     if (main_flag)
-      graph->setColor(rm_common::GraphColor::ORANGE);
+      graph->setColor(rm_referee::GraphColor::ORANGE);
     else if (sub_flag)
-      graph->setColor(rm_common::GraphColor::GREEN);
+      graph->setColor(rm_referee::GraphColor::GREEN);
     else if (sub_mode == 1)
-      graph->setColor(rm_common::GraphColor::PINK);
+      graph->setColor(rm_referee::GraphColor::PINK);
     else
-      graph->setColor(rm_common::GraphColor::WHITE);
+      graph->setColor(rm_referee::GraphColor::WHITE);
   }
   else if (name == "shooter")
   {
     graph->setContent(getShooterState(main_mode));
     if (sub_mode == rm_common::HeatLimit::LOW)
-      graph->setColor(rm_common::GraphColor::WHITE);
+      graph->setColor(rm_referee::GraphColor::WHITE);
     else if (sub_mode == rm_common::HeatLimit::HIGH)
-      graph->setColor(rm_common::GraphColor::YELLOW);
+      graph->setColor(rm_referee::GraphColor::YELLOW);
     else if (sub_mode == rm_common::HeatLimit::BURST)
-      graph->setColor(rm_common::GraphColor::ORANGE);
+      graph->setColor(rm_referee::GraphColor::ORANGE);
   }
   else if (name == "gimbal")
   {
     graph->setContent(getGimbalState(main_mode));
     if (main_flag)
-      graph->setColor(rm_common::GraphColor::ORANGE);
+      graph->setColor(rm_referee::GraphColor::ORANGE);
     else
-      graph->setColor(rm_common::GraphColor::WHITE);
+      graph->setColor(rm_referee::GraphColor::WHITE);
   }
   else if (name == "target")
   {
     graph->setContent(getTargetState(main_mode, sub_mode));
     if (main_flag)
-      graph->setColor(rm_common::GraphColor::ORANGE);
+      graph->setColor(rm_referee::GraphColor::ORANGE);
     else if (sub_flag)
-      graph->setColor(rm_common::GraphColor::PINK);
+      graph->setColor(rm_referee::GraphColor::PINK);
     else
-      graph->setColor(rm_common::GraphColor::CYAN);
+      graph->setColor(rm_referee::GraphColor::CYAN);
   }
   else if (name == "card")
   {
@@ -204,7 +204,7 @@ std::string TriggerChangeUi::getChassisState(uint8_t mode)
 
 std::string TriggerChangeUi::getTargetState(uint8_t target, uint8_t armor_target)
 {
-  if (data_.base_.robot_id_ != rm_common::RobotId::BLUE_HERO && data_.base_.robot_id_ != rm_common::RobotId::RED_HERO)
+  if (data_.base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && data_.base_.robot_id_ != rm_referee::RobotId::RED_HERO)
   {
     if (target == rm_msgs::StatusChangeRequest::BUFF)
       return "buff";
@@ -246,7 +246,7 @@ void FixedUi::update()
   for (auto graph : graph_vector_)
   {
     graph.second->updatePosition(getShootSpeedIndex());
-    graph.second->setOperation(rm_common::GraphOperation::UPDATE);
+    graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
     graph.second->display();
     graph.second->sendUi(ros::Time::now());
   }
@@ -255,7 +255,7 @@ void FixedUi::update()
 int FixedUi::getShootSpeedIndex()
 {
   uint16_t speed_limit;
-  if (data_.base_.robot_id_ != rm_common::RobotId::BLUE_HERO && data_.base_.robot_id_ != rm_common::RobotId::RED_HERO)
+  if (data_.base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && data_.base_.robot_id_ != rm_referee::RobotId::RED_HERO)
   {
     speed_limit = data_.base_.game_robot_status_data_.shooter_id_1_17_mm_speed_limit;
     if (speed_limit == 15)
@@ -294,7 +294,7 @@ void FlashUi::update(const std::string& name, const ros::Time& time, bool state)
     if (name == "aux")
       updateChassisGimbalDate(data_.joint_state_.position[8], graph->second);
     if (state)
-      graph->second->setOperation(rm_common::GraphOperation::DELETE);
+      graph->second->setOperation(rm_referee::GraphOperation::DELETE);
 
     if (name == "cover")
       graph->second->display(time, !state, true);
@@ -361,7 +361,7 @@ void TimeChangeUi::add()
   {
     if (graph.first == "capacitor" && data_.base_.capacity_data_.cap_power == 0.)
       continue;
-    graph.second->setOperation(rm_common::GraphOperation::ADD);
+    graph.second->setOperation(rm_referee::GraphOperation::ADD);
     graph.second->display(true);
     graph.second->sendUi(ros::Time::now());
   }
@@ -400,7 +400,7 @@ void TimeChangeUi::setOreRemindData(Graph& graph)
   else
     return;
   graph.setContent(data_str);
-  graph.setOperation(rm_common::GraphOperation::UPDATE);
+  graph.setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
 void TimeChangeUi::setDartStatusData(Graph& graph)
@@ -409,20 +409,20 @@ void TimeChangeUi::setDartStatusData(Graph& graph)
   if (data_.base_.dart_client_cmd_data_.dart_launch_opening_status == 1)
   {
     sprintf(data_str, "Dart Status: Close");
-    graph.setColor(rm_common::GraphColor::YELLOW);
+    graph.setColor(rm_referee::GraphColor::YELLOW);
   }
   else if (data_.base_.dart_client_cmd_data_.dart_launch_opening_status == 2)
   {
     sprintf(data_str, "Dart Status: Changing");
-    graph.setColor(rm_common::GraphColor::ORANGE);
+    graph.setColor(rm_referee::GraphColor::ORANGE);
   }
   else if (data_.base_.dart_client_cmd_data_.dart_launch_opening_status == 0)
   {
     sprintf(data_str, "Dart Open!");
-    graph.setColor(rm_common::GraphColor::GREEN);
+    graph.setColor(rm_referee::GraphColor::GREEN);
   }
   graph.setContent(data_str);
-  graph.setOperation(rm_common::GraphOperation::UPDATE);
+  graph.setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
 void TimeChangeUi::setCapacitorData(Graph& graph)
@@ -437,12 +437,12 @@ void TimeChangeUi::setCapacitorData(Graph& graph)
       sprintf(data_str, "please charge");
     graph.setContent(data_str);
     if (cap_power < 30.)
-      graph.setColor(rm_common::GraphColor::ORANGE);
+      graph.setColor(rm_referee::GraphColor::ORANGE);
     else if (cap_power > 70.)
-      graph.setColor(rm_common::GraphColor::GREEN);
+      graph.setColor(rm_referee::GraphColor::GREEN);
     else
-      graph.setColor(rm_common::GraphColor::YELLOW);
-    graph.setOperation(rm_common::GraphOperation::UPDATE);
+      graph.setColor(rm_referee::GraphColor::YELLOW);
+    graph.setOperation(rm_referee::GraphOperation::UPDATE);
   }
 }
 
@@ -463,12 +463,12 @@ void TimeChangeUi::setEffortData(Graph& graph)
       sprintf(data_str, "%s:%.2f N.m", data_.joint_state_.name[max_index].c_str(), data_.joint_state_.effort[max_index]);
       graph.setContent(data_str);
       if (data_.joint_state_.effort[max_index] > 20.)
-        graph.setColor(rm_common::GraphColor::ORANGE);
+        graph.setColor(rm_referee::GraphColor::ORANGE);
       else if (data_.joint_state_.effort[max_index] < 10.)
-        graph.setColor(rm_common::GraphColor::GREEN);
+        graph.setColor(rm_referee::GraphColor::GREEN);
       else
-        graph.setColor(rm_common::GraphColor::YELLOW);
-      graph.setOperation(rm_common::GraphOperation::UPDATE);
+        graph.setColor(rm_referee::GraphColor::YELLOW);
+      graph.setOperation(rm_referee::GraphOperation::UPDATE);
     }
   }
 }
@@ -478,7 +478,7 @@ void TimeChangeUi::setProgressData(Graph& graph, double data)
   char data_str[30] = { ' ' };
   sprintf(data_str, " %.1f%%", data * 100.);
   graph.setContent(data_str);
-  graph.setOperation(rm_common::GraphOperation::UPDATE);
+  graph.setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
 void TimeChangeUi::setTemperatureData(Graph& graph)
@@ -491,14 +491,14 @@ void TimeChangeUi::setTemperatureData(Graph& graph)
       sprintf(data_str, " %.1hhu C", data_.actuator_state_.temperature[i]);
       graph.setContent(data_str);
       if (data_.actuator_state_.temperature[i] > 70.)
-        graph.setColor(rm_common::GraphColor::ORANGE);
+        graph.setColor(rm_referee::GraphColor::ORANGE);
       else if (data_.actuator_state_.temperature[i] < 30.)
-        graph.setColor(rm_common::GraphColor::GREEN);
+        graph.setColor(rm_referee::GraphColor::GREEN);
       else
-        graph.setColor(rm_common::GraphColor::YELLOW);
+        graph.setColor(rm_referee::GraphColor::YELLOW);
     }
   }
-  graph.setOperation(rm_common::GraphOperation::UPDATE);
+  graph.setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
 }  // namespace rm_referee

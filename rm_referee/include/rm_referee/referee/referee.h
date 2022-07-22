@@ -47,7 +47,7 @@ namespace rm_referee
 class SuperCapacitor
 {
 public:
-  explicit SuperCapacitor(rm_common::CapacityData& data) : last_get_data_(ros::Time::now()), data_(data){};
+  explicit SuperCapacitor(rm_referee::CapacityData& data) : last_get_data_(ros::Time::now()), data_(data){};
   void read(const std::vector<uint8_t>& rx_buffer);
   ros::Time last_get_data_;
 
@@ -55,7 +55,7 @@ private:
   void dtpReceivedCallBack(unsigned char receive_byte);
   void receiveCallBack(unsigned char package_id, const unsigned char* data);
   static float int16ToFloat(unsigned short data0);
-  rm_common::CapacityData& data_;
+  rm_referee::CapacityData& data_;
   unsigned char receive_buffer_[1024] = { 0 };
   unsigned char ping_pong_buffer_[1024] = { 0 };
   unsigned int receive_buf_counter_ = 0;

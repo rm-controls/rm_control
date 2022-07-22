@@ -1,9 +1,41 @@
+/*******************************************************************************
+ * BSD 3-Clause License
+ *
+ * Copyright (c) 2021, Qiayuan Liao
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * * Neither the name of the copyright holder nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************/
+
 //
-// Created by yuchen on 2022/7/18.
+// Created by peter on 2021/7/17.
 //
 
-#ifndef REFEREE_DATA_H_
-#define REFEREE_DATA_H_
+#pragma once
 
 #include "ros/ros.h"
 #include <unistd.h>
@@ -13,7 +45,7 @@
 #include <rm_msgs/ChassisCmd.h>
 #include <rm_msgs/GimbalCmd.h>
 #include <rm_msgs/ShootCmd.h>
-#include "rm_common/referee/data.h"
+#include <rm_referee/referee/protocol.h>
 
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
 #include <rm_msgs/GameRobotStatus.h>
@@ -43,12 +75,21 @@
 
 namespace rm_referee
 {
+struct CapacityData
+{
+  double chassis_power_;
+  double limit_power_;
+  double buffer_power_;
+  double cap_power_;
+  bool is_online_ = false;
+};
+
 class Base
 {
 public:
   serial::Serial serial_;
   rm_msgs::Referee referee_pub_data_ = {};
-  rm_common::CapacityData capacity_data_ref_;
+  rm_referee::CapacityData capacity_data_ref_;
   rm_msgs::BulletRemaining bullet_remaining_data_;
   rm_msgs::CapacityData capacity_data_;
   rm_msgs::SuperCapacitor super_capacitor_data_;
@@ -96,7 +137,7 @@ public:
     while (dw_length--)
     {
       uc_index = uc_crc_8 ^ (*pch_message++);
-      uc_crc_8 = rm_common::kCrc8Table[uc_index];
+      uc_crc_8 = rm_referee::kCrc8Table[uc_index];
     }
     return (uc_crc_8);
   }
@@ -106,7 +147,7 @@ public:
     unsigned char uc_expected;
     if ((pch_message == nullptr) || (dw_length <= 2))
       return 0;
-    uc_expected = getCRC8CheckSum(pch_message, dw_length - 1, rm_common::kCrc8Init);
+    uc_expected = getCRC8CheckSum(pch_message, dw_length - 1, rm_referee::kCrc8Init);
     return (uc_expected == pch_message[dw_length - 1]);
   }
 
@@ -115,7 +156,7 @@ public:
     unsigned char uc_crc;
     if ((pch_message == nullptr) || (dw_length <= 2))
       return;
-    uc_crc = getCRC8CheckSum((unsigned char*)pch_message, dw_length - 1, rm_common::kCrc8Init);
+    uc_crc = getCRC8CheckSum((unsigned char*)pch_message, dw_length - 1, rm_referee::kCrc8Init);
     pch_message[dw_length - 1] = uc_crc;
   }
 
@@ -127,7 +168,7 @@ public:
     while (dw_length--)
     {
       chData = *pch_message++;
-      (w_crc) = ((uint16_t)(w_crc) >> 8) ^ rm_common::wCRC_table[((uint16_t)(w_crc) ^ (uint16_t)(chData)) & 0x00ff];
+      (w_crc) = ((uint16_t)(w_crc) >> 8) ^ rm_referee::wCRC_table[((uint16_t)(w_crc) ^ (uint16_t)(chData)) & 0x00ff];
     }
     return w_crc;
   }
@@ -137,7 +178,7 @@ public:
     uint16_t w_expected;
     if ((pch_message == nullptr) || (dw_length <= 2))
       return 0;
-    w_expected = getCRC16CheckSum(pch_message, dw_length - 2, rm_common::kCrc16Init);
+    w_expected = getCRC16CheckSum(pch_message, dw_length - 2, rm_referee::kCrc16Init);
     return ((w_expected & 0xff) == pch_message[dw_length - 2] &&
             ((w_expected >> 8) & 0xff) == pch_message[dw_length - 1]);
   }
@@ -147,10 +188,9 @@ public:
     uint16_t wCRC;
     if ((pch_message == nullptr) || (dw_length <= 2))
       return;
-    wCRC = getCRC16CheckSum((uint8_t*)pch_message, dw_length - 2, rm_common::kCrc16Init);
+    wCRC = getCRC16CheckSum((uint8_t*)pch_message, dw_length - 2, rm_referee::kCrc16Init);
     pch_message[dw_length - 2] = (uint8_t)(wCRC & 0x00ff);
     pch_message[dw_length - 1] = (uint8_t)((wCRC >> 8) & 0x00ff);
   }
 };
 }  // namespace rm_referee
-#endif

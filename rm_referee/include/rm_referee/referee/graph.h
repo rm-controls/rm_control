@@ -6,7 +6,6 @@
 
 #include <rm_referee/referee/data.h>
 #include <rm_common/ros_utilities.h>
-#include <rm_common/referee/protocol.h>
 
 namespace rm_referee
 {
@@ -14,7 +13,7 @@ class Graph
 {
 public:
   explicit Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id);
-  void addUi(const rm_common::GraphConfig& config, const std::string& content, bool priority_flag = false);
+  void addUi(const rm_referee::GraphConfig& config, const std::string& content, bool priority_flag = false);
   void sendUi(const ros::Time& time);
   void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);
   void clearTxBuffer()
@@ -29,11 +28,11 @@ public:
   void display(const ros::Time& time);
   void display(const ros::Time& time, bool state, bool once = false);
   void updatePosition(int index);
-  void setOperation(const rm_common::GraphOperation& operation)
+  void setOperation(const rm_referee::GraphOperation& operation)
   {
     config_.operate_type_ = operation;
   }
-  void setColor(const rm_common::GraphColor& color)
+  void setColor(const rm_referee::GraphColor& color)
   {
     config_.color_ = color;
   }
@@ -64,18 +63,18 @@ public:
 private:
   void initPosition(XmlRpc::XmlRpcValue value, std::vector<std::pair<int, int>>& positions);
   void pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const;
-  rm_common::GraphColor getColor(const std::string& color);
-  rm_common::GraphType getType(const std::string& type);
+  rm_referee::GraphColor getColor(const std::string& color);
+  rm_referee::GraphType getType(const std::string& type);
 
   Base& base_;
   ros::Time last_time_ = ros::Time::now();
   ros::Duration delay_ = ros::Duration(0.);
-  rm_common::GraphConfig config_{}, last_config_{};
+  rm_referee::GraphConfig config_{}, last_config_{};
   std::string title_{}, content_{}, last_title_{}, last_content_{};
   std::vector<std::pair<int, int>> start_positions_{}, end_positions_{};
 
   ros::Time last_send_;
-  std::vector<std::pair<rm_common::GraphConfig, std::string>> ui_queue_;
+  std::vector<std::pair<rm_referee::GraphConfig, std::string>> ui_queue_;
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
 };
 

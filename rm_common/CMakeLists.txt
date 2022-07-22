@@ -53,7 +53,7 @@ include_directories(
 
 file(GLOB_RECURSE sources "src/*.cpp" "src/decision/*.cpp" "src/filter/*.cpp")
 
-add_library(rm_common SHARED ${sources} include/rm_common/referee/data.h)
+add_library(rm_common SHARED ${sources})
 #add_executable(test_traj test/test_traj.cpp)
 add_executable(test_kalman test/test_kalman_filter.cpp)
 
