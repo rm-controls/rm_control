@@ -429,13 +429,17 @@ void TimeChangeUi::setCapacitorData(Graph& graph)
 {
   if (data_.base_.capacity_data_.cap_power != 0.)
   {
-    char data_str[30] = { ' ' };
     double cap_power = data_.base_.capacity_data_.cap_power * 100.;
     if (cap_power > 0.)
-      sprintf(data_str, "cap:%1.0f%%", cap_power);
+    {
+      graph.setStartX(640);
+      graph.setStartY(100);
+
+      graph.setEndX(640 + 640 * cap_power);
+      graph.setEndY(100);
+    }
     else
-      sprintf(data_str, "please charge");
-    graph.setContent(data_str);
+      return;
     if (cap_power < 30.)
       graph.setColor(rm_referee::GraphColor::ORANGE);
     else if (cap_power > 70.)

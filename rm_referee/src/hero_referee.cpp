@@ -60,7 +60,7 @@ void HeroReferee::shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data)
   trigger_change_ui_->update("shooter", data_.shoot_cmd_data_.mode, 0, data_.manual_to_referee_data_.shoot_frequency,
                              false);
 
-  if (data_.base_.robot_id_ != rm_common::RobotId::BLUE_HERO && data_.base_.robot_id_ != rm_common::RobotId::RED_HERO)
+  if (data_.base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && data_.base_.robot_id_ != rm_referee::RobotId::RED_HERO)
     trigger_change_ui_->update("target", switch_detection_srv_->getTarget(),
                                data_.manual_to_referee_data_.shoot_frequency == rm_common::HeatLimit::BURST,
                                switch_detection_srv_->getArmorTarget(),

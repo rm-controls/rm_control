@@ -51,6 +51,8 @@ include_directories(
         ${EIGEN3_INCLUDE_DIR}
 )
 
+include_directories(BEFORE ../rm_referee/include)
+
 file(GLOB_RECURSE sources "src/*.cpp" "src/decision/*.cpp" "src/filter/*.cpp")
 
 add_library(rm_common SHARED ${sources})

@@ -84,7 +84,7 @@ int Referee::unpack(uint8_t* rx_data)
 {
   uint16_t cmd_id;
   int frame_len;
-  rm_common::FrameHeader frame_header;
+  rm_referee::FrameHeader frame_header;
 
   memcpy(&frame_header, rx_data, k_header_length_);
   if (base_.verifyCRC8CheckSum(rx_data, k_header_length_) == true)
@@ -95,10 +95,10 @@ int Referee::unpack(uint8_t* rx_data)
       cmd_id = (rx_data[6] << 8 | rx_data[5]);
       switch (cmd_id)
       {
-        case rm_common::RefereeCmdId::GAME_STATUS_CMD:
+        case rm_referee::RefereeCmdId::GAME_STATUS_CMD:
         {
-          rm_common::GameStatus game_status_ref;
-          memcpy(&game_status_ref, rx_data + 7, sizeof(rm_common::GameStatus));
+          rm_referee::GameStatus game_status_ref;
+          memcpy(&game_status_ref, rx_data + 7, sizeof(rm_referee::GameStatus));
 
           base_.game_status_data_.game_type = game_status_ref.game_type_;
           base_.game_status_data_.game_progress = game_status_ref.game_progress_;
@@ -109,16 +109,16 @@ int Referee::unpack(uint8_t* rx_data)
           game_status_pub_.publish(base_.game_status_data_);
           break;
         }
-        case rm_common::RefereeCmdId::GAME_RESULT_CMD:
+        case rm_referee::RefereeCmdId::GAME_RESULT_CMD:
         {
-          rm_common::GameResult game_result_ref;
-          memcpy(&game_result_ref, rx_data + 7, sizeof(rm_common::GameResult));
+          rm_referee::GameResult game_result_ref;
+          memcpy(&game_result_ref, rx_data + 7, sizeof(rm_referee::GameResult));
           break;
         }
-        case rm_common::RefereeCmdId::GAME_ROBOT_HP_CMD:
+        case rm_referee::RefereeCmdId::GAME_ROBOT_HP_CMD:
         {
-          rm_common::GameRobotHp game_robot_hp_ref;
-          memcpy(&game_robot_hp_ref, rx_data + 7, sizeof(rm_common::GameRobotHp));
+          rm_referee::GameRobotHp game_robot_hp_ref;
+          memcpy(&game_robot_hp_ref, rx_data + 7, sizeof(rm_referee::GameRobotHp));
 
           base_.game_robot_hp_data_.blue_1_robot_hp = game_robot_hp_ref.blue_1_robot_hp_;
           base_.game_robot_hp_data_.blue_2_robot_hp = game_robot_hp_ref.blue_2_robot_hp_;
@@ -137,10 +137,10 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_hp_pub_.publish(base_.game_robot_hp_data_);
           break;
         }
-        case rm_common::RefereeCmdId::DART_STATUS_CMD:
+        case rm_referee::RefereeCmdId::DART_STATUS_CMD:
         {
-          rm_common::DartStatus dart_status_ref;
-          memcpy(&dart_status_ref, rx_data + 7, sizeof(rm_common::DartStatus));
+          rm_referee::DartStatus dart_status_ref;
+          memcpy(&dart_status_ref, rx_data + 7, sizeof(rm_referee::DartStatus));
 
           base_.dart_status_data_.dart_belong = dart_status_ref.dart_belong_;
           base_.dart_status_data_.stage_remaining_time = dart_status_ref.stage_remaining_time_;
@@ -149,10 +149,10 @@ int Referee::unpack(uint8_t* rx_data)
           dart_status_pub_.publish(base_.dart_status_data_);
           break;
         }
-        case rm_common::RefereeCmdId::ICRA_ZONE_STATUS_CMD:
+        case rm_referee::RefereeCmdId::ICRA_ZONE_STATUS_CMD:
         {
-          rm_common::IcraBuffDebuffZoneStatus icra_buff_debuff_zone_status_ref;
-          memcpy(&icra_buff_debuff_zone_status_ref, rx_data + 7, sizeof(rm_common::IcraBuffDebuffZoneStatus));
+          rm_referee::IcraBuffDebuffZoneStatus icra_buff_debuff_zone_status_ref;
+          memcpy(&icra_buff_debuff_zone_status_ref, rx_data + 7, sizeof(rm_referee::IcraBuffDebuffZoneStatus));
 
           base_.icra_buff_debuff_zone_status_data_.blue_1_bullet_left =
               icra_buff_debuff_zone_status_ref.blue_1_bullet_left_;
@@ -185,10 +185,10 @@ int Referee::unpack(uint8_t* rx_data)
           icra_buff_debuff_zone_status_pub_.publish(base_.icra_buff_debuff_zone_status_data_);
           break;
         }
-        case rm_common::RefereeCmdId::FIELD_EVENTS_CMD:
+        case rm_referee::RefereeCmdId::FIELD_EVENTS_CMD:
         {
-          rm_common::EventData event_ref;
-          memcpy(&event_ref, rx_data + 7, sizeof(rm_common::EventData));
+          rm_referee::EventData event_ref;
+          memcpy(&event_ref, rx_data + 7, sizeof(rm_referee::EventData));
 
           base_.event_data_.event_data = event_ref.event_type_;
           base_.event_data_.stamp = last_get_;
@@ -196,10 +196,10 @@ int Referee::unpack(uint8_t* rx_data)
           event_data_pub_.publish(base_.event_data_);
           break;
         }
-        case rm_common::RefereeCmdId::SUPPLY_PROJECTILE_ACTION_CMD:
+        case rm_referee::RefereeCmdId::SUPPLY_PROJECTILE_ACTION_CMD:
         {
-          rm_common::SupplyProjectileAction supply_projectile_action_ref;
-          memcpy(&supply_projectile_action_ref, rx_data + 7, sizeof(rm_common::SupplyProjectileAction));
+          rm_referee::SupplyProjectileAction supply_projectile_action_ref;
+          memcpy(&supply_projectile_action_ref, rx_data + 7, sizeof(rm_referee::SupplyProjectileAction));
 
           base_.supply_projectile_action_data_.supply_projectile_id =
               supply_projectile_action_ref.supply_projectile_id_;
@@ -213,16 +213,16 @@ int Referee::unpack(uint8_t* rx_data)
           supply_projectile_action_pub_.publish(base_.supply_projectile_action_data_);
           break;
         }
-        case rm_common::RefereeCmdId::REFEREE_WARNING_CMD:
+        case rm_referee::RefereeCmdId::REFEREE_WARNING_CMD:
         {
-          rm_common::RefereeWarning referee_warning_ref;
-          memcpy(&referee_warning_ref, rx_data + 7, sizeof(rm_common::RefereeWarning));
+          rm_referee::RefereeWarning referee_warning_ref;
+          memcpy(&referee_warning_ref, rx_data + 7, sizeof(rm_referee::RefereeWarning));
           break;
         }
-        case rm_common::RefereeCmdId::DART_REMAINING_CMD:
+        case rm_referee::RefereeCmdId::DART_REMAINING_CMD:
         {
-          rm_common::DartRemainingTime dart_remaining_time_ref;
-          memcpy(&dart_remaining_time_ref, rx_data + 7, sizeof(rm_common::DartRemainingTime));
+          rm_referee::DartRemainingTime dart_remaining_time_ref;
+          memcpy(&dart_remaining_time_ref, rx_data + 7, sizeof(rm_referee::DartRemainingTime));
 
           base_.dart_remaining_time_data_.dart_remaining_time = dart_remaining_time_ref.dart_remaining_time_;
           base_.dart_remaining_time_data_.stamp = last_get_;
@@ -230,10 +230,10 @@ int Referee::unpack(uint8_t* rx_data)
           dart_remaining_time_pub_.publish(base_.dart_remaining_time_data_);
           break;
         }
-        case rm_common::RefereeCmdId::ROBOT_STATUS_CMD:
+        case rm_referee::RefereeCmdId::ROBOT_STATUS_CMD:
         {
-          rm_common::GameRobotStatus game_robot_status_ref;
-          memcpy(&game_robot_status_ref, rx_data + 7, sizeof(rm_common::GameRobotStatus));
+          rm_referee::GameRobotStatus game_robot_status_ref;
+          memcpy(&game_robot_status_ref, rx_data + 7, sizeof(rm_referee::GameRobotStatus));
 
           base_.game_robot_status_data_.mains_power_chassis_output = game_robot_status_ref.mains_power_chassis_output_;
           base_.game_robot_status_data_.mains_power_gimbal_output = game_robot_status_ref.mains_power_gimbal_output_;
@@ -274,10 +274,10 @@ int Referee::unpack(uint8_t* rx_data)
           referee_pub_.publish(base_.referee_pub_data_);
           break;
         }
-        case rm_common::RefereeCmdId::POWER_HEAT_DATA_CMD:
+        case rm_referee::RefereeCmdId::POWER_HEAT_DATA_CMD:
         {
-          rm_common::PowerHeatData power_heat_ref;
-          memcpy(&power_heat_ref, rx_data + 7, sizeof(rm_common::PowerHeatData));
+          rm_referee::PowerHeatData power_heat_ref;
+          memcpy(&power_heat_ref, rx_data + 7, sizeof(rm_referee::PowerHeatData));
 
           base_.power_heat_data_.chassis_power_buffer = power_heat_ref.chassis_power_buffer_;
           base_.power_heat_data_.chassis_power = power_heat_ref.chassis_power_;
@@ -304,28 +304,28 @@ int Referee::unpack(uint8_t* rx_data)
           power_heat_data_pub_.publish(base_.power_heat_data_);
           break;
         }
-        case rm_common::RefereeCmdId::ROBOT_POS_CMD:
+        case rm_referee::RefereeCmdId::ROBOT_POS_CMD:
         {
-          rm_common::GameRobotPos game_robot_pos_ref;
-          memcpy(&game_robot_pos_ref, rx_data + 7, sizeof(rm_common::GameRobotPos));
+          rm_referee::GameRobotPos game_robot_pos_ref;
+          memcpy(&game_robot_pos_ref, rx_data + 7, sizeof(rm_referee::GameRobotPos));
           break;
         }
-        case rm_common::RefereeCmdId::BUFF_CMD:
+        case rm_referee::RefereeCmdId::BUFF_CMD:
         {
-          rm_common::Buff referee_buff;
-          memcpy(&referee_buff, rx_data + 7, sizeof(rm_common::Buff));
+          rm_referee::Buff referee_buff;
+          memcpy(&referee_buff, rx_data + 7, sizeof(rm_referee::Buff));
           break;
         }
-        case rm_common::RefereeCmdId::AERIAL_ROBOT_ENERGY_CMD:
+        case rm_referee::RefereeCmdId::AERIAL_ROBOT_ENERGY_CMD:
         {
-          rm_common::AerialRobotEnergy aerial_robot_energy_ref;
-          memcpy(&aerial_robot_energy_ref, rx_data + 7, sizeof(rm_common::AerialRobotEnergy));
+          rm_referee::AerialRobotEnergy aerial_robot_energy_ref;
+          memcpy(&aerial_robot_energy_ref, rx_data + 7, sizeof(rm_referee::AerialRobotEnergy));
           break;
         }
-        case rm_common::RefereeCmdId::ROBOT_HURT_CMD:
+        case rm_referee::RefereeCmdId::ROBOT_HURT_CMD:
         {
-          rm_common::RobotHurt robot_hurt_ref;
-          memcpy(&robot_hurt_ref, rx_data + 7, sizeof(rm_common::RobotHurt));
+          rm_referee::RobotHurt robot_hurt_ref;
+          memcpy(&robot_hurt_ref, rx_data + 7, sizeof(rm_referee::RobotHurt));
 
           base_.robot_hurt_data_.armor_id = robot_hurt_ref.armor_id_;
           base_.robot_hurt_data_.hurt_type = robot_hurt_ref.hurt_type_;
@@ -342,10 +342,10 @@ int Referee::unpack(uint8_t* rx_data)
           referee_pub_.publish(base_.referee_pub_data_);
           break;
         }
-        case rm_common::RefereeCmdId::SHOOT_DATA_CMD:
+        case rm_referee::RefereeCmdId::SHOOT_DATA_CMD:
         {
-          rm_common::ShootData shoot_data_ref;
-          memcpy(&shoot_data_ref, rx_data + 7, sizeof(rm_common::ShootData));
+          rm_referee::ShootData shoot_data_ref;
+          memcpy(&shoot_data_ref, rx_data + 7, sizeof(rm_referee::ShootData));
 
           base_.shoot_data_.bullet_freq = shoot_data_ref.bullet_freq_;
           base_.shoot_data_.bullet_speed = shoot_data_ref.bullet_speed_;
@@ -361,10 +361,10 @@ int Referee::unpack(uint8_t* rx_data)
           referee_pub_.publish(base_.referee_pub_data_);
           break;
         }
-        case rm_common::RefereeCmdId::BULLET_REMAINING_CMD:
+        case rm_referee::RefereeCmdId::BULLET_REMAINING_CMD:
         {
-          rm_common::BulletRemaining bullet_remaining_ref;
-          memcpy(&bullet_remaining_ref, rx_data + 7, sizeof(rm_common::BulletRemaining));
+          rm_referee::BulletRemaining bullet_remaining_ref;
+          memcpy(&bullet_remaining_ref, rx_data + 7, sizeof(rm_referee::BulletRemaining));
 
           base_.bullet_remaining_data_.bullet_remaining_num_17_mm = bullet_remaining_ref.bullet_remaining_num_17_mm_;
           base_.bullet_remaining_data_.bullet_remaining_num_42_mm = bullet_remaining_ref.bullet_remaining_num_42_mm_;
@@ -374,10 +374,10 @@ int Referee::unpack(uint8_t* rx_data)
           bullet_remaining_pub_.publish(base_.bullet_remaining_data_);
           break;
         }
-        case rm_common::RefereeCmdId::ROBOT_RFID_STATUS_CMD:
+        case rm_referee::RefereeCmdId::ROBOT_RFID_STATUS_CMD:
         {
-          rm_common::RfidStatus rfid_status_ref;
-          memcpy(&rfid_status_ref, rx_data + 7, sizeof(rm_common::RfidStatus));
+          rm_referee::RfidStatus rfid_status_ref;
+          memcpy(&rfid_status_ref, rx_data + 7, sizeof(rm_referee::RfidStatus));
 
           base_.rfid_status_data_.rfid_status = rfid_status_ref.rfid_status_;
           base_.rfid_status_data_.stamp = last_get_;
@@ -385,10 +385,10 @@ int Referee::unpack(uint8_t* rx_data)
           rfid_status_pub_.publish(base_.rfid_status_data_);
           break;
         }
-        case rm_common::RefereeCmdId::DART_CLIENT_CMD:
+        case rm_referee::RefereeCmdId::DART_CLIENT_CMD:
         {
-          rm_common::DartClientCmd dart_client_cmd_ref;
-          memcpy(&dart_client_cmd_ref, rx_data + 7, sizeof(rm_common::DartClientCmd));
+          rm_referee::DartClientCmd dart_client_cmd_ref;
+          memcpy(&dart_client_cmd_ref, rx_data + 7, sizeof(rm_referee::DartClientCmd));
 
           base_.dart_client_cmd_data_.dart_attack_target = dart_client_cmd_ref.dart_attack_target_;
           base_.dart_client_cmd_data_.dart_launch_opening_status = dart_client_cmd_ref.dart_launch_opening_status_;
@@ -404,10 +404,10 @@ int Referee::unpack(uint8_t* rx_data)
           dart_client_cmd_pub_.publish(base_.dart_client_cmd_data_);
           break;
         }
-        case rm_common::RefereeCmdId::INTERACTIVE_DATA_CMD:
+        case rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD:
         {
-          rm_common::InteractiveData interactive_data_ref;  // local variable temporarily before moving referee data
-          memcpy(&interactive_data_ref, rx_data + 7, sizeof(rm_common::InteractiveData));
+          rm_referee::InteractiveData interactive_data_ref;  // local variable temporarily before moving referee data
+          memcpy(&interactive_data_ref, rx_data + 7, sizeof(rm_referee::InteractiveData));
           break;
         }
         default:
@@ -426,39 +426,39 @@ void Referee::getRobotInfo()
 {
   base_.robot_id_ = base_.game_robot_status_data_.robot_id;
   base_.robot_color_ = base_.game_robot_status_data_.robot_id >= 100 ? "blue" : "red";
-  if (base_.robot_id_ != rm_common::RobotId::BLUE_SENTRY && base_.robot_id_ != rm_common::RobotId::RED_SENTRY)
+  if (base_.robot_id_ != rm_referee::RobotId::BLUE_SENTRY && base_.robot_id_ != rm_referee::RobotId::RED_SENTRY)
   {
     switch (base_.robot_id_)
     {
-      case rm_common::RobotId::BLUE_HERO:
-        base_.client_id_ = rm_common::ClientId::BLUE_HERO_CLIENT;
+      case rm_referee::RobotId::BLUE_HERO:
+        base_.client_id_ = rm_referee::ClientId::BLUE_HERO_CLIENT;
         break;
-      case rm_common::RobotId::BLUE_ENGINEER:
-        base_.client_id_ = rm_common::ClientId::BLUE_ENGINEER_CLIENT;
+      case rm_referee::RobotId::BLUE_ENGINEER:
+        base_.client_id_ = rm_referee::ClientId::BLUE_ENGINEER_CLIENT;
         break;
-      case rm_common::RobotId::BLUE_STANDARD_3:
-        base_.client_id_ = rm_common::ClientId::BLUE_STANDARD_3_CLIENT;
+      case rm_referee::RobotId::BLUE_STANDARD_3:
+        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_3_CLIENT;
         break;
-      case rm_common::RobotId::BLUE_STANDARD_4:
-        base_.client_id_ = rm_common::ClientId::BLUE_STANDARD_4_CLIENT;
+      case rm_referee::RobotId::BLUE_STANDARD_4:
+        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_4_CLIENT;
         break;
-      case rm_common::RobotId::BLUE_STANDARD_5:
-        base_.client_id_ = rm_common::ClientId::BLUE_STANDARD_5_CLIENT;
+      case rm_referee::RobotId::BLUE_STANDARD_5:
+        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_5_CLIENT;
         break;
-      case rm_common::RobotId::RED_HERO:
-        base_.client_id_ = rm_common::ClientId::RED_HERO_CLIENT;
+      case rm_referee::RobotId::RED_HERO:
+        base_.client_id_ = rm_referee::ClientId::RED_HERO_CLIENT;
         break;
-      case rm_common::RobotId::RED_ENGINEER:
-        base_.client_id_ = rm_common::ClientId::RED_ENGINEER_CLIENT;
+      case rm_referee::RobotId::RED_ENGINEER:
+        base_.client_id_ = rm_referee::ClientId::RED_ENGINEER_CLIENT;
         break;
-      case rm_common::RobotId::RED_STANDARD_3:
-        base_.client_id_ = rm_common::ClientId::RED_STANDARD_3_CLIENT;
+      case rm_referee::RobotId::RED_STANDARD_3:
+        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_3_CLIENT;
         break;
-      case rm_common::RobotId::RED_STANDARD_4:
-        base_.client_id_ = rm_common::ClientId::RED_STANDARD_4_CLIENT;
+      case rm_referee::RobotId::RED_STANDARD_4:
+        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_4_CLIENT;
         break;
-      case rm_common::RobotId::RED_STANDARD_5:
-        base_.client_id_ = rm_common::ClientId::RED_STANDARD_5_CLIENT;
+      case rm_referee::RobotId::RED_STANDARD_5:
+        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_5_CLIENT;
         break;
     }
   }

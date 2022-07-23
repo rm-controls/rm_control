@@ -24,6 +24,8 @@ int main(int argc, char** argv)
     referee.referee_ui_ = new rm_referee::EngineerReferee(nh, data);
   else if (robot == "radar")
     referee.referee_ui_ = new rm_referee::RadarReferee(nh, data);
+  else if (robot == "sentry")
+    referee.referee_ui_ = new rm_referee::RefereeBase(nh, data);
   else
   {
     ROS_ERROR("no robot type ");

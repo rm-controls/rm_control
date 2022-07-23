@@ -29,13 +29,17 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Data& data) : data_(data), nh_(nh)
       nh.subscribe<rm_msgs::EngineerCmd>("/engineer_cmd", 10, &RefereeBase::engineerCmdDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
-  if (data_.base_.robot_id_ == rm_common::RobotId::RED_RADAR || data_.base_.robot_id_ == rm_common::RobotId::BLUE_RADAR)
+  if (data_.base_.robot_id_ == rm_referee::RobotId::RED_RADAR ||
+      data_.base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
 }
 
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data_,
                                           const ros::Time& last_get_)
+{
+}
+void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data_, const ros::Time& last_get_)
 {
 }
 void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& capacity_data_, const ros::Time& last_get_)
@@ -47,15 +51,23 @@ void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat
 void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data_, const ros::Time& last_get_)
 {
 }
+void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data_,
+                                          const ros::Time& last_get_)
+{
+}
+void RefereeBase::eventDataCallBack(const rm_msgs::EventData& event_data_, const ros::Time& last_get_)
+{
+}
+
 void RefereeBase::addUi()
 {
 }
 void RefereeBase::run()
 {
 }
-void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& joint_state)
+void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& data)
 {
-  data_.joint_state_ = *joint_state;
+  data_.joint_state_ = *data;
 }
 void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
 {

@@ -192,12 +192,12 @@ public:
     service_.request.armor_target = rm_msgs::StatusChangeRequest::ARMOR_ALL;
     callService();
   }
-  void setEnemyColor(const RefereeData& referee_data)
+  void setEnemyColor(const int& robot_id_, const std::string& robot_color_)
   {
-    if (referee_data.robot_id_ != 0)
+    if (robot_id_ != 0)
     {
       service_.request.color =
-          referee_data.robot_color_ == "blue" ? rm_msgs::StatusChangeRequest::RED : rm_msgs::StatusChangeRequest::BLUE;
+          robot_color_ == "blue" ? rm_msgs::StatusChangeRequest::RED : rm_msgs::StatusChangeRequest::BLUE;
       ROS_INFO_STREAM("Set enemy color: " << (service_.request.color == service_.request.RED ? "red" : "blue"));
 
       callService();
