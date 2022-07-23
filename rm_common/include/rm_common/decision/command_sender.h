@@ -492,8 +492,15 @@ public:
   {
     auto i = std::find(joint_state_.name.begin(), joint_state_.name.end(), joint_);
     if (i != joint_state_.name.end())
+    {
       index_ = std::distance(joint_state_.name.begin(), i);
-    return index_;
+      return index_;
+    }
+    else
+    {
+      ROS_ERROR("Can not find joint %s", joint_.c_str());
+      return -1;
+    }
   }
   void setZero() override{};
 
