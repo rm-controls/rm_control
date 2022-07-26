@@ -13,6 +13,7 @@ class Graph
 {
 public:
   explicit Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id);
+  explicit Graph(Base& base);
   void addUi(const rm_referee::GraphConfig& config, const std::string& content, bool priority_flag = false);
   void sendUi(const ros::Time& time);
   void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);

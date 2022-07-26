@@ -5,7 +5,6 @@
 #pragma once
 
 #include "rm_referee/robot_referee.h"
-#include "rm_common/decision/calibration_queue.h"
 
 #include <std_srvs/Empty.h>
 #include <actionlib/client/simple_action_client.h>
@@ -27,10 +26,10 @@ public:
   void actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data) override;
   void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data) override;
   void engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data) override;
+  void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data) override;
 
 private:
   bool symbol;
-  rm_common::CalibrationQueue* power_on_calibration_{};
 };
 
 }  // namespace rm_referee

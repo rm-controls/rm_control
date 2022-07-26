@@ -13,8 +13,8 @@ RobotReferee::RobotReferee(ros::NodeHandle& nh, Data& data) : RefereeBase(nh, da
                                                                      &RobotReferee::chassisCmdDataCallback, this);
   RobotReferee::gimbal_cmd_sub_ = nh.subscribe<rm_msgs::GimbalCmd>("/controllers/gimbal_controller/command", 10,
                                                                    &RobotReferee::gimbalCmdDataCallback, this);
-  RobotReferee::cover_cmd_sub_ = nh.subscribe<std_msgs::Float64>("/controllers/cover_controller/command", 10,
-                                                                 &RobotReferee::coverCmdDataCallBack, this);
+  RobotReferee::manual_data_sub_ =
+      nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RobotReferee::manualDataCallBack, this);
   trigger_change_ui_ = new TriggerChangeUi(ui_nh, data_);
   time_change_ui_ = new TimeChangeUi(ui_nh, data_);
   flash_ui_ = new FlashUi(ui_nh, data_);
@@ -85,9 +85,9 @@ void RobotReferee::shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data)
   RefereeBase::shootCmdDataCallback(data);
 }
 
-void RobotReferee::coverCmdDataCallBack(const std_msgs::Float64::ConstPtr& data)
+void RobotReferee::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
-  RefereeBase::coverCmdDataCallBack(data);
+  RefereeBase::manualDataCallBack(data);
 }
 
 }  // namespace rm_referee

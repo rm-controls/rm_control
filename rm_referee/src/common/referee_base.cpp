@@ -21,8 +21,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Data& data) : data_(data), nh_(nh)
                                                                 &RefereeBase::shootCmdDataCallback, this);
   RefereeBase::gimbal_cmd_sub_ = nh.subscribe<rm_msgs::GimbalCmd>("/controllers/gimbal_controller/command", 10,
                                                                   &RefereeBase::gimbalCmdDataCallback, this);
-  RefereeBase::cover_cmd_sub_ = nh.subscribe<std_msgs::Float64>("/controllers/cover_controller/command", 10,
-                                                                &RefereeBase::coverCmdDataCallBack, this);
   RefereeBase::card_cmd_sub_ = nh.subscribe<rm_msgs::StateCmd>("/controllers/card_controller/command", 10,
                                                                &RefereeBase::cardCmdDataCallback, this);
   RefereeBase::engineer_cmd_sub_ =
@@ -92,10 +90,6 @@ void RefereeBase::shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data)
 void RefereeBase::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data)
 {
   data_.gimbal_cmd_data_ = *data;
-}
-void RefereeBase::coverCmdDataCallBack(const std_msgs::Float64::ConstPtr& data)
-{
-  data_.cover_state_ = *data;
 }
 void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 {

@@ -65,6 +65,10 @@ Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base
   last_content_ = content_;
 }
 
+Graph::Graph(Base& base) : base_(base)
+{
+}
+
 void Graph::display(bool priority_flag)
 {
   if (config_ == last_config_ && title_ == last_title_ && content_ == last_content_)

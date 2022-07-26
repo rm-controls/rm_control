@@ -20,7 +20,7 @@ public:
   void chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data) override;
   void gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data) override;
   void shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data) override;
-  void coverCmdDataCallBack(const std_msgs::Float64::ConstPtr& state) override;
+  void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data) override;
 
   void addUi() override;
 

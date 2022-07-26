@@ -79,6 +79,11 @@ public:
     power_heat_data_ = data;
   }
 
+  void updateRefereeData(rm_msgs::Referee data)
+  {
+    referee_ = data;
+  }
+
   double getShootFrequency() const
   {
     if (state_ == BURST)

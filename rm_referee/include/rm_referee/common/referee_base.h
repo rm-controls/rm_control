@@ -36,7 +36,6 @@ public:
   virtual void vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data);
   virtual void shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data);
   virtual void gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data);
-  virtual void coverCmdDataCallBack(const std_msgs::Float64::ConstPtr& data);
   virtual void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data);
   virtual void engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data);
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
@@ -47,7 +46,6 @@ public:
   ros::Subscriber dbus_sub_;
   ros::Subscriber chassis_cmd_sub_;
   ros::Subscriber vel2D_cmd_sub_;
-  ros::Subscriber cover_cmd_sub_;
   ros::Subscriber shoot_cmd_sub_;
   ros::Subscriber gimbal_cmd_sub_;
   ros::Subscriber detection_status_sub_;

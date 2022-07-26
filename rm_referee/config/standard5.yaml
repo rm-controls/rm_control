@@ -12,7 +12,8 @@ rm_referee:
         config: { start_position: [ 400, 700 ], size: 15, width: 2, title: "target: " }
     time_change:
       - name: "capacitor"
-        config: { start_position: [ 900, 100 ], size: 15, width: 2, delay: 0.5 }
+        config: { type: "line", width: 5, delay: 0.5,
+                  start_position: [ 580, 100 ], end_position: [ 1180, 100 ] }
     fixed:
       - name: "2m"
         config: { type: "line", width: 2, color: "yellow",

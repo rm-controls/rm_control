@@ -89,6 +89,11 @@ int Referee::unpack(uint8_t* rx_data)
   memcpy(&frame_header, rx_data, k_header_length_);
   if (base_.verifyCRC8CheckSum(rx_data, k_header_length_) == true)
   {
+    if (frame_header.data_length_ > 256)  // temporary and inaccurate value
+    {
+      ROS_INFO("discard possible wrong frames, data length: %d", frame_header.data_length_);
+      return 0;
+    }
     frame_len = frame_header.data_length_ + k_header_length_ + k_cmd_id_length_ + k_tail_length_;
     if (base_.verifyCRC16CheckSum(rx_data, frame_len) == true)
     {
@@ -261,9 +266,6 @@ int Referee::unpack(uint8_t* rx_data)
           base_.game_robot_status_data_.robot_level = game_robot_status_ref.robot_level_;
           base_.game_robot_status_data_.stamp = last_get_;
 
-          base_.referee_pub_data_.shooter_heat_cooling_limit = game_robot_status_ref.shooter_id_1_42_mm_cooling_limit_;
-          base_.referee_pub_data_.shooter_heat_cooling_limit = game_robot_status_ref.shooter_id_1_17_mm_cooling_limit_;
-          base_.referee_pub_data_.robot_hp = game_robot_status_ref.remain_hp_;
           base_.referee_pub_data_.is_online = base_.referee_data_is_online_;
 
           base_.referee_pub_data_.stamp = last_get_;
@@ -286,15 +288,6 @@ int Referee::unpack(uint8_t* rx_data)
           base_.power_heat_data_.shooter_id_1_42_mm_cooling_heat = power_heat_ref.shooter_id_1_42_mm_cooling_heat_;
           base_.power_heat_data_.chassis_volt = (uint16_t)(power_heat_ref.chassis_volt_ * 0.001);        // mV->V
           base_.power_heat_data_.chassis_current = (uint16_t)(power_heat_ref.chassis_current_ * 0.001);  // mA->A
-
-          base_.referee_pub_data_.shooter_heat =
-              base_.power_heat_data_.shooter_id_1_42_mm_cooling_heat;  // cancel robot type check
-          base_.referee_pub_data_.shooter_heat = base_.power_heat_data_.shooter_id_1_17_mm_cooling_heat;
-
-          base_.referee_pub_data_.chassis_current = base_.power_heat_data_.chassis_current;
-          base_.referee_pub_data_.chassis_volt = base_.power_heat_data_.chassis_volt;
-          base_.referee_pub_data_.chassis_power = base_.power_heat_data_.chassis_power;
-          base_.referee_pub_data_.chassis_power_buffer = base_.power_heat_data_.chassis_power_buffer;
 
           base_.referee_pub_data_.is_online = base_.referee_data_is_online_;
           base_.referee_pub_data_.stamp = last_get_;
@@ -331,8 +324,6 @@ int Referee::unpack(uint8_t* rx_data)
           base_.robot_hurt_data_.hurt_type = robot_hurt_ref.hurt_type_;
           base_.robot_hurt_data_.stamp = last_get_;
 
-          base_.referee_pub_data_.hurt_armor_id = robot_hurt_ref.armor_id_;
-          base_.referee_pub_data_.hurt_type = robot_hurt_ref.hurt_type_;
           base_.referee_pub_data_.is_online = base_.referee_data_is_online_;
           base_.referee_pub_data_.stamp = last_get_;
 
@@ -353,7 +344,6 @@ int Referee::unpack(uint8_t* rx_data)
           base_.shoot_data_.shooter_id = shoot_data_ref.shooter_id_;
           base_.shoot_data_.stamp = last_get_;
 
-          base_.referee_pub_data_.bullet_speed = shoot_data_ref.bullet_speed_;
           base_.referee_pub_data_.is_online = base_.referee_data_is_online_;
           base_.referee_pub_data_.stamp = last_get_;
 

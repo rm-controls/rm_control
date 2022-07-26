@@ -68,8 +68,6 @@
 #include <rm_msgs/GimbalDesError.h>
 #include <rm_msgs/StatusChangeRequest.h>
 #include <rm_msgs/StateCmd.h>
-#include <rm_msgs/DetectionStatus.h>
-#include <rm_msgs/CalibrationStatus.h>
 #include <rm_msgs/EngineerCmd.h>
 #include <rm_msgs/DartRemainingTime.h>
 

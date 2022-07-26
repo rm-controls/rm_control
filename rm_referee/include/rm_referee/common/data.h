@@ -25,16 +25,13 @@ public:
   // sub data
   uint8_t radar_data_;
   sensor_msgs::JointState joint_state_;
-  std_msgs::Float64 cover_state_;
   rm_msgs::ActuatorState actuator_state_;
   rm_msgs::DbusData dbus_data_;
   rm_msgs::ChassisCmd chassis_cmd_data_;
   geometry_msgs::Twist vel2d_cmd_data_;
   rm_msgs::ShootCmd shoot_cmd_data_;
   rm_msgs::GimbalCmd gimbal_cmd_data_;
-  rm_msgs::DetectionStatus detection_status_data_;
   rm_msgs::StateCmd card_cmd_data_;
-  rm_msgs::CalibrationStatus calibration_status_data_;
   rm_msgs::EngineerCmd engineer_cmd_data_;
   rm_msgs::ManualToReferee manual_to_referee_data_;
 

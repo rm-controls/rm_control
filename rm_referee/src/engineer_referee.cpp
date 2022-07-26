@@ -7,9 +7,11 @@ namespace rm_referee
 {
 EngineerReferee::EngineerReferee(ros::NodeHandle& nh, Data& data) : RobotReferee(nh, data)
 {
-  RefereeBase::joint_state_sub_ =
+  EngineerReferee::joint_state_sub_ =
       nh.subscribe<sensor_msgs::JointState>("/joint_states", 10, &EngineerReferee::jointStateCallback, this);
-  // interactive_data_sender_ = new Graph(data.base_);
+  EngineerReferee::manual_data_sub_ =
+      nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &EngineerReferee::manualDataCallBack, this);
+  interactive_data_sender_ = new Graph(data.base_);
 }
 
 void EngineerReferee::run()
@@ -62,10 +64,10 @@ void EngineerReferee::engineerCmdDataCallback(const rm_msgs::EngineerCmd ::Const
   trigger_change_ui_->update("step", data_.engineer_cmd_data_.step_queue_name);
 }
 
-// void EngineerReferee::drawUi(const ros::Time& time)
-//{
-//   RobotReferee::drawUi(time);
-//   flash_ui_->update("calibration", time, data_.calibration_status_data_.calibration_state);
-// }
+void EngineerReferee::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
+{
+  RefereeBase::manualDataCallBack(data);
+  flash_ui_->update("calibration", ros::Time::now(), data_.manual_to_referee_data_.engineer_calibration_state);
+}
 
 }  // namespace rm_referee
