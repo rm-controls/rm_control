@@ -432,10 +432,10 @@ void TimeChangeUi::setCapacitorData(Graph& graph)
     double cap_power = data_.base_.capacity_data_.cap_power * 100.;
     if (cap_power > 0.)
     {
-      graph.setStartX(640);
+      graph.setStartX(580);
       graph.setStartY(100);
 
-      graph.setEndX(640 + 640 * cap_power);
+      graph.setEndX(580 + 600 * cap_power);
       graph.setEndY(100);
     }
     else

@@ -167,7 +167,6 @@ public:
       return 0xFFFF;
     while (dw_length--)
     {
-      ROS_INFO("dw_length: %d", dw_length);
       chData = *pch_message++;
       (w_crc) = ((uint16_t)(w_crc) >> 8) ^ rm_referee::wCRC_table[((uint16_t)(w_crc) ^ (uint16_t)(chData)) & 0x00ff];
     }
