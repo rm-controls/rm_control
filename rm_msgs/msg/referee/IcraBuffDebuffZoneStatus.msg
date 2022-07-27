@@ -1,0 +1,18 @@
+uint8 f_1_zone_status
+uint8 f_1_zone_buff_debuff_status
+uint8 f_2_zone_status
+uint8 f_2_zone_buff_debuff_status
+uint8 f_3_zone_status
+uint8 f_3_zone_buff_debuff_status
+uint8 f_4_zone_status
+uint8 f_4_zone_buff_debuff_status
+uint8 f_5_zone_status
+uint8 f_5_zone_buff_debuff_status
+uint8 f_6_zone_status
+uint8 f_6_zone_buff_debuff_status
+uint16 red_1_bullet_left
+uint16 red_2_bullet_left
+uint16 blue_1_bullet_left
+uint16 blue_2_bullet_left
+
+time stamp

@@ -1,0 +1,9 @@
+float32 chassis_volt
+float32 chassis_current
+float32 chassis_power
+uint16 chassis_power_buffer
+uint16 shooter_id_1_17_mm_cooling_heat
+uint16 shooter_id_2_17_mm_cooling_heat
+uint16 shooter_id_1_42_mm_cooling_heat
+
+time stamp
