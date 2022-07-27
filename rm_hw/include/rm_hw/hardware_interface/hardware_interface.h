@@ -179,7 +179,7 @@ private:
   bool is_actuator_specified_ = false;
   // Interface
   std::vector<CanBus*> can_buses_{};
-  GpioMangager gpio_manager_{};
+  GpioManager gpio_manager_{};
   rm_control::GpioStateInterface gpio_state_interface_;
   rm_control::GpioCommandInterface gpio_command_interface_;
   hardware_interface::ActuatorStateInterface act_state_interface_;

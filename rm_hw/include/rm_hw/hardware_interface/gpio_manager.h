@@ -14,11 +14,11 @@
 
 namespace rm_hw
 {
-class GpioMangager
+class GpioManager
 {
 public:
-  explicit GpioMangager();
-  ~GpioMangager();
+  explicit GpioManager();
+  ~GpioManager();
 
   void setGpioDirection(rm_control::GpioData gpioData);
   void readGpio();
