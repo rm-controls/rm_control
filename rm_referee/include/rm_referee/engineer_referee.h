@@ -29,7 +29,7 @@ public:
   void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data) override;
 
 private:
-  bool symbol;
+  bool symbol_;
 };
 
 }  // namespace rm_referee

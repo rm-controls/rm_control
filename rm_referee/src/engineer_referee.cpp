@@ -52,7 +52,7 @@ void EngineerReferee::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& dat
 void EngineerReferee::engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data)
 {
   RefereeBase::engineerCmdDataCallback(data);
-  if (data_.engineer_cmd_data_.symbol != symbol)
+  if (data_.engineer_cmd_data_.symbol != symbol_)
   {
     if (data_.engineer_cmd_data_.total_steps != 0)
       time_change_ui_->update("progress", ros::Time::now(),
@@ -60,7 +60,7 @@ void EngineerReferee::engineerCmdDataCallback(const rm_msgs::EngineerCmd ::Const
     else
       time_change_ui_->update("progress", ros::Time::now(), 0.);
   }
-  symbol = data_.engineer_cmd_data_.symbol;
+  symbol_ = data_.engineer_cmd_data_.symbol;
   trigger_change_ui_->update("step", data_.engineer_cmd_data_.step_queue_name);
 }
 

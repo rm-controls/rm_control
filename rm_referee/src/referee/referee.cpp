@@ -456,17 +456,17 @@ void Referee::getRobotInfo()
 
 void Referee::publishCapacityData()
 {
-  base_.super_capacitor_data_.capacity = (float)base_.capacity_data_ref_.cap_power_;
-  base_.super_capacitor_data_.chassis_power_buffer = (uint16_t)base_.capacity_data_ref_.buffer_power_;
-  base_.super_capacitor_data_.limit_power = (float)base_.capacity_data_ref_.limit_power_;
-  base_.super_capacitor_data_.chassis_power = (float)base_.capacity_data_ref_.chassis_power_;
+  base_.super_capacitor_data_.capacity = (float)base_.capacity_data_ref_.cap_power;
+  base_.super_capacitor_data_.chassis_power_buffer = (uint16_t)base_.capacity_data_ref_.buffer_power;
+  base_.super_capacitor_data_.limit_power = (float)base_.capacity_data_ref_.limit_power;
+  base_.super_capacitor_data_.chassis_power = (float)base_.capacity_data_ref_.chassis_power;
   base_.super_capacitor_data_.stamp = super_capacitor_.last_get_data_;
 
-  base_.capacity_data_.buffer_power = base_.capacity_data_ref_.buffer_power_;
-  base_.capacity_data_.is_online = base_.capacity_data_ref_.is_online_;
-  base_.capacity_data_.cap_power = base_.capacity_data_ref_.cap_power_;
-  base_.capacity_data_.chassis_power = base_.capacity_data_ref_.chassis_power_;
-  base_.capacity_data_.limit_power = base_.capacity_data_ref_.limit_power_;
+  base_.capacity_data_.buffer_power = base_.capacity_data_ref_.buffer_power;
+  base_.capacity_data_.is_online = base_.capacity_data_ref_.is_online;
+  base_.capacity_data_.cap_power = base_.capacity_data_ref_.cap_power;
+  base_.capacity_data_.chassis_power = base_.capacity_data_ref_.chassis_power;
+  base_.capacity_data_.limit_power = base_.capacity_data_ref_.limit_power;
   base_.capacity_data_.stamp = last_get_;
 
   referee_ui_->capacityDataCallBack(base_.capacity_data_, last_get_);
@@ -492,18 +492,18 @@ void SuperCapacitor::read(const std::vector<uint8_t>& rx_buffer)
       receive_buf_counter_ = 0;
     }
   }
-  if (data_.chassis_power_ >= 120.)
-    data_.chassis_power_ = 120.;
-  if (data_.chassis_power_ <= 0.)
-    data_.chassis_power_ = 0.;
-  if (data_.buffer_power_ >= 25.)
-    data_.buffer_power_ = 25.;
-  if (data_.buffer_power_ <= 0.)
-    data_.buffer_power_ = 0.;
-  if (data_.cap_power_ >= 1.)
-    data_.cap_power_ = 1.;
+  if (data_.chassis_power >= 120.)
+    data_.chassis_power = 120.;
+  if (data_.chassis_power <= 0.)
+    data_.chassis_power = 0.;
+  if (data_.buffer_power >= 25.)
+    data_.buffer_power = 25.;
+  if (data_.buffer_power <= 0.)
+    data_.buffer_power = 0.;
+  if (data_.cap_power >= 1.)
+    data_.cap_power = 1.;
   if (ros::Time::now() - last_get_data_ > ros::Duration(0.1))
-    data_.is_online_ = false;
+    data_.is_online = false;
 }
 
 void SuperCapacitor::receiveCallBack(unsigned char package_id, const unsigned char* data)
@@ -511,11 +511,11 @@ void SuperCapacitor::receiveCallBack(unsigned char package_id, const unsigned ch
   if (package_id == 0)
   {
     last_get_data_ = ros::Time::now();
-    data_.is_online_ = true;
-    data_.chassis_power_ = (double)int16ToFloat((data[0] << 8) | data[1]);
-    data_.limit_power_ = (double)int16ToFloat((data[2] << 8) | data[3]);
-    data_.buffer_power_ = (double)int16ToFloat((data[4] << 8) | data[5]);
-    data_.cap_power_ = (double)int16ToFloat((data[6] << 8) | data[7]);
+    data_.is_online = true;
+    data_.chassis_power = (double)int16ToFloat((data[0] << 8) | data[1]);
+    data_.limit_power = (double)int16ToFloat((data[2] << 8) | data[3]);
+    data_.buffer_power = (double)int16ToFloat((data[4] << 8) | data[5]);
+    data_.cap_power = (double)int16ToFloat((data[6] << 8) | data[7]);
   }
 }
 

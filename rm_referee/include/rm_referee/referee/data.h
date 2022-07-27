@@ -75,11 +75,11 @@ namespace rm_referee
 {
 struct CapacityData
 {
-  double chassis_power_;
-  double limit_power_;
-  double buffer_power_;
-  double cap_power_;
-  bool is_online_ = false;
+  double chassis_power;
+  double limit_power;
+  double buffer_power;
+  double cap_power;
+  bool is_online = false;
 };
 
 class Base
