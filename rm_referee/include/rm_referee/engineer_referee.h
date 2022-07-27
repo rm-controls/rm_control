@@ -18,12 +18,17 @@ namespace rm_referee
 class EngineerReferee : public RobotReferee
 {
 public:
-  explicit EngineerReferee(ros::NodeHandle& nh);
+  explicit EngineerReferee(ros::NodeHandle& nh, Data& data);
   void run() override;
+  void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data_,
+                               const ros::Time& last_get_) override;
+  void jointStateCallback(const sensor_msgs::JointState::ConstPtr& joint_state) override;
+  void actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data) override;
+  void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data) override;
+  void engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data) override;
+  void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data) override;
 
 private:
-  void drawUi(const ros::Time& time) override;
-  void drawProcess(const ros::Time& time);
   bool symbol;
 };
 

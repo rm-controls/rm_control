@@ -11,10 +11,10 @@ namespace rm_referee
 class StandardReferee : public HeroReferee
 {
 public:
-  explicit StandardReferee(ros::NodeHandle& nh) : HeroReferee(nh){};
-  void run() override;
+  explicit StandardReferee(ros::NodeHandle& nh, Data& data);
+
+  void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data) override;
 
 protected:
-  void drawUi(const ros::Time& time) override;
 };
 }  // namespace rm_referee

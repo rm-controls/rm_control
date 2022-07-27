@@ -9,11 +9,18 @@ rm_referee:
       - name: "shooter"
         config: { start_position: [ 400, 750 ], size: 15, width: 2, title: "shooter: " }
       - name: "target"
-        config: { start_position: [ 400, 700 ], size: 15, width: 2, title: "target:" }
+        config: { start_position: [ 400, 700 ], size: 15, width: 2, title: "target: " }
     time_change:
       - name: "capacitor"
-        config: { start_position: [ 900, 100 ], size: 15, width: 2, delay: 0.5 }
+        config: { type: "line", width: 5, delay: 0.5,
+                  start_position: [ 610, 100 ], end_position: [ 1210, 100 ] }
     fixed:
+      - name: "capacity_boundary_l"
+        config: { type: "line", width: 2, color: "green",
+                  start_position: [ 610, 110 ], end_position: [ 610, 90 ] }
+      - name: "capacity_boundary_r"
+        config: { type: "line", width: 2, color: "green",
+                    start_position: [ 1210, 110 ], end_position: [ 1210, 90 ] }
       - name: "2m"
         config: { type: "line", width: 2, color: "yellow",
                   start_position: [ 925, 435 ], end_position: [ 995, 435 ] }

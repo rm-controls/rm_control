@@ -39,36 +39,15 @@
 #include <cstdint>
 #include <ros/ros.h>
 
-#include <rm_msgs/Referee.h>
-#include <rm_msgs/SuperCapacitor.h>
-#include <rm_msgs/ChassisCmd.h>
-#include <rm_msgs/GimbalCmd.h>
-#include <rm_msgs/ShootCmd.h>
-#include "rm_common/referee/data.h"
-
-#include <rm_msgs/IcraBuffDebuffZoneStatus.h>
-#include <rm_msgs/GameRobotStatus.h>
-#include <rm_msgs/GameRobotHp.h>
-#include <rm_msgs/GameStatus.h>
-#include <rm_msgs/PowerHeatData.h>
-#include <rm_msgs/CapacityData.h>
-#include <rm_msgs/EventData.h>
-#include <rm_msgs/DartStatus.h>
-#include <rm_msgs/SupplyProjectileAction.h>
-#include <rm_msgs/DartRemainingTime.h>
-#include <rm_msgs/RobotHurt.h>
-#include <rm_msgs/ShootData.h>
-#include <rm_msgs/BulletRemaining.h>
-#include <rm_msgs/RfidStatus.h>
-#include <rm_msgs/DartClientCmd.h>
-#include <rm_msgs/ManualToReferee.h>
+#include <rm_referee/referee/data.h>
+#include <rm_referee/common/referee_base.h>
 
 namespace rm_referee
 {
 class SuperCapacitor
 {
 public:
-  explicit SuperCapacitor(rm_common::CapacityData& data) : last_get_data_(ros::Time::now()), data_(data){};
+  explicit SuperCapacitor(rm_referee::CapacityData& data) : last_get_data_(ros::Time::now()), data_(data){};
   void read(const std::vector<uint8_t>& rx_buffer);
   ros::Time last_get_data_;
 
@@ -76,7 +55,7 @@ private:
   void dtpReceivedCallBack(unsigned char receive_byte);
   void receiveCallBack(unsigned char package_id, const unsigned char* data);
   static float int16ToFloat(unsigned short data0);
-  rm_common::CapacityData& data_;
+  rm_referee::CapacityData& data_;
   unsigned char receive_buffer_[1024] = { 0 };
   unsigned char ping_pong_buffer_[1024] = { 0 };
   unsigned int receive_buf_counter_ = 0;
@@ -85,25 +64,52 @@ private:
 class Referee
 {
 public:
-  Referee()
-    : super_capacitor_(referee_data_.capacity_data)
-    , last_get_(ros::Time::now())
-    , last_send_(ros::Time::now())
-    , client_id_(0)
+  Referee() : super_capacitor_(base_.capacity_data_ref_), last_get_(ros::Time::now())
   {
-    referee_data_.robot_hurt_.hurt_type_ = 0x09;
+    base_.robot_hurt_data_.hurt_type = 0x09;
+    // pub
+    ros::NodeHandle root_nh;
+    referee_pub_ = root_nh.advertise<rm_msgs::Referee>("/referee", 1);
+    super_capacitor_pub_ = root_nh.advertise<rm_msgs::SuperCapacitor>("/super_capacitor", 1);
+    game_robot_status_pub_ = root_nh.advertise<rm_msgs::GameRobotStatus>("/game_robot_status", 1);
+    game_status_pub_ = root_nh.advertise<rm_msgs::GameStatus>("/game_status", 1);
+    capacity_data_pub_ = root_nh.advertise<rm_msgs::CapacityData>("/capacity_data", 1);
+    power_heat_data_pub_ = root_nh.advertise<rm_msgs::PowerHeatData>("/power_heat_data", 1);
+    game_robot_hp_pub_ = root_nh.advertise<rm_msgs::GameRobotHp>("/game_robot_hp", 1);
+    event_data_pub_ = root_nh.advertise<rm_msgs::EventData>("/event_data", 1);
+    dart_status_pub_ = root_nh.advertise<rm_msgs::DartStatus>("/dart_status_data", 1);
+    icra_buff_debuff_zone_status_pub_ =
+        root_nh.advertise<rm_msgs::IcraBuffDebuffZoneStatus>("/icra_buff_debuff_zone_status_data", 1);
+    supply_projectile_action_pub_ =
+        root_nh.advertise<rm_msgs::SupplyProjectileAction>("/supply_projectile_action_data", 1);
+    dart_remaining_time_pub_ = root_nh.advertise<rm_msgs::DartRemainingTime>("/dart_remaining_time_data", 1);
+    robot_hurt_pub_ = root_nh.advertise<rm_msgs::RobotHurt>("/robot_hurt_data", 1);
+    shoot_data_pub_ = root_nh.advertise<rm_msgs::ShootData>("/shoot_data", 1);
+    bullet_remaining_pub_ = root_nh.advertise<rm_msgs::BulletRemaining>("/bullet_remaining_data", 1);
+    rfid_status_pub_ = root_nh.advertise<rm_msgs::RfidStatus>("/rfid_status_data", 1);
+    dart_client_cmd_pub_ = root_nh.advertise<rm_msgs::DartClientCmd>("/dart_client_cmd_data", 1);
+    // initSerial
+    base_.initSerial();
   };
   void read();
-  void addUi(const rm_common::GraphConfig& config, const std::string& content, bool priority_flag = false);
-  void sendUi(const ros::Time& time);
-  void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);
-  void clearBuffer()
+  void checkUiAdd()
+  {
+    if (referee_ui_->data_.dbus_data_.s_r == rm_msgs::DbusData::UP)
+    {
+      if (referee_ui_->add_ui_flag_)
+      {
+        referee_ui_->addUi();
+        ROS_INFO("Add ui");
+        referee_ui_->add_ui_flag_ = false;
+      }
+    }
+    else
+      referee_ui_->add_ui_flag_ = true;
+  }
+  void clearRxBuffer()
   {
     rx_buffer_.clear();
-    for (int i = 0; i < 128; i++)
-      tx_buffer_[i] = 0;
     rx_len_ = 0;
-    tx_len_ = 0;
   }
 
   ros::Publisher referee_pub_;
@@ -124,32 +130,21 @@ public:
   ros::Publisher rfid_status_pub_;
   ros::Publisher dart_client_cmd_pub_;
 
-  rm_common::RefereeData referee_data_{};
+  Base base_;
   std::vector<uint8_t> rx_buffer_;
-  uint8_t tx_buffer_[128];
-  int tx_len_, rx_len_;
+  rm_referee::RefereeBase* referee_ui_;
+  int rx_len_;
 
 private:
   int unpack(uint8_t* rx_data);
-  void pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const;
   void getRobotInfo();
   void publishCapacityData();
 
   SuperCapacitor super_capacitor_;
-  ros::Time last_get_, last_send_;
-  rm_msgs::Referee referee_pub_data_ = {};
-  std::vector<std::pair<rm_common::GraphConfig, std::string>> ui_queue_;
+  ros::Time last_get_;
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
   const int k_unpack_buffer_length_ = 256;
   uint8_t unpack_buffer_[256]{};
-  int client_id_;
 };
 
-// CRC verification
-uint8_t getCRC8CheckSum(unsigned char* pch_message, unsigned int dw_length, unsigned char uc_crc_8);
-uint32_t verifyCRC8CheckSum(unsigned char* pch_message, unsigned int dw_length);
-void appendCRC8CheckSum(unsigned char* pch_message, unsigned int dw_length);
-uint16_t getCRC16CheckSum(uint8_t* pch_message, uint32_t dw_length, uint16_t w_crc);
-uint32_t verifyCRC16CheckSum(uint8_t* pch_message, uint32_t dw_length);
-void appendCRC16CheckSum(unsigned char* pch_message, unsigned int dw_length);
 }  // namespace rm_referee

@@ -1,5 +1,5 @@
-uint16 chassis_volt
-uint16 chassis_current
+float32 chassis_volt
+float32 chassis_current
 float32 chassis_power
 uint16 chassis_power_buffer
 uint16 shooter_id_1_17_mm_cooling_heat

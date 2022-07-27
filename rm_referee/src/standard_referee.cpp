@@ -6,14 +6,16 @@
 
 namespace rm_referee
 {
-void StandardReferee::run()
+StandardReferee::StandardReferee(ros::NodeHandle& nh, Data& data) : HeroReferee(nh, data)
 {
-  RobotReferee::run();
+  StandardReferee::manual_data_sub_ =
+      nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &StandardReferee::manualDataCallBack, this);
 }
 
-void StandardReferee::drawUi(const ros::Time& time)
+void StandardReferee::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
-  HeroReferee::drawUi(time);
-  flash_ui_->update("cover", time, !data_.cover_cmd_data_.mode);
+  HeroReferee::manualDataCallBack(data);
+  flash_ui_->update("cover", ros::Time::now(), !data_.manual_to_referee_data_.cover_state);
 }
+
 }  // namespace rm_referee

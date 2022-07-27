@@ -2,8 +2,7 @@
 // Created by peter on 2021/5/24.
 //
 
-#ifndef RM_MANUAL_REFEREE_UI_H_
-#define RM_MANUAL_REFEREE_UI_H_
+#pragma once
 
 #include "rm_referee/referee/graph.h"
 #include "rm_referee/common/data.h"
@@ -83,4 +82,3 @@ private:
 };
 
 }  // namespace rm_referee
-#endif  // RM_MANUAL_REFEREE_UI_H_

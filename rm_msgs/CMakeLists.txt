@@ -18,7 +18,6 @@ add_message_files(
         ShootCmd.msg
         GimbalCmd.msg
         GimbalDesError.msg
-        Referee.msg
         LpData.msg
         KalmanData.msg
         MovingAverageData.msg
@@ -50,8 +49,6 @@ add_message_files(
         GameRobotStatus.msg
         GameStatus.msg
         StateCmd.msg
-        DetectionStatus.msg
-        CalibrationStatus.msg
         EngineerCmd.msg
         GameRobotHp.msg
         PowerHeatData.msg
@@ -66,6 +63,7 @@ add_message_files(
         RfidStatus.msg
         DartClientCmd.msg
         ManualToReferee.msg
+        Referee.msg
 )
 
 add_action_files(

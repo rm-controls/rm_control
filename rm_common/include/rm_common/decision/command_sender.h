@@ -97,8 +97,7 @@ template <class MsgType>
 class TimeStampCommandSenderBase : public CommandSenderBase<MsgType>
 {
 public:
-  explicit TimeStampCommandSenderBase(ros::NodeHandle& nh, const RefereeData& referee_data)
-    : CommandSenderBase<MsgType>(nh), referee_data_(referee_data)
+  explicit TimeStampCommandSenderBase(ros::NodeHandle& nh) : CommandSenderBase<MsgType>(nh)
   {
   }
   void sendCommand(const ros::Time& time) override
@@ -106,9 +105,6 @@ public:
     CommandSenderBase<MsgType>::msg_.stamp = time;
     CommandSenderBase<MsgType>::sendCommand(time);
   }
-
-protected:
-  const RefereeData& referee_data_;
 };
 
 template <class MsgType>
@@ -187,11 +183,10 @@ protected:
 class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisCmd>
 {
 public:
-  explicit ChassisCommandSender(ros::NodeHandle& nh, const RefereeData& referee_data)
-    : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh, referee_data)
+  explicit ChassisCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh)
   {
     XmlRpc::XmlRpcValue xml_rpc_value;
-    power_limit_ = new PowerLimit(nh, referee_data, msg_);
+    power_limit_ = new PowerLimit(nh, msg_);
     if (!nh.getParam("accel_x", xml_rpc_value))
       ROS_ERROR("Accel X no defined (namespace: %s)", nh.getNamespace().c_str());
     else
@@ -223,8 +218,7 @@ private:
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd>
 {
 public:
-  explicit GimbalCommandSender(ros::NodeHandle& nh, const RefereeData& referee_data)
-    : TimeStampCommandSenderBase<rm_msgs::GimbalCmd>(nh, referee_data)
+  explicit GimbalCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::GimbalCmd>(nh)
   {
     if (!nh.getParam("max_yaw_vel", max_yaw_rate_))
       ROS_ERROR("Max yaw velocity no defined (namespace: %s)", nh.getNamespace().c_str());
@@ -273,12 +267,11 @@ private:
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd>
 {
 public:
-  explicit ShooterCommandSender(ros::NodeHandle& nh, const RefereeData& referee_data,
-                                const rm_msgs::TrackData& track_data)
-    : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh, referee_data), track_data_(track_data)
+  explicit ShooterCommandSender(ros::NodeHandle& nh, const rm_msgs::TrackData& track_data)
+    : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh), track_data_(track_data)
   {
     ros::NodeHandle limit_nh(nh, "heat_limit");
-    heat_limit_ = new HeatLimit(limit_nh, referee_data);
+    heat_limit_ = new HeatLimit(limit_nh);
     nh.param("speed_10m_per_speed", speed_10_, 10.);
     nh.param("speed_15m_per_speed", speed_15_, 15.);
     nh.param("speed_16m_per_speed", speed_16_, 16.);
@@ -351,6 +344,7 @@ public:
     return heat_limit_->getShootFrequencyMode();
   }
   void setZero() override{};
+  HeatLimit* heat_limit_{};
 
 private:
   double speed_10_, speed_15_, speed_16_, speed_18_, speed_30_;
@@ -361,7 +355,6 @@ private:
   double last_target_vel_ = 0.;
   double last_target_time_ = 0.;
   const rm_msgs::TrackData& track_data_;
-  HeatLimit* heat_limit_{};
 };
 
 class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::TwistStamped>
@@ -440,24 +433,28 @@ private:
   double on_pos_{}, off_pos_{};
 };
 
-class StateCommandSender : public CommandSenderBase<rm_msgs::StateCmd>
+class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
 {
 public:
-  explicit StateCommandSender(ros::NodeHandle& nh) : CommandSenderBase<rm_msgs::StateCmd>(nh)
+  explicit CardCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
   {
-    ROS_ASSERT(nh.getParam("on_pos", on_pos_) && nh.getParam("off_pos", off_pos_));
+    ROS_ASSERT(nh.getParam("long_pos", long_pos_) && nh.getParam("short_pos", short_pos_) &&
+               nh.getParam("off_pos", off_pos_));
   }
-  void on()
+  void long_on()
   {
-    msg_.data = on_pos_;
+    msg_.data = long_pos_;
     state = true;
-    msg_.mode = state;
+  }
+  void short_on()
+  {
+    msg_.data = short_pos_;
+    state = true;
   }
   void off()
   {
     msg_.data = off_pos_;
     state = false;
-    msg_.mode = state;
   }
   bool getState() const
   {
@@ -465,13 +462,13 @@ public:
   }
   void sendCommand(const ros::Time& time) override
   {
-    CommandSenderBase<rm_msgs::StateCmd>::sendCommand(time);
+    CommandSenderBase<std_msgs::Float64>::sendCommand(time);
   }
   void setZero() override{};
 
 private:
   bool state{};
-  double on_pos_{}, off_pos_{};
+  double long_pos_{}, short_pos_{}, off_pos_{};
 };
 
 class JointJogCommandSender : public CommandSenderBase<std_msgs::Float64>

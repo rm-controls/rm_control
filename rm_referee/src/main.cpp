@@ -2,7 +2,7 @@
 // Created by ljq on 2022/5/17.
 //
 
-#include "rm_referee/common/referee_base.h"
+#include "rm_referee/referee/referee.h"
 #include "rm_referee/hero_referee.h"
 #include "rm_referee/standard_referee.h"
 #include "rm_referee/engineer_referee.h"
@@ -11,18 +11,21 @@
 int main(int argc, char** argv)
 {
   std::string robot;
-  rm_referee::RefereeBase* referee;
   ros::init(argc, argv, "rm_referee");  // rm_referee
   ros::NodeHandle nh("~");
+  rm_referee::Referee referee;
+  rm_referee::Data data(nh, referee.base_);
   robot = getParam(nh, "robot_type", (std::string) "error");
   if (robot == "standard")
-    referee = new rm_referee::StandardReferee(nh);
+    referee.referee_ui_ = new rm_referee::StandardReferee(nh, data);
   else if (robot == "hero")
-    referee = new rm_referee::HeroReferee(nh);
+    referee.referee_ui_ = new rm_referee::HeroReferee(nh, data);
   else if (robot == "engineer")
-    referee = new rm_referee::EngineerReferee(nh);
+    referee.referee_ui_ = new rm_referee::EngineerReferee(nh, data);
   else if (robot == "radar")
-    referee = new rm_referee::RadarReferee(nh);
+    referee.referee_ui_ = new rm_referee::RadarReferee(nh, data);
+  else if (robot == "sentry")
+    referee.referee_ui_ = new rm_referee::RefereeBase(nh, data);
   else
   {
     ROS_ERROR("no robot type ");
@@ -32,7 +35,7 @@ int main(int argc, char** argv)
   while (ros::ok())
   {
     ros::spinOnce();
-    referee->run();
+    referee.read();
     loop_rate.sleep();
   }
 
