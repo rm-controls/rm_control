@@ -18,7 +18,7 @@ namespace rm_referee
 class EngineerReferee : public RobotReferee
 {
 public:
-  explicit EngineerReferee(ros::NodeHandle& nh, Data& data);
+  explicit EngineerReferee(ros::NodeHandle& nh, Base& base);
   void run() override;
   void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data_,
                                const ros::Time& last_get_) override;
@@ -29,7 +29,7 @@ public:
   void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data) override;
 
 private:
-  bool symbol_;
+  std::string last_step_queue_name_;
 };
 
 }  // namespace rm_referee

@@ -14,7 +14,7 @@ namespace rm_referee
 class RefereeBase
 {
 public:
-  explicit RefereeBase(ros::NodeHandle& nh, Data& data);
+  explicit RefereeBase(ros::NodeHandle& nh, Base& base);
   virtual void run();
   virtual void addUi();
 
@@ -55,7 +55,7 @@ public:
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
 
-  Data& data_;
+  Base& base_;
   bool add_ui_flag_ = false;
   Graph* interactive_data_sender_;
   ros::NodeHandle nh_;

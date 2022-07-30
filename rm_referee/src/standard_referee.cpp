@@ -6,7 +6,7 @@
 
 namespace rm_referee
 {
-StandardReferee::StandardReferee(ros::NodeHandle& nh, Data& data) : HeroReferee(nh, data)
+StandardReferee::StandardReferee(ros::NodeHandle& nh, Base& base) : HeroReferee(nh, base)
 {
   StandardReferee::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &StandardReferee::manualDataCallBack, this);
@@ -15,7 +15,7 @@ StandardReferee::StandardReferee(ros::NodeHandle& nh, Data& data) : HeroReferee(
 void StandardReferee::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
   HeroReferee::manualDataCallBack(data);
-  flash_ui_->update("cover", ros::Time::now(), !data_.manual_to_referee_data_.cover_state);
+  flash_ui_->update("cover", ros::Time::now(), !base_.manual_to_referee_data_.cover_state);
 }
 
 }  // namespace rm_referee

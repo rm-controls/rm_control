@@ -6,7 +6,7 @@
 
 namespace rm_referee
 {
-RobotReferee::RobotReferee(ros::NodeHandle& nh, Data& data) : RefereeBase(nh, data)
+RobotReferee::RobotReferee(ros::NodeHandle& nh, Base& base) : RefereeBase(nh, base)
 {
   ros::NodeHandle ui_nh(nh, "ui");
   RobotReferee::chassis_cmd_sub_ = nh.subscribe<rm_msgs::ChassisCmd>("/controllers/chassis_controller/command", 10,
@@ -15,10 +15,10 @@ RobotReferee::RobotReferee(ros::NodeHandle& nh, Data& data) : RefereeBase(nh, da
                                                                    &RobotReferee::gimbalCmdDataCallback, this);
   RobotReferee::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RobotReferee::manualDataCallBack, this);
-  trigger_change_ui_ = new TriggerChangeUi(ui_nh, data_);
-  time_change_ui_ = new TimeChangeUi(ui_nh, data_);
-  flash_ui_ = new FlashUi(ui_nh, data_);
-  fixed_ui_ = new FixedUi(ui_nh, data_);
+  trigger_change_ui_ = new TriggerChangeUi(ui_nh, base);
+  time_change_ui_ = new TimeChangeUi(ui_nh, base);
+  flash_ui_ = new FlashUi(ui_nh, base);
+  fixed_ui_ = new FixedUi(ui_nh, base);
   add_ui_flag_ = true;
 }
 
@@ -61,17 +61,17 @@ void RobotReferee::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& d
 {
   RefereeBase::chassisCmdDataCallback(data);
 
-  flash_ui_->update("spin", ros::Time::now(), data_.chassis_cmd_data_.mode == rm_msgs::ChassisCmd::GYRO);
+  flash_ui_->update("spin", ros::Time::now(), base_.chassis_cmd_data_.mode == rm_msgs::ChassisCmd::GYRO);
 
-  if (data_.dbus_data_.s_l == rm_msgs::DbusData::MID && data_.dbus_data_.s_r == rm_msgs::DbusData::UP)
+  if (base_.dbus_data_.s_l == rm_msgs::DbusData::MID && base_.dbus_data_.s_r == rm_msgs::DbusData::UP)
   {
     trigger_change_ui_->update("chassis", data->mode, false, 1, false);
   }
   else
   {
     trigger_change_ui_->update("chassis", data->mode,
-                               data_.manual_to_referee_data_.power_limit_state == rm_common::PowerLimit::BURST, 0,
-                               data_.manual_to_referee_data_.power_limit_state == rm_common::PowerLimit::CHARGE);
+                               base_.manual_to_referee_data_.power_limit_state == rm_common::PowerLimit::BURST, 0,
+                               base_.manual_to_referee_data_.power_limit_state == rm_common::PowerLimit::CHARGE);
   }
 }
 

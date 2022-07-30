@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <rm_referee/referee/data.h>
+#include "rm_referee/referee/data.h"
 #include <rm_common/ros_utilities.h>
 
 namespace rm_referee
@@ -70,9 +70,9 @@ private:
   Base& base_;
   ros::Time last_time_ = ros::Time::now();
   ros::Duration delay_ = ros::Duration(0.);
-  rm_referee::GraphConfig config_{}, last_config_{};
   std::string title_{}, content_{}, last_title_{}, last_content_{};
   std::vector<std::pair<int, int>> start_positions_{}, end_positions_{};
+  rm_referee::GraphConfig config_{}, last_config_{};
 
   ros::Time last_send_;
   std::vector<std::pair<rm_referee::GraphConfig, std::string>> ui_queue_;

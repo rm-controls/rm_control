@@ -7,7 +7,7 @@
 namespace rm_referee
 {
 int UiBase::id_(2);
-UiBase::UiBase(ros::NodeHandle& nh, Data& data, const std::string& ui_type) : data_(data)
+UiBase::UiBase(ros::NodeHandle& nh, Base& base, const std::string& ui_type) : base_(base), tf_listener_(tf_buffer_)
 {
   XmlRpc::XmlRpcValue rpc_value;
   if (!nh.getParam(ui_type, rpc_value))
@@ -21,10 +21,10 @@ UiBase::UiBase(ros::NodeHandle& nh, Data& data, const std::string& ui_type) : da
     {
       if (rpc_value[i]["name"] == "chassis")
         graph_vector_.insert(
-            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], data_.base_, 1)));
+            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, 1)));
       else
-        graph_vector_.insert(std::pair<std::string, Graph*>(rpc_value[i]["name"],
-                                                            new Graph(rpc_value[i]["config"], data_.base_, id_++)));
+        graph_vector_.insert(
+            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
     }
   }
   catch (XmlRpc::XmlRpcException& e)
@@ -45,14 +45,13 @@ void UiBase::add()
   }
 }
 
-TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, Data& data) : UiBase(nh, data, "trigger_change")
+TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, Base& base) : UiBase(nh, base, "trigger_change")
 {
   for (auto graph : graph_vector_)
   {
     if (graph.first == "chassis")
     {
-      if (data_.base_.robot_id_ == rm_referee::RobotId::RED_ENGINEER ||
-          data_.base_.robot_id_ == rm_referee::RobotId::BLUE_ENGINEER)
+      if (base_.robot_id_ == rm_referee::RobotId::RED_ENGINEER || base_.robot_id_ == rm_referee::RobotId::BLUE_ENGINEER)
         graph.second->setContent("raw");
       else
         graph.second->setContent("follow");
@@ -60,7 +59,7 @@ TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, Data& data) : UiBase(nh, d
     else if (graph.first == "target")
     {
       graph.second->setContent("armor");
-      if (data_.base_.robot_color_ == "red")
+      if (base_.robot_color_ == "red")
         graph.second->setColor(rm_referee::GraphColor::CYAN);
       else
         graph.second->setColor(rm_referee::GraphColor::PINK);
@@ -204,7 +203,7 @@ std::string TriggerChangeUi::getChassisState(uint8_t mode)
 
 std::string TriggerChangeUi::getTargetState(uint8_t target, uint8_t armor_target)
 {
-  if (data_.base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && data_.base_.robot_id_ != rm_referee::RobotId::RED_HERO)
+  if (base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && base_.robot_id_ != rm_referee::RobotId::RED_HERO)
   {
     if (target == rm_msgs::StatusChangeRequest::BUFF)
       return "buff";
@@ -255,9 +254,9 @@ void FixedUi::update()
 int FixedUi::getShootSpeedIndex()
 {
   uint16_t speed_limit;
-  if (data_.base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && data_.base_.robot_id_ != rm_referee::RobotId::RED_HERO)
+  if (base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && base_.robot_id_ != rm_referee::RobotId::RED_HERO)
   {
-    speed_limit = data_.base_.game_robot_status_data_.shooter_id_1_17_mm_speed_limit;
+    speed_limit = base_.game_robot_status_data_.shooter_id_1_17_mm_speed_limit;
     if (speed_limit == 15)
       return 0;
     else if (speed_limit == 18)
@@ -275,13 +274,12 @@ void FlashUi::update(const std::string& name, const ros::Time& time, bool state)
     return;
   if (name.find("armor") != std::string::npos)
   {
-    if (data_.base_.robot_hurt_data_.hurt_type == 0x00 &&
-        data_.base_.robot_hurt_data_.armor_id == getArmorId(graph->first))
+    if (base_.robot_hurt_data_.hurt_type == 0x00 && base_.robot_hurt_data_.armor_id == getArmorId(graph->first))
     {
       updateArmorPosition(graph->first, graph->second);
       graph->second->display(time, true, true);
       graph->second->sendUi(time);
-      data_.base_.robot_hurt_data_.hurt_type = 9;
+      base_.robot_hurt_data_.hurt_type = 9;
     }
     else
     {
@@ -292,7 +290,7 @@ void FlashUi::update(const std::string& name, const ros::Time& time, bool state)
   else
   {
     if (name == "aux")
-      updateChassisGimbalDate(data_.joint_state_.position[8], graph->second);
+      updateChassisGimbalDate(base_.joint_state_.position[8], graph->second);
     if (state)
       graph->second->setOperation(rm_referee::GraphOperation::DELETE);
 
@@ -324,7 +322,7 @@ void FlashUi::updateArmorPosition(const std::string& name, Graph* graph)
   double roll, pitch, yaw;
   try
   {
-    yaw_2_baselink = data_.tf_buffer_.lookupTransform("yaw", "base_link", ros::Time(0));
+    yaw_2_baselink = tf_buffer_.lookupTransform("yaw", "base_link", ros::Time(0));
   }
   catch (tf2::TransformException& ex)
   {
@@ -359,7 +357,7 @@ void TimeChangeUi::add()
 {
   for (auto graph : graph_vector_)
   {
-    if (graph.first == "capacitor" && data_.base_.capacity_data_.cap_power == 0.)
+    if (graph.first == "capacitor" && base_.capacity_data_.cap_power == 0.)
       continue;
     graph.second->setOperation(rm_referee::GraphOperation::ADD);
     graph.second->display(true);
@@ -390,7 +388,7 @@ void TimeChangeUi::update(const std::string& name, const ros::Time& time, double
 void TimeChangeUi::setOreRemindData(Graph& graph)
 {
   char data_str[30] = { ' ' };
-  int time = data_.base_.game_status_data_.stage_remain_time;
+  int time = base_.game_status_data_.stage_remain_time;
   if (time < 420 && time > 417)
     sprintf(data_str, "Ore will released after 15s");
   else if (time < 272 && time > 269)
@@ -406,17 +404,17 @@ void TimeChangeUi::setOreRemindData(Graph& graph)
 void TimeChangeUi::setDartStatusData(Graph& graph)
 {
   char data_str[30] = { ' ' };
-  if (data_.base_.dart_client_cmd_data_.dart_launch_opening_status == 1)
+  if (base_.dart_client_cmd_data_.dart_launch_opening_status == 1)
   {
     sprintf(data_str, "Dart Status: Close");
     graph.setColor(rm_referee::GraphColor::YELLOW);
   }
-  else if (data_.base_.dart_client_cmd_data_.dart_launch_opening_status == 2)
+  else if (base_.dart_client_cmd_data_.dart_launch_opening_status == 2)
   {
     sprintf(data_str, "Dart Status: Changing");
     graph.setColor(rm_referee::GraphColor::ORANGE);
   }
-  else if (data_.base_.dart_client_cmd_data_.dart_launch_opening_status == 0)
+  else if (base_.dart_client_cmd_data_.dart_launch_opening_status == 0)
   {
     sprintf(data_str, "Dart Open!");
     graph.setColor(rm_referee::GraphColor::GREEN);
@@ -427,21 +425,21 @@ void TimeChangeUi::setDartStatusData(Graph& graph)
 
 void TimeChangeUi::setCapacitorData(Graph& graph)
 {
-  if (data_.base_.capacity_data_.cap_power != 0.)
+  if (base_.capacity_data_.cap_power != 0.)
   {
-    if (data_.base_.capacity_data_.cap_power > 0.)
+    if (base_.capacity_data_.cap_power > 0.)
     {
       graph.setStartX(610);
       graph.setStartY(100);
 
-      graph.setEndX(610 + 600 * data_.base_.capacity_data_.cap_power);
+      graph.setEndX(610 + 600 * base_.capacity_data_.cap_power);
       graph.setEndY(100);
     }
     else
       return;
-    if (data_.base_.capacity_data_.cap_power < 0.3)
+    if (base_.capacity_data_.cap_power < 0.3)
       graph.setColor(rm_referee::GraphColor::ORANGE);
-    else if (data_.base_.capacity_data_.cap_power > 0.7)
+    else if (base_.capacity_data_.cap_power > 0.7)
       graph.setColor(rm_referee::GraphColor::GREEN);
     else
       graph.setColor(rm_referee::GraphColor::YELLOW);
@@ -453,21 +451,21 @@ void TimeChangeUi::setEffortData(Graph& graph)
 {
   char data_str[30] = { ' ' };
   int max_index = 0;
-  if (!data_.joint_state_.name.empty())
+  if (!base_.joint_state_.name.empty())
   {
-    for (int i = 0; i < (int)data_.joint_state_.effort.size(); ++i)
-      if ((data_.joint_state_.name[i] == "joint1" || data_.joint_state_.name[i] == "joint2" ||
-           data_.joint_state_.name[i] == "joint3" || data_.joint_state_.name[i] == "joint4" ||
-           data_.joint_state_.name[i] == "joint5") &&
-          data_.joint_state_.effort[i] > data_.joint_state_.effort[max_index])
+    for (int i = 0; i < (int)base_.joint_state_.effort.size(); ++i)
+      if ((base_.joint_state_.name[i] == "joint1" || base_.joint_state_.name[i] == "joint2" ||
+           base_.joint_state_.name[i] == "joint3" || base_.joint_state_.name[i] == "joint4" ||
+           base_.joint_state_.name[i] == "joint5") &&
+          base_.joint_state_.effort[i] > base_.joint_state_.effort[max_index])
         max_index = i;
     if (max_index != 0)
     {
-      sprintf(data_str, "%s:%.2f N.m", data_.joint_state_.name[max_index].c_str(), data_.joint_state_.effort[max_index]);
+      sprintf(data_str, "%s:%.2f N.m", base_.joint_state_.name[max_index].c_str(), base_.joint_state_.effort[max_index]);
       graph.setContent(data_str);
-      if (data_.joint_state_.effort[max_index] > 20.)
+      if (base_.joint_state_.effort[max_index] > 20.)
         graph.setColor(rm_referee::GraphColor::ORANGE);
-      else if (data_.joint_state_.effort[max_index] < 10.)
+      else if (base_.joint_state_.effort[max_index] < 10.)
         graph.setColor(rm_referee::GraphColor::GREEN);
       else
         graph.setColor(rm_referee::GraphColor::YELLOW);
@@ -487,15 +485,15 @@ void TimeChangeUi::setProgressData(Graph& graph, double data)
 void TimeChangeUi::setTemperatureData(Graph& graph)
 {
   char data_str[30] = { ' ' };
-  for (int i = 0; i < (int)data_.actuator_state_.name.size(); ++i)
+  for (int i = 0; i < (int)base_.actuator_state_.name.size(); ++i)
   {
-    if (data_.actuator_state_.name[i] == "right_finger_joint_motor")
+    if (base_.actuator_state_.name[i] == "right_finger_joint_motor")
     {
-      sprintf(data_str, " %.1hhu C", data_.actuator_state_.temperature[i]);
+      sprintf(data_str, " %.1hhu C", base_.actuator_state_.temperature[i]);
       graph.setContent(data_str);
-      if (data_.actuator_state_.temperature[i] > 70.)
+      if (base_.actuator_state_.temperature[i] > 70.)
         graph.setColor(rm_referee::GraphColor::ORANGE);
-      else if (data_.actuator_state_.temperature[i] < 30.)
+      else if (base_.actuator_state_.temperature[i] < 30.)
         graph.setColor(rm_referee::GraphColor::GREEN);
       else
         graph.setColor(rm_referee::GraphColor::YELLOW);

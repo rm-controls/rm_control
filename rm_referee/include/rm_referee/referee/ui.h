@@ -8,7 +8,6 @@
 #include <tf/transform_listener.h>
 #include <rm_common/ori_tool.h>
 #include <rm_common/decision/heat_limit.h>
-#include "rm_referee/common/data.h"
 #include "rm_referee/referee/graph.h"
 #include <rm_msgs/StatusChangeRequest.h>
 
@@ -17,19 +16,21 @@ namespace rm_referee
 class UiBase
 {
 public:
-  explicit UiBase(ros::NodeHandle& nh, Data& data, const std::string& ui_type);
+  explicit UiBase(ros::NodeHandle& nh, Base& base, const std::string& ui_type);
   virtual void add();
 
 protected:
-  Data& data_;
-  std::map<std::string, Graph*> graph_vector_;
+  Base& base_;
   static int id_;
+  tf2_ros::Buffer tf_buffer_;
+  tf2_ros::TransformListener tf_listener_;
+  std::map<std::string, Graph*> graph_vector_;
 };
 
 class TriggerChangeUi : public UiBase
 {
 public:
-  explicit TriggerChangeUi(ros::NodeHandle& nh, Data& data);
+  explicit TriggerChangeUi(ros::NodeHandle& nh, Base& base);
   void update(const std::string& graph_name, const std::string& content);
   void update(const std::string& graph_name, uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0,
               bool sub_flag = false);
@@ -46,7 +47,7 @@ private:
 class TimeChangeUi : public UiBase
 {
 public:
-  explicit TimeChangeUi(ros::NodeHandle& nh, Data& data) : UiBase(nh, data, "time_change"){};
+  explicit TimeChangeUi(ros::NodeHandle& nh, Base& base) : UiBase(nh, base, "time_change"){};
   void add() override;
   void update(const std::string& name, const ros::Time& time, double data = 0.);
 
@@ -62,7 +63,7 @@ private:
 class FixedUi : public UiBase
 {
 public:
-  explicit FixedUi(ros::NodeHandle& nh, Data& data) : UiBase(nh, data, "fixed"){};
+  explicit FixedUi(ros::NodeHandle& nh, Base& base) : UiBase(nh, base, "fixed"){};
   void update();
 
 private:
@@ -72,7 +73,7 @@ private:
 class FlashUi : public UiBase
 {
 public:
-  explicit FlashUi(ros::NodeHandle& nh, Data& data) : UiBase(nh, data, "flash"){};
+  explicit FlashUi(ros::NodeHandle& nh, Base& base) : UiBase(nh, base, "flash"){};
   void update(const std::string& name, const ros::Time& time, bool state = false);
 
 private:

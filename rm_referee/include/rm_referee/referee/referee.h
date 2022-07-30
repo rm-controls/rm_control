@@ -94,7 +94,7 @@ public:
   void read();
   void checkUiAdd()
   {
-    if (referee_ui_->data_.dbus_data_.s_r == rm_msgs::DbusData::UP)
+    if (referee_ui_->base_.dbus_data_.s_r == rm_msgs::DbusData::UP)
     {
       if (referee_ui_->add_ui_flag_)
       {

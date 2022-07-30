@@ -11,7 +11,7 @@ namespace rm_referee
 class RobotReferee : public RefereeBase
 {
 public:
-  explicit RobotReferee(ros::NodeHandle& nh, Data& data);
+  explicit RobotReferee(ros::NodeHandle& nh, Base& base);
   void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data_,
                                const ros::Time& last_get_) override;
   void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data_, const ros::Time& last_get_) override;

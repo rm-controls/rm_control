@@ -6,7 +6,7 @@
 
 namespace rm_referee
 {
-RefereeBase::RefereeBase(ros::NodeHandle& nh, Data& data) : data_(data), nh_(nh)
+RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
 {
   RefereeBase::joint_state_sub_ =
       nh.subscribe<sensor_msgs::JointState>("/joint_states", 10, &RefereeBase::jointStateCallback, this);
@@ -27,8 +27,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Data& data) : data_(data), nh_(nh)
       nh.subscribe<rm_msgs::EngineerCmd>("/engineer_cmd", 10, &RefereeBase::engineerCmdDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
-  if (data_.base_.robot_id_ == rm_referee::RobotId::RED_RADAR ||
-      data_.base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
+  if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
 }
@@ -65,47 +64,47 @@ void RefereeBase::run()
 }
 void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& data)
 {
-  data_.joint_state_ = *data;
+  base_.joint_state_ = *data;
 }
 void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
 {
-  data_.actuator_state_ = *data;
+  base_.actuator_state_ = *data;
 }
 void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
 {
-  data_.dbus_data_ = *data;
+  base_.dbus_data_ = *data;
 }
 void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
 {
-  data_.chassis_cmd_data_ = *data;
+  base_.chassis_cmd_data_ = *data;
 }
 void RefereeBase::vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data)
 {
-  data_.vel2d_cmd_data_ = *data;
+  base_.vel2d_cmd_data_ = *data;
 }
 void RefereeBase::shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data)
 {
-  data_.shoot_cmd_data_ = *data;
+  base_.shoot_cmd_data_ = *data;
 }
 void RefereeBase::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data)
 {
-  data_.gimbal_cmd_data_ = *data;
+  base_.gimbal_cmd_data_ = *data;
 }
 void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 {
-  data_.card_cmd_data_ = *data;
+  base_.card_cmd_data_ = *data;
 }
 void RefereeBase::engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data)
 {
-  data_.engineer_cmd_data_ = *data;
+  base_.engineer_cmd_data_ = *data;
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
-  data_.manual_to_referee_data_ = *data;
+  base_.manual_to_referee_data_ = *data;
 }
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {
-  data_.radar_data_ = data->data[0] * 10 + data->data[1];
+  base_.radar_data_ = data->data[0] * 10 + data->data[1];
 }
 
 }  // namespace rm_referee

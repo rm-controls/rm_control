@@ -183,9 +183,9 @@ protected:
 class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisCmd>
 {
 public:
-  explicit ChassisCommandSender(ros::NodeHandle& nh, rm_msgs::GameStatus* game_status_data,
-                                rm_msgs::GameRobotStatus* game_robot_status_data, rm_msgs::Referee* referee_data,
-                                rm_msgs::CapacityData* capacity_data)
+  explicit ChassisCommandSender(ros::NodeHandle& nh, const rm_msgs::GameStatus& game_status_data,
+                                const rm_msgs::GameRobotStatus& game_robot_status_data,
+                                const rm_msgs::Referee& referee_data, const rm_msgs::CapacityData& capacity_data)
     : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh)
   {
     XmlRpc::XmlRpcValue xml_rpc_value;
@@ -271,8 +271,8 @@ class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd
 {
 public:
   explicit ShooterCommandSender(ros::NodeHandle& nh, const rm_msgs::TrackData& track_data,
-                                rm_msgs::GameRobotStatus* robot_status_data, rm_msgs::PowerHeatData* power_heat_data,
-                                rm_msgs::Referee* referee_data)
+                                const rm_msgs::GameRobotStatus& robot_status_data,
+                                const rm_msgs::PowerHeatData& power_heat_data, const rm_msgs::Referee& referee_data)
     : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh), track_data_(track_data)
   {
     ros::NodeHandle limit_nh(nh, "heat_limit");
@@ -356,10 +356,10 @@ private:
   double gimbal_error_tolerance_{};
   double target_acceleration_tolerance_{};
   double track_target_acceleration_;
-  MovingAverageFilter<double>* acceleration_filter_;
   double last_target_vel_ = 0.;
   double last_target_time_ = 0.;
   const rm_msgs::TrackData& track_data_;
+  MovingAverageFilter<double>* acceleration_filter_;
 };
 
 class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::TwistStamped>

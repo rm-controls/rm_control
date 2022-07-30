@@ -11,7 +11,7 @@ namespace rm_referee
 class StandardReferee : public HeroReferee
 {
 public:
-  explicit StandardReferee(ros::NodeHandle& nh, Data& data);
+  explicit StandardReferee(ros::NodeHandle& nh, Base& base);
 
   void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data) override;
 

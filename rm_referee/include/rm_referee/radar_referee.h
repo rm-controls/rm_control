@@ -12,7 +12,7 @@ namespace rm_referee
 class RadarReferee : public RefereeBase
 {
 public:
-  explicit RadarReferee(ros::NodeHandle& nh, Data& data);
+  explicit RadarReferee(ros::NodeHandle& nh, Base& base);
   void run() override;
 
 private:
