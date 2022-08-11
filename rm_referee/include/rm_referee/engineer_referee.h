@@ -27,9 +27,6 @@ public:
   void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data) override;
   void engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data) override;
   void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data) override;
-
-private:
-  std::string last_step_queue_name_;
 };
 
 }  // namespace rm_referee

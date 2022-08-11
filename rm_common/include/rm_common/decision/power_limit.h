@@ -89,9 +89,11 @@ public:
   }
   double getLimitPower()
   {
-    if (game_robot_status_.robot_id == 107 || game_robot_status_.robot_id == 7)  // Sentry ID
+    if (game_robot_status_.robot_id == rm_msgs::GameRobotStatus::BLUE_SENTRY ||
+        game_robot_status_.robot_id == rm_msgs::GameRobotStatus::RED_SENTRY)
       limit_power_ = 30;
-    else if (game_robot_status_.robot_id == 102 || game_robot_status_.robot_id == 2)  // Engineer ID
+    else if (game_robot_status_.robot_id == rm_msgs::GameRobotStatus::BLUE_ENGINEER ||
+             game_robot_status_.robot_id == rm_msgs::GameRobotStatus::RED_ENGINEER)
       limit_power_ = 400;
     else
     {  // standard and hero

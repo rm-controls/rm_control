@@ -23,10 +23,6 @@ void EngineerReferee::interactiveDataCallBack(const rm_referee::InteractiveData&
                                               const ros::Time& last_get_)
 {
   RefereeBase::interactiveDataCallBack(interactive_data_, last_get_);
-  //  if (interactive_data_.header_data_.data_cmd_id_ == 0x0201 && interactive_data_.data_ != sentry_mode_)
-  //    interactive_data_sender_->sendInteractiveData(
-  //        0x0200, data_.base_.robot_color_ == "blue" ? rm_referee::RobotId::BLUE_SENTRY : rm_referee::RED_SENTRY,
-  //        sentry_mode_);
 }
 void EngineerReferee::jointStateCallback(const sensor_msgs::JointState::ConstPtr& data)
 {
@@ -51,18 +47,16 @@ void EngineerReferee::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& dat
 
 void EngineerReferee::engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data)
 {
-  RefereeBase::engineerCmdDataCallback(data);
-  if (base_.engineer_cmd_data_.step_queue_name != last_step_queue_name_)
+  if (base_.engineer_cmd_data_.step_queue_name != data->step_queue_name)
   {
     if (base_.engineer_cmd_data_.total_steps != 0)
       time_change_ui_->update("progress", ros::Time::now(),
                               base_.engineer_cmd_data_.finished_step / base_.engineer_cmd_data_.total_steps);
     else
       time_change_ui_->update("progress", ros::Time::now(), 0.);
-
-    last_step_queue_name_ = base_.engineer_cmd_data_.step_queue_name;
   }
   trigger_change_ui_->update("step", base_.engineer_cmd_data_.step_queue_name);
+  RefereeBase::engineerCmdDataCallback(data);
 }
 
 void EngineerReferee::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
