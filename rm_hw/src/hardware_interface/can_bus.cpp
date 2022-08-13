@@ -74,14 +74,14 @@ void CanBus::write()
           minAbs(act_coeff.effort2act * item.second.exe_effort, act_coeff.max_out);  // add max_range to act_data
       if (-1 < id && id < 4)
       {
-        rm_frame0_.data[2 * id] = (uint8_t)(static_cast<int16_t>(cmd) >> 8u);
-        rm_frame0_.data[2 * id + 1] = (uint8_t)cmd;
+        rm_frame0_.data[2 * id] = static_cast<uint8_t>(static_cast<int16_t>(cmd) >> 8u);
+        rm_frame0_.data[2 * id + 1] = static_cast<uint8_t>(cmd);
         has_write_frame0 = true;
       }
       else if (3 < id && id < 8)
       {
-        rm_frame1_.data[2 * (id - 4)] = (uint8_t)(static_cast<int16_t>(cmd) >> 8u);
-        rm_frame1_.data[2 * (id - 4) + 1] = (uint8_t)cmd;
+        rm_frame1_.data[2 * (id - 4)] = static_cast<uint8_t>(static_cast<int16_t>(cmd) >> 8u);
+        rm_frame1_.data[2 * (id - 4) + 1] = static_cast<uint8_t>(cmd);
         has_write_frame1 = true;
       }
     }
@@ -91,11 +91,11 @@ void CanBus::write()
       const ActCoeff& act_coeff = data_ptr_.type2act_coeffs_->find(item.second.type)->second;
       frame.can_id = item.first;
       frame.can_dlc = 8;
-      uint16_t q_des = (int)(act_coeff.pos2act * (item.second.cmd_pos - act_coeff.act2pos_offset));
-      uint16_t qd_des = (int)(act_coeff.vel2act * (item.second.cmd_vel - act_coeff.act2vel_offset));
+      uint16_t q_des = static_cast<int>(act_coeff.pos2act * (item.second.cmd_pos - act_coeff.act2pos_offset));
+      uint16_t qd_des = static_cast<int>(act_coeff.vel2act * (item.second.cmd_vel - act_coeff.act2vel_offset));
       uint16_t kp = 0.;
       uint16_t kd = 0.;
-      uint16_t tau = (int)(act_coeff.effort2act * (item.second.exe_effort - act_coeff.act2effort_offset));
+      uint16_t tau = static_cast<int>(act_coeff.effort2act * (item.second.exe_effort - act_coeff.act2effort_offset));
       // TODO(qiayuan) add position vel and effort hardware interface for MIT Cheetah Motor, now we using it as an effort joint.
       frame.data[0] = q_des >> 8;
       frame.data[1] = q_des & 0xFF;

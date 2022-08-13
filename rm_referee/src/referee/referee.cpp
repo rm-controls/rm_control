@@ -43,7 +43,7 @@ void Referee::read()
 {
   if (base_.serial_.available())
   {
-    rx_len_ = (int)base_.serial_.available();
+    rx_len_ = static_cast<int>(base_.serial_.available());
     base_.serial_.read(rx_buffer_, rx_len_);
   }
   else
@@ -286,8 +286,9 @@ int Referee::unpack(uint8_t* rx_data)
           base_.power_heat_data_.shooter_id_1_17_mm_cooling_heat = power_heat_ref.shooter_id_1_17_mm_cooling_heat_;
           base_.power_heat_data_.shooter_id_2_17_mm_cooling_heat = power_heat_ref.shooter_id_2_17_mm_cooling_heat_;
           base_.power_heat_data_.shooter_id_1_42_mm_cooling_heat = power_heat_ref.shooter_id_1_42_mm_cooling_heat_;
-          base_.power_heat_data_.chassis_volt = (uint16_t)(power_heat_ref.chassis_volt_ * 0.001);        // mV->V
-          base_.power_heat_data_.chassis_current = (uint16_t)(power_heat_ref.chassis_current_ * 0.001);  // mA->A
+          base_.power_heat_data_.chassis_volt = static_cast<uint16_t>(power_heat_ref.chassis_volt_ * 0.001);  // mV->V
+          base_.power_heat_data_.chassis_current =
+              static_cast<uint16_t>(power_heat_ref.chassis_current_ * 0.001);  // mA->A
 
           base_.referee_pub_data_.is_online = base_.referee_data_is_online_;
           base_.referee_pub_data_.stamp = last_get_;
@@ -456,10 +457,10 @@ void Referee::getRobotInfo()
 
 void Referee::publishCapacityData()
 {
-  base_.super_capacitor_data_.capacity = (float)base_.capacity_data_ref_.cap_power;
-  base_.super_capacitor_data_.chassis_power_buffer = (uint16_t)base_.capacity_data_ref_.buffer_power;
-  base_.super_capacitor_data_.limit_power = (float)base_.capacity_data_ref_.limit_power;
-  base_.super_capacitor_data_.chassis_power = (float)base_.capacity_data_ref_.chassis_power;
+  base_.super_capacitor_data_.capacity = static_cast<float>(base_.capacity_data_ref_.cap_power);
+  base_.super_capacitor_data_.chassis_power_buffer = static_cast<uint16_t>(base_.capacity_data_ref_.buffer_power);
+  base_.super_capacitor_data_.limit_power = static_cast<float>(base_.capacity_data_ref_.limit_power);
+  base_.super_capacitor_data_.chassis_power = static_cast<float>(base_.capacity_data_ref_.chassis_power);
   base_.super_capacitor_data_.stamp = super_capacitor_.last_get_data_;
 
   base_.capacity_data_.buffer_power = base_.capacity_data_ref_.buffer_power;
@@ -485,7 +486,7 @@ void SuperCapacitor::read(const std::vector<uint8_t>& rx_buffer)
   {
     dtpReceivedCallBack(kI);
     count++;
-    if (count >= (int)sizeof(receive_buffer_))
+    if (count >= static_cast<int>(sizeof(receive_buffer_)))
     {
       memset(receive_buffer_, 0x00, sizeof(receive_buffer_));
       memset(ping_pong_buffer_, 0x00, sizeof(ping_pong_buffer_));
@@ -512,10 +513,10 @@ void SuperCapacitor::receiveCallBack(unsigned char package_id, const unsigned ch
   {
     last_get_data_ = ros::Time::now();
     data_.is_online = true;
-    data_.chassis_power = (double)int16ToFloat((data[0] << 8) | data[1]);
-    data_.limit_power = (double)int16ToFloat((data[2] << 8) | data[3]);
-    data_.buffer_power = (double)int16ToFloat((data[4] << 8) | data[5]);
-    data_.cap_power = (double)int16ToFloat((data[6] << 8) | data[7]);
+    data_.chassis_power = static_cast<double>(int16ToFloat((data[0] << 8) | data[1]));
+    data_.limit_power = static_cast<double>(int16ToFloat((data[2] << 8) | data[3]));
+    data_.buffer_power = static_cast<double>(int16ToFloat((data[4] << 8) | data[5]));
+    data_.cap_power = static_cast<double>(int16ToFloat((data[6] << 8) | data[7]));
   }
 }
 
@@ -596,7 +597,7 @@ float SuperCapacitor::int16ToFloat(unsigned short data0)
   float* fp32;
   unsigned int fInt32 =
       ((data0 & 0x8000) << 16) | (((((data0 >> 10) & 0x1f) - 0x0f + 0x7f) & 0xff) << 23) | ((data0 & 0x03FF) << 13);
-  fp32 = (float*)&fInt32;
+  fp32 = reinterpret_cast<float*>(&fInt32);
   return *fp32;
 }
 }  // namespace rm_referee

@@ -6,9 +6,9 @@ namespace rm_referee
 {
 Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base), last_send_(ros::Time::now())
 {
-  config_.graphic_id_[0] = (uint8_t)(id >> 0 & 0xFF);
-  config_.graphic_id_[1] = (uint8_t)(id >> 8 & 0xFF);
-  config_.graphic_id_[2] = (uint8_t)(id >> 16 & 0xFF);
+  config_.graphic_id_[0] = static_cast<uint8_t>((id >> 0 & 0xFF));
+  config_.graphic_id_[1] = static_cast<uint8_t>((id >> 8 & 0xFF));
+  config_.graphic_id_[2] = static_cast<uint8_t>((id >> 16 & 0xFF));
   if (config.hasMember("type"))
     config_.graphic_type_ = getType(config["type"]);
   else
@@ -16,12 +16,12 @@ Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base
   if (config_.graphic_type_ == getType("string"))
   {
     if (config.hasMember("size"))
-      config_.start_angle_ = (int)config["size"];
+      config_.start_angle_ = static_cast<int>(config["size"]);
   }
   else
   {
     if (config.hasMember("start_angle"))
-      config_.start_angle_ = (int)config["start_angle"];
+      config_.start_angle_ = static_cast<int>(config["start_angle"]);
   }
   if (config.hasMember("start_position"))
   {
@@ -48,17 +48,17 @@ Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base
     config_.color_ = rm_referee::GraphColor::WHITE;
   }
   if (config.hasMember("end_angle"))
-    config_.end_angle_ = (int)config["end_angle"];
+    config_.end_angle_ = static_cast<int>(config["end_angle"]);
   if (config.hasMember("radius"))
-    config_.radius_ = (int)config["radius"];
+    config_.radius_ = static_cast<int>(config["radius"]);
   if (config.hasMember("width"))
-    config_.width_ = (int)config["width"];
+    config_.width_ = static_cast<int>(config["width"]);
   if (config.hasMember("delay"))
-    delay_ = ros::Duration((double)config["delay"]);
+    delay_ = ros::Duration(static_cast<double>(config["delay"]));
   if (config.hasMember("title"))
-    title_ = (std::string)config["title"];
+    title_ = static_cast<std::string>(config["title"]);
   if (config.hasMember("content"))
-    content_ = (std::string)config["content"];
+    content_ = static_cast<std::string>(config["content"]);
   config_.operate_type_ = rm_referee::GraphOperation::DELETE;
   last_config_ = config_;
   last_title_ = title_;
@@ -74,7 +74,7 @@ void Graph::display(bool priority_flag)
   if (config_ == last_config_ && title_ == last_title_ && content_ == last_content_)
     return;
   if (!title_.empty() && !content_.empty())
-    config_.end_angle_ = (int)(title_ + content_).size();
+    config_.end_angle_ = static_cast<int>((title_ + content_).size());
   addUi(config_, title_ + content_, priority_flag);
   last_content_ = content_;
   last_title_ = title_;
@@ -86,7 +86,7 @@ void Graph::displayTwice(bool priority_flag)
   if (config_ == last_config_ && title_ == last_title_ && content_ == last_content_)
     return;
   if (!title_.empty() && !content_.empty())
-    config_.end_angle_ = (int)(title_ + content_).size();
+    config_.end_angle_ = static_cast<int>((title_ + content_).size());
   for (int i = 0; i < 2; ++i)
     addUi(config_, title_ + content_, priority_flag);
   last_content_ = content_;
@@ -147,7 +147,7 @@ void Graph::initPosition(XmlRpc::XmlRpcValue value, std::vector<std::pair<int, i
   }
   else
   {
-    positions.push_back(std::pair<int, int>((int)value[0], (int)value[1]));
+    positions.push_back(std::pair<int, int>(static_cast<int>(value[0]), static_cast<int>(value[1])));
   }
 }
 
@@ -192,11 +192,11 @@ rm_referee::GraphType Graph::getType(const std::string& type)
 void Graph::pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const
 {
   memset(tx_buffer, 0, k_frame_length_);
-  auto* frame_header = (rm_referee::FrameHeader*)tx_buffer;
+  auto* frame_header = reinterpret_cast<rm_referee::FrameHeader*>(tx_buffer);
 
   frame_header->sof_ = 0xA5;
   frame_header->data_length_ = len;
-  memcpy(&tx_buffer[k_header_length_], (uint8_t*)&cmd_id, k_cmd_id_length_);
+  memcpy(&tx_buffer[k_header_length_], reinterpret_cast<uint8_t*>(&cmd_id), k_cmd_id_length_);
   base_.appendCRC8CheckSum(tx_buffer, k_header_length_);
   memcpy(&tx_buffer[k_header_length_ + k_cmd_id_length_], data, len);
   base_.appendCRC16CheckSum(tx_buffer, k_header_length_ + k_cmd_id_length_ + len + k_tail_length_);
@@ -214,12 +214,13 @@ void Graph::sendInteractiveData(int data_cmd_id, int receiver_id, uint8_t data)
   student_interactive_data->header_data_.receiver_id_ = receiver_id;
   student_interactive_data->data_ = data;
   pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(rm_referee::InteractiveData));
-  tx_len_ = k_header_length_ + k_cmd_id_length_ + (int)sizeof(rm_referee::InteractiveData) + k_tail_length_;
+  tx_len_ =
+      k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::InteractiveData) + k_tail_length_);
 }
 
 void Graph::addUi(const rm_referee::GraphConfig& config, const std::string& content, bool priority_flag)
 {
-  for (int i = 0; i < (int)ui_queue_.size() - 20; i++)
+  for (int i = 0; i < static_cast<int>(ui_queue_.size() - 20); i++)
     ui_queue_.erase(ui_queue_.begin());
   if (priority_flag)
     ui_queue_.push_back(std::pair<rm_referee::GraphConfig, std::string>(config, content));
@@ -232,7 +233,7 @@ void Graph::sendUi(const ros::Time& time)
   if (ui_queue_.empty() || time - last_send_ < ros::Duration(0.05))
     return;
   rm_referee::GraphData tx_data;
-  int data_len = (int)sizeof(rm_referee::GraphData);
+  int data_len = static_cast<int>(sizeof(rm_referee::GraphData));
   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
   tx_data.header_.sender_id_ = base_.robot_id_;
@@ -248,13 +249,13 @@ void Graph::sendUi(const ros::Time& time)
     tx_data.header_.data_cmd_id_ = rm_referee::DataCmdId::CLIENT_CHARACTER_CMD;
     for (int i = 0; i < 30; i++)
     {
-      if (i < (int)ui_queue_.back().second.size())
+      if (i < static_cast<int>(ui_queue_.back().second.size()))
         tx_data.content_[i] = ui_queue_.back().second[i];
       else
         tx_data.content_[i] = ' ';
     }
   }
-  pack(tx_buffer_, (uint8_t*)&tx_data, rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
+  pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   tx_len_ = k_header_length_ + k_cmd_id_length_ + k_tail_length_ + data_len;
   ui_queue_.pop_back();
   last_send_ = time;

@@ -17,7 +17,7 @@ UiBase::UiBase(ros::NodeHandle& nh, Base& base, const std::string& ui_type) : ba
   }
   try
   {
-    for (int i = 0; i < (int)rpc_value.size(); i++)
+    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
     {
       if (rpc_value[i]["name"] == "chassis")
         graph_vector_.insert(
@@ -330,13 +330,13 @@ void FlashUi::updateArmorPosition(const std::string& name, Graph* graph)
   quatToRPY(yaw_2_baselink.transform.rotation, roll, pitch, yaw);
   if (getArmorId(name) == 0 || getArmorId(name) == 2)
   {
-    graph->setStartX((int)(960 + 340 * sin(getArmorId(name) * M_PI_2 + yaw)));
-    graph->setStartY((int)(540 + 340 * cos(getArmorId(name) * M_PI_2 + yaw)));
+    graph->setStartX(static_cast<int>((960 + 340 * sin(getArmorId(name) * M_PI_2 + yaw))));
+    graph->setStartY(static_cast<int>((540 + 340 * cos(getArmorId(name) * M_PI_2 + yaw))));
   }
   else
   {
-    graph->setStartX((int)(960 + 340 * sin(-getArmorId(name) * M_PI_2 + yaw)));
-    graph->setStartY((int)(540 + 340 * cos(-getArmorId(name) * M_PI_2 + yaw)));
+    graph->setStartX(static_cast<int>((960 + 340 * sin(-getArmorId(name) * M_PI_2 + yaw))));
+    graph->setStartY(static_cast<int>((540 + 340 * cos(-getArmorId(name) * M_PI_2 + yaw))));
   }
 }
 
@@ -453,7 +453,7 @@ void TimeChangeUi::setEffortData(Graph& graph)
   int max_index = 0;
   if (!base_.joint_state_.name.empty())
   {
-    for (int i = 0; i < (int)base_.joint_state_.effort.size(); ++i)
+    for (int i = 0; i < static_cast<int>(base_.joint_state_.effort.size()); ++i)
       if ((base_.joint_state_.name[i] == "joint1" || base_.joint_state_.name[i] == "joint2" ||
            base_.joint_state_.name[i] == "joint3" || base_.joint_state_.name[i] == "joint4" ||
            base_.joint_state_.name[i] == "joint5") &&
@@ -485,7 +485,7 @@ void TimeChangeUi::setProgressData(Graph& graph, double data)
 void TimeChangeUi::setTemperatureData(Graph& graph)
 {
   char data_str[30] = { ' ' };
-  for (int i = 0; i < (int)base_.actuator_state_.name.size(); ++i)
+  for (int i = 0; i < static_cast<int>(base_.actuator_state_.name.size()); ++i)
   {
     if (base_.actuator_state_.name[i] == "right_finger_joint_motor")
     {

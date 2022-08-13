@@ -47,7 +47,7 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
-#include <rm_referee/referee/protocol.h>
+#include "rm_referee/referee/protocol.h"
 
 #include <rm_msgs/Referee.h>
 #include <rm_msgs/ShootCmd.h>
@@ -186,7 +186,8 @@ public:
     while (dw_length--)
     {
       chData = *pch_message++;
-      (w_crc) = ((uint16_t)(w_crc) >> 8) ^ rm_referee::wCRC_table[((uint16_t)(w_crc) ^ (uint16_t)(chData)) & 0x00ff];
+      (w_crc) = (static_cast<uint16_t>(w_crc) >> 8) ^
+                rm_referee::wCRC_table[(static_cast<uint16_t>(w_crc) ^ static_cast<uint16_t>(chData)) & 0x00ff];
     }
     return w_crc;
   }
@@ -206,9 +207,9 @@ public:
     uint16_t wCRC;
     if ((pch_message == nullptr) || (dw_length <= 2))
       return;
-    wCRC = getCRC16CheckSum((uint8_t*)pch_message, dw_length - 2, rm_referee::kCrc16Init);
-    pch_message[dw_length - 2] = (uint8_t)(wCRC & 0x00ff);
-    pch_message[dw_length - 1] = (uint8_t)((wCRC >> 8) & 0x00ff);
+    wCRC = getCRC16CheckSum(static_cast<uint8_t*>(pch_message), dw_length - 2, rm_referee::kCrc16Init);
+    pch_message[dw_length - 2] = static_cast<uint8_t>((wCRC & 0x00ff));
+    pch_message[dw_length - 1] = static_cast<uint8_t>(((wCRC >> 8) & 0x00ff));
   }
 };
 }  // namespace rm_referee
