@@ -60,7 +60,7 @@ public:
     if (!nh.getParam("burst_power", burst_power_))
       ROS_ERROR("Burst power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("power_coeff", power_coeff_))
-      ROS_ERROR("kp no defined (namespace: %s)", nh.getNamespace().c_str());
+      ROS_ERROR("power coeff no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("power_buffer_offset", power_buffer_offset_))
       ROS_ERROR("power buffer offset no defined (namespace: %s)", nh.getNamespace().c_str());
   }
