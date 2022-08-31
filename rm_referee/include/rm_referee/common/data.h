@@ -47,7 +47,7 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
-#include "rm_referee/referee/protocol.h"
+#include "rm_referee/common/protocol.h"
 
 #include <rm_msgs/Referee.h>
 #include <rm_msgs/ShootCmd.h>

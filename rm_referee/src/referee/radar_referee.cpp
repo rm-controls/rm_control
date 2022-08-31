@@ -2,7 +2,7 @@
 // Created by yuchen on 2022/6/10.
 //
 
-#include "rm_referee/radar_referee.h"
+#include "rm_referee/referee/radar_referee.h"
 
 namespace rm_referee
 {

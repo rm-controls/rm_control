@@ -8,7 +8,7 @@
 #include <tf/transform_listener.h>
 #include <rm_common/ori_tool.h>
 #include <rm_common/decision/heat_limit.h>
-#include "rm_referee/referee/graph.h"
+#include "rm_referee/common/graph.h"
 #include <rm_msgs/StatusChangeRequest.h>
 
 namespace rm_referee

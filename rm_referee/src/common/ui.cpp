@@ -2,7 +2,7 @@
 // Created by peter on 2021/7/20.
 //
 
-#include "rm_referee/referee/ui.h"
+#include "rm_referee/common/ui.h"
 
 namespace rm_referee
 {

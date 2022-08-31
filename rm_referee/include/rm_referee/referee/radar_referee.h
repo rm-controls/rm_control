@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "rm_referee/common/referee_base.h"
+#include "rm_referee/referee/referee_base.h"
 #include <std_msgs/Int8MultiArray.h>
 
 namespace rm_referee

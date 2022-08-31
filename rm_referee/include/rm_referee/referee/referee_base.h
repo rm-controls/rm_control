@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "rm_referee/referee/ui.h"
+#include "rm_referee/common/ui.h"
 
 #include <rm_common/ros_utilities.h>
 #include <rm_common/decision/command_sender.h>

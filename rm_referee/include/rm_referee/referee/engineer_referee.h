@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "rm_referee/robot_referee.h"
+#include "rm_referee/referee/robot_referee.h"
 
 #include <std_srvs/Empty.h>
 #include <actionlib/client/simple_action_client.h>

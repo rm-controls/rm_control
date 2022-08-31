@@ -1,7 +1,7 @@
 //
 // Created by peter on 2021/7/22.
 //
-#include "rm_referee/referee/graph.h"
+#include "rm_referee/common/graph.h"
 namespace rm_referee
 {
 Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base), last_send_(ros::Time::now())

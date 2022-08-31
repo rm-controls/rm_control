@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "rm_referee/hero_referee.h"
+#include "rm_referee/referee/hero_referee.h"
 
 namespace rm_referee
 {

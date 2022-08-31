@@ -34,7 +34,7 @@
 //
 // Created by peter on 2021/5/17.
 //
-#include "rm_referee/referee/referee.h"
+#include "rm_referee/referee.h"
 
 namespace rm_referee
 {

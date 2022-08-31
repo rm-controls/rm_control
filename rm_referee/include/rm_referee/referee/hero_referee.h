@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "rm_referee/robot_referee.h"
+#include "rm_referee/referee/robot_referee.h"
 #include <rm_msgs/StatusChange.h>
 #include <rm_common/decision/calibration_queue.h>
 

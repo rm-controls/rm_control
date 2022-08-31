@@ -2,11 +2,11 @@
 // Created by ljq on 2022/5/17.
 //
 
-#include "rm_referee/referee/referee.h"
-#include "rm_referee/hero_referee.h"
-#include "rm_referee/standard_referee.h"
-#include "rm_referee/engineer_referee.h"
-#include "rm_referee/radar_referee.h"
+#include "rm_referee/referee.h"
+#include "rm_referee/referee/hero_referee.h"
+#include "rm_referee/referee/standard_referee.h"
+#include "rm_referee/referee/engineer_referee.h"
+#include "rm_referee/referee/radar_referee.h"
 
 int main(int argc, char** argv)
 {
@@ -30,7 +30,7 @@ int main(int argc, char** argv)
     ROS_ERROR("no robot type ");
     return 0;
   }
-  ros::Rate loop_rate(60);
+  ros::Rate loop_rate(80);
   while (ros::ok())
   {
     ros::spinOnce();
