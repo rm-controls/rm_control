@@ -75,8 +75,6 @@ public:
 
   void write(can_frame* frame);
 
-  void setReceiverThreadPriority(int thread_priority);
-
   const std::string bus_name_;
 
 private:

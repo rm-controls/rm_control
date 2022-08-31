@@ -36,7 +36,9 @@
 //
 #include "rm_hw/control_loop.h"
 
-rm_hw::RmRobotHWLoop::RmRobotHWLoop(ros::NodeHandle& nh, std::shared_ptr<RmRobotHW> hardware_interface)
+namespace rm_hw
+{
+RmRobotHWLoop::RmRobotHWLoop(ros::NodeHandle& nh, std::shared_ptr<RmRobotHW> hardware_interface)
   : nh_(nh), hardware_interface_(std::move(hardware_interface))
 {
   // Load ros params
@@ -79,7 +81,7 @@ rm_hw::RmRobotHWLoop::RmRobotHWLoop(ros::NodeHandle& nh, std::shared_ptr<RmRobot
              "are not set properly.).\n");
 }
 
-void rm_hw::RmRobotHWLoop::update()
+void RmRobotHWLoop::update()
 {
   const auto current_time = clock::now();
   // Compute desired duration rounded to clock decimation
@@ -113,9 +115,10 @@ void rm_hw::RmRobotHWLoop::update()
   std::this_thread::sleep_until(sleep_till);
 }
 
-rm_hw::RmRobotHWLoop::~RmRobotHWLoop()
+RmRobotHWLoop::~RmRobotHWLoop()
 {
   loop_running_ = false;
   if (loop_thread_.joinable())
     loop_thread_.join();
 }
+}  // namespace rm_hw
