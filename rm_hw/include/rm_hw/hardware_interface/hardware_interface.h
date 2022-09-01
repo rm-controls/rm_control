@@ -102,6 +102,8 @@ public:
    */
   void write(const ros::Time& time, const ros::Duration& period) override;
 
+  void setCanBusThreadPriority(int thread_priority);
+
 private:
   /** \brief Check whether some coefficients that are related to actuator are set up and load these coefficients.
    *
@@ -177,6 +179,7 @@ private:
   ros::ServiceServer service_server_;
 
   bool is_actuator_specified_ = false;
+  int thread_priority_;
   // Interface
   std::vector<CanBus*> can_buses_{};
   GpioManager gpio_manager_{};

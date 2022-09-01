@@ -73,7 +73,7 @@ public:
    *
    * \returns \c true if it successfully open and bind socket.
    */
-  bool open(const std::string& interface, boost::function<void(const can_frame& frame)> handler);
+  bool open(const std::string& interface, boost::function<void(const can_frame& frame)> handler, int thread_priority);
   /** \brief Close and unbind socket.
    *
    */
@@ -91,7 +91,7 @@ public:
   /** \brief Starts a new thread, that will wait for socket events.
    *
    */
-  bool startReceiverThread();
+  bool startReceiverThread(int thread_priority);
   /**
    * Pointer to a function which shall be called
    * when frames are being received from the CAN bus
