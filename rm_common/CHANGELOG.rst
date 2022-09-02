@@ -2,6 +2,9 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.15 (2022-09-02)
+-------------------
+
 0.1.14 (2022-06-16)
 -------------------
 * Merge pull request `#65 <https://github.com/rm-controls/rm_control/issues/65>`_ from ye-luo-xi-tui/param

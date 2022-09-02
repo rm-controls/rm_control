@@ -54,7 +54,8 @@ SocketCAN::~SocketCAN()
     this->close();
 }
 
-bool SocketCAN::open(const std::string& interface, boost::function<void(const can_frame& frame)> handler)
+bool SocketCAN::open(const std::string& interface, boost::function<void(const can_frame& frame)> handler,
+                     int thread_priority)
 {
   reception_handler = std::move(handler);
   // Request a socket
@@ -86,7 +87,7 @@ bool SocketCAN::open(const std::string& interface, boost::function<void(const ca
     return false;
   }
   // Start a separate, event-driven thread for frame reception
-  return startReceiverThread();
+  return startReceiverThread(thread_priority);
 }
 
 void SocketCAN::close()
@@ -158,7 +159,7 @@ static void* socketcan_receiver_thread(void* argv)
   return nullptr;
 }
 
-bool SocketCAN::startReceiverThread()
+bool SocketCAN::startReceiverThread(int thread_priority)
 {
   // Frame reception is accomplished in a separate, event-driven thread.
   // See also: https://www.thegeekstuff.com/2012/04/create-threads-in-linux/
@@ -170,6 +171,8 @@ bool SocketCAN::startReceiverThread()
     return false;
   }
   ROS_INFO("Successfully started receiver thread with ID %lu", receiver_thread_id_);
+  sched_param sched{ .sched_priority = thread_priority };
+  pthread_setschedparam(receiver_thread_id_, SCHED_FIFO, &sched);
   return true;
 }
 
