@@ -2,8 +2,8 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.15 (2022-09-02)
+-------------------
 * Add namespace.
 * Fix realtime loop.
 * Contributors: yezi
