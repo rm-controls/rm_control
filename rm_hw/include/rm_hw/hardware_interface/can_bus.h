@@ -61,7 +61,7 @@ public:
    * \param bus_name Bus's name(example: can0).
    * \param data_ptr Pointer which point to CAN data.
    */
-  CanBus(const std::string& bus_name, CanDataPtr data_ptr);
+  CanBus(const std::string& bus_name, CanDataPtr data_ptr, int thread_priority);
   /** \brief Read active data from read_buffer_ to data_ptr_, such as position, velocity, torque and so on. Clear
    * read_buffer_ after reading.
    *

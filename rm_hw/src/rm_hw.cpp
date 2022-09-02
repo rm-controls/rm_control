@@ -41,7 +41,6 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "rm_hw");
   ros::NodeHandle nh;
-  ros::NodeHandle robot_hw_nh("~");
 
   // Run the hardware interface node
   // -------------------------------
@@ -52,21 +51,10 @@ int main(int argc, char** argv)
   ros::AsyncSpinner spinner(2);
   spinner.start();
 
-  struct sched_param params
-  {
-    .sched_priority = 95
-  };
-  if (sched_setscheduler(0, SCHED_FIFO, &params) == -1)
-    ROS_ERROR("Set scheduler failed, RUN THIS NODE AS SUPER USER.\n");
-
   try
   {
     // Create the hardware interface specific to your robot
     std::shared_ptr<rm_hw::RmRobotHW> rm_hw_hw_interface = std::make_shared<rm_hw::RmRobotHW>();
-    // Initialise the hardware interface:
-    // 1. retrieve configuration from rosparam
-    // 2. initialize the hardware and interface it with ros_control
-    rm_hw_hw_interface->init(nh, robot_hw_nh);
 
     // Start the control loop
     rm_hw::RmRobotHWLoop control_loop(nh, rm_hw_hw_interface);

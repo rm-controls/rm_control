@@ -6,14 +6,14 @@
 
 namespace rm_hw
 {
-GpioMangager::GpioMangager()
+GpioManager::GpioManager()
 {
 }
 
-GpioMangager::~GpioMangager()
+GpioManager::~GpioManager()
 {
 }
-void GpioMangager::setGpioDirection(rm_control::GpioData gpioData)
+void GpioManager::setGpioDirection(rm_control::GpioData gpioData)
 {
   std::string file = "/sys/class/gpio/gpio" + std::to_string(gpioData.pin) + "/direction";
   int fd;
@@ -42,7 +42,7 @@ void GpioMangager::setGpioDirection(rm_control::GpioData gpioData)
   close(fd);
 }
 
-void GpioMangager::readGpio()
+void GpioManager::readGpio()
 {
   for (auto iter = gpio_state_values.begin(); iter != gpio_state_values.end(); iter++)
   {
@@ -65,7 +65,7 @@ void GpioMangager::readGpio()
   }
 }
 
-void GpioMangager::writeGpio()
+void GpioManager::writeGpio()
 {
   char buffer[1] = { '1' };
   for (auto iter : gpio_command_values)

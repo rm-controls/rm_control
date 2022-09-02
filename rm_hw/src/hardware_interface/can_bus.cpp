@@ -41,10 +41,11 @@
 #include <rm_common/math_utilities.h>
 namespace rm_hw
 {
-CanBus::CanBus(const std::string& bus_name, CanDataPtr data_ptr) : bus_name_(bus_name), data_ptr_(data_ptr)
+CanBus::CanBus(const std::string& bus_name, CanDataPtr data_ptr, int thread_priority)
+  : bus_name_(bus_name), data_ptr_(data_ptr)
 {
   // Initialize device at can_device, false for no loop back.
-  while (!socket_can_.open(bus_name, boost::bind(&CanBus::frameCallback, this, _1)) && ros::ok())
+  while (!socket_can_.open(bus_name, boost::bind(&CanBus::frameCallback, this, _1), thread_priority) && ros::ok())
     ros::Duration(.5).sleep();
 
   ROS_INFO("Successfully connected to %s.", bus_name.c_str());
@@ -248,6 +249,7 @@ void CanBus::read(ros::Time time)
       TofData& tof_data = data_ptr_.id2tof_data_->find(frame.can_id)->second;
       tof_data.distance = ((int16_t)((frame.data[1]) << 8) | frame.data[0]);
       tof_data.strength = ((int16_t)((frame.data[3]) << 8) | frame.data[2]);
+      continue;
     }
     if (frame.can_id != 0x0)
       ROS_ERROR_STREAM_ONCE("Can not find defined device, id: 0x" << std::hex << frame.can_id
