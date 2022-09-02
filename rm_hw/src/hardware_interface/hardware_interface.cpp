@@ -77,10 +77,12 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     {
       std::string bus_name = xml_rpc_value[i];
       if (bus_name.find("can") != std::string::npos)
-        can_buses_.push_back(new CanBus(bus_name, CanDataPtr{ .type2act_coeffs_ = &type2act_coeffs_,
-                                                              .id2act_data_ = &bus_id2act_data_[bus_name],
-                                                              .id2imu_data_ = &bus_id2imu_data_[bus_name],
-                                                              .id2tof_data_ = &bus_id2tof_data_[bus_name] }));
+        can_buses_.push_back(new CanBus(bus_name,
+                                        CanDataPtr{ .type2act_coeffs_ = &type2act_coeffs_,
+                                                    .id2act_data_ = &bus_id2act_data_[bus_name],
+                                                    .id2imu_data_ = &bus_id2imu_data_[bus_name],
+                                                    .id2tof_data_ = &bus_id2tof_data_[bus_name] },
+                                        thread_priority_));
       else
         ROS_ERROR_STREAM("Unknown bus: " << bus_name);
     }
@@ -173,6 +175,11 @@ void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
   // Gpio write
   gpio_manager_.writeGpio();
   publishActuatorState(time);
+}
+
+void RmRobotHW::setCanBusThreadPriority(int thread_priority)
+{
+  thread_priority_ = thread_priority;
 }
 
 void RmRobotHW::publishActuatorState(const ros::Time& time)

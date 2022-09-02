@@ -39,19 +39,16 @@
 
 #include "rm_hw/hardware_interface/hardware_interface.h"
 
-// Timer
 #include <chrono>
-#include <utility>
+#include <thread>
 
-// ROS
 #include <ros/ros.h>
-
-// ROS control
 #include <controller_manager/controller_manager.h>
 
 namespace rm_hw
 {
 using namespace std::chrono;
+using clock = high_resolution_clock;
 
 class RmRobotHWLoop
 {
@@ -63,6 +60,8 @@ public:
    * @param hardware_interface A pointer which point to hardware_interface.
    */
   RmRobotHWLoop(ros::NodeHandle& nh, std::shared_ptr<RmRobotHW> hardware_interface);
+
+  ~RmRobotHWLoop();
   /** \brief Timed method that reads current hardware's state, runs the controller code once and sends the new commands
    * to the hardware.
    *
@@ -73,22 +72,21 @@ public:
    * linearly increasing.
    */
 
-  void update(const ros::TimerEvent&);
+  void update();
 
 private:
   // Startup and shutdown of the internal node inside a roscpp program
   ros::NodeHandle nh_;
 
   // Settings
-  ros::Duration desired_update_freq_;
   double cycle_time_error_threshold_{};
 
   // Timing
-  ros::Timer loop_timer_;
-  ros::Duration elapsed_time_;
+  std::thread loop_thread_;
+  std::atomic_bool loop_running_;
   double loop_hz_{};
-  steady_clock::time_point last_time_;
-  steady_clock::time_point current_time_;
+  ros::Duration elapsed_time_;
+  clock::time_point last_time_;
 
   /** ROS Controller Manager and Runner
 
