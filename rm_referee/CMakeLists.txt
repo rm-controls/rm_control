@@ -101,7 +101,7 @@ install(
 
 ## Mark other files for installation
 install(
-        DIRECTORY config launch
+        DIRECTORY launch
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
