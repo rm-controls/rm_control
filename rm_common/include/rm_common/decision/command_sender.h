@@ -519,4 +519,38 @@ private:
   const sensor_msgs::JointState& joint_state_;
   double step_{};
 };
+
+class JointPointCommandSender : public CommandSenderBase<std_msgs::Float64>
+{
+public:
+  explicit JointPointCommandSender(ros::NodeHandle& nh, const sensor_msgs::JointState& joint_state)
+    : CommandSenderBase<std_msgs::Float64>(nh), joint_state_(joint_state)
+  {
+    ROS_ASSERT(nh.getParam("joint", joint_));
+  }
+  void setPoint(double point)
+  {
+    msg_.data = point;
+  }
+  int getIndex()
+  {
+    auto i = std::find(joint_state_.name.begin(), joint_state_.name.end(), joint_);
+    if (i != joint_state_.name.end())
+    {
+      index_ = std::distance(joint_state_.name.begin(), i);
+      return index_;
+    }
+    else
+    {
+      ROS_ERROR("Can not find joint %s", joint_.c_str());
+      return -1;
+    }
+  }
+  void setZero() override{};
+
+private:
+  std::string joint_{};
+  int index_{};
+  const sensor_msgs::JointState& joint_state_;
+};
 }  // namespace rm_common
