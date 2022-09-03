@@ -2,7 +2,7 @@
 // Created by yezi on 2022/3/26.
 //
 
-#include <rm_common/filters/imu_filter_base.h>
+#include "rm_common/filters/imu_filter_base.h"
 
 namespace rm_common
 {
@@ -10,7 +10,7 @@ bool ImuFilterBase::init(XmlRpc::XmlRpcValue& imu_data, const std::string& name)
 {
   ros::NodeHandle nh("~");
   frame_id_ = (std::string)imu_data["frame_id"];
-  getFilterParam(imu_data);
+  initFilter(imu_data);
   imu_data_pub_ = nh.advertise<sensor_msgs::Imu>(name + "/data", 100);
   imu_temp_pub_ = nh.advertise<sensor_msgs::Temperature>(name + "/temperature", 100);
   trigger_time_pub_ = nh.advertise<sensor_msgs::TimeReference>(name + "/trigger_time", 100);
@@ -27,7 +27,12 @@ void ImuFilterBase::update(ros::Time time, double* accel, double* omega, double*
     imu_pub_data_.header.frame_id = frame_id_;
     return;
   }
-
+  if ((time - last_update_).toSec() > 1)
+  {
+    resetFilter();
+    last_update_ = time;
+    return;
+  }
   // Update the filter.
   filterUpdate(accel[0], accel[1], accel[2], omega[0], omega[1], omega[2], (time - last_update_).toSec());
   last_update_ = time;

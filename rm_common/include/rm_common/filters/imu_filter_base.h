@@ -21,7 +21,8 @@ public:
   virtual void getOrientation(double& q0, double& q1, double& q2, double& q3) = 0;
 
 protected:
-  virtual bool getFilterParam(XmlRpc::XmlRpcValue& imu_data) = 0;
+  virtual bool initFilter(XmlRpc::XmlRpcValue& imu_data) = 0;
+  virtual void resetFilter() = 0;
   virtual void filterUpdate(double ax, double ay, double az, double wx, double wy, double wz, double dt) = 0;
   ros::Time last_update_;
   bool initialized_filter_{ false };

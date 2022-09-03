@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <rm_common/filters/imu_filter_base.h>
+#include "rm_common/filters/imu_filter_base.h"
 #include <imu_complementary_filter/complementary_filter.h>
 
 namespace rm_common
@@ -17,10 +17,15 @@ public:
 
 private:
   void filterUpdate(double ax, double ay, double az, double wx, double wy, double wz, double dt) override;
-  bool getFilterParam(XmlRpc::XmlRpcValue& imu_data) override;
+  bool initFilter(XmlRpc::XmlRpcValue& imu_data) override;
+  void resetFilter() override;
   // Parameters:
+  double gain_acc_;
+  double gain_mag_;
+  bool do_bias_estimation_;
+  double bias_alpha_;
+  bool do_adaptive_gain_;
   bool use_mag_;
-  // State variables:
-  imu_tools::ComplementaryFilter filter_;
+  std::shared_ptr<imu_tools::ComplementaryFilter> filter_;
 };
 }  // namespace rm_common
