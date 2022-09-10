@@ -59,6 +59,10 @@ public:
       ROS_ERROR("Extra power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("burst_power", burst_power_))
       ROS_ERROR("Burst power no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("power_gain", power_gain_))
+      ROS_ERROR("power gain no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("buffer_threshold", buffer_threshold_))
+      ROS_ERROR("buffer threshold no defined (namespace: %s)", nh.getNamespace().c_str());
   }
   typedef enum
   {
@@ -132,7 +136,9 @@ private:
   }
   void normal()
   {
-    limit_power_ = referee_data_.game_robot_status_.chassis_power_limit_;
+    double buffer_energy_error = referee_data_.power_heat_data_.chassis_power_buffer_ - buffer_threshold_;
+    double plus_power = buffer_energy_error * power_gain_;
+    limit_power_ = referee_data_.game_robot_status_.chassis_power_limit_ + plus_power;
   }
   void test()
   {
@@ -154,9 +160,9 @@ private:
   double limit_power_;
   double safety_power_{};
   double capacitor_threshold_{};
-  double charge_power_{};
-  double extra_power_{};
-  double burst_power_{};
+  double charge_power_{}, extra_power_{}, burst_power_{};
+  double buffer_threshold_{};
+  double power_gain_{};
   uint8_t state_{};
   const RefereeData& referee_data_;
   const rm_msgs::ChassisCmd& chassis_cmd_;
