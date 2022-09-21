@@ -42,6 +42,7 @@
 #include <rm_msgs/GameStatus.h>
 #include <rm_msgs/GameRobotStatus.h>
 #include <rm_msgs/Referee.h>
+#include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/CapacityData.h>
 
 namespace rm_common
@@ -50,12 +51,13 @@ class PowerLimit
 {
 public:
   PowerLimit(ros::NodeHandle& nh, const rm_msgs::ChassisCmd& chassis_cmd, const rm_msgs::GameStatus& game_status_data,
-             const rm_msgs::GameRobotStatus& robot_status_data, const rm_msgs::Referee& referee_data,
-             const rm_msgs::CapacityData& capacity_data)
+             const rm_msgs::GameRobotStatus& robot_status_data, const rm_msgs::PowerHeatData& power_heat_data,
+             const rm_msgs::Referee& referee_data, const rm_msgs::CapacityData& capacity_data)
     : chassis_cmd_(chassis_cmd)
     , game_robot_status_(robot_status_data)
     , game_status_(game_status_data)
     , capacity_(capacity_data)
+    , power_heat_(power_heat_data)
     , referee_(referee_data)
 
   {
@@ -69,6 +71,10 @@ public:
       ROS_ERROR("Extra power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("burst_power", burst_power_))
       ROS_ERROR("Burst power no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("power_gain", power_gain_))
+      ROS_ERROR("power gain no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("buffer_threshold", buffer_threshold_))
+      ROS_ERROR("buffer threshold no defined (namespace: %s)", nh.getNamespace().c_str());
   }
   typedef enum
   {
@@ -142,7 +148,9 @@ private:
   }
   void normal()
   {
-    limit_power_ = game_robot_status_.chassis_power_limit;
+    double buffer_energy_error = power_heat_.chassis_power_buffer - buffer_threshold_;
+    double plus_power = buffer_energy_error * power_gain_;
+    limit_power_ = game_robot_status_.chassis_power_limit + plus_power;
   }
   void test()
   {
@@ -164,15 +172,16 @@ private:
   double limit_power_;
   double safety_power_{};
   double capacitor_threshold_{};
-  double charge_power_{};
-  double extra_power_{};
-  double burst_power_{};
+  double charge_power_{}, extra_power_{}, burst_power_{};
+  double buffer_threshold_{};
+  double power_gain_{};
   uint8_t state_{};
 
   const rm_msgs::ChassisCmd& chassis_cmd_;
   const rm_msgs::GameRobotStatus& game_robot_status_;
   const rm_msgs::GameStatus& game_status_;
   const rm_msgs::CapacityData& capacity_;
+  const rm_msgs::PowerHeatData& power_heat_;
   const rm_msgs::Referee& referee_;
 };
 }  // namespace rm_common
