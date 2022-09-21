@@ -185,11 +185,13 @@ class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisC
 public:
   explicit ChassisCommandSender(ros::NodeHandle& nh, const rm_msgs::GameStatus& game_status_data,
                                 const rm_msgs::GameRobotStatus& game_robot_status_data,
-                                const rm_msgs::Referee& referee_data, const rm_msgs::CapacityData& capacity_data)
+                                const rm_msgs::PowerHeatData& power_heat_data, const rm_msgs::Referee& referee_data,
+                                const rm_msgs::CapacityData& capacity_data)
     : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh)
   {
     XmlRpc::XmlRpcValue xml_rpc_value;
-    power_limit_ = new PowerLimit(nh, msg_, game_status_data, game_robot_status_data, referee_data, capacity_data);
+    power_limit_ = new PowerLimit(nh, msg_, game_status_data, game_robot_status_data, power_heat_data, referee_data,
+                                  capacity_data);
     if (!nh.getParam("accel_x", xml_rpc_value))
       ROS_ERROR("Accel X no defined (namespace: %s)", nh.getNamespace().c_str());
     else
