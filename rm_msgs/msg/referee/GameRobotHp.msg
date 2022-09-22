@@ -1,0 +1,14 @@
+uint16 red_1_robot_hp
+uint16 red_2_robot_hp
+uint16 red_3_robot_hp
+uint16 red_4_robot_hp
+uint16 red_5_robot_hp
+uint16 red_7_robot_hp
+uint16 blue_1_robot_hp
+uint16 blue_2_robot_hp
+uint16 blue_3_robot_hp
+uint16 blue_4_robot_hp
+uint16 blue_5_robot_hp
+uint16 blue_7_robot_hp
+
+time stamp

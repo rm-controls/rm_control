@@ -18,7 +18,6 @@ add_message_files(
         ShootCmd.msg
         GimbalCmd.msg
         GimbalDesError.msg
-        Referee.msg
         LpData.msg
         KalmanData.msg
         MovingAverageData.msg
@@ -46,9 +45,26 @@ add_message_files(
 add_message_files(
         DIRECTORY msg/referee
         FILES
+        CapacityData.msg
         GameRobotStatus.msg
         GameStatus.msg
+        StateCmd.msg
+        EngineerCmd.msg
+        GameRobotHp.msg
+        PowerHeatData.msg
         EventData.msg
+        DartStatus.msg
+        IcraBuffDebuffZoneStatus.msg
+        SupplyProjectileAction.msg
+        DartRemainingTime.msg
+        RobotHurt.msg
+        ShootData.msg
+        BulletRemaining.msg
+        RfidStatus.msg
+        DartClientCmd.msg
+        ManualToReferee.msg
+        Referee.msg
+        RadarData.msg
 )
 
 add_action_files(

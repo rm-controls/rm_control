@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>rm_referee</name>
+    <version>1.0.54</version>
+    <description>A template for ROS packages.</description>
+    <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
+
+    <license>BSD</license>
+    <author email="liaoqiayuan@gmail.com">Qiayuan Liao</author>
+
+    <!-- buildtool_depend: dependencies of the build process -->
+    <buildtool_depend>catkin</buildtool_depend>
+    <!-- depend: build, export, and execution dependency -->
+    <depend>roscpp</depend>
+    <depend>sensor_msgs</depend>
+    <depend>roslint</depend>
+    <depend>rm_msgs</depend>
+    <depend>std_msgs</depend>
+    <depend>nav_msgs</depend>
+    <depend>actionlib</depend>
+    <depend>rm_common</depend>
+    <depend>tf2_geometry_msgs</depend>
+    <depend>serial</depend>
+</package>
