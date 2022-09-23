@@ -294,6 +294,7 @@ public:
     double moving_average_num;
     nh.param("accleration_moving_average_num", moving_average_num, 1.);
     acceleration_filter_ = new MovingAverageFilter<double>(moving_average_num);
+    track_target_acceleration_ = 0.;
   }
   ~ShooterCommandSender()
   {
