@@ -190,13 +190,14 @@ public:
     service_.request.target = rm_msgs::StatusChangeRequest::ARMOR;
     service_.request.exposure = rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0;
     service_.request.armor_target = rm_msgs::StatusChangeRequest::ARMOR_ALL;
+    callService();
   }
-  void setEnemyColor(const RefereeData& referee_data)
+  void setEnemyColor(const int& robot_id_, const std::string& robot_color_)
   {
-    if (referee_data.robot_id_ != 0)
+    if (robot_id_ != 0)
     {
       service_.request.color =
-          referee_data.robot_color_ == "blue" ? rm_msgs::StatusChangeRequest::RED : rm_msgs::StatusChangeRequest::BLUE;
+          robot_color_ == "blue" ? rm_msgs::StatusChangeRequest::RED : rm_msgs::StatusChangeRequest::BLUE;
       ROS_INFO_STREAM("Set enemy color: " << (service_.request.color == service_.request.RED ? "red" : "blue"));
 
       callService();
@@ -242,5 +243,14 @@ public:
   {
     return service_.request.exposure;
   }
+  bool getIsSwitch()
+  {
+    if (isCalling())
+      return false;
+    return service_.response.switch_is_success;
+  }
+
+private:
+  bool is_set_{};
 };
 }  // namespace rm_common

@@ -39,15 +39,27 @@
 
 #include <ros/ros.h>
 #include <rm_msgs/ChassisCmd.h>
+#include <rm_msgs/GameStatus.h>
+#include <rm_msgs/GameRobotStatus.h>
+#include <rm_msgs/Referee.h>
+#include <rm_msgs/PowerHeatData.h>
+#include <rm_msgs/CapacityData.h>
 
-#include "rm_common/referee/data.h"
 namespace rm_common
 {
 class PowerLimit
 {
 public:
-  PowerLimit(ros::NodeHandle& nh, const RefereeData& referee_data, const rm_msgs::ChassisCmd& chassis_cmd)
-    : referee_data_(referee_data), chassis_cmd_(chassis_cmd)
+  PowerLimit(ros::NodeHandle& nh, const rm_msgs::ChassisCmd& chassis_cmd, const rm_msgs::GameStatus& game_status_data,
+             const rm_msgs::GameRobotStatus& robot_status_data, const rm_msgs::PowerHeatData& power_heat_data,
+             const rm_msgs::Referee& referee_data, const rm_msgs::CapacityData& capacity_data)
+    : chassis_cmd_(chassis_cmd)
+    , game_robot_status_(robot_status_data)
+    , game_status_(game_status_data)
+    , capacity_(capacity_data)
+    , power_heat_(power_heat_data)
+    , referee_(referee_data)
+
   {
     if (!nh.getParam("safety_power", safety_power_))
       ROS_ERROR("Safety power no defined (namespace: %s)", nh.getNamespace().c_str());
@@ -59,6 +71,10 @@ public:
       ROS_ERROR("Extra power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("burst_power", burst_power_))
       ROS_ERROR("Burst power no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("power_gain", power_gain_))
+      ROS_ERROR("power gain no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("buffer_threshold", buffer_threshold_))
+      ROS_ERROR("buffer threshold no defined (namespace: %s)", nh.getNamespace().c_str());
   }
   typedef enum
   {
@@ -72,27 +88,28 @@ public:
   {
     state_ = state;
   }
+
   uint8_t getState()
   {
     return state_;
   }
   double getLimitPower()
   {
-    if (referee_data_.robot_id_ == rm_common::RobotId::BLUE_SENTRY ||
-        referee_data_.robot_id_ == rm_common::RobotId::RED_SENTRY)
+    if (game_robot_status_.robot_id == rm_msgs::GameRobotStatus::BLUE_SENTRY ||
+        game_robot_status_.robot_id == rm_msgs::GameRobotStatus::RED_SENTRY)
       limit_power_ = 30;
-    else if (referee_data_.robot_id_ == rm_common::RobotId::RED_ENGINEER ||
-             referee_data_.robot_id_ == rm_common::RobotId::BLUE_ENGINEER)
+    else if (game_robot_status_.robot_id == rm_msgs::GameRobotStatus::BLUE_ENGINEER ||
+             game_robot_status_.robot_id == rm_msgs::GameRobotStatus::RED_ENGINEER)
       limit_power_ = 400;
     else
     {  // standard and hero
-      if (referee_data_.is_online_)
+      if (referee_.is_online)
       {
-        if (referee_data_.capacity_data.is_online_)
+        if (capacity_.is_online)
         {
-          if (referee_data_.game_status_.game_progress_ == 1)
+          if (game_status_.game_progress == 1)
             return 30;  // calibra
-          if (referee_data_.game_robot_status_.chassis_power_limit_ > 120)
+          if (game_robot_status_.chassis_power_limit > 120)
             limit_power_ = burst_power_;
           else
           {
@@ -111,13 +128,12 @@ public:
                 charge();
                 break;
             }
-            if (state_ != Mode::BURST && (abs(referee_data_.capacity_data.limit_power_ -
-                                              referee_data_.game_robot_status_.chassis_power_limit_) < 0.05))
+            if (state_ != Mode::BURST && (abs(capacity_.limit_power - game_robot_status_.chassis_power_limit) < 0.05))
               normal();
           }
         }
         else
-          limit_power_ = referee_data_.game_robot_status_.chassis_power_limit_;
+          limit_power_ = game_robot_status_.chassis_power_limit;
       }
       else
         limit_power_ = safety_power_;
@@ -128,11 +144,13 @@ public:
 private:
   void charge()
   {
-    limit_power_ = referee_data_.game_robot_status_.chassis_power_limit_ * 0.85;
+    limit_power_ = game_robot_status_.chassis_power_limit * 0.85;
   }
   void normal()
   {
-    limit_power_ = referee_data_.game_robot_status_.chassis_power_limit_;
+    double buffer_energy_error = power_heat_.chassis_power_buffer - buffer_threshold_;
+    double plus_power = buffer_energy_error * power_gain_;
+    limit_power_ = game_robot_status_.chassis_power_limit + plus_power;
   }
   void test()
   {
@@ -140,25 +158,30 @@ private:
   }
   void burst()
   {
-    if (referee_data_.capacity_data.cap_power_ > capacitor_threshold_)
+    if (capacity_.cap_power > capacitor_threshold_)
     {
       if (chassis_cmd_.mode == rm_msgs::ChassisCmd::GYRO)
-        limit_power_ = referee_data_.game_robot_status_.chassis_power_limit_ + extra_power_;
+        limit_power_ = game_robot_status_.chassis_power_limit + extra_power_;
       else
         limit_power_ = burst_power_;
     }
     else
-      limit_power_ = referee_data_.game_robot_status_.chassis_power_limit_;
+      limit_power_ = game_robot_status_.chassis_power_limit;
   }
 
   double limit_power_;
   double safety_power_{};
   double capacitor_threshold_{};
-  double charge_power_{};
-  double extra_power_{};
-  double burst_power_{};
+  double charge_power_{}, extra_power_{}, burst_power_{};
+  double buffer_threshold_{};
+  double power_gain_{};
   uint8_t state_{};
-  const RefereeData& referee_data_;
+
   const rm_msgs::ChassisCmd& chassis_cmd_;
+  const rm_msgs::GameRobotStatus& game_robot_status_;
+  const rm_msgs::GameStatus& game_status_;
+  const rm_msgs::CapacityData& capacity_;
+  const rm_msgs::PowerHeatData& power_heat_;
+  const rm_msgs::Referee& referee_;
 };
 }  // namespace rm_common
