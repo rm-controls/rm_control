@@ -40,7 +40,6 @@
 #include <rm_msgs/GameRobotStatus.h>
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/ShootCmd.h>
-#include <rm_msgs/Referee.h>
 
 namespace rm_common
 {
@@ -48,8 +47,8 @@ class HeatLimit
 {
 public:
   HeatLimit(ros::NodeHandle& nh, const rm_msgs::GameRobotStatus& robot_status_data,
-            const rm_msgs::PowerHeatData& power_heat_data, const rm_msgs::Referee& referee_data)
-    : referee_(referee_data), game_robot_status_(robot_status_data), power_heat_(power_heat_data)
+            const rm_msgs::PowerHeatData& power_heat_data, bool& referee)
+    : referee_is_online_(referee), game_robot_status_(robot_status_data), power_heat_(power_heat_data)
   {
     if (!nh.getParam("low_shoot_frequency", low_shoot_frequency_))
       ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
@@ -80,7 +79,7 @@ public:
   {
     if (state_ == BURST)
       return shoot_frequency_;
-    if (!referee_.is_online)
+    if (!referee_is_online_)
       return safe_shoot_frequency_;
     double cooling_limit{}, cooling_rate{}, cooling_heat{};
     if (type_ == "ID1_17MM")
@@ -195,7 +194,7 @@ private:
   double bullet_heat_, safe_shoot_frequency_{}, heat_coeff_{}, shoot_frequency_{}, low_shoot_frequency_{},
       high_shoot_frequency_{}, burst_shoot_frequency_{};
 
-  const rm_msgs::Referee& referee_;
+  bool& referee_is_online_;
   const rm_msgs::GameRobotStatus& game_robot_status_;
   const rm_msgs::PowerHeatData& power_heat_;
 };

@@ -69,7 +69,6 @@ public:
     base_.robot_hurt_data_.hurt_type = 0x09;
     // pub
     ros::NodeHandle root_nh;
-    referee_pub_ = root_nh.advertise<rm_msgs::Referee>("/referee", 1);
     super_capacitor_pub_ = root_nh.advertise<rm_msgs::SuperCapacitor>("/super_capacitor", 1);
     game_robot_status_pub_ = root_nh.advertise<rm_msgs::GameRobotStatus>("/game_robot_status", 1);
     game_status_pub_ = root_nh.advertise<rm_msgs::GameStatus>("/game_status", 1);

@@ -41,7 +41,6 @@
 #include <rm_msgs/ChassisCmd.h>
 #include <rm_msgs/GameStatus.h>
 #include <rm_msgs/GameRobotStatus.h>
-#include <rm_msgs/Referee.h>
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/CapacityData.h>
 
@@ -52,13 +51,13 @@ class PowerLimit
 public:
   PowerLimit(ros::NodeHandle& nh, const rm_msgs::ChassisCmd& chassis_cmd, const rm_msgs::GameStatus& game_status_data,
              const rm_msgs::GameRobotStatus& robot_status_data, const rm_msgs::PowerHeatData& power_heat_data,
-             const rm_msgs::Referee& referee_data, const rm_msgs::CapacityData& capacity_data)
+             const rm_msgs::CapacityData& capacity_data, bool& referee)
     : chassis_cmd_(chassis_cmd)
     , game_robot_status_(robot_status_data)
     , game_status_(game_status_data)
     , capacity_(capacity_data)
     , power_heat_(power_heat_data)
-    , referee_(referee_data)
+    , referee_is_online_(referee)
 
   {
     if (!nh.getParam("safety_power", safety_power_))
@@ -103,7 +102,7 @@ public:
       limit_power_ = 400;
     else
     {  // standard and hero
-      if (referee_.is_online)
+      if (referee_is_online_)
       {
         if (capacity_.is_online)
         {
@@ -182,6 +181,6 @@ private:
   const rm_msgs::GameStatus& game_status_;
   const rm_msgs::CapacityData& capacity_;
   const rm_msgs::PowerHeatData& power_heat_;
-  const rm_msgs::Referee& referee_;
+  bool& referee_is_online_;
 };
 }  // namespace rm_common
