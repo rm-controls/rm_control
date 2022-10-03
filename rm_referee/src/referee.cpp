@@ -284,7 +284,7 @@ int Referee::unpack(uint8_t* rx_data)
           base_.power_heat_data_.chassis_volt = static_cast<uint16_t>(power_heat_ref.chassis_volt_ * 0.001);  // mV->V
           base_.power_heat_data_.chassis_current =
               static_cast<uint16_t>(power_heat_ref.chassis_current_ * 0.001);  // mA->A
-
+          base_.power_heat_data_.stamp = last_get_;
           power_heat_data_pub_.publish(base_.power_heat_data_);
           break;
         }
