@@ -48,6 +48,7 @@ bool RmRobotHWSim::initSim(const std::string& robot_namespace, ros::NodeHandle m
   bool ret = DefaultRobotHWSim::initSim(robot_namespace, model_nh, parent_model, urdf_model, transmissions);
   gazebo_ros_control::DefaultRobotHWSim::registerInterface(&robot_state_interface_);
   gazebo_ros_control::DefaultRobotHWSim::registerInterface(&imu_sensor_interface_);
+  gazebo_ros_control::DefaultRobotHWSim::registerInterface(&rm_imu_sensor_interface_);
   XmlRpc::XmlRpcValue xml_rpc_value;
 
   if (!model_nh.getParam("imus", xml_rpc_value))
@@ -55,30 +56,35 @@ bool RmRobotHWSim::initSim(const std::string& robot_namespace, ros::NodeHandle m
   else
     parseImu(xml_rpc_value, parent_model);
   world_ = parent_model->GetWorld();  // For gravity
+  switch_imu_service_ = model_nh.advertiseService("switch_imu_status", switchImuStatus);
   return ret;
 }
 
 void RmRobotHWSim::readSim(ros::Time time, ros::Duration period)
 {
   gazebo_ros_control::DefaultRobotHWSim::readSim(time, period);
-  for (auto& imu : imu_datas_)
+  if (!disable_imu_)
   {
-    // TODO(qiayuan) Add noise
-    ignition::math::Pose3d pose = imu.link_prt->WorldPose();
-    imu.ori[0] = pose.Rot().X();
-    imu.ori[1] = pose.Rot().Y();
-    imu.ori[2] = pose.Rot().Z();
-    imu.ori[3] = pose.Rot().W();
-    ignition::math::Vector3d rate = imu.link_prt->RelativeAngularVel();
-    imu.angular_vel[0] = rate.X();
-    imu.angular_vel[1] = rate.Y();
-    imu.angular_vel[2] = rate.Z();
-    ignition::math::Vector3d accel = imu.link_prt->RelativeLinearAccel();
-    // TODO(qiayuan): Add gravity
-    // https://github.com/tu-darmstadt-ros-pkg/hector_gazebo/blob/melodic-devel/hector_gazebo_plugins/src/gazebo_ros_imu.cpp
-    imu.linear_acc[0] = accel.X();
-    imu.linear_acc[1] = accel.Y();
-    imu.linear_acc[2] = accel.Z();
+    for (auto& imu : imu_datas_)
+    {
+      // TODO(qiayuan) Add noise
+      ignition::math::Pose3d pose = imu.link_ptr->WorldPose();
+      imu.time_stamp = time;
+      imu.ori[0] = pose.Rot().X();
+      imu.ori[1] = pose.Rot().Y();
+      imu.ori[2] = pose.Rot().Z();
+      imu.ori[3] = pose.Rot().W();
+      ignition::math::Vector3d rate = imu.link_ptr->RelativeAngularVel();
+      imu.angular_vel[0] = rate.X();
+      imu.angular_vel[1] = rate.Y();
+      imu.angular_vel[2] = rate.Z();
+      ignition::math::Vector3d accel = imu.link_ptr->RelativeLinearAccel();
+      // TODO(qiayuan): Add gravity
+      // https://github.com/tu-darmstadt-ros-pkg/hector_gazebo/blob/melodic-devel/hector_gazebo_plugins/src/gazebo_ros_imu.cpp
+      imu.linear_acc[0] = accel.X();
+      imu.linear_acc[1] = accel.Y();
+      imu.linear_acc[2] = accel.Z();
+    }
   }
 
   // Set cmd to zero to avoid crazy soft limit oscillation when not controller loaded
@@ -137,7 +143,8 @@ void RmRobotHWSim::parseImu(XmlRpc::XmlRpcValue& imu_datas, const gazebo::physic
       ROS_ASSERT(linear_cov[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
 
     imu_datas_.push_back((ImuData{
-        .link_prt = link_ptr,
+        .link_ptr = link_ptr,
+        .time_stamp = {},
         .ori = { 0., 0., 0., 0. },
         .ori_cov = { static_cast<double>(ori_cov[0]), 0., 0., 0., static_cast<double>(ori_cov[1]), 0., 0., 0.,
                      static_cast<double>(ori_cov[2]) },
@@ -148,12 +155,15 @@ void RmRobotHWSim::parseImu(XmlRpc::XmlRpcValue& imu_datas, const gazebo::physic
         .linear_acc_cov = { static_cast<double>(linear_cov[0]), 0., 0., 0., static_cast<double>(linear_cov[1]), 0., 0.,
                             0., static_cast<double>(linear_cov[2]) } }));
     ImuData& imu_data = imu_datas_.back();
-    imu_sensor_interface_.registerHandle(
-        hardware_interface::ImuSensorHandle(it->first, frame_id, imu_data.ori, imu_data.ori_cov, imu_data.angular_vel,
-                                            imu_data.angular_vel_cov, imu_data.linear_acc, imu_data.linear_acc_cov));
+    hardware_interface::ImuSensorHandle imu_sensor_handle(it->first, frame_id, imu_data.ori, imu_data.ori_cov,
+                                                          imu_data.angular_vel, imu_data.angular_vel_cov,
+                                                          imu_data.linear_acc, imu_data.linear_acc_cov);
+    imu_sensor_interface_.registerHandle(hardware_interface::ImuSensorHandle(imu_sensor_handle));
+    rm_imu_sensor_interface_.registerHandle(rm_control::RmImuSensorHandle(imu_sensor_handle, &imu_data.time_stamp));
   }
 }
 
+bool RmRobotHWSim::disable_imu_ = false;
 }  // namespace rm_gazebo
 
 PLUGINLIB_EXPORT_CLASS(rm_gazebo::RmRobotHWSim, gazebo_ros_control::RobotHWSim)
