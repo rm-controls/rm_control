@@ -301,21 +301,19 @@ public:
   }
   void computeTargetAcceleration()
   {
-    auto target_vel = track_data_.target_vel;
-    double current_target_vel = sqrt(pow(target_vel.x, 2) + pow(target_vel.y, 2) + pow(target_vel.z, 2));
+    tf2::Vector3 current_target_vel{ track_data_.target_vel.x, track_data_.target_vel.y, track_data_.target_vel.z };
     double current_time = track_data_.header.stamp.toSec();
     if (current_time == last_target_time_)
       return;
-    track_target_acceleration_ = (current_target_vel - last_target_vel_) / (current_time - last_target_time_);
+    acceleration_filter_->input((current_target_vel - last_target_vel_).length() / (current_time - last_target_time_));
     last_target_vel_ = current_target_vel;
     last_target_time_ = current_time;
-    acceleration_filter_->input(track_target_acceleration_);
-    track_target_acceleration_ = acceleration_filter_->output();
+    ROS_INFO_THROTTLE(0.5, "%lf", acceleration_filter_->output());
   }
   void checkError(const rm_msgs::GimbalDesError& gimbal_des_error, const ros::Time& time)
   {
     if ((gimbal_des_error.error > gimbal_error_tolerance_ && time - gimbal_des_error.stamp < ros::Duration(0.1)) ||
-        (track_target_acceleration_ > target_acceleration_tolerance_))
+        (std::abs(acceleration_filter_->output()) > target_acceleration_tolerance_))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
         setMode(rm_msgs::ShootCmd::READY);
   }
@@ -357,8 +355,7 @@ private:
   double speed_10_, speed_15_, speed_16_, speed_18_, speed_30_;
   double gimbal_error_tolerance_{};
   double target_acceleration_tolerance_{};
-  double track_target_acceleration_;
-  double last_target_vel_ = 0.;
+  tf2::Vector3 last_target_vel_{ 0, 0, 0 };
   double last_target_time_ = 0.;
   const rm_msgs::TrackData& track_data_;
   MovingAverageFilter<double>* acceleration_filter_;
