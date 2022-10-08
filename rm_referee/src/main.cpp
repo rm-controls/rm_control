@@ -15,16 +15,10 @@ int main(int argc, char** argv)
   ros::NodeHandle nh("~");
   rm_referee::Referee referee;
   robot = getParam(nh, "robot_type", static_cast<std::string>("error"));
-  if (robot == "standard")
-    referee.referee_ui_ = new rm_referee::StandardReferee(nh, referee.base_);
-  else if (robot == "hero")
-    referee.referee_ui_ = new rm_referee::HeroReferee(nh, referee.base_);
-  else if (robot == "engineer")
-    referee.referee_ui_ = new rm_referee::EngineerReferee(nh, referee.base_);
-  else if (robot == "radar")
-    referee.referee_ui_ = new rm_referee::RadarReferee(nh, referee.base_);
+  if (robot == "hero")
+    referee.referee_ui_ = new rm_referee::HeroReferee(nh, referee.data_translation_);
   else if (robot == "sentry")
-    referee.referee_ui_ = new rm_referee::RefereeBase(nh, referee.base_);
+    referee.referee_ui_ = new rm_referee::RefereeBase(nh, referee.data_translation_);
   else
   {
     ROS_ERROR("no robot type ");

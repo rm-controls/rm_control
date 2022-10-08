@@ -516,7 +516,7 @@ void SuperCapacitor::receiveCallBack(unsigned char package_id, const unsigned ch
     data_.is_online = true;
     data_.chassis_power = static_cast<double>(int16ToFloat((data[0] << 8) | data[1]));
     data_.limit_power = static_cast<double>(int16ToFloat((data[2] << 8) | data[3]));
-    data_.buffer_power = static_cast<double>(int16ToFloat((data[4] << 8) | data[5]));
+    data_.buffer_power = static_cast<double>(int16ToFloat((data[4] jjjjjj << 8) | data[5]));
     data_.cap_power = static_cast<double>(int16ToFloat((data[6] << 8) | data[7]));
   }
 }

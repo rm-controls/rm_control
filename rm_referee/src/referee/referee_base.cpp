@@ -6,8 +6,10 @@
 
 namespace rm_referee
 {
-RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
+RefereeBase::RefereeBase(ros::NodeHandle& nh, DataTranslation& data_translation)
+  : data_translation_(data_translation), nh_(nh)
 {
+  ros::NodeHandle ui_nh(nh, "ui");
   RefereeBase::joint_state_sub_ =
       nh.subscribe<sensor_msgs::JointState>("/joint_states", 10, &RefereeBase::jointStateCallback, this);
   RefereeBase::actuator_state_sub_ =
@@ -30,6 +32,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
+  trigger_change_ui_ = new TriggerChangeUi(ui_nh, data_translation_);
+  chassis_trigger_change_ui_ = new ChassisTriggerChangeUi(ui_nh, data_translation_);
 }
 
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data_,

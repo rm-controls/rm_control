@@ -11,7 +11,7 @@ namespace rm_referee
 class RobotReferee : public RefereeBase
 {
 public:
-  explicit RobotReferee(ros::NodeHandle& nh, Base& base);
+  explicit RobotReferee(ros::NodeHandle& nh, DataTranslation& data_translation);
   void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data_,
                                const ros::Time& last_get_) override;
   void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data_, const ros::Time& last_get_) override;
@@ -25,9 +25,10 @@ public:
   void addUi() override;
 
 protected:
-  TimeChangeUi* time_change_ui_{};
-  FlashUi* flash_ui_{};
+  //  TimeChangeUi* time_change_ui_{};
+  //  FlashUi* flash_ui_{};
   TriggerChangeUi* trigger_change_ui_{};
-  FixedUi* fixed_ui_{};
+  ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
+  //  FixedUi* fixed_ui_{};
 };
 }  // namespace rm_referee

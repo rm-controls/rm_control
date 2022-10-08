@@ -13,7 +13,7 @@ namespace rm_referee
 class HeroReferee : public RobotReferee
 {
 public:
-  explicit HeroReferee(ros::NodeHandle& nh, Base& base);
+  explicit HeroReferee(ros::NodeHandle& nh, DataTranslation& data_translation);
   void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data_, const ros::Time& last_get_) override;
 
   void gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data) override;
