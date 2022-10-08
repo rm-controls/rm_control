@@ -124,11 +124,21 @@ public:
   rm_msgs::SupplyProjectileAction supply_projectile_action_data_;
   rm_msgs::IcraBuffDebuffZoneStatus icra_buff_debuff_zone_status_data_;
 
-  serial::Serial serial_;
   std::string robot_color_;
   bool referee_data_is_online_ = false;
   int client_id_ = 0;  // recipient's id
   int robot_id_ = 0;   // recent robot's id
+};
+
+class DataTranslation
+{
+public:
+  serial::Serial serial_;
+
+  int client_id_ = 0;  // recipient's id
+  int robot_id_ = 0;   // recent robot's id
+  std::string robot_color_;
+  bool referee_data_is_online_ = false;
 
   void initSerial()
   {
