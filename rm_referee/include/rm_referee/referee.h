@@ -89,7 +89,7 @@ public:
     rfid_status_pub_ = root_nh.advertise<rm_msgs::RfidStatus>("/rfid_status_data", 1);
     dart_client_cmd_pub_ = root_nh.advertise<rm_msgs::DartClientCmd>("/dart_client_cmd_data", 1);
     // initSerial
-    base_.initSerial();
+    data_translation_.initSerial();
   };
   void read();
   void checkUiAdd()
@@ -131,6 +131,7 @@ public:
   ros::Publisher dart_client_cmd_pub_;
 
   Base base_;
+  DataTranslation data_translation_;
   std::vector<uint8_t> rx_buffer_;
   rm_referee::RefereeBase* referee_ui_;
   int rx_len_;

@@ -41,10 +41,10 @@ namespace rm_referee
 // read data from referee
 void Referee::read()
 {
-  if (base_.serial_.available())
+  if (data_translation_.serial_.available())
   {
-    rx_len_ = static_cast<int>(base_.serial_.available());
-    base_.serial_.read(rx_buffer_, rx_len_);
+    rx_len_ = static_cast<int>(data_translation_.serial_.available());
+    data_translation_.serial_.read(rx_buffer_, rx_len_);
   }
   else
   {
@@ -87,7 +87,7 @@ int Referee::unpack(uint8_t* rx_data)
   rm_referee::FrameHeader frame_header;
 
   memcpy(&frame_header, rx_data, k_header_length_);
-  if (base_.verifyCRC8CheckSum(rx_data, k_header_length_) == true)
+  if (data_translation_.verifyCRC8CheckSum(rx_data, k_header_length_) == true)
   {
     if (frame_header.data_length_ > 256)  // temporary and inaccurate value
     {
@@ -95,7 +95,7 @@ int Referee::unpack(uint8_t* rx_data)
       return 0;
     }
     frame_len = frame_header.data_length_ + k_header_length_ + k_cmd_id_length_ + k_tail_length_;
-    if (base_.verifyCRC16CheckSum(rx_data, frame_len) == true)
+    if (data_translation_.verifyCRC16CheckSum(rx_data, frame_len) == true)
     {
       cmd_id = (rx_data[6] << 8 | rx_data[5]);
       switch (cmd_id)
@@ -415,41 +415,42 @@ int Referee::unpack(uint8_t* rx_data)
 
 void Referee::getRobotInfo()
 {
-  base_.robot_id_ = base_.game_robot_status_data_.robot_id;
-  base_.robot_color_ = base_.game_robot_status_data_.robot_id >= 100 ? "blue" : "red";
-  if (base_.robot_id_ != rm_referee::RobotId::BLUE_SENTRY && base_.robot_id_ != rm_referee::RobotId::RED_SENTRY)
+  data_translation_.robot_id_ = base_.game_robot_status_data_.robot_id;
+  data_translation_.robot_color_ = base_.game_robot_status_data_.robot_id >= 100 ? "blue" : "red";
+  if (data_translation_.robot_id_ != rm_referee::RobotId::BLUE_SENTRY &&
+      data_translation_.robot_id_ != rm_referee::RobotId::RED_SENTRY)
   {
-    switch (base_.robot_id_)
+    switch (data_translation_.robot_id_)
     {
       case rm_referee::RobotId::BLUE_HERO:
-        base_.client_id_ = rm_referee::ClientId::BLUE_HERO_CLIENT;
+        data_translation_.client_id_ = rm_referee::ClientId::BLUE_HERO_CLIENT;
         break;
       case rm_referee::RobotId::BLUE_ENGINEER:
-        base_.client_id_ = rm_referee::ClientId::BLUE_ENGINEER_CLIENT;
+        data_translation_.client_id_ = rm_referee::ClientId::BLUE_ENGINEER_CLIENT;
         break;
       case rm_referee::RobotId::BLUE_STANDARD_3:
-        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_3_CLIENT;
+        data_translation_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_3_CLIENT;
         break;
       case rm_referee::RobotId::BLUE_STANDARD_4:
-        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_4_CLIENT;
+        data_translation_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_4_CLIENT;
         break;
       case rm_referee::RobotId::BLUE_STANDARD_5:
-        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_5_CLIENT;
+        data_translation_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_5_CLIENT;
         break;
       case rm_referee::RobotId::RED_HERO:
-        base_.client_id_ = rm_referee::ClientId::RED_HERO_CLIENT;
+        data_translation_.client_id_ = rm_referee::ClientId::RED_HERO_CLIENT;
         break;
       case rm_referee::RobotId::RED_ENGINEER:
-        base_.client_id_ = rm_referee::ClientId::RED_ENGINEER_CLIENT;
+        data_translation_.client_id_ = rm_referee::ClientId::RED_ENGINEER_CLIENT;
         break;
       case rm_referee::RobotId::RED_STANDARD_3:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_3_CLIENT;
+        data_translation_.client_id_ = rm_referee::ClientId::RED_STANDARD_3_CLIENT;
         break;
       case rm_referee::RobotId::RED_STANDARD_4:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_4_CLIENT;
+        data_translation_.client_id_ = rm_referee::ClientId::RED_STANDARD_4_CLIENT;
         break;
       case rm_referee::RobotId::RED_STANDARD_5:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_5_CLIENT;
+        data_translation_.client_id_ = rm_referee::ClientId::RED_STANDARD_5_CLIENT;
         break;
     }
   }
