@@ -47,6 +47,7 @@
 #include <rm_msgs/GimbalDesError.h>
 #include <rm_msgs/StateCmd.h>
 #include <rm_msgs/TrackData.h>
+#include <rm_msgs/GameRobotHp.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
@@ -80,6 +81,10 @@ public:
   {
     pub_.publish(msg_);
   }
+  virtual void gameRobotStatusCallback(const rm_msgs::GameRobotStatus::ConstPtr& data);
+  virtual void gameStatusCallback(const rm_msgs::GameStatus::ConstPtr& data);
+  virtual void capacityDataCallback(const rm_msgs::CapacityData ::ConstPtr& data);
+  virtual void powerHeatDataCallback(const rm_msgs::PowerHeatData::ConstPtr& data);
   virtual void setZero() = 0;
   MsgType* getMsg()
   {
@@ -183,15 +188,10 @@ protected:
 class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisCmd>
 {
 public:
-  explicit ChassisCommandSender(ros::NodeHandle& nh, const rm_msgs::GameStatus& game_status_data,
-                                const rm_msgs::GameRobotStatus& game_robot_status_data,
-                                const rm_msgs::PowerHeatData& power_heat_data, const rm_msgs::Referee& referee_data,
-                                const rm_msgs::CapacityData& capacity_data)
-    : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh)
+  explicit ChassisCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh)
   {
     XmlRpc::XmlRpcValue xml_rpc_value;
-    power_limit_ = new PowerLimit(nh, msg_, game_status_data, game_robot_status_data, power_heat_data, referee_data,
-                                  capacity_data);
+    power_limit_ = new PowerLimit(nh, msg_);
     if (!nh.getParam("accel_x", xml_rpc_value))
       ROS_ERROR("Accel X no defined (namespace: %s)", nh.getNamespace().c_str());
     else
@@ -205,6 +205,42 @@ public:
     else
       accel_z_.init(xml_rpc_value);
   }
+  void gameStatusCallback(const rm_msgs::GameStatus::ConstPtr& data) override
+  {
+    power_limit_->setGameProgress(data->game_progress);
+  }
+
+  void gameRobotStatusCallback(const rm_msgs::GameRobotStatus::ConstPtr& data) override
+  {
+    robot_id_ = data->robot_id;
+    power_limit_->setRobotId(data->robot_id);
+    power_limit_->setChassisPowerLimit(data->chassis_power_limit);
+  }
+
+  void powerHeatDataCallback(const rm_msgs::PowerHeatData::ConstPtr& data) override
+  {
+    power_limit_->setChassisPowerBuffer(data->chassis_power_buffer);
+  }
+
+  void capacityDataCallback(const rm_msgs::CapacityData ::ConstPtr& data) override
+  {
+    chassis_power_ = data->chassis_power;
+    power_limit_->setCapacityStatus(data->is_online);
+    power_limit_->setCapPower(data->cap_power);
+  }
+  void updateRefereeStatus(bool status)
+  {
+    power_limit_->setRefereeStatus(status);
+  }
+  int getChassisPower()
+  {
+    return chassis_power_;
+  }
+  int getRobotId()
+  {
+    return robot_id_;
+  }
+
   void sendCommand(const ros::Time& time) override
   {
     msg_.power_limit = power_limit_->getLimitPower();
@@ -218,6 +254,7 @@ public:
 
 private:
   LinearInterp accel_x_, accel_y_, accel_z_;
+  int robot_id_, chassis_power_;
 };
 
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd>
@@ -272,13 +309,11 @@ private:
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd>
 {
 public:
-  explicit ShooterCommandSender(ros::NodeHandle& nh, const rm_msgs::TrackData& track_data,
-                                const rm_msgs::GameRobotStatus& robot_status_data,
-                                const rm_msgs::PowerHeatData& power_heat_data, const rm_msgs::Referee& referee_data)
+  explicit ShooterCommandSender(ros::NodeHandle& nh, const rm_msgs::TrackData& track_data)
     : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh), track_data_(track_data)
   {
     ros::NodeHandle limit_nh(nh, "heat_limit");
-    heat_limit_ = new HeatLimit(limit_nh, robot_status_data, power_heat_data, referee_data);
+    heat_limit_ = new HeatLimit(limit_nh);
     nh.param("speed_10m_per_speed", speed_10_, 10.);
     nh.param("speed_15m_per_speed", speed_15_, 15.);
     nh.param("speed_16m_per_speed", speed_16_, 16.);
@@ -299,6 +334,33 @@ public:
   ~ShooterCommandSender()
   {
     delete heat_limit_;
+  }
+
+  void gameRobotStatusCallback(const rm_msgs::GameRobotStatus::ConstPtr& data) override
+  {
+    heat_limit_->setStatusOfShooter(data->shooter_id_1_17_mm_cooling_limit, data->shooter_id_2_17_mm_cooling_limit,
+                                    data->shooter_id_1_42_mm_cooling_limit, data->shooter_id_1_17_mm_cooling_rate,
+                                    data->shooter_id_2_17_mm_cooling_rate, data->shooter_id_1_42_mm_cooling_rate,
+                                    data->shooter_id_1_17_mm_speed_limit, data->shooter_id_2_17_mm_speed_limit,
+                                    data->shooter_id_1_42_mm_speed_limit);
+  }
+  void powerHeatDataCallback(const rm_msgs::PowerHeatData::ConstPtr& data) override
+  {
+    heat_limit_->setCoolingHeatOfShooter(data->shooter_id_1_17_mm_cooling_heat, data->shooter_id_2_17_mm_cooling_heat,
+                                         data->shooter_id_1_42_mm_cooling_heat);
+  }
+  void updateRefereeStatus(bool status)
+  {
+    heat_limit_->setRefereeStatus(status);
+  }
+
+  void setGimbalDesError(rm_msgs::GimbalDesError data)
+  {
+    gimbal_des_error_ = data;
+  }
+  rm_msgs::GimbalDesError getGimbalDesError()
+  {
+    return gimbal_des_error_;
   }
   void computeTargetAcceleration()
   {
@@ -363,6 +425,7 @@ private:
   double last_target_time_ = 0.;
   const rm_msgs::TrackData& track_data_;
   MovingAverageFilter<double>* acceleration_filter_;
+  rm_msgs::GimbalDesError gimbal_des_error_;
 };
 
 class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::TwistStamped>
@@ -548,6 +611,10 @@ public:
       ROS_ERROR("Can not find joint %s", joint_.c_str());
       return -1;
     }
+  }
+  sensor_msgs::JointState getJointState()
+  {
+    return joint_state_;
   }
   void setZero() override{};
 
