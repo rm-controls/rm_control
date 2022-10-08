@@ -349,7 +349,8 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
       }
       else
         bus_id2imu_data_[bus].insert(std::make_pair(
-            id, ImuData{ .imu_name = name,
+            id, ImuData{ .time_stamp = {},
+                         .imu_name = name,
                          .ori = {},
                          .angular_vel = {},
                          .linear_acc = {},
@@ -380,8 +381,11 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
           bus_id2imu_data_[bus][id].angular_vel, bus_id2imu_data_[bus][id].angular_vel_cov,
           bus_id2imu_data_[bus][id].linear_acc, bus_id2imu_data_[bus][id].linear_acc_cov);
       imu_sensor_interface_.registerHandle(imu_sensor_handle);
+      rm_imu_sensor_interface_.registerHandle(
+          rm_control::RmImuSensorHandle(imu_sensor_handle, &bus_id2imu_data_[bus][id].time_stamp));
     }
     registerInterface(&imu_sensor_interface_);
+    registerInterface(&rm_imu_sensor_interface_);
   }
   catch (XmlRpc::XmlRpcException& e)
   {

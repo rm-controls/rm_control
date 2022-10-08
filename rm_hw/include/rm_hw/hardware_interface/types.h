@@ -72,6 +72,7 @@ struct ActData
 
 struct ImuData
 {
+  ros::Time time_stamp;
   std::string imu_name;
   double ori[4];
   double angular_vel[3], linear_acc[3];

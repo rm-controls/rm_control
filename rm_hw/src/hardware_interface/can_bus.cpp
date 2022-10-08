@@ -224,6 +224,7 @@ void CanBus::read(ros::Time time)
                                 imu_data.angular_vel_offset[1];
       imu_data.angular_vel[2] = (((int16_t)((frame.data[5]) << 8) | frame.data[4]) * imu_data.angular_vel_coeff) +
                                 imu_data.angular_vel_offset[2];
+      imu_data.time_stamp = frame_stamp.stamp;
       int16_t temp = (int16_t)((frame.data[6] << 3) | (frame.data[7] >> 5));
       if (temp > 1023)
         temp -= 2048;
@@ -237,6 +238,7 @@ void CanBus::read(ros::Time time)
       imu_data.linear_acc[0] = ((int16_t)((frame.data[1]) << 8) | frame.data[0]) * imu_data.accel_coeff;
       imu_data.linear_acc[1] = ((int16_t)((frame.data[3]) << 8) | frame.data[2]) * imu_data.accel_coeff;
       imu_data.linear_acc[2] = ((int16_t)((frame.data[5]) << 8) | frame.data[4]) * imu_data.accel_coeff;
+      imu_data.time_stamp = frame_stamp.stamp;
       imu_data.camera_trigger = frame.data[6] & 1;
       imu_data.enabled_trigger = frame.data[6] & 2;
       imu_data.imu_filter->update(frame_stamp.stamp, imu_data.linear_acc, imu_data.angular_vel, imu_data.ori,

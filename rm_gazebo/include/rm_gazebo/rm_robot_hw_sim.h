@@ -38,14 +38,16 @@
 #pragma once
 
 #include <gazebo_ros_control/default_robot_hw_sim.h>
-#include <hardware_interface/imu_sensor_interface.h>
+#include <rm_common/hardware_interface/rm_imu_sensor_interface.h>
 #include <rm_common/hardware_interface/robot_state_interface.h>
+#include <std_srvs/Trigger.h>
 
 namespace rm_gazebo
 {
 struct ImuData
 {
-  gazebo::physics::LinkPtr link_prt;
+  gazebo::physics::LinkPtr link_ptr;
+  ros::Time time_stamp;
   double ori[4];
   double ori_cov[9];
   double angular_vel[3];
@@ -65,10 +67,21 @@ public:
 private:
   void parseImu(XmlRpc::XmlRpcValue& imu_datas, const gazebo::physics::ModelPtr& parent_model);
 
+  static bool switchImuStatus(std_srvs::TriggerRequest& req, std_srvs::TriggerResponse& res)
+  {
+    disable_imu_ = !disable_imu_;
+    res.success = true;
+    std::string imu_status_message = disable_imu_ ? "disable" : "enable";
+    res.message = "Imu status: " + imu_status_message;
+    return true;
+  }
   rm_control::RobotStateInterface robot_state_interface_;
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
+  rm_control::RmImuSensorInterface rm_imu_sensor_interface_;
   gazebo::physics::WorldPtr world_;
   std::vector<ImuData> imu_datas_;
+  ros::ServiceServer switch_imu_service_;
+  static bool disable_imu_;
 };
 
 }  // namespace rm_gazebo
