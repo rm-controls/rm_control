@@ -37,6 +37,7 @@
 
 #pragma once
 
+#include <ros/ros.h>
 #include <rm_msgs/GameRobotStatus.h>
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/ShootCmd.h>
@@ -74,26 +75,24 @@ public:
     BURST = 2,
   } ShootHz;
 
-  void setStatusOfShooter(int id_1_17_mm_cooling_limit, int id_2_17_mm_cooling_limit, int id_1_42_mm_cooling_limit,
-                          int id_1_17_mm_cooling_rate, int id_2_17_mm_cooling_rate, int id_1_42_mm_cooling_rate,
-                          int id_1_17_mm_speed_limit, int id_2_17_mm_speed_limit, int id_1_42_mm_speed_limit)
+  void setStatusOfShooter(const rm_msgs::GameRobotStatus data)
   {
-    shooter_id_1_17_mm_cooling_limit_ = id_1_17_mm_cooling_limit;
-    shooter_id_2_17_mm_cooling_limit_ = id_2_17_mm_cooling_limit;
-    shooter_id_1_42_mm_cooling_limit_ = id_1_42_mm_cooling_limit;
-    shooter_id_1_17_mm_cooling_rate_ = id_1_17_mm_cooling_rate;
-    shooter_id_2_17_mm_cooling_rate_ = id_2_17_mm_cooling_rate;
-    shooter_id_1_42_mm_cooling_rate_ = id_1_42_mm_cooling_rate;
-    shooter_id_1_17_mm_speed_limit_ = id_1_17_mm_speed_limit;
-    shooter_id_2_17_mm_speed_limit_ = id_2_17_mm_speed_limit;
-    shooter_id_1_42_mm_speed_limit_ = id_1_42_mm_speed_limit;
+    shooter_id_1_17_mm_cooling_limit_ = data.shooter_id_1_17_mm_cooling_limit;
+    shooter_id_2_17_mm_cooling_limit_ = data.shooter_id_2_17_mm_cooling_limit;
+    shooter_id_1_42_mm_cooling_limit_ = data.shooter_id_1_42_mm_cooling_limit;
+    shooter_id_1_17_mm_cooling_rate_ = data.shooter_id_1_17_mm_cooling_rate;
+    shooter_id_2_17_mm_cooling_rate_ = data.shooter_id_2_17_mm_cooling_rate;
+    shooter_id_1_42_mm_cooling_rate_ = data.shooter_id_1_42_mm_cooling_rate;
+    shooter_id_1_17_mm_speed_limit_ = data.shooter_id_1_17_mm_speed_limit;
+    shooter_id_2_17_mm_speed_limit_ = data.shooter_id_2_17_mm_speed_limit;
+    shooter_id_1_42_mm_speed_limit_ = data.shooter_id_1_42_mm_speed_limit;
   }
 
-  void setCoolingHeatOfShooter(int id_1_17_mm_cooling_heat, int id_2_17_mm_cooling_heat, int id_1_42_mm_cooling_heat)
+  void setCoolingHeatOfShooter(const rm_msgs::PowerHeatData data)
   {
-    shooter_id_1_17_mm_cooling_heat_ = id_1_17_mm_cooling_heat;
-    shooter_id_2_17_mm_cooling_heat_ = id_2_17_mm_cooling_heat;
-    shooter_id_1_42_mm_cooling_heat_ = id_1_42_mm_cooling_heat;
+    shooter_id_1_17_mm_cooling_heat_ = data.shooter_id_1_17_mm_cooling_heat;
+    shooter_id_2_17_mm_cooling_heat_ = data.shooter_id_2_17_mm_cooling_heat;
+    shooter_id_1_42_mm_cooling_heat_ = data.shooter_id_1_42_mm_cooling_heat;
   }
 
   void setRefereeStatus(bool status)

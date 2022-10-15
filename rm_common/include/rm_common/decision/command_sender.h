@@ -81,10 +81,18 @@ public:
   {
     pub_.publish(msg_);
   }
-  virtual void gameRobotStatusCallback(const rm_msgs::GameRobotStatus::ConstPtr& data);
-  virtual void gameStatusCallback(const rm_msgs::GameStatus::ConstPtr& data);
-  virtual void capacityDataCallback(const rm_msgs::CapacityData ::ConstPtr& data);
-  virtual void powerHeatDataCallback(const rm_msgs::PowerHeatData::ConstPtr& data);
+  virtual void updateGameRobotStatus(const rm_msgs::GameRobotStatus data)
+  {
+  }
+  virtual void updateGameStatus(const rm_msgs::GameStatus data)
+  {
+  }
+  virtual void updateCapacityData(const rm_msgs::CapacityData data)
+  {
+  }
+  virtual void updatePowerHeatData(const rm_msgs::PowerHeatData data)
+  {
+  }
   virtual void setZero() = 0;
   MsgType* getMsg()
   {
@@ -205,40 +213,28 @@ public:
     else
       accel_z_.init(xml_rpc_value);
   }
-  void gameStatusCallback(const rm_msgs::GameStatus::ConstPtr& data) override
+  void updateGameStatus(const rm_msgs::GameStatus data) override
   {
-    power_limit_->setGameProgress(data->game_progress);
+    power_limit_->setGameProgress(data);
   }
 
-  void gameRobotStatusCallback(const rm_msgs::GameRobotStatus::ConstPtr& data) override
+  void updateGameRobotStatus(const rm_msgs::GameRobotStatus data) override
   {
-    robot_id_ = data->robot_id;
-    power_limit_->setRobotId(data->robot_id);
-    power_limit_->setChassisPowerLimit(data->chassis_power_limit);
+    power_limit_->setGameRobotData(data);
   }
 
-  void powerHeatDataCallback(const rm_msgs::PowerHeatData::ConstPtr& data) override
+  void updatePowerHeatData(const rm_msgs::PowerHeatData data) override
   {
-    power_limit_->setChassisPowerBuffer(data->chassis_power_buffer);
+    power_limit_->setChassisPowerBuffer(data);
   }
 
-  void capacityDataCallback(const rm_msgs::CapacityData ::ConstPtr& data) override
+  void updateCapacityData(const rm_msgs::CapacityData data) override
   {
-    chassis_power_ = data->chassis_power;
-    power_limit_->setCapacityStatus(data->is_online);
-    power_limit_->setCapPower(data->cap_power);
+    power_limit_->setCapacityData(data);
   }
   void updateRefereeStatus(bool status)
   {
     power_limit_->setRefereeStatus(status);
-  }
-  int getChassisPower()
-  {
-    return chassis_power_;
-  }
-  int getRobotId()
-  {
-    return robot_id_;
   }
 
   void sendCommand(const ros::Time& time) override
@@ -254,7 +250,6 @@ public:
 
 private:
   LinearInterp accel_x_, accel_y_, accel_z_;
-  int robot_id_, chassis_power_;
 };
 
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd>
@@ -336,32 +331,19 @@ public:
     delete heat_limit_;
   }
 
-  void gameRobotStatusCallback(const rm_msgs::GameRobotStatus::ConstPtr& data) override
+  void updateGameRobotStatus(const rm_msgs::GameRobotStatus data) override
   {
-    heat_limit_->setStatusOfShooter(data->shooter_id_1_17_mm_cooling_limit, data->shooter_id_2_17_mm_cooling_limit,
-                                    data->shooter_id_1_42_mm_cooling_limit, data->shooter_id_1_17_mm_cooling_rate,
-                                    data->shooter_id_2_17_mm_cooling_rate, data->shooter_id_1_42_mm_cooling_rate,
-                                    data->shooter_id_1_17_mm_speed_limit, data->shooter_id_2_17_mm_speed_limit,
-                                    data->shooter_id_1_42_mm_speed_limit);
+    heat_limit_->setStatusOfShooter(data);
   }
-  void powerHeatDataCallback(const rm_msgs::PowerHeatData::ConstPtr& data) override
+  void updatePowerHeatData(const rm_msgs::PowerHeatData data) override
   {
-    heat_limit_->setCoolingHeatOfShooter(data->shooter_id_1_17_mm_cooling_heat, data->shooter_id_2_17_mm_cooling_heat,
-                                         data->shooter_id_1_42_mm_cooling_heat);
+    heat_limit_->setCoolingHeatOfShooter(data);
   }
   void updateRefereeStatus(bool status)
   {
     heat_limit_->setRefereeStatus(status);
   }
 
-  void setGimbalDesError(rm_msgs::GimbalDesError data)
-  {
-    gimbal_des_error_ = data;
-  }
-  rm_msgs::GimbalDesError getGimbalDesError()
-  {
-    return gimbal_des_error_;
-  }
   void computeTargetAcceleration()
   {
     auto target_vel = track_data_.target_vel;
@@ -425,7 +407,6 @@ private:
   double last_target_time_ = 0.;
   const rm_msgs::TrackData& track_data_;
   MovingAverageFilter<double>* acceleration_filter_;
-  rm_msgs::GimbalDesError gimbal_des_error_;
 };
 
 class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::TwistStamped>
@@ -611,10 +592,6 @@ public:
       ROS_ERROR("Can not find joint %s", joint_.c_str());
       return -1;
     }
-  }
-  sensor_msgs::JointState getJointState()
-  {
-    return joint_state_;
   }
   void setZero() override{};
 

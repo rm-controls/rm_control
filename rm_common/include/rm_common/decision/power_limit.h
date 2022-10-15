@@ -79,29 +79,24 @@ public:
   {
     state_ = state;
   }
-  void setRobotId(int robot_id)
+  void setGameRobotData(const rm_msgs::GameRobotStatus data)
   {
-    robot_id_ = robot_id;
+    robot_id_ = data.robot_id;
+    chassis_power_limit_ = data.chassis_power_limit;
   }
-  void setGameProgress(int game_progress)
+  void setGameProgress(const rm_msgs::GameStatus data)
   {
-    game_progress_ = game_progress;
+    game_progress_ = data.game_progress;
   }
-  void setChassisPowerLimit(int chassis_power_limit)
+  void setChassisPowerBuffer(const rm_msgs::PowerHeatData data)
   {
-    chassis_power_limit_ = chassis_power_limit;
+    chassis_power_buffer_ = data.chassis_power_buffer;
   }
-  void setChassisPowerBuffer(int chassis_power_buffer)
+
+  void setCapacityData(const rm_msgs::CapacityData data)
   {
-    chassis_power_buffer_ = chassis_power_buffer;
-  }
-  void setCapPower(float cap_power)
-  {
-    cap_power_ = cap_power;
-  }
-  void setCapacityStatus(bool status)
-  {
-    capacity_is_online_ = status;
+    capacity_is_online_ = data.is_online;
+    cap_power_ = data.cap_power;
   }
   void setRefereeStatus(bool status)
   {
