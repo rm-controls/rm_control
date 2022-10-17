@@ -51,11 +51,11 @@
 #include <hardware_interface/robot_hw.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
-#include <hardware_interface/imu_sensor_interface.h>
 #include <transmission_interface/transmission_interface_loader.h>
 #include <joint_limits_interface/joint_limits_interface.h>
 
 #include <rm_common/hardware_interface/robot_state_interface.h>
+#include <rm_common/hardware_interface/rm_imu_sensor_interface.h>
 #include <rm_common/hardware_interface/actuator_extra_interface.h>
 #include <rm_common/hardware_interface/tof_radar_interface.h>
 #include <rm_common/hardware_interface/gpio_interface.h>
@@ -190,6 +190,7 @@ private:
   hardware_interface::EffortActuatorInterface effort_act_interface_;
   rm_control::RobotStateInterface robot_state_interface_;
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
+  rm_control::RmImuSensorInterface rm_imu_sensor_interface_;
   std::unique_ptr<transmission_interface::TransmissionInterfaceLoader> transmission_loader_{};
   transmission_interface::RobotTransmissions robot_transmissions_;
   transmission_interface::ActuatorToJointStateInterface* act_to_jnt_state_{};
