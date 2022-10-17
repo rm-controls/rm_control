@@ -4,8 +4,7 @@
 #include "rm_referee/common/graph.h"
 namespace rm_referee
 {
-Graph::Graph(const XmlRpc::XmlRpcValue& config, DataTranslation& data_translation, int id)
-  : data_translation_(data_translation), last_send_(ros::Time::now())
+Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base), last_send_(ros::Time::now())
 {
   config_.graphic_id_[0] = static_cast<uint8_t>((id >> 0 & 0xFF));
   config_.graphic_id_[1] = static_cast<uint8_t>((id >> 8 & 0xFF));
@@ -66,7 +65,7 @@ Graph::Graph(const XmlRpc::XmlRpcValue& config, DataTranslation& data_translatio
   last_content_ = content_;
 }
 
-Graph::Graph(DataTranslation& data_translation) : data_translation_(data_translation)
+Graph::Graph(Base& base) : base_(base)
 {
 }
 
@@ -198,9 +197,9 @@ void Graph::pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const
   frame_header->sof_ = 0xA5;
   frame_header->data_length_ = len;
   memcpy(&tx_buffer[k_header_length_], reinterpret_cast<uint8_t*>(&cmd_id), k_cmd_id_length_);
-  data_translation_.appendCRC8CheckSum(tx_buffer, k_header_length_);
+  base_.appendCRC8CheckSum(tx_buffer, k_header_length_);
   memcpy(&tx_buffer[k_header_length_ + k_cmd_id_length_], data, len);
-  data_translation_.appendCRC16CheckSum(tx_buffer, k_header_length_ + k_cmd_id_length_ + len + k_tail_length_);
+  base_.appendCRC16CheckSum(tx_buffer, k_header_length_ + k_cmd_id_length_ + len + k_tail_length_);
 }
 
 void Graph::sendInteractiveData(int data_cmd_id, int receiver_id, uint8_t data)
@@ -211,7 +210,7 @@ void Graph::sendInteractiveData(int data_cmd_id, int receiver_id, uint8_t data)
   for (int i = 0; i < 128; i++)
     tx_buffer_[i] = 0;
   student_interactive_data->header_data_.data_cmd_id_ = data_cmd_id;
-  student_interactive_data->header_data_.sender_id_ = data_translation_.robot_id_;
+  student_interactive_data->header_data_.sender_id_ = base_.robot_id_;
   student_interactive_data->header_data_.receiver_id_ = receiver_id;
   student_interactive_data->data_ = data;
   pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(rm_referee::InteractiveData));
@@ -235,10 +234,10 @@ void Graph::sendUi(const ros::Time& time)
     return;
   rm_referee::GraphData tx_data;
   int data_len = static_cast<int>(sizeof(rm_referee::GraphData));
-  if (data_translation_.robot_id_ == 0 || data_translation_.client_id_ == 0)
+  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
-  tx_data.header_.sender_id_ = data_translation_.robot_id_;
-  tx_data.header_.receiver_id_ = data_translation_.client_id_;
+  tx_data.header_.sender_id_ = base_.robot_id_;
+  tx_data.header_.receiver_id_ = base_.client_id_;
   tx_data.config_ = ui_queue_.back().first;
   if (ui_queue_.back().second.empty())
   {
@@ -263,7 +262,7 @@ void Graph::sendUi(const ros::Time& time)
 
   try
   {
-    data_translation_.serial_.write(tx_buffer_, tx_len_);
+    base_.serial_.write(tx_buffer_, tx_len_);
   }
   catch (serial::PortNotOpenedException& e)
   {

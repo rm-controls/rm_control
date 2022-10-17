@@ -14,7 +14,7 @@ namespace rm_referee
 class RefereeBase
 {
 public:
-  explicit RefereeBase(ros::NodeHandle& nh, DataTranslation& data_translation);
+  explicit RefereeBase(ros::NodeHandle& nh, Base& base);
   virtual void run();
   virtual void addUi();
 
@@ -22,7 +22,7 @@ public:
   virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data_,
                                        const ros::Time& last_get_);
   virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data_, const ros::Time& last_get_);
-  virtual void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data_, const ros::Time& last_get_);
+  virtual void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data_, ros::Time& last_get_);
   virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data_, const ros::Time& last_get_);
   virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data_, const ros::Time& last_get_);
   virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data_, const ros::Time& last_get_);
@@ -55,11 +55,24 @@ public:
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
 
-  TriggerChangeUi* trigger_change_ui_{};
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
+  ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
+  GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
+  TargetTriggerChangeUi* target_trigger_change_ui_{};
 
-  DataTranslation& data_translation_;
+  FixedUi* fixed_ui_{};
+
+  CapacitorTimeChangeUI* capacitor_time_change_ui_{};
+  EffortTimeChangeUI* effort_time_change_ui_{};
+  ProgressTimeChangeUI* progress_time_change_ui_{};
+  DartStatusTimeChangeUI* dart_status_time_change_ui_{};
+  OreRemindTimeChangeUI* ore_remind_time_change_ui_{};
+
+  CoverFlashUI* cover_flash_ui_{};
+
+  Base& base_;
   bool add_ui_flag_ = false;
+  bool send_ui_flag_ = false;
   Graph* interactive_data_sender_;
   ros::NodeHandle nh_;
 };

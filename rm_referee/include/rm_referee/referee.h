@@ -47,15 +47,15 @@ namespace rm_referee
 class SuperCapacitor
 {
 public:
-  explicit SuperCapacitor(rm_referee::CapacityData& data) : last_get_data_(ros::Time::now()), data_(data){};
+  explicit SuperCapacitor() : last_get_data_(ros::Time::now()){};
   void read(const std::vector<uint8_t>& rx_buffer);
   ros::Time last_get_data_;
+  rm_referee::CapacityData capacity_data_;
 
 private:
   void dtpReceivedCallBack(unsigned char receive_byte);
   void receiveCallBack(unsigned char package_id, const unsigned char* data);
   static float int16ToFloat(unsigned short data0);
-  rm_referee::CapacityData& data_;
   unsigned char receive_buffer_[1024] = { 0 };
   unsigned char ping_pong_buffer_[1024] = { 0 };
   unsigned int receive_buf_counter_ = 0;
@@ -64,9 +64,8 @@ private:
 class Referee
 {
 public:
-  Referee() : super_capacitor_(base_.capacity_data_ref_), last_get_(ros::Time::now())
+  Referee() : super_capacitor_(), last_get_(ros::Time::now())
   {
-    base_.robot_hurt_data_.hurt_type = 0x09;
     // pub
     ros::NodeHandle root_nh;
     referee_pub_ = root_nh.advertise<rm_msgs::Referee>("/referee", 1);
@@ -89,12 +88,12 @@ public:
     rfid_status_pub_ = root_nh.advertise<rm_msgs::RfidStatus>("/rfid_status_data", 1);
     dart_client_cmd_pub_ = root_nh.advertise<rm_msgs::DartClientCmd>("/dart_client_cmd_data", 1);
     // initSerial
-    data_translation_.initSerial();
+    base_.initSerial();
   };
   void read();
   void checkUiAdd()
   {
-    if (referee_ui_->base_.dbus_data_.s_r == rm_msgs::DbusData::UP)
+    if (referee_ui_->send_ui_flag_)
     {
       if (referee_ui_->add_ui_flag_)
       {
@@ -131,7 +130,7 @@ public:
   ros::Publisher dart_client_cmd_pub_;
 
   Base base_;
-  DataTranslation data_translation_;
+  rm_msgs::Referee referee_pub_data_;
   std::vector<uint8_t> rx_buffer_;
   rm_referee::RefereeBase* referee_ui_;
   int rx_len_;

@@ -17,200 +17,212 @@ namespace rm_referee
 class UiBase
 {
 public:
-  explicit UiBase(ros::NodeHandle& nh, DataTranslation& data_translation, const std::string& ui_type);
+  explicit UiBase(ros::NodeHandle& nh, Base& base, const std::string& ui_type);
   virtual void add();
 
 protected:
-  DataTranslation& data_translation_;
+  Base& base_;
+  Graph* graph_;
   static int id_;
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
-  std::map<std::string, Graph*> special_graph_vector_, normal_graph_vector_;
+  std::map<std::string, Graph*> graph_vector_;
 };
 
 // TriggerChangeUi
 class TriggerChangeUi : public UiBase
 {
 public:
-  explicit TriggerChangeUi(ros::NodeHandle& nh, DataTranslation& data_translation);
-  void update(const std::string& graph_name, const std::string& content);
-  virtual void update(const std::string& graph_name, uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0,
-                      bool sub_flag = false);
+  explicit TriggerChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name);
+  virtual void setContent(const std::string& content);
+  virtual void update();
+  virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false);
 };
 
 class ChassisTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit ChassisTriggerChangeUi(ros::NodeHandle& nh, DataTranslation& data_translation);
-  void update();
-  void update(const std::string& graph_name, uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0,
-              bool sub_flag = false) override;
-
-  void updateChassisMode(uint8_t mode);
-  void updatePowerLimitState(uint8_t power_limit_state);
-  void updateDbusData(uint8_t s_l, uint8_t s_r, uint8_t key_ctrl, uint8_t key_shift, uint8_t key_b);
+  explicit ChassisTriggerChangeUi(ros::NodeHandle& nh, Base& base);
+  void ChassisModeCallBack(uint8_t mode);
+  void PowerLimitStateCallBack(uint8_t power_limit_state);
+  void DbusDataCallBack(uint8_t s_l, uint8_t s_r, uint8_t key_ctrl, uint8_t key_shift, uint8_t key_b);
+  void capacityDataCallBack();
 
 private:
+  void update() override;
+  void updateCapacity();
+  void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
   static std::string getChassisState(uint8_t mode);
 
-  Graph* chassis_graph_;
   uint8_t chassis_mode_, power_limit_state_, s_l_, s_r_, key_ctrl_, key_shift_, key_b_;
 };
-//
+
+class ShooterTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit ShooterTriggerChangeUi(ros::NodeHandle& nh, Base& base);
+  void ShooterModeCallBack(uint8_t mode);
+  void ShootFrequencyCallBack(uint8_t shoot_frequency);
+
+private:
+  void update() override;
+  void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
+  static std::string getShooterState(uint8_t mode);
+
+  uint8_t shooter_mode_, shoot_frequency_;
+};
+
+class GimbalTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit GimbalTriggerChangeUi(ros::NodeHandle& nh, Base& base);
+  void GimbalModeCallback(uint8_t mode);
+  void GimbalEjectCallBack(uint8_t gimbal_eject);
+
+private:
+  void update() override;
+  void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
+  static std::string getGimbalState(uint8_t mode);
+
+  uint8_t gimbal_mode_, gimbal_eject_;
+};
+
+class TargetTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit TargetTriggerChangeUi(ros::NodeHandle& nh, Base& base);
+  void ManalToRefereeCallback(uint8_t det_target, uint8_t shoot_frequency, uint8_t det_armor_target, uint8_t det_color,
+                              uint8_t gimbal_eject);
+  void ShooterCallBack();
+
+private:
+  void update() override;
+  void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
+  std::string getTargetState(uint8_t target, uint8_t armor_target);
+
+  uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
+};
+
 //// FixedUi
-// class FixedUi : public UiBase
-//{
-// public:
-//   explicit FixedUi(ros::NodeHandle& nh, DataTranslation& data_translation) : UiBase(nh, data_translation, "fixed"){};
-//   void update();
-//   void updateSpeedLimit(int speed_limit);
-//
-// private:
-//   int getShootSpeedIndex();
-//   int speed_limit_;
-// };
-//
-//// FlashUi
-// class FlashUi : public UiBase
-//{
-// public:
-//   explicit FlashUi(ros::NodeHandle& nh, DataTranslation& data_translation) : UiBase(nh, data_translation, "flash"){};
-//   void update(const std::string& name, const ros::Time& time, bool state = false);
-//
-// private:
-//   void updateArmorPosition(const std::string& name, Graph* graph);
-//   void updateChassisGimbalDate(const double yaw_joint, Graph* graph);
-//   static uint8_t getArmorId(const std::string& name);
-// };
-//
+class FixedUi : public UiBase
+{
+public:
+  explicit FixedUi(ros::NodeHandle& nh, Base& base) : UiBase(nh, base, "fixed"){};
+  void update();
+  void speedLimitCallback(int speed_limit);
+
+private:
+  int getShootSpeedIndex();
+  int speed_limit_;
+};
+
 //// TimeChangeUi
-// class TimeChangeUi : public UiBase
-//{
-// public:
-//   explicit TimeChangeUi(ros::NodeHandle& nh, DataTranslation& data_translation)
-//     : UiBase(nh, data_translation, "time_change"){};
-//   void add() override;
-//   void update(const std::string& name, const ros::Time& time, double data = 0.);
-// };
-//
-// class ShooterTriggerChangeUi : public TriggerChangeUi
-//{
-// public:
-//  explicit ShooterTriggerChangeUi(ros::NodeHandle& nh);
-//  void updateShooterMode(uint8_t mode);
-//  void updateShooter(const std::string& graph_name, uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0,
-//                     bool sub_flag = false);
-//
-// private:
-//  static std::string getShooterState(uint8_t mode);
-//  uint8_t shooter_mode_;
-//  Graph* shooter_graph_;
-//};
-//
-// class GimbalTriggerChangeUi : public TriggerChangeUi
-//{
-// public:
-//  explicit GimbalTriggerChangeUi(ros::NodeHandle& nh);
-//  void updateGimbalMode(uint8_t mode);
-//  void updateGimbal(const std::string& graph_name, uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0,
-//                    bool sub_flag = false);
-//
-// private:
-//  static std::string getGimbalState(uint8_t mode);
-//  uint8_t gimbal_mode_;
-//  Graph* gimbal_graph_;
-//};
-//
-// class TargetTriggerChangeUi : public TriggerChangeUi
-//{
-// public:
-//  explicit TargetTriggerChangeUi(ros::NodeHandle& nh);
-//  void updateTarget(const std::string& graph_name, uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0,
-//                    bool sub_flag = false);
-//
-// private:
-//  std::string getTargetState(uint8_t target, uint8_t armor_target);
-//  Graph* target_graph_;
-//};
-//
-// class CapacitorTimeChangeUI : public TimeChangeUi
-//{
-// public:
-//  explicit CapacitorTimeChangeUI(ros::NodeHandle& nh);
-//  void add() override;
-//  void updateCapPower(double cap_power);
-//
-// private:
-//  void setCapacitorData();
-//  double cap_power_;
-//  Graph* capacitor_graph_;
-//};
-//
-// class EffortTimeChangeUI : public TimeChangeUi
-//{
-// public:
-//  explicit EffortTimeChangeUI(ros::NodeHandle& nh);
-//  void updateEffort(std::string joint_name[], double joint_effort[]);
-//
-// private:
-//  void setEffortData();
-//  Graph* effort_graph_;
-//  int size_t_ = 0;
-//  std::string joint_name_[5];
-//  double joint_effort_[5];
-//};
-//
-// class ProgressTimeChangeUI : public TimeChangeUi
-//{
-// public:
-//  explicit ProgressTimeChangeUI(ros::NodeHandle& nh);
-//
-// private:
-//  void setProgressData(double data);
-//  Graph* progress_graph_;
-//};
-//
-// class TemperatureTimeChangeUI : public TimeChangeUi
-//{
-// public:
-//  explicit TemperatureTimeChangeUI(ros::NodeHandle& nh);
-//
-// private:
-//  void setTemperatureData();
-//  Graph* temperature_graph_;
-//};
-//
-// class OreRemindTimeChangeUI : public TimeChangeUi
-//{
-// public:
-//  explicit OreRemindTimeChangeUI(ros::NodeHandle& nh);
-//
-// private:
-//  void setOreRemindData();
-//  Graph* ore_remind_graph_;
-//};
-//
-// class DartStatusTimeChangeUI : public TimeChangeUi
-//{
-// public:
-//  explicit DartStatusTimeChangeUI(ros::NodeHandle& nh);
-//
-// private:
-//  void setDartStatusData();
-//  Graph* dart_status_graph_;
-//};
-//
-// class ArmorFlashUI : public FlashUi
-//{
-// public:
-//  explicit ArmorFlashUI(ros::NodeHandle& nh, std::string armor_name);
-//  void update(const std::string& name, const ros::Time& time, bool state);
-//
-// private:
-//  uint8_t getArmorId(const std::string& name);
-//  void updateArmorPosition(Graph* graph);
-//  Graph* armor_graph_;
-//  std::string armor_name_;
-//};
+class TimeChangeUi : public UiBase
+{
+public:
+  explicit TimeChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name);
+  void add() override;
+  virtual void update(const ros::Time& time);
+
+private:
+  virtual void updateData();
+};
+
+class CapacitorTimeChangeUI : public TimeChangeUi
+{
+public:
+  explicit CapacitorTimeChangeUI(ros::NodeHandle& nh, Base& base);
+  void add() override;
+
+  void capPowerDataCallBack(double cap_power, ros::Time& time);
+
+private:
+  void updateData() override;
+  double cap_power_;
+};
+
+class EffortTimeChangeUI : public TimeChangeUi
+{
+public:
+  explicit EffortTimeChangeUI(ros::NodeHandle& nh, Base& base);
+
+  void EffortDataCallBack(std::string joint_name, double joint_effort);
+
+private:
+  void updateData() override;
+  double joint_effort_;
+  std::string joint_name_;
+};
+
+class ProgressTimeChangeUI : public TimeChangeUi
+{
+public:
+  explicit ProgressTimeChangeUI(ros::NodeHandle& nh, Base& base);
+
+  void progressDataCallBack(uint32_t finished_data, uint32_t total_steps_, std::string step_name_);
+
+private:
+  void updateData() override;
+  uint32_t finished_data_, total_steps_;
+  std::string step_name_;
+};
+
+class DartStatusTimeChangeUI : public TimeChangeUi
+{
+public:
+  explicit DartStatusTimeChangeUI(ros::NodeHandle& nh, Base& base);
+
+  void dartLaunchOpeningStatusCallBack(uint8_t dart_launch_opening_status);
+
+private:
+  void updateData() override;
+  uint8_t dart_launch_opening_status_;
+};
+
+class OreRemindTimeChangeUI : public TimeChangeUi
+{
+public:
+  explicit OreRemindTimeChangeUI(ros::NodeHandle& nh, Base& base);
+
+  void stageRemainTimeCallBack(uint16_t stage_remain_time);
+
+private:
+  void updateData() override;
+  uint16_t stage_remain_time_;
+};
+
+//// FlashUi
+class FlashUi : public UiBase
+{
+public:
+  explicit FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name);
+  virtual void update(const ros::Time& time, bool state = false);
+
+private:
+  virtual void updateData();
+};
+
+class AuxFlashUI : public FlashUi
+{
+public:
+  explicit AuxFlashUI(ros::NodeHandle& nh, Base& base_);
+
+  void jointStateCallBack(uint32_t joint_position);
+
+private:
+  void updateData() override;
+  uint32_t joint_position_;
+};
+
+class CoverFlashUI : public FlashUi
+{
+public:
+  explicit CoverFlashUI(ros::NodeHandle& nh, Base& base_);
+  void coverStateCallBack(uint8_t cover_state);
+  virtual void update(const ros::Time& time, bool state = false) override;
+
+private:
+  uint8_t cover_state_;
+};
 
 }  // namespace rm_referee

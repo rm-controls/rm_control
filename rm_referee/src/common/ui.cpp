@@ -8,8 +8,7 @@
 namespace rm_referee
 {
 int UiBase::id_(2);
-UiBase::UiBase(ros::NodeHandle& nh, DataTranslation& data_translation, const std::string& ui_type)
-  : data_translation_(data_translation), tf_listener_(tf_buffer_)
+UiBase::UiBase(ros::NodeHandle& nh, Base& base, const std::string& ui_type) : base_(base), tf_listener_(tf_buffer_)
 {
   XmlRpc::XmlRpcValue rpc_value;
   if (!nh.getParam(ui_type, rpc_value))
@@ -19,119 +18,105 @@ UiBase::UiBase(ros::NodeHandle& nh, DataTranslation& data_translation, const std
   }
   try
   {
-    for (int i = 0; i < static_cast<int>(rpc_value["special"].size()); i++)
+    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
     {
       if (rpc_value[i]["name"] == "chassis")
-        special_graph_vector_.insert(std::pair<std::string, Graph*>(
-            rpc_value["special"][i]["name"], new Graph(rpc_value[i]["special"]["config"], data_translation_, 1)));
+        graph_vector_.insert(
+            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, 1)));
       else
-        special_graph_vector_.insert(std::pair<std::string, Graph*>(
-            rpc_value[i]["special"]["name"], new Graph(rpc_value[i]["special"]["config"], data_translation_, id_++)));
-    }
-    for (int i = 0; i < static_cast<int>(rpc_value["normal"].size()); i++)
-    {
-      normal_graph_vector_.insert(std::pair<std::string, Graph*>(
-          rpc_value[i]["normal"]["name"], new Graph(rpc_value[i]["normal"]["config"], data_translation_, id_++)));
+        graph_vector_.insert(
+            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
     }
   }
   catch (XmlRpc::XmlRpcException& e)
   {
     ROS_ERROR("Wrong ui parameter: %s", e.getMessage().c_str());
   }
-  for (auto graph : special_graph_vector_)
-    graph.second->setOperation(rm_referee::GraphOperation::DELETE);
-  for (auto graph : normal_graph_vector_)
+  for (auto graph : graph_vector_)
     graph.second->setOperation(rm_referee::GraphOperation::DELETE);
 }
 
 void UiBase::add()
 {
-  for (auto graph : normal_graph_vector_)
-  {
-    graph.second->setOperation(rm_referee::GraphOperation::ADD);
-    graph.second->display(true);
-    graph.second->sendUi(ros::Time::now());
-  }
+  graph_->setOperation(rm_referee::GraphOperation::ADD);
+  graph_->display(true);
+  graph_->sendUi(ros::Time::now());
 }
 
-TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, DataTranslation& data_translation)
-  : UiBase(nh, data_translation, "trigger_change")
+TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name)
+  : UiBase(nh, base, "trigger_change")
 {
-  for (auto graph : normal_graph_vector_)
-    graph.second->setContent("0");
+  for (auto graph : graph_vector_)
+    if (graph.first == graph_name)
+      graph_ = graph.second;
 }
 
-void TriggerChangeUi::update(const std::string& graph_name, const std::string& content)
+void TriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
-  auto graph = normal_graph_vector_.find(graph_name);
-  if (graph != normal_graph_vector_.end())
-  {
-    if (graph_name == "stone")
-    {
-      if (content == "0")
-        graph->second->setContent("upper");
-      else
-        graph->second->setContent("lower");
-    }
-    else
-      graph->second->setContent(content);
-    graph->second->setOperation(rm_referee::GraphOperation::UPDATE);
-    graph->second->display();
-    graph->second->sendUi(ros::Time::now());
-  }
 }
 
-ChassisTriggerChangeUi::ChassisTriggerChangeUi(ros::NodeHandle& nh, DataTranslation& data_translation)
-  : TriggerChangeUi(nh, data_translation)
+void TriggerChangeUi::setContent(const std::string& content)
 {
-  for (auto graph : special_graph_vector_)
-    if (graph.first == "chassis")
-      chassis_graph_ = graph.second;
-  if (data_translation.robot_id_ == rm_referee::RobotId::RED_ENGINEER ||
-      data_translation.robot_id_ == rm_referee::RobotId::BLUE_ENGINEER)
-    chassis_graph_->setContent("raw");
+  graph_->setContent(content);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_->display();
+  graph_->sendUi(ros::Time::now());
+}
+
+void TriggerChangeUi::update()
+{
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_->display();
+  graph_->sendUi(ros::Time::now());
+}
+
+ChassisTriggerChangeUi::ChassisTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "chassis")
+{
+  if (base.robot_id_ == rm_referee::RobotId::RED_ENGINEER || base.robot_id_ == rm_referee::RobotId::BLUE_ENGINEER)
+    graph_->setContent("raw");
   else
-    chassis_graph_->setContent("follow");
+    graph_->setContent("follow");
 }
+
 void ChassisTriggerChangeUi::update()
 {
   if (s_l_ == rm_msgs::DbusData::MID && s_r_ == rm_msgs::DbusData::UP)
   {
-    update("chassis", chassis_mode_, false, 1, false);
+    updateConfig(chassis_mode_, false, 1, false);
   }
   else
   {
-    update("chassis", chassis_mode_, power_limit_state_ == rm_common::PowerLimit::BURST, 0,
-           power_limit_state_ == rm_common::PowerLimit::CHARGE);
+    updateConfig(chassis_mode_, power_limit_state_ == rm_common::PowerLimit::BURST, 0,
+                 power_limit_state_ == rm_common::PowerLimit::CHARGE);
   }
-  if (key_ctrl_ && key_shift_ && key_b_)
-  {
-    update("chassis", 254, 0);
-  }
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_->displayTwice(true);
+  graph_->sendUi(ros::Time::now());
 }
 
-void ChassisTriggerChangeUi::update(const std::string& graph_name, uint8_t main_mode, bool main_flag, uint8_t sub_mode,
-                                    bool sub_flag)
+void ChassisTriggerChangeUi::updateCapacity()
+{
+  if (key_ctrl_ && key_shift_ && key_b_)
+    updateConfig(254, 0);
+}
+
+void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
   if (main_mode == 254)
   {
-    chassis_graph_->setContent("Cap reset");
-    chassis_graph_->setColor(rm_referee::GraphColor::YELLOW);
+    graph_->setContent("Cap reset");
+    graph_->setColor(rm_referee::GraphColor::YELLOW);
     return;
   }
-  chassis_graph_->setContent(getChassisState(main_mode));
-  if (main_flag)
-    chassis_graph_->setColor(rm_referee::GraphColor::ORANGE);
-  else if (sub_flag)
-    chassis_graph_->setColor(rm_referee::GraphColor::GREEN);
-  else if (sub_mode == 1)
-    chassis_graph_->setColor(rm_referee::GraphColor::PINK);
+  {
+    graph_->setContent(getChassisState(main_mode));
+  }
+  if (sub_mode == 1)
+    graph_->setColor(rm_referee::GraphColor::PINK);
+  else if (sub_mode == 0)
+    graph_->setColor(rm_referee::GraphColor::PINK);
   else
-    chassis_graph_->setColor(rm_referee::GraphColor::WHITE);
-
-  chassis_graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  chassis_graph_->displayTwice(true);
-  chassis_graph_->sendUi(ros::Time::now());
+    graph_->setColor(rm_referee::GraphColor::WHITE);
 }
 
 std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
@@ -148,522 +133,462 @@ std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
     return "error";
 }
 
-void ChassisTriggerChangeUi::updateChassisMode(uint8_t mode)
+void ChassisTriggerChangeUi::ChassisModeCallBack(uint8_t mode)
 {
   chassis_mode_ = mode;
+  update();
 }
-//
-// ShooterTriggerChangeUi::ShooterTriggerChangeUi(ros::NodeHandle& nh) : TriggerChangeUi(nh)
-//{
-//  for (auto graph : graph_vector_)
-//    if (graph.first == "shooter")
-//      shooter_graph_ = graph.second;
-//  shooter_graph_->setContent("0");
-//}
-//
-// void ShooterTriggerChangeUi::updateShooter(const std::string& graph_name, uint8_t main_mode, bool main_flag,
-//                                           uint8_t sub_mode, bool sub_flag)
-//{
-//  shooter_graph_->setContent(getShooterState(main_mode));
-//  if (sub_mode == rm_common::HeatLimit::LOW)
-//    shooter_graph_->setColor(rm_referee::GraphColor::WHITE);
-//  else if (sub_mode == rm_common::HeatLimit::HIGH)
-//    shooter_graph_->setColor(rm_referee::GraphColor::YELLOW);
-//  else if (sub_mode == rm_common::HeatLimit::BURST)
-//    shooter_graph_->setColor(rm_referee::GraphColor::ORANGE);
-//
-//  shooter_graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-//  shooter_graph_->display();
-//  shooter_graph_->sendUi(ros::Time::now());
-//}
-//
-// std::string ShooterTriggerChangeUi::getShooterState(uint8_t mode)
-//{
-//  if (mode == rm_msgs::ShootCmd::READY)
-//    return "ready";
-//  else if (mode == rm_msgs::ShootCmd::PUSH)
-//    return "push";
-//  else if (mode == rm_msgs::ShootCmd::STOP)
-//    return "stop";
-//  else
-//    return "error";
-//}
-//
-// void ShooterTriggerChangeUi::updateShooterMode(uint8_t mode)
-//{
-//  shooter_mode_ = mode;
-//}
-//
-// GimbalTriggerChangeUi::GimbalTriggerChangeUi(ros::NodeHandle& nh) : TriggerChangeUi(nh)
-//{
-//  for (auto graph : graph_vector_)
-//    if (graph.first == "gimbal")
-//      gimbal_graph_ = graph.second;
-//  gimbal_graph_->setContent("0");
-//}
-//
-// void GimbalTriggerChangeUi::updateGimbal(const std::string& graph_name, uint8_t main_mode, bool main_flag,
-//                                         uint8_t sub_mode, bool sub_flag)
-//{
-//  gimbal_graph_->setContent(getGimbalState(main_mode));
-//  if (main_flag)
-//    gimbal_graph_->setColor(rm_referee::GraphColor::ORANGE);
-//  else
-//    gimbal_graph_->setColor(rm_referee::GraphColor::WHITE);
-//}
-//
-// std::string GimbalTriggerChangeUi::getGimbalState(uint8_t mode)
-//{
-//  if (mode == rm_msgs::GimbalCmd::DIRECT)
-//    return "direct";
-//  else if (mode == rm_msgs::GimbalCmd::RATE)
-//    return "rate";
-//  else if (mode == rm_msgs::GimbalCmd::TRACK)
-//    return "track";
-//  else
-//    return "error";
-//}
-//
-// void GimbalTriggerChangeUi::updateGimbalMode(uint8_t mode)
-//{
-//  gimbal_mode_ = mode;
-//}
-//
-// TargetTriggerChangeUi::TargetTriggerChangeUi(ros::NodeHandle& nh) : TriggerChangeUi(nh)
-//{
-//  for (auto graph : graph_vector_)
-//    if (graph.first == "target")
-//      target_graph_ = graph.second;
-//  target_graph_->setContent("armor");
-//  if (robot_color_ == "red")
-//    target_graph_->setColor(rm_referee::GraphColor::CYAN);
-//  else
-//    target_graph_->setColor(rm_referee::GraphColor::PINK);
-//}
-//
-// void TargetTriggerChangeUi::updateTarget(const std::string& graph_name, uint8_t main_mode, bool main_flag,
-//                                         uint8_t sub_mode, bool sub_flag)
-//{
-//  target_graph_->setContent(getTargetState(main_mode, sub_mode));
-//  if (main_flag)
-//    target_graph_->setColor(rm_referee::GraphColor::ORANGE);
-//  else if (sub_flag)
-//    target_graph_->setColor(rm_referee::GraphColor::PINK);
-//  else
-//    target_graph_->setColor(rm_referee::GraphColor::CYAN);
-//}
-//
-// std::string TargetTriggerChangeUi::getTargetState(uint8_t target, uint8_t armor_target)
-//{
-//  if (robot_id_ != rm_referee::RobotId::BLUE_HERO && robot_id_ != rm_referee::RobotId::RED_HERO)
-//  {
-//    if (target == rm_msgs::StatusChangeRequest::BUFF)
-//      return "buff";
-//    else if (target == rm_msgs::StatusChangeRequest::ARMOR && armor_target == rm_msgs::StatusChangeRequest::ARMOR_ALL)
-//      return "armor_all";
-//    else if (target == rm_msgs::StatusChangeRequest::ARMOR &&
-//             armor_target == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE)
-//      return "armor_base";
-//    else
-//      return "error";
-//  }
-//  else
-//  {
-//    if (target == 1)
-//      return "eject";
-//    else if (armor_target == rm_msgs::StatusChangeRequest::ARMOR_ALL)
-//      return "all";
-//    else if (armor_target == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE)
-//      return "base";
-//    else
-//      return "error";
-//  }
-//}
-// void FixedUi::update()
-//{
-//  for (auto graph : graph_vector_)
-//  {
-//    graph.second->updatePosition(getShootSpeedIndex());
-//    graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
-//    graph.second->display();
-//    graph.second->sendUi(ros::Time::now());
-//  }
-//}
-//
-// int FixedUi::getShootSpeedIndex()
-//{
-//  if (robot_id_ != rm_referee::RobotId::BLUE_HERO && robot_id_ != rm_referee::RobotId::RED_HERO)
-//  {
-//    if (speed_limit_ == 15)
-//      return 0;
-//    else if (speed_limit_ == 18)
-//      return 1;
-//    else if (speed_limit_ == 30)
-//      return 2;
-//  }
-//  return 0;
-//}
-//
-// void FixedUi::updateSpeedLimit(int speed_limit)
-//{
-//  speed_limit_ = speed_limit;
-//}
-//
-// ArmorFlashUI::ArmorFlashUI(ros::NodeHandle& nh, std::string armor_name) : FlashUi(nh)
-//{
-//  armor_name_ = armor_name;
-//  for (auto graph : graph_vector_)
-//    if (graph.first == armor_name)
-//      armor_graph_ = graph.second;
-//}
-//
-// void ArmorFlashUI::update(const std::string& name, const ros::Time& time, bool state)
-//{
-//  if (base_.robot_hurt_data_.hurt_type == 0x00 && base_.robot_hurt_data_.armor_id == getArmorId(graph->first))
-//  {
-//    updateArmorPosition(armor_graph_);
-//    armor_graph_->display(time, true, true);
-//    armor_graph_->sendUi(time);
-//    base_.robot_hurt_data_.hurt_type = 9;
-//  }
-//  else
-//  {
-//    armor_graph_->display(time, false, true);
-//    armor_graph_->sendUi(time);
-//  }
-//}
-//
-// void ArmorFlashUI::updateArmorPosition(Graph* graph)
-//{
-//  geometry_msgs::TransformStamped yaw_2_baselink;
-//  double roll, pitch, yaw;
-//  try
-//  {
-//    yaw_2_baselink = tf_buffer_.lookupTransform("yaw", "base_link", ros::Time(0));
-//  }
-//  catch (tf2::TransformException& ex)
-//  {
-//  }
-//  quatToRPY(yaw_2_baselink.transform.rotation, roll, pitch, yaw);
-//  if (getArmorId(armor_name_) == 0 || getArmorId(armor_name_) == 2)
-//  {
-//    graph->setStartX(static_cast<int>((960 + 340 * sin(getArmorId(armor_name_) * M_PI_2 + yaw))));
-//    graph->setStartY(static_cast<int>((540 + 340 * cos(getArmorId(armor_name_) * M_PI_2 + yaw))));
-//  }
-//  else
-//  {
-//    graph->setStartX(static_cast<int>((960 + 340 * sin(-getArmorId(armor_name_) * M_PI_2 + yaw))));
-//    graph->setStartY(static_cast<int>((540 + 340 * cos(-getArmorId(armor_name_) * M_PI_2 + yaw))));
-//  }
-//}
-//
-// uint8_t ArmorFlashUI::getArmorId(const std::string& name)
-//{
-//  if (name == "armor0")
-//    return 0;
-//  else if (name == "armor1")
-//    return 1;
-//  else if (name == "armor2")
-//    return 2;
-//  else if (name == "armor3")
-//    return 3;
-//  return 9;
-//}
-//
-// void FlashUi::update(const std::string& name, const ros::Time& time, bool state)
-//{
-//  auto graph = graph_vector_.find(name);
-//  if (graph == graph_vector_.end())
-//    return;
-//  if (name.find("armor") != std::string::npos)
-//  {
-//    if (base_.robot_hurt_data_.hurt_type == 0x00 && base_.robot_hurt_data_.armor_id == getArmorId(graph->first))
-//    {
-//      updateArmorPosition(graph->first, graph->second);
-//      graph->second->display(time, true, true);
-//      graph->second->sendUi(time);
-//      base_.robot_hurt_data_.hurt_type = 9;
-//    }
-//    else
-//    {
-//      graph->second->display(time, false, true);
-//      graph->second->sendUi(time);
-//    }
-//  }
-//  else
-//  {
-//    if (name == "aux")
-//      updateChassisGimbalDate(base_.joint_state_.position[8], graph->second);
-//    if (state)
-//      graph->second->setOperation(rm_referee::GraphOperation::DELETE);
-//
-//    if (name == "cover")
-//      graph->second->display(time, !state, true);
-//    else
-//      graph->second->display(time, !state);
-//    graph->second->sendUi(time);
-//  }
-//}
-//
-// void FlashUi::updateChassisGimbalDate(const double yaw_joint_, Graph* graph)
-//{
-//  double cover_yaw_joint = yaw_joint_;
-//  while (abs(cover_yaw_joint) > 2 * M_PI)
-//  {
-//    cover_yaw_joint += cover_yaw_joint > 0 ? -2 * M_PI : 2 * M_PI;
-//  }
-//  graph->setStartX(960 - 50 * sin(cover_yaw_joint));
-//  graph->setStartY(540 + 50 * cos(cover_yaw_joint));
-//
-//  graph->setEndX(960 - 100 * sin(cover_yaw_joint));
-//  graph->setEndY(540 + 100 * cos(cover_yaw_joint));
-//}
-//
-// void FlashUi::updateArmorPosition(const std::string& name, Graph* graph)
-//{
-//  geometry_msgs::TransformStamped yaw_2_baselink;
-//  double roll, pitch, yaw;
-//  try
-//  {
-//    yaw_2_baselink = tf_buffer_.lookupTransform("yaw", "base_link", ros::Time(0));
-//  }
-//  catch (tf2::TransformException& ex)
-//  {
-//  }
-//  quatToRPY(yaw_2_baselink.transform.rotation, roll, pitch, yaw);
-//  if (getArmorId(name) == 0 || getArmorId(name) == 2)
-//  {
-//    graph->setStartX(static_cast<int>((960 + 340 * sin(getArmorId(name) * M_PI_2 + yaw))));
-//    graph->setStartY(static_cast<int>((540 + 340 * cos(getArmorId(name) * M_PI_2 + yaw))));
-//  }
-//  else
-//  {
-//    graph->setStartX(static_cast<int>((960 + 340 * sin(-getArmorId(name) * M_PI_2 + yaw))));
-//    graph->setStartY(static_cast<int>((540 + 340 * cos(-getArmorId(name) * M_PI_2 + yaw))));
-//  }
-//}
-//
-// uint8_t FlashUi::getArmorId(const std::string& name)
-//{
-//  if (name == "armor0")
-//    return 0;
-//  else if (name == "armor1")
-//    return 1;
-//  else if (name == "armor2")
-//    return 2;
-//  else if (name == "armor3")
-//    return 3;
-//  return 9;
-//}
-//
-// void TimeChangeUi::add()
-//{
-//  for (auto graph : graph_vector_)
-//  {
-//    if (graph.first == "capacitor" && base_.capacity_data_.cap_power == 0.)
-//      continue;
-//    graph.second->setOperation(rm_referee::GraphOperation::ADD);
-//    graph.second->display(true);
-//    graph.second->sendUi(ros::Time::now());
-//  }
-//}
-//
-// void TimeChangeUi::update(const std::string& name, const ros::Time& time, double data)
-//{
-//  auto graph = graph_vector_.find(name);
-//  if (graph != graph_vector_.end())
-//  {
-//    if (name == "capacitor")
-//      setCapacitorData(*graph->second);
-//    if (name == "effort")
-//      setEffortData(*graph->second);
-//    if (name == "progress")
-//      setProgressData(*graph->second, data);
-//    if (name == "temperature")
-//      setTemperatureData(*graph->second);
-//    if (name == "dart_status")
-//      setDartStatusData(*graph->second);
-//    graph->second->display(time);
-//    graph->second->sendUi(ros::Time::now());
-//  }
-//}
-//
-// CapacitorTimeChangeUI::CapacitorTimeChangeUI(ros::NodeHandle& nh) : TimeChangeUi(nh)
-//{
-//  for (auto graph : graph_vector_)
-//    if (graph.first == "capacitor")
-//      capacitor_graph_ = graph.second;
-//}
-//
-// void CapacitorTimeChangeUI::add()
-//{
-//  if (cap_power_ != 0.)
-//    capacitor_graph_->setOperation(rm_referee::GraphOperation::ADD);
-//  capacitor_graph_->display(true);
-//  capacitor_graph_->sendUi(ros::Time::now());
-//}
-//
-// void CapacitorTimeChangeUI::updateCapPower(double cap_power)
-//{
-//  cap_power_ = cap_power;
-//}
-//
-// void CapacitorTimeChangeUI::setCapacitorData()
-//{
-//  if (cap_power_ != 0.)
-//  {
-//    if (cap_power_ > 0.)
-//    {
-//      capacitor_graph_->setStartX(610);
-//      capacitor_graph_->setStartY(100);
-//
-//      capacitor_graph_->setEndX(610 + 600 * cap_power_);
-//      capacitor_graph_->setEndY(100);
-//    }
-//    else
-//      return;
-//    if (cap_power_ < 0.3)
-//      capacitor_graph_->setColor(rm_referee::GraphColor::ORANGE);
-//    else if (cap_power_ > 0.7)
-//      capacitor_graph_->setColor(rm_referee::GraphColor::GREEN);
-//    else
-//      capacitor_graph_->setColor(rm_referee::GraphColor::YELLOW);
-//    capacitor_graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-//  }
-//}
-//
-// EffortTimeChangeUI::EffortTimeChangeUI(ros::NodeHandle& nh) : TimeChangeUi(nh)
-//{
-//  for (auto graph : graph_vector_)
-//    if (graph.first == "effort")
-//      effort_graph_ = graph.second;
-//}
-//
-// void EffortTimeChangeUI::updateEffort(std::string joint_name[], double joint_effort[])
-//{
-//  joint_name_ = joint_name;
-//  joint_effort_ = joint_effort_;
-//}
-//
-// void EffortTimeChangeUI::setEffortData()
-//{
-//  char data_str[30] = { ' ' };
-//  int max_index = 0;
-//  if (!joints_->joint_name_.empty())
-//  {
-//    for (int i = 0; i < static_cast<int>(joints_[i].joint_state_.effort.size()); ++i)
-//      if ((test[i].joint_name_ == "joint1" || base_.joint_state_.name[i] == "joint2" ||
-//           base_.joint_state_.name[i] == "joint3" || base_.joint_state_.name[i] == "joint4" ||
-//           base_.joint_state_.name[i] == "joint5") &&
-//          base_.joint_state_.effort[i] > base_.joint_state_.effort[max_index])
-//        max_index = i;
-//    if (max_index != 0)
-//    {
-//      sprintf(data_str, "%s:%.2f N.m", base_.joint_state_.name[max_index].c_str(), base_.joint_state_.effort[max_index]);
-//      graph.setContent(data_str);
-//      if (base_.joint_state_.effort[max_index] > 20.)
-//        graph.setColor(rm_referee::GraphColor::ORANGE);
-//      else if (base_.joint_state_.effort[max_index] < 10.)
-//        graph.setColor(rm_referee::GraphColor::GREEN);
-//      else
-//        graph.setColor(rm_referee::GraphColor::YELLOW);
-//      graph.setOperation(rm_referee::GraphOperation::UPDATE);
-//    }
-//  }
-//}
-//
-// ProgressTimeChangeUI::ProgressTimeChangeUI(ros::NodeHandle& nh) : TimeChangeUi(nh)
-//{
-//  for (auto graph : graph_vector_)
-//    if (graph.first == "effort")
-//      progress_graph_ = graph.second;
-//}
-//
-// void ProgressTimeChangeUI::setProgressData(double data)
-//{
-//  char data_str[30] = { ' ' };
-//  sprintf(data_str, " %.1f%%", data * 100.);
-//  progress_graph_->setContent(data_str);
-//  progress_graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-//}
-//
-// TemperatureTimeChangeUI::TemperatureTimeChangeUI(ros::NodeHandle& nh) : TimeChangeUi(nh)
-//{
-//  for (auto graph : graph_vector_)
-//    if (graph.first == "effort")
-//      temperature_graph_ = graph.second;
-//}
-//
-// void TemperatureTimeChangeUI::setTemperatureData()
-//{
-//  char data_str[30] = { ' ' };
-//  for (int i = 0; i < static_cast<int>(base_.actuator_state_.name.size()); ++i)
-//  {
-//    if (base_.actuator_state_.name[i] == "right_finger_joint_motor")
-//    {
-//      sprintf(data_str, " %.1hhu C", base_.actuator_state_.temperature[i]);
-//      graph.setContent(data_str);
-//      if (base_.actuator_state_.temperature[i] > 70.)
-//        graph.setColor(rm_referee::GraphColor::ORANGE);
-//      else if (base_.actuator_state_.temperature[i] < 30.)
-//        graph.setColor(rm_referee::GraphColor::GREEN);
-//      else
-//        graph.setColor(rm_referee::GraphColor::YELLOW);
-//    }
-//  }
-//  graph.setOperation(rm_referee::GraphOperation::UPDATE);
-//}
-//
-// OreRemindTimeChangeUI::OreRemindTimeChangeUI(ros::NodeHandle& nh) : TimeChangeUi(nh)
-//{
-//  for (auto graph : graph_vector_)
-//    if (graph.first == "ore")
-//      ore_remind_graph_ = graph.second;
-//}
-//
-// void OreRemindTimeChangeUI::setOreRemindData()
-//{
-//  char data_str[30] = { ' ' };
-//  int time = base_.game_status_data_.stage_remain_time;
-//  if (time < 420 && time > 417)
-//    sprintf(data_str, "Ore will released after 15s");
-//  else if (time < 272 && time > 269)
-//    sprintf(data_str, "Ore will released after 30s");
-//  else if (time < 252 && time > 249)
-//    sprintf(data_str, "Ore will released after 10s");
-//  else
-//    return;
-//  graph.setContent(data_str);
-//  graph.setOperation(rm_referee::GraphOperation::UPDATE);
-//}
-//
-// DartStatusTimeChangeUI::DartStatusTimeChangeUI(ros::NodeHandle& nh) : TimeChangeUi(nh)
-//{
-//  for (auto graph : graph_vector_)
-//    if (graph.first == "dart")
-//      dart_status_graph_ = graph.second;
-//}
-//
-// void DartStatusTimeChangeUI::setDartStatusData()
-//{
-//  char data_str[30] = { ' ' };
-//  if (base_.dart_client_cmd_data_.dart_launch_opening_status == 1)
-//  {
-//    sprintf(data_str, "Dart Status: Close");
-//    graph.setColor(rm_referee::GraphColor::YELLOW);
-//  }
-//  else if (base_.dart_client_cmd_data_.dart_launch_opening_status == 2)
-//  {
-//    sprintf(data_str, "Dart Status: Changing");
-//    graph.setColor(rm_referee::GraphColor::ORANGE);
-//  }
-//  else if (base_.dart_client_cmd_data_.dart_launch_opening_status == 0)
-//  {
-//    sprintf(data_str, "Dart Open!");
-//    graph.setColor(rm_referee::GraphColor::GREEN);
-//  }
-//  graph.setContent(data_str);
-//  graph.setOperation(rm_referee::GraphOperation::UPDATE);
-//}
+
+void ChassisTriggerChangeUi::capacityDataCallBack()
+{
+  updateCapacity();
+}
+
+void ChassisTriggerChangeUi::PowerLimitStateCallBack(uint8_t power_limit_state)
+{
+  power_limit_state_ = power_limit_state;
+}
+
+void ChassisTriggerChangeUi::DbusDataCallBack(uint8_t s_l, uint8_t s_r, uint8_t key_ctrl, uint8_t key_shift,
+                                              uint8_t key_b)
+{
+  s_l_ = s_l;
+  s_r_ = s_r;
+  key_ctrl_ = key_ctrl;
+  key_shift_ = key_shift;
+  key_b_ = key_b;
+}
+
+ShooterTriggerChangeUi::ShooterTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base_, "shooter")
+{
+  graph_->setContent("0");
+}
+
+void ShooterTriggerChangeUi::update()
+{
+  updateConfig(shooter_mode_, 0, shoot_frequency_, false);
+  TriggerChangeUi::update();
+}
+
+void ShooterTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
+{
+  graph_->setContent(getShooterState(main_mode));
+  if (sub_mode == rm_common::HeatLimit::LOW)
+    graph_->setColor(rm_referee::GraphColor::WHITE);
+  else if (sub_mode == rm_common::HeatLimit::HIGH)
+    graph_->setColor(rm_referee::GraphColor::YELLOW);
+  else if (sub_mode == rm_common::HeatLimit::BURST)
+    graph_->setColor(rm_referee::GraphColor::ORANGE);
+}
+
+std::string ShooterTriggerChangeUi::getShooterState(uint8_t mode)
+{
+  if (mode == rm_msgs::ShootCmd::READY)
+    return "ready";
+  else if (mode == rm_msgs::ShootCmd::PUSH)
+    return "push";
+  else if (mode == rm_msgs::ShootCmd::STOP)
+    return "stop";
+  else
+    return "error";
+}
+
+void ShooterTriggerChangeUi::ShooterModeCallBack(uint8_t mode)
+{
+  shooter_mode_ = mode;
+  update();
+}
+
+void ShooterTriggerChangeUi::ShootFrequencyCallBack(uint8_t shoot_frequency)
+{
+  shoot_frequency_ = shoot_frequency;
+}
+
+GimbalTriggerChangeUi::GimbalTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base_, "gimbal")
+{
+  graph_->setContent("0");
+}
+
+void GimbalTriggerChangeUi::update()
+{
+  updateConfig(gimbal_mode_, gimbal_eject_);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_->displayTwice(true);
+  graph_->sendUi(ros::Time::now());
+}
+
+void GimbalTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
+{
+  graph_->setContent(getGimbalState(main_mode));
+  if (main_flag)
+    graph_->setColor(rm_referee::GraphColor::ORANGE);
+  else
+    graph_->setColor(rm_referee::GraphColor::WHITE);
+}
+
+std::string GimbalTriggerChangeUi::getGimbalState(uint8_t mode)
+{
+  if (mode == rm_msgs::GimbalCmd::DIRECT)
+    return "direct";
+  else if (mode == rm_msgs::GimbalCmd::RATE)
+    return "rate";
+  else if (mode == rm_msgs::GimbalCmd::TRACK)
+    return "track";
+  else
+    return "error";
+}
+
+void GimbalTriggerChangeUi::GimbalModeCallback(uint8_t mode)
+{
+  gimbal_mode_ = mode;
+  update();
+}
+
+void GimbalTriggerChangeUi::GimbalEjectCallBack(uint8_t gimbal_eject)
+{
+  gimbal_eject_ = gimbal_eject;
+}
+
+TargetTriggerChangeUi::TargetTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base_, "target")
+{
+  for (auto graph : graph_vector_)
+    graph_->setContent("armor");
+  if (base_.robot_color_ == "red")
+    graph_->setColor(rm_referee::GraphColor::CYAN);
+  else
+    graph_->setColor(rm_referee::GraphColor::PINK);
+}
+
+void TargetTriggerChangeUi::update()
+{
+  if (base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && base_.robot_id_ != rm_referee::RobotId::RED_HERO)
+    updateConfig(det_target_, shoot_frequency_ == rm_common::HeatLimit::BURST, det_armor_target_,
+                 det_color_ == rm_msgs::StatusChangeRequest::RED);
+  else
+    updateConfig(gimbal_eject_, shoot_frequency_, det_armor_target_, det_color_ == rm_msgs::StatusChangeRequest::RED);
+  TriggerChangeUi::update();
+}
+
+void TargetTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
+{
+  graph_->setContent(getTargetState(main_mode, sub_mode));
+  if (main_flag)
+    graph_->setColor(rm_referee::GraphColor::ORANGE);
+  else if (sub_flag)
+    graph_->setColor(rm_referee::GraphColor::PINK);
+  else
+    graph_->setColor(rm_referee::GraphColor::CYAN);
+}
+
+std::string TargetTriggerChangeUi::getTargetState(uint8_t target, uint8_t armor_target)
+{
+  if (base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && base_.robot_id_ != rm_referee::RobotId::RED_HERO)
+  {
+    if (target == rm_msgs::StatusChangeRequest::BUFF)
+      return "buff";
+    else if (target == rm_msgs::StatusChangeRequest::ARMOR && armor_target == rm_msgs::StatusChangeRequest::ARMOR_ALL)
+      return "armor_all";
+    else if (target == rm_msgs::StatusChangeRequest::ARMOR &&
+             armor_target == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE)
+      return "armor_base";
+    else
+      return "error";
+  }
+  else
+  {
+    if (target == 1)
+      return "eject";
+    else if (armor_target == rm_msgs::StatusChangeRequest::ARMOR_ALL)
+      return "all";
+    else if (armor_target == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE)
+      return "base";
+    else
+      return "error";
+  }
+}
+
+void TargetTriggerChangeUi::ManalToRefereeCallback(uint8_t det_target, uint8_t shoot_frequency,
+                                                   uint8_t det_armor_target, uint8_t det_color, uint8_t gimbal_eject)
+{
+  det_target_ = det_target;
+  shoot_frequency_ = shoot_frequency;
+  det_armor_target_ = det_armor_target;
+  det_color_ = det_color;
+  gimbal_eject_ = gimbal_eject;
+}
+
+void TargetTriggerChangeUi::ShooterCallBack()
+{
+  update();
+}
+
+void FixedUi::update()
+{
+  for (auto graph : graph_vector_)
+  {
+    graph.second->updatePosition(getShootSpeedIndex());
+    graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
+    graph.second->display();
+    graph.second->sendUi(ros::Time::now());
+  }
+}
+
+int FixedUi::getShootSpeedIndex()
+{
+  if (base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && base_.robot_id_ != rm_referee::RobotId::RED_HERO)
+  {
+    if (speed_limit_ == 15)
+      return 0;
+    else if (speed_limit_ == 18)
+      return 1;
+    else if (speed_limit_ == 30)
+      return 2;
+  }
+  return 0;
+}
+
+void FixedUi::speedLimitCallback(int speed_limit)
+{
+  speed_limit_ = speed_limit;
+  UiBase::add();
+}
+
+TimeChangeUi::TimeChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name)
+  : UiBase(nh, base, "trigger_change")
+{
+  for (auto graph : graph_vector_)
+    if (graph.first == graph_name)
+      graph_ = graph.second;
+}
+
+void TimeChangeUi::updateData()
+{
+}
+
+void TimeChangeUi::add()
+{
+  graph_->setOperation(rm_referee::GraphOperation::ADD);
+  graph_->display(true);
+  graph_->sendUi(ros::Time::now());
+}
+
+void TimeChangeUi::update(const ros::Time& time)
+{
+  updateData();
+  graph_->display(time);
+  graph_->sendUi(ros::Time::now());
+}
+
+CapacitorTimeChangeUI::CapacitorTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base_, "capacitor")
+{
+}
+
+void CapacitorTimeChangeUI::add()
+{
+  if (cap_power_ != 0.)
+  {
+    graph_->setOperation(rm_referee::GraphOperation::ADD);
+    graph_->display(true);
+    graph_->sendUi(ros::Time::now());
+  }
+}
+
+void CapacitorTimeChangeUI::updateData()
+{
+  if (cap_power_ != 0.)
+  {
+    if (cap_power_ > 0.)
+    {
+      graph_->setStartX(610);
+      graph_->setStartY(100);
+
+      graph_->setEndX(610 + 600 * cap_power_);
+      graph_->setEndY(100);
+    }
+    else
+      return;
+    if (cap_power_ < 0.3)
+      graph_->setColor(rm_referee::GraphColor::ORANGE);
+    else if (cap_power_ > 0.7)
+      graph_->setColor(rm_referee::GraphColor::GREEN);
+    else
+      graph_->setColor(rm_referee::GraphColor::YELLOW);
+    graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  }
+}
+
+void CapacitorTimeChangeUI::capPowerDataCallBack(double cap_power, ros::Time& time)
+{
+  cap_power_ = cap_power;
+  update(time);
+}
+
+EffortTimeChangeUI::EffortTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base_, "effort")
+{
+}
+
+void EffortTimeChangeUI::updateData()
+{
+  char data_str[30] = { ' ' };
+  sprintf(data_str, "%s:%.2f N.m", joint_name_.c_str(), joint_effort_);
+  graph_->setContent(data_str);
+  if (joint_effort_ > 20.)
+    graph_->setColor(rm_referee::GraphColor::ORANGE);
+  else if (joint_effort_ < 10.)
+    graph_->setColor(rm_referee::GraphColor::GREEN);
+  else
+    graph_->setColor(rm_referee::GraphColor::YELLOW);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+}
+
+void EffortTimeChangeUI::EffortDataCallBack(std::string joint_name, double joint_effort)
+{
+  joint_effort_ = joint_effort;
+  joint_name_ = joint_name;
+  update(ros::Time::now());
+};
+
+ProgressTimeChangeUI::ProgressTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "")
+{
+}
+
+void ProgressTimeChangeUI::updateData()
+{
+  char data_str[30] = { ' ' };
+  if (total_steps_ != 0)
+    sprintf(data_str, " %.1f%%", finished_data_ / total_steps_ * 100.);
+  else
+    sprintf(data_str, " %.1f%%", finished_data_ / total_steps_ * 100.);
+  graph_->setContent(data_str);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+}
+
+void ProgressTimeChangeUI::progressDataCallBack(uint32_t finished_data, uint32_t total_steps, std::string step_name)
+{
+  finished_data_ = finished_data;
+  total_steps_ = total_steps;
+  if (step_name_ != step_name)
+  {
+    step_name_ = step_name;
+    update(ros::Time::now());
+  }
+}
+
+DartStatusTimeChangeUI::DartStatusTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "")
+{
+}
+
+void DartStatusTimeChangeUI::updateData()
+{
+  char data_str[30] = { ' ' };
+  if (dart_launch_opening_status_ == 1)
+  {
+    sprintf(data_str, "Dart Status: Close");
+    graph_->setColor(rm_referee::GraphColor::YELLOW);
+  }
+  else if (dart_launch_opening_status_ == 2)
+  {
+    sprintf(data_str, "Dart Status: Changing");
+    graph_->setColor(rm_referee::GraphColor::ORANGE);
+  }
+  else if (dart_launch_opening_status_ == 0)
+  {
+    sprintf(data_str, "Dart Open!");
+    graph_->setColor(rm_referee::GraphColor::GREEN);
+  }
+  graph_->setContent(data_str);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+}
+
+void DartStatusTimeChangeUI::dartLaunchOpeningStatusCallBack(uint8_t dart_launch_opening_status)
+{
+  dart_launch_opening_status_ = dart_launch_opening_status;
+}
+
+OreRemindTimeChangeUI::OreRemindTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "")
+{
+}
+
+void OreRemindTimeChangeUI::updateData()
+{
+  char data_str[30] = { ' ' };
+  int time = stage_remain_time_;
+  if (time < 420 && time > 417)
+    sprintf(data_str, "Ore will released after 15s");
+  else if (time < 272 && time > 269)
+    sprintf(data_str, "Ore will released after 30s");
+  else if (time < 252 && time > 249)
+    sprintf(data_str, "Ore will released after 10s");
+  else
+    return;
+  graph_->setContent(data_str);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+}
+
+void OreRemindTimeChangeUI::stageRemainTimeCallBack(uint16_t stage_remain_time)
+{
+  stage_remain_time_ = stage_remain_time;
+}
+
+FlashUi::FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name) : UiBase(nh, base, "flash_ui")
+{
+  for (auto graph : graph_vector_)
+    if (graph.first == graph_name)
+      graph_ = graph.second;
+}
+
+void FlashUi::update(const ros::Time& time, bool state)
+{
+  if (state)
+    graph_->setOperation(rm_referee::GraphOperation::DELETE);
+  else
+    graph_->display(time, !state);
+  graph_->sendUi(time);
+}
+
+void FlashUi::updateData()
+{
+}
+
+AuxFlashUI::AuxFlashUI(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "")
+{
+}
+
+void AuxFlashUI::updateData()
+{
+  double cover_yaw_joint = joint_position_;
+  while (abs(cover_yaw_joint) > 2 * M_PI)
+  {
+    cover_yaw_joint += cover_yaw_joint > 0 ? -2 * M_PI : 2 * M_PI;
+  }
+  graph_->setStartX(960 - 50 * sin(cover_yaw_joint));
+  graph_->setStartY(540 + 50 * cos(cover_yaw_joint));
+
+  graph_->setEndX(960 - 100 * sin(cover_yaw_joint));
+  graph_->setEndY(540 + 100 * cos(cover_yaw_joint));
+}
+
+void AuxFlashUI::jointStateCallBack(uint32_t joint_position)
+{
+  joint_position = joint_position_;
+}
+
+CoverFlashUI::CoverFlashUI(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "")
+{
+}
+
+void CoverFlashUI::update(const ros::Time& time, bool state)
+{
+  if (state)
+    graph_->setOperation(rm_referee::GraphOperation::DELETE);
+  graph_->display(time, !state, true);
+  graph_->sendUi(time);
+}
+
+void CoverFlashUI::coverStateCallBack(uint8_t cover_state)
+{
+  cover_state = cover_state_;
+  update(ros::Time::now(), cover_state_);
+}
 
 }  // namespace rm_referee

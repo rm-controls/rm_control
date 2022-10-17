@@ -12,8 +12,8 @@ namespace rm_referee
 class Graph
 {
 public:
-  explicit Graph(const XmlRpc::XmlRpcValue& config, DataTranslation& data_translation, int id);
-  explicit Graph(DataTranslation& data_translation);
+  explicit Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id);
+  explicit Graph(Base& base);
   void addUi(const rm_referee::GraphConfig& config, const std::string& content, bool priority_flag = false);
   void sendUi(const ros::Time& time);
   void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);
@@ -67,7 +67,7 @@ private:
   rm_referee::GraphColor getColor(const std::string& color);
   rm_referee::GraphType getType(const std::string& type);
 
-  DataTranslation& data_translation_;
+  Base& base_;
   ros::Time last_time_ = ros::Time::now();
   ros::Duration delay_ = ros::Duration(0.);
   std::string title_{}, content_{}, last_title_{}, last_content_{};

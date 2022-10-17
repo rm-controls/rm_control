@@ -3,10 +3,6 @@
 //
 
 #include "rm_referee/referee.h"
-#include "rm_referee/referee/hero_referee.h"
-#include "rm_referee/referee/standard_referee.h"
-#include "rm_referee/referee/engineer_referee.h"
-#include "rm_referee/referee/radar_referee.h"
 
 int main(int argc, char** argv)
 {
@@ -15,10 +11,13 @@ int main(int argc, char** argv)
   ros::NodeHandle nh("~");
   rm_referee::Referee referee;
   robot = getParam(nh, "robot_type", static_cast<std::string>("error"));
-  if (robot == "hero")
-    referee.referee_ui_ = new rm_referee::HeroReferee(nh, referee.data_translation_);
-  else if (robot == "sentry")
-    referee.referee_ui_ = new rm_referee::RefereeBase(nh, referee.data_translation_);
+  ROS_INFO("HI12");
+  if (robot == "standard")
+  {
+    ROS_INFO("HI1342");
+    referee.referee_ui_ = new rm_referee::RefereeBase(nh, referee.base_);
+    ROS_INFO("HI");
+  }
   else
   {
     ROS_ERROR("no robot type ");
@@ -28,7 +27,9 @@ int main(int argc, char** argv)
   while (ros::ok())
   {
     ros::spinOnce();
+    ROS_INFO("HI23");
     referee.read();
+    ROS_INFO("HI2443");
     loop_rate.sleep();
   }
 

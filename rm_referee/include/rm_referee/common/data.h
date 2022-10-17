@@ -91,50 +91,12 @@ struct CapacityData
 class Base
 {
 public:
-  // sub data
-  uint8_t radar_data_;
-  sensor_msgs::JointState joint_state_;
-  geometry_msgs::Twist vel2d_cmd_data_;
-  rm_msgs::DbusData dbus_data_;
-  rm_msgs::StateCmd card_cmd_data_;
-  rm_msgs::ShootCmd shoot_cmd_data_;
-  rm_msgs::GimbalCmd gimbal_cmd_data_;
-  rm_msgs::ChassisCmd chassis_cmd_data_;
-  rm_msgs::ActuatorState actuator_state_;
-  rm_msgs::EngineerCmd engineer_cmd_data_;
-  rm_msgs::ManualToReferee manual_to_referee_data_;
-
-  // pub data
-  rm_msgs::EventData event_data_;
-  rm_msgs::ShootData shoot_data_;
-  rm_msgs::Referee referee_pub_data_;
-  rm_msgs::RobotHurt robot_hurt_data_;
-  rm_msgs::CapacityData capacity_data_;
-  rm_msgs::RfidStatus rfid_status_data_;
-  rm_msgs::DartStatus dart_status_data_;
-  rm_msgs::GameStatus game_status_data_;
-  rm_msgs::PowerHeatData power_heat_data_;
-  rm_msgs::GameRobotHp game_robot_hp_data_;
-  rm_referee::CapacityData capacity_data_ref_;
-  rm_msgs::DartClientCmd dart_client_cmd_data_;
-  rm_msgs::SuperCapacitor super_capacitor_data_;
-  rm_msgs::BulletRemaining bullet_remaining_data_;
-  rm_msgs::GameRobotStatus game_robot_status_data_;
-  rm_msgs::DartRemainingTime dart_remaining_time_data_;
-  rm_msgs::SupplyProjectileAction supply_projectile_action_data_;
-  rm_msgs::IcraBuffDebuffZoneStatus icra_buff_debuff_zone_status_data_;
-
-  bool referee_data_is_online_ = false;
-};
-
-class DataTranslation
-{
-public:
   serial::Serial serial_;
 
   int client_id_ = 0;  // recipient's id
   int robot_id_ = 0;   // recent  robot's id
   std::string robot_color_;
+  bool referee_data_is_online_ = false;
 
   void initSerial()
   {
