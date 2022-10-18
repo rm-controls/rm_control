@@ -109,11 +109,8 @@ class FixedUi : public UiBase
 public:
   explicit FixedUi(ros::NodeHandle& nh, Base& base) : UiBase(nh, base, "fixed"){};
   void update();
-  void speedLimitCallback(int speed_limit);
 
 private:
-  int getShootSpeedIndex();
-  int speed_limit_;
 };
 
 //// TimeChangeUi

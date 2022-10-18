@@ -159,7 +159,7 @@ void ChassisTriggerChangeUi::DbusDataCallBack(uint8_t s_l, uint8_t s_r, uint8_t 
   key_b_ = key_b;
 }
 
-ShooterTriggerChangeUi::ShooterTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base_, "shooter")
+ShooterTriggerChangeUi::ShooterTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "shooter")
 {
   graph_->setContent("0");
 }
@@ -204,7 +204,7 @@ void ShooterTriggerChangeUi::ShootFrequencyCallBack(uint8_t shoot_frequency)
   shoot_frequency_ = shoot_frequency;
 }
 
-GimbalTriggerChangeUi::GimbalTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base_, "gimbal")
+GimbalTriggerChangeUi::GimbalTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "gimbal")
 {
   graph_->setContent("0");
 }
@@ -249,7 +249,7 @@ void GimbalTriggerChangeUi::GimbalEjectCallBack(uint8_t gimbal_eject)
   gimbal_eject_ = gimbal_eject;
 }
 
-TargetTriggerChangeUi::TargetTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base_, "target")
+TargetTriggerChangeUi::TargetTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "target")
 {
   for (auto graph : graph_vector_)
     graph_->setContent("armor");
@@ -326,35 +326,14 @@ void FixedUi::update()
 {
   for (auto graph : graph_vector_)
   {
-    graph.second->updatePosition(getShootSpeedIndex());
     graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
     graph.second->display();
     graph.second->sendUi(ros::Time::now());
   }
 }
 
-int FixedUi::getShootSpeedIndex()
-{
-  if (base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && base_.robot_id_ != rm_referee::RobotId::RED_HERO)
-  {
-    if (speed_limit_ == 15)
-      return 0;
-    else if (speed_limit_ == 18)
-      return 1;
-    else if (speed_limit_ == 30)
-      return 2;
-  }
-  return 0;
-}
-
-void FixedUi::speedLimitCallback(int speed_limit)
-{
-  speed_limit_ = speed_limit;
-  UiBase::add();
-}
-
 TimeChangeUi::TimeChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name)
-  : UiBase(nh, base, "trigger_change")
+  : UiBase(nh, base, "time_change")
 {
   for (auto graph : graph_vector_)
     if (graph.first == graph_name)
@@ -379,7 +358,7 @@ void TimeChangeUi::update(const ros::Time& time)
   graph_->sendUi(ros::Time::now());
 }
 
-CapacitorTimeChangeUI::CapacitorTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base_, "capacitor")
+CapacitorTimeChangeUI::CapacitorTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "capacitor")
 {
 }
 
@@ -423,7 +402,7 @@ void CapacitorTimeChangeUI::capPowerDataCallBack(double cap_power, ros::Time& ti
   update(time);
 }
 
-EffortTimeChangeUI::EffortTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base_, "effort")
+EffortTimeChangeUI::EffortTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "effort")
 {
 }
 
@@ -448,7 +427,7 @@ void EffortTimeChangeUI::EffortDataCallBack(std::string joint_name, double joint
   update(ros::Time::now());
 };
 
-ProgressTimeChangeUI::ProgressTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "")
+ProgressTimeChangeUI::ProgressTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "progress")
 {
 }
 
@@ -474,7 +453,7 @@ void ProgressTimeChangeUI::progressDataCallBack(uint32_t finished_data, uint32_t
   }
 }
 
-DartStatusTimeChangeUI::DartStatusTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "")
+DartStatusTimeChangeUI::DartStatusTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "dart")
 {
 }
 
@@ -505,7 +484,7 @@ void DartStatusTimeChangeUI::dartLaunchOpeningStatusCallBack(uint8_t dart_launch
   dart_launch_opening_status_ = dart_launch_opening_status;
 }
 
-OreRemindTimeChangeUI::OreRemindTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "")
+OreRemindTimeChangeUI::OreRemindTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "ore_remind")
 {
 }
 
@@ -530,7 +509,7 @@ void OreRemindTimeChangeUI::stageRemainTimeCallBack(uint16_t stage_remain_time)
   stage_remain_time_ = stage_remain_time;
 }
 
-FlashUi::FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name) : UiBase(nh, base, "flash_ui")
+FlashUi::FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name) : UiBase(nh, base, "flash")
 {
   for (auto graph : graph_vector_)
     if (graph.first == graph_name)
@@ -550,7 +529,7 @@ void FlashUi::updateData()
 {
 }
 
-AuxFlashUI::AuxFlashUI(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "")
+AuxFlashUI::AuxFlashUI(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "aux")
 {
 }
 
@@ -573,7 +552,7 @@ void AuxFlashUI::jointStateCallBack(uint32_t joint_position)
   joint_position = joint_position_;
 }
 
-CoverFlashUI::CoverFlashUI(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "")
+CoverFlashUI::CoverFlashUI(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "cover")
 {
 }
 

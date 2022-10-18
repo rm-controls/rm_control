@@ -51,9 +51,7 @@ void Referee::read()
     ROS_INFO("Port exception before read");
     return;
   }
-  ROS_INFO("1");
   checkUiAdd();
-  ROS_INFO("2");
   uint8_t temp_buffer[256] = { 0 };
   int frame_len;
   if (ros::Time::now() - last_get_ > ros::Duration(0.1))
@@ -76,13 +74,9 @@ void Referee::read()
         kI += frame_len;
     }
   }
-  ROS_INFO("okok");
   super_capacitor_.read(rx_buffer_);
-  ROS_INFO("3");
   publishCapacityData();
-  ROS_INFO("4");
   getRobotInfo();
-  ROS_INFO("5");
   clearRxBuffer();
 }
 
@@ -486,9 +480,7 @@ void Referee::publishCapacityData()
   capacity_data_.limit_power = super_capacitor_.capacity_data_.limit_power;
   capacity_data_.stamp = last_get_;
 
-  ROS_INFO("TEST");
   referee_ui_->capacityDataCallBack(capacity_data_, last_get_);
-  ROS_INFO("TEST2");
 
   super_capacitor_pub_.publish(super_capacitor_data_);
   capacity_data_pub_.publish(capacity_data_);

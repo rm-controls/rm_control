@@ -8,11 +8,6 @@ namespace rm_referee
 {
 RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
 {
-  XmlRpc::XmlRpcValue rpc_value;
-  ROS_INFO("12");
-  ros::NodeHandle ui_nh(nh, "ui");
-  nh.getParam("ui", rpc_value);
-  ROS_INFO("13");
   RefereeBase::joint_state_sub_ =
       nh.subscribe<sensor_msgs::JointState>("/joint_states", 10, &RefereeBase::jointStateCallback, this);
   RefereeBase::actuator_state_sub_ =
@@ -35,8 +30,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
+  XmlRpc::XmlRpcValue rpc_value;
+  ros::NodeHandle ui_nh(nh, "ui");
   ui_nh.getParam("trigger_change", rpc_value);
-  ROS_INFO("14");
   for (int i = 0; i < rpc_value.size(); i++)
   {
     if (rpc_value[i]["name"] == "chassis")
@@ -48,9 +44,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     if (rpc_value[i]["name"] == "target")
       target_trigger_change_ui_ = new TargetTriggerChangeUi(ui_nh, base_);
   }
-
-  //  fixed_ui_ = new FixedUi(nh, base_);
-  ROS_INFO("15");
 
   ui_nh.getParam("time_change", rpc_value);
   for (int i = 0; i < rpc_value.size(); i++)
@@ -66,14 +59,13 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     if (rpc_value[i]["name"] == "ore_remind")
       ore_remind_time_change_ui_ = new OreRemindTimeChangeUI(ui_nh, base_);
   }
-  ROS_INFO("16");
-  ui_nh.getParam("flash_ui", rpc_value);
+
+  fixed_ui_ = new FixedUi(ui_nh, base_);
+
+  ui_nh.getParam("flash", rpc_value);
   for (int i = 0; i < rpc_value.size(); i++)
-  {
     if (rpc_value[i]["name"] == "cover")
       cover_flash_ui_ = new CoverFlashUI(ui_nh, base_);
-  }
-  ROS_INFO("17");
 }
 void RefereeBase::addUi()
 {
@@ -85,6 +77,8 @@ void RefereeBase::addUi()
     target_trigger_change_ui_->add();
   if (capacitor_time_change_ui_)
     capacitor_time_change_ui_->add();
+  if (exposure_trigger_change_ui_)
+    exposure_trigger_change_ui_->add();
 
   if (fixed_ui_)
     fixed_ui_->add();
@@ -107,25 +101,17 @@ void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_r
                                           const ros::Time& last_get_)
 {
   if (fixed_ui_)
-    fixed_ui_->speedLimitCallback(game_robot_status_data_.shooter_id_1_17_mm_speed_limit);
+    fixed_ui_->update();
 }
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data_, const ros::Time& last_get_)
 {
 }
 void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& capacity_data_, ros::Time& last_get_)
 {
-  ROS_INFO("GG");
   if (chassis_trigger_change_ui_)
-  {
-    ROS_INFO("GG2");
     chassis_trigger_change_ui_->capacityDataCallBack();
-  }
   if (capacitor_time_change_ui_)
-  {
-    ROS_INFO("GG3");
     capacitor_time_change_ui_->capPowerDataCallBack(capacity_data_.cap_power, last_get_);
-  }
-  ROS_INFO("GG1");
 }
 void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data_, const ros::Time& last_get_)
 {
