@@ -51,10 +51,6 @@ TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, Base& base, const std::str
       graph_ = graph.second;
 }
 
-void TriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
-{
-}
-
 void TriggerChangeUi::setContent(const std::string& content)
 {
   graph_->setContent(content);
@@ -63,7 +59,7 @@ void TriggerChangeUi::setContent(const std::string& content)
   graph_->sendUi(ros::Time::now());
 }
 
-void TriggerChangeUi::update()
+void TriggerChangeUi::display()
 {
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->display();
@@ -78,26 +74,25 @@ ChassisTriggerChangeUi::ChassisTriggerChangeUi(ros::NodeHandle& nh, Base& base) 
     graph_->setContent("follow");
 }
 
-void ChassisTriggerChangeUi::update()
+void ChassisTriggerChangeUi::display()
 {
   if (s_l_ == rm_msgs::DbusData::MID && s_r_ == rm_msgs::DbusData::UP)
-  {
     updateConfig(chassis_mode_, false, 1, false);
-  }
   else
-  {
     updateConfig(chassis_mode_, power_limit_state_ == rm_common::PowerLimit::BURST, 0,
                  power_limit_state_ == rm_common::PowerLimit::CHARGE);
-  }
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->displayTwice(true);
   graph_->sendUi(ros::Time::now());
 }
 
-void ChassisTriggerChangeUi::updateCapacity()
+void ChassisTriggerChangeUi::displayInCapacity()
 {
   if (key_ctrl_ && key_shift_ && key_b_)
     updateConfig(254, 0);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_->displayTwice(true);
+  graph_->sendUi(ros::Time::now());
 }
 
 void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -133,30 +128,29 @@ std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
     return "error";
 }
 
-void ChassisTriggerChangeUi::ChassisModeCallBack(uint8_t mode)
+void ChassisTriggerChangeUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data)
 {
-  chassis_mode_ = mode;
-  update();
+  chassis_mode_ = data->mode;
+  display();
 }
 
-void ChassisTriggerChangeUi::capacityDataCallBack()
+void ChassisTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
 {
-  updateCapacity();
+  power_limit_state_ = data->power_limit_state;
 }
 
-void ChassisTriggerChangeUi::PowerLimitStateCallBack(uint8_t power_limit_state)
+void ChassisTriggerChangeUi::updateDbusData(const rm_msgs::DbusData::ConstPtr data)
 {
-  power_limit_state_ = power_limit_state;
+  s_l_ = data->s_l;
+  s_r_ = data->s_r;
+  key_ctrl_ = data->key_ctrl;
+  key_shift_ = data->key_shift;
+  key_b_ = data->key_b;
 }
 
-void ChassisTriggerChangeUi::DbusDataCallBack(uint8_t s_l, uint8_t s_r, uint8_t key_ctrl, uint8_t key_shift,
-                                              uint8_t key_b)
+void ChassisTriggerChangeUi::updateCapacityData(const rm_msgs::CapacityData data)
 {
-  s_l_ = s_l;
-  s_r_ = s_r;
-  key_ctrl_ = key_ctrl;
-  key_shift_ = key_shift;
-  key_b_ = key_b;
+  displayInCapacity();
 }
 
 ShooterTriggerChangeUi::ShooterTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "shooter")
@@ -164,10 +158,10 @@ ShooterTriggerChangeUi::ShooterTriggerChangeUi(ros::NodeHandle& nh, Base& base) 
   graph_->setContent("0");
 }
 
-void ShooterTriggerChangeUi::update()
+void ShooterTriggerChangeUi::display()
 {
   updateConfig(shooter_mode_, 0, shoot_frequency_, false);
-  TriggerChangeUi::update();
+  TriggerChangeUi::display();
 }
 
 void ShooterTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -193,15 +187,15 @@ std::string ShooterTriggerChangeUi::getShooterState(uint8_t mode)
     return "error";
 }
 
-void ShooterTriggerChangeUi::ShooterModeCallBack(uint8_t mode)
+void ShooterTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data)
 {
-  shooter_mode_ = mode;
-  update();
+  shooter_mode_ = data->mode;
+  display();
 }
 
-void ShooterTriggerChangeUi::ShootFrequencyCallBack(uint8_t shoot_frequency)
+void ShooterTriggerChangeUi::updateManualCmdData(rm_msgs::ManualToReferee::ConstPtr data)
 {
-  shoot_frequency_ = shoot_frequency;
+  shoot_frequency_ = data->shoot_frequency;
 }
 
 GimbalTriggerChangeUi::GimbalTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "gimbal")
@@ -209,7 +203,7 @@ GimbalTriggerChangeUi::GimbalTriggerChangeUi(ros::NodeHandle& nh, Base& base) : 
   graph_->setContent("0");
 }
 
-void GimbalTriggerChangeUi::update()
+void GimbalTriggerChangeUi::display()
 {
   updateConfig(gimbal_mode_, gimbal_eject_);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
@@ -238,15 +232,15 @@ std::string GimbalTriggerChangeUi::getGimbalState(uint8_t mode)
     return "error";
 }
 
-void GimbalTriggerChangeUi::GimbalModeCallback(uint8_t mode)
+void GimbalTriggerChangeUi::updateGimbalCmdData(const rm_msgs::GimbalCmd::ConstPtr data)
 {
-  gimbal_mode_ = mode;
-  update();
+  gimbal_mode_ = data->mode;
+  display();
 }
 
-void GimbalTriggerChangeUi::GimbalEjectCallBack(uint8_t gimbal_eject)
+void GimbalTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
 {
-  gimbal_eject_ = gimbal_eject;
+  gimbal_eject_ = data->gimbal_eject;
 }
 
 TargetTriggerChangeUi::TargetTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "target")
@@ -259,14 +253,14 @@ TargetTriggerChangeUi::TargetTriggerChangeUi(ros::NodeHandle& nh, Base& base) : 
     graph_->setColor(rm_referee::GraphColor::PINK);
 }
 
-void TargetTriggerChangeUi::update()
+void TargetTriggerChangeUi::display()
 {
   if (base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && base_.robot_id_ != rm_referee::RobotId::RED_HERO)
     updateConfig(det_target_, shoot_frequency_ == rm_common::HeatLimit::BURST, det_armor_target_,
                  det_color_ == rm_msgs::StatusChangeRequest::RED);
   else
     updateConfig(gimbal_eject_, shoot_frequency_, det_armor_target_, det_color_ == rm_msgs::StatusChangeRequest::RED);
-  TriggerChangeUi::update();
+  TriggerChangeUi::display();
 }
 
 void TargetTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -307,22 +301,21 @@ std::string TargetTriggerChangeUi::getTargetState(uint8_t target, uint8_t armor_
   }
 }
 
-void TargetTriggerChangeUi::ManalToRefereeCallback(uint8_t det_target, uint8_t shoot_frequency,
-                                                   uint8_t det_armor_target, uint8_t det_color, uint8_t gimbal_eject)
+void TargetTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
 {
-  det_target_ = det_target;
-  shoot_frequency_ = shoot_frequency;
-  det_armor_target_ = det_armor_target;
-  det_color_ = det_color;
-  gimbal_eject_ = gimbal_eject;
+  det_target_ = data->det_target;
+  shoot_frequency_ = data->shoot_frequency;
+  det_armor_target_ = data->det_armor_target;
+  det_color_ = data->det_color;
+  gimbal_eject_ = data->gimbal_eject;
 }
 
-void TargetTriggerChangeUi::ShooterCallBack()
+void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data)
 {
-  update();
+  display();
 }
 
-void FixedUi::update()
+void FixedUi::display()
 {
   for (auto graph : graph_vector_)
   {
@@ -340,20 +333,8 @@ TimeChangeUi::TimeChangeUi(ros::NodeHandle& nh, Base& base, const std::string& g
       graph_ = graph.second;
 }
 
-void TimeChangeUi::updateData()
+void TimeChangeUi::display(const ros::Time& time)
 {
-}
-
-void TimeChangeUi::add()
-{
-  graph_->setOperation(rm_referee::GraphOperation::ADD);
-  graph_->display(true);
-  graph_->sendUi(ros::Time::now());
-}
-
-void TimeChangeUi::update(const ros::Time& time)
-{
-  updateData();
   graph_->display(time);
   graph_->sendUi(ros::Time::now());
 }
@@ -370,6 +351,12 @@ void CapacitorTimeChangeUI::add()
     graph_->display(true);
     graph_->sendUi(ros::Time::now());
   }
+}
+
+void CapacitorTimeChangeUI::display(const ros::Time& time)
+{
+  updateData();
+  TimeChangeUi::display(time);
 }
 
 void CapacitorTimeChangeUI::updateData()
@@ -396,13 +383,17 @@ void CapacitorTimeChangeUI::updateData()
   }
 }
 
-void CapacitorTimeChangeUI::capPowerDataCallBack(double cap_power, ros::Time& time)
+void CapacitorTimeChangeUI::updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time)
 {
-  cap_power_ = cap_power;
-  update(time);
+  cap_power_ = data.cap_power;
+  display(time);
 }
 
 EffortTimeChangeUI::EffortTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "effort")
+{
+}
+
+void EffortTimeChangeUI::display(const ros::Time& time)
 {
 }
 
@@ -420,11 +411,8 @@ void EffortTimeChangeUI::updateData()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
-void EffortTimeChangeUI::EffortDataCallBack(std::string joint_name, double joint_effort)
-{
-  joint_effort_ = joint_effort;
-  joint_name_ = joint_name;
-  update(ros::Time::now());
+void EffortTimeChangeUI::updateJointStateData(const sensor_msgs::JointState::ConstPtr data){
+
 };
 
 ProgressTimeChangeUI::ProgressTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "progress")
@@ -449,7 +437,7 @@ void ProgressTimeChangeUI::progressDataCallBack(uint32_t finished_data, uint32_t
   if (step_name_ != step_name)
   {
     step_name_ = step_name;
-    update(ros::Time::now());
+    update();
   }
 }
 
@@ -516,7 +504,7 @@ FlashUi::FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name)
       graph_ = graph.second;
 }
 
-void FlashUi::update(const ros::Time& time, bool state)
+void FlashUi::display(const ros::Time& time, bool state)
 {
   if (state)
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
@@ -529,45 +517,22 @@ void FlashUi::updateData()
 {
 }
 
-AuxFlashUI::AuxFlashUI(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "aux")
-{
-}
-
-void AuxFlashUI::updateData()
-{
-  double cover_yaw_joint = joint_position_;
-  while (abs(cover_yaw_joint) > 2 * M_PI)
-  {
-    cover_yaw_joint += cover_yaw_joint > 0 ? -2 * M_PI : 2 * M_PI;
-  }
-  graph_->setStartX(960 - 50 * sin(cover_yaw_joint));
-  graph_->setStartY(540 + 50 * cos(cover_yaw_joint));
-
-  graph_->setEndX(960 - 100 * sin(cover_yaw_joint));
-  graph_->setEndY(540 + 100 * cos(cover_yaw_joint));
-}
-
-void AuxFlashUI::jointStateCallBack(uint32_t joint_position)
-{
-  joint_position = joint_position_;
-}
-
 CoverFlashUI::CoverFlashUI(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "cover")
 {
 }
 
-void CoverFlashUI::update(const ros::Time& time, bool state)
+void CoverFlashUI::display(const ros::Time& time)
 {
-  if (state)
+  if (cover_state_)
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  graph_->display(time, !state, true);
+  graph_->display(time, !cover_state_, true);
   graph_->sendUi(time);
 }
 
 void CoverFlashUI::coverStateCallBack(uint8_t cover_state)
 {
   cover_state = cover_state_;
-  update(ros::Time::now(), cover_state_);
+  display(ros::Time::now());
 }
 
 }  // namespace rm_referee

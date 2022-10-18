@@ -97,33 +97,31 @@ void RefereeBase::run()
 {
 }
 
-void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data_,
-                                          const ros::Time& last_get_)
+void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_)
 {
   if (fixed_ui_)
     fixed_ui_->update();
 }
-void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data_, const ros::Time& last_get_)
+void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_)
 {
 }
-void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& capacity_data_, ros::Time& last_get_)
+void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::Time& last_get_)
 {
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->capacityDataCallBack();
   if (capacitor_time_change_ui_)
-    capacitor_time_change_ui_->capPowerDataCallBack(capacity_data_.cap_power, last_get_);
+    capacitor_time_change_ui_->updateCapacityData(data, last_get_);
 }
-void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data_, const ros::Time& last_get_)
+void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_)
 {
 }
-void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data_, const ros::Time& last_get_)
+void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ros::Time& last_get_)
 {
 }
-void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data_,
-                                          const ros::Time& last_get_)
+void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_)
 {
 }
-void RefereeBase::eventDataCallBack(const rm_msgs::EventData& event_data_, const ros::Time& last_get_)
+void RefereeBase::eventDataCallBack(const rm_msgs::EventData& data, const ros::Time& last_get_)
 {
 }
 void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& data)
@@ -160,7 +158,7 @@ void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
 void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
 {
   if (chassis_trigger_change_ui_)
-    chassis_trigger_change_ui_->ChassisModeCallBack(data->mode);
+    chassis_trigger_change_ui_->updateChassisCmdData(data);
 }
 void RefereeBase::vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data)
 {
