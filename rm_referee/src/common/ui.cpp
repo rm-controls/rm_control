@@ -98,9 +98,9 @@ void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uin
 {
   if (main_mode == 254)
   {
-    graph_->setContent("Cap reset");
-    graph_->setColor(rm_referee::GraphColor::YELLOW);
-    return;
+//    graph_->setContent("Cap reset");
+//    graph_->setColor(rm_referee::GraphColor::YELLOW);
+//    return;
   }
   {
     graph_->setContent(getChassisState(main_mode));
@@ -129,10 +129,8 @@ std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
 
 void ChassisTriggerChangeUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data)
 {
-  ROS_INFO("1");
   chassis_mode_ = data->mode;
-  ROS_INFO("2");
-  //  display();
+  display();
 }
 
 void ChassisTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
