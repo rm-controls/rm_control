@@ -89,7 +89,7 @@ private:
   void display() override;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
   void displayInCapacity();
-  static std::string getChassisState(uint8_t mode);
+  std::string getChassisState(uint8_t mode);
   uint8_t chassis_mode_, power_limit_state_, s_l_, s_r_, key_ctrl_, key_shift_, key_b_;
 };
 
@@ -103,7 +103,7 @@ public:
 private:
   void display() override;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
-  static std::string getShooterState(uint8_t mode);
+  std::string getShooterState(uint8_t mode);
   uint8_t shooter_mode_, shoot_frequency_;
 };
 
@@ -118,7 +118,7 @@ private:
   void display() override;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
 
-  static std::string getGimbalState(uint8_t mode);
+  std::string getGimbalState(uint8_t mode);
   uint8_t gimbal_mode_, gimbal_eject_;
 };
 

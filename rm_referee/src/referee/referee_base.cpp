@@ -48,6 +48,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   ui_nh.getParam("time_change", rpc_value);
   for (int i = 0; i < rpc_value.size(); i++)
   {
+    if (rpc_value[i]["name"] == "ca")
+      capacitor_time_change_ui_ = new CapacitorTimeChangeUI(ui_nh, base_);
     if (rpc_value[i]["name"] == "effort")
       effort_time_change_ui_ = new EffortTimeChangeUI(ui_nh, base_);
     if (rpc_value[i]["name"] == "progress")
@@ -77,24 +79,26 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
 }
 void RefereeBase::addUi()
 {
-  if (chassis_trigger_change_ui_)
-    chassis_trigger_change_ui_->add();
-  if (gimbal_trigger_change_ui_)
-    gimbal_trigger_change_ui_->add();
-  if (target_trigger_change_ui_)
-    target_trigger_change_ui_->add();
-  usleep(200000);
-
-  if (fixed_ui_)
-    fixed_ui_->add();
-  usleep(200000);
-
-  if (effort_time_change_ui_)
-    effort_time_change_ui_->add();
-  if (progress_time_change_ui_)
-    progress_time_change_ui_->add();
-  if (dart_status_time_change_ui_)
-    dart_status_time_change_ui_->add();
+  //  if (chassis_trigger_change_ui_)
+  //    chassis_trigger_change_ui_->add();
+  //  if (gimbal_trigger_change_ui_)
+  //    gimbal_trigger_change_ui_->add();
+  //  if (target_trigger_change_ui_)
+  //    target_trigger_change_ui_->add();
+  //  usleep(200000);
+  //
+  //  if (fixed_ui_)
+  //    fixed_ui_->add();
+  //  usleep(200000);
+  //
+  //  if (effort_time_change_ui_)
+  //    effort_time_change_ui_->add();
+  //  if (progress_time_change_ui_)
+  //    progress_time_change_ui_->add();
+  //  if (dart_status_time_change_ui_)
+  //    dart_status_time_change_ui_->add();
+  if (capacitor_time_change_ui_)
+    capacitor_time_change_ui_->add();
   usleep(200000);
 }
 
@@ -112,6 +116,10 @@ void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const 
 }
 void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::Time& last_get_)
 {
+  if (capacitor_time_change_ui_)
+    capacitor_time_change_ui_->updateCapacityData(data, last_get_);
+  if (chassis_trigger_change_ui_)
+    chassis_trigger_change_ui_->updateCapacityData(data);
 }
 void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_)
 {

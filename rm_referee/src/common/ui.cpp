@@ -98,16 +98,16 @@ void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uin
 {
   if (main_mode == 254)
   {
-//    graph_->setContent("Cap reset");
-//    graph_->setColor(rm_referee::GraphColor::YELLOW);
-//    return;
+    graph_->setContent("Cap reset");
+    graph_->setColor(rm_referee::GraphColor::YELLOW);
+    return;
   }
-  {
-    graph_->setContent(getChassisState(main_mode));
-  }
-  if (sub_mode == 1)
-    graph_->setColor(rm_referee::GraphColor::PINK);
-  else if (sub_mode == 0)
+  graph_->setContent(getChassisState(main_mode));
+  if (main_flag)
+    graph_->setColor(rm_referee::GraphColor::ORANGE);
+  else if (sub_flag)
+    graph_->setColor(rm_referee::GraphColor::GREEN);
+  else if (sub_mode == 1)
     graph_->setColor(rm_referee::GraphColor::PINK);
   else
     graph_->setColor(rm_referee::GraphColor::WHITE);

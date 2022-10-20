@@ -59,6 +59,7 @@ public:
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
   GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
   TargetTriggerChangeUi* target_trigger_change_ui_{};
+  CapacitorTimeChangeUI* capacitor_time_change_ui_{};
   EffortTimeChangeUI* effort_time_change_ui_{};
   ProgressTimeChangeUI* progress_time_change_ui_{};
   DartStatusTimeChangeUI* dart_status_time_change_ui_{};
