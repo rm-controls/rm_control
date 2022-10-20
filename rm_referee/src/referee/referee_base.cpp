@@ -46,8 +46,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   ui_nh.getParam("time_change", rpc_value);
   for (int i = 0; i < rpc_value.size(); i++)
   {
-    if (rpc_value[i]["name"] == "capacitor")
-      capacitor_time_change_ui_ = new CapacitorTimeChangeUI(ui_nh, base_);
     if (rpc_value[i]["name"] == "effort")
       effort_time_change_ui_ = new EffortTimeChangeUI(ui_nh, base_);
     if (rpc_value[i]["name"] == "progress")
@@ -83,11 +81,11 @@ void RefereeBase::addUi()
     gimbal_trigger_change_ui_->add();
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->add();
-  if (capacitor_time_change_ui_)
-    capacitor_time_change_ui_->add();
+  usleep(200000);
 
   if (fixed_ui_)
     fixed_ui_->add();
+  usleep(200000);
 
   if (effort_time_change_ui_)
     effort_time_change_ui_->add();
@@ -95,17 +93,7 @@ void RefereeBase::addUi()
     progress_time_change_ui_->add();
   if (dart_status_time_change_ui_)
     dart_status_time_change_ui_->add();
-
-  if (spin_flash_ui_)
-    spin_flash_ui_->add();
-  if (armor1_flash_ui_)
-    armor1_flash_ui_->add();
-  if (armor2_flash_ui_)
-    armor2_flash_ui_->add();
-  if (armor3_flash_ui_)
-    armor3_flash_ui_->add();
-  if (armor4_flash_ui_)
-    armor4_flash_ui_->add();
+  usleep(200000);
 }
 
 void RefereeBase::run()
@@ -122,10 +110,6 @@ void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const 
 }
 void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::Time& last_get_)
 {
-  if (chassis_trigger_change_ui_)
-    chassis_trigger_change_ui_->updateCapacityData(data);
-  if (capacitor_time_change_ui_)
-    capacitor_time_change_ui_->updateCapacityData(data, last_get_);
 }
 void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_)
 {
@@ -159,6 +143,8 @@ void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
 {
   if (data->s_r == rm_msgs::DbusData::UP)
     send_ui_flag_ = true;
+  if (data->s_r != rm_msgs::DbusData::UP)
+    send_ui_flag_ = false;
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateDbusData(data);
 }
