@@ -35,8 +35,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   ui_nh.getParam("trigger_change", rpc_value);
   for (int i = 0; i < rpc_value.size(); i++)
   {
-    if (rpc_value[i]["name"] == "chassis")
-      chassis_trigger_change_ui_ = new ChassisTriggerChangeUi(ui_nh, base_);
     if (rpc_value[i]["name"] == "shooter")
       shooter_trigger_change_ui_ = new ShooterTriggerChangeUi(ui_nh, base_);
     if (rpc_value[i]["name"] == "gimbal")
