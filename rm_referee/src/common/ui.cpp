@@ -129,8 +129,10 @@ std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
 
 void ChassisTriggerChangeUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data)
 {
+  ROS_INFO("1");
   chassis_mode_ = data->mode;
-  display();
+  ROS_INFO("2");
+  //  display();
 }
 
 void ChassisTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)

@@ -59,14 +59,10 @@ public:
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
   GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
   TargetTriggerChangeUi* target_trigger_change_ui_{};
-
-  CapacitorTimeChangeUI* capacitor_time_change_ui_{};
   EffortTimeChangeUI* effort_time_change_ui_{};
   ProgressTimeChangeUI* progress_time_change_ui_{};
   DartStatusTimeChangeUI* dart_status_time_change_ui_{};
-
   FixedUi* fixed_ui_{};
-
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
   ArmorFlashUi *armor1_flash_ui_{}, *armor2_flash_ui_{}, *armor3_flash_ui_{}, *armor4_flash_ui_{};
