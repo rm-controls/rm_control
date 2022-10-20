@@ -54,9 +54,7 @@ TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, Base& base, const std::str
 void TriggerChangeUi::setContent(const std::string& content)
 {
   graph_->setContent(content);
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  graph_->display();
-  graph_->sendUi(ros::Time::now());
+  display();
 }
 
 void TriggerChangeUi::display()
@@ -88,7 +86,8 @@ void ChassisTriggerChangeUi::display()
 
 void ChassisTriggerChangeUi::displayInCapacity()
 {
-  if (key_ctrl_ && key_shift_ && key_b_)
+  if (key_ctrl_ && key_shift_ && key_b_ && base_.robot_id_ != rm_referee::RobotId::RED_ENGINEER &&
+      base_.robot_id_ != rm_referee::RobotId::BLUE_ENGINEER)
     updateConfig(254, 0);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->displayTwice(true);
@@ -315,6 +314,16 @@ void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr
   display();
 }
 
+void FixedUi ::add()
+{
+  for (auto graph : graph_vector_)
+  {
+    graph.second->setOperation(rm_referee::GraphOperation::ADD);
+    graph.second->display();
+    graph.second->sendUi(ros::Time::now());
+  }
+};
+
 void FixedUi::display()
 {
   for (auto graph : graph_vector_)
@@ -335,12 +344,9 @@ TimeChangeUi::TimeChangeUi(ros::NodeHandle& nh, Base& base, const std::string& g
 
 void TimeChangeUi::display(const ros::Time& time)
 {
+  updateConfig();
   graph_->display(time);
   graph_->sendUi(ros::Time::now());
-}
-
-CapacitorTimeChangeUI::CapacitorTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "capacitor")
-{
 }
 
 void CapacitorTimeChangeUI::add()
@@ -355,11 +361,11 @@ void CapacitorTimeChangeUI::add()
 
 void CapacitorTimeChangeUI::display(const ros::Time& time)
 {
-  updateData();
+  updateConfig();
   TimeChangeUi::display(time);
 }
 
-void CapacitorTimeChangeUI::updateData()
+void CapacitorTimeChangeUI::updateConfig()
 {
   if (cap_power_ != 0.)
   {
@@ -389,15 +395,13 @@ void CapacitorTimeChangeUI::updateCapacityData(const rm_msgs::CapacityData data,
   display(time);
 }
 
-EffortTimeChangeUI::EffortTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "effort")
-{
-}
-
 void EffortTimeChangeUI::display(const ros::Time& time)
 {
+  updateConfig();
+  TimeChangeUi::display(time);
 }
 
-void EffortTimeChangeUI::updateData()
+void EffortTimeChangeUI::updateConfig()
 {
   char data_str[30] = { ' ' };
   sprintf(data_str, "%s:%.2f N.m", joint_name_.c_str(), joint_effort_);
@@ -411,15 +415,32 @@ void EffortTimeChangeUI::updateData()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
-void EffortTimeChangeUI::updateJointStateData(const sensor_msgs::JointState::ConstPtr data){
-
-};
-
-ProgressTimeChangeUI::ProgressTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "progress")
+void EffortTimeChangeUI::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
+  int max_index = 0;
+  if (!data->name.empty())
+  {
+    for (int i = 0; i < static_cast<int>(data->effort.size()); ++i)
+      if ((data->name[i] == "joint1" || data->name[i] == "joint2" || data->name[i] == "joint3" ||
+           data->name[i] == "joint4" || data->name[i] == "joint5") &&
+          data->effort[i] > data->effort[max_index])
+        max_index = i;
+    if (max_index != 0)
+    {
+      joint_effort_ = data->effort[max_index];
+      joint_name_ = data->name[max_index];
+      display(time);
+    }
+  }
 }
 
-void ProgressTimeChangeUI::updateData()
+void ProgressTimeChangeUI::display(const ros::Time& time)
+{
+  updateConfig();
+  TimeChangeUi::display(time);
+}
+
+void ProgressTimeChangeUI::updateConfig()
 {
   char data_str[30] = { ' ' };
   if (total_steps_ != 0)
@@ -430,22 +451,20 @@ void ProgressTimeChangeUI::updateData()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
-void ProgressTimeChangeUI::progressDataCallBack(uint32_t finished_data, uint32_t total_steps, std::string step_name)
+void ProgressTimeChangeUI::updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data, const ros::Time& last_get_)
 {
-  finished_data_ = finished_data;
-  total_steps_ = total_steps;
-  if (step_name_ != step_name)
-  {
-    step_name_ = step_name;
-    update();
-  }
+  total_steps_ = data->total_steps;
+  finished_data_ = data->finished_step;
+  display(last_get_);
 }
 
-DartStatusTimeChangeUI::DartStatusTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "dart")
+void DartStatusTimeChangeUI::display(const ros::Time& time)
 {
+  updateConfig();
+  TimeChangeUi::display(time);
 }
 
-void DartStatusTimeChangeUI::updateData()
+void DartStatusTimeChangeUI::updateConfig()
 {
   char data_str[30] = { ' ' };
   if (dart_launch_opening_status_ == 1)
@@ -467,34 +486,10 @@ void DartStatusTimeChangeUI::updateData()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
-void DartStatusTimeChangeUI::dartLaunchOpeningStatusCallBack(uint8_t dart_launch_opening_status)
+void DartStatusTimeChangeUI::updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_)
 {
-  dart_launch_opening_status_ = dart_launch_opening_status;
-}
-
-OreRemindTimeChangeUI::OreRemindTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "ore_remind")
-{
-}
-
-void OreRemindTimeChangeUI::updateData()
-{
-  char data_str[30] = { ' ' };
-  int time = stage_remain_time_;
-  if (time < 420 && time > 417)
-    sprintf(data_str, "Ore will released after 15s");
-  else if (time < 272 && time > 269)
-    sprintf(data_str, "Ore will released after 30s");
-  else if (time < 252 && time > 249)
-    sprintf(data_str, "Ore will released after 10s");
-  else
-    return;
-  graph_->setContent(data_str);
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-}
-
-void OreRemindTimeChangeUI::stageRemainTimeCallBack(uint16_t stage_remain_time)
-{
-  stage_remain_time_ = stage_remain_time;
+  dart_launch_opening_status_ = data->dart_launch_opening_status;
+  display(last_get_);
 }
 
 FlashUi::FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name) : UiBase(nh, base, "flash")
@@ -504,24 +499,67 @@ FlashUi::FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name)
       graph_ = graph.second;
 }
 
-void FlashUi::display(const ros::Time& time, bool state)
+void ArmorFlashUi::display(const ros::Time& time)
 {
-  if (state)
-    graph_->setOperation(rm_referee::GraphOperation::DELETE);
+  if (hurt_type_ == 0x00 && armor_id_ == getArmorId())
+  {
+    updateArmorPosition();
+    graph_->display(time, true, true);
+    graph_->sendUi(time);
+    hurt_type_ = 9;
+  }
   else
-    graph_->display(time, !state);
-  graph_->sendUi(time);
+  {
+    graph_->display(time, false, true);
+    graph_->sendUi(time);
+  }
 }
 
-void FlashUi::updateData()
+void ArmorFlashUi::updateArmorPosition()
 {
+  geometry_msgs::TransformStamped yaw_2_baselink;
+  double roll, pitch, yaw;
+  try
+  {
+    yaw_2_baselink = tf_buffer_.lookupTransform("yaw", "base_link", ros::Time(0));
+  }
+  catch (tf2::TransformException& ex)
+  {
+  }
+  quatToRPY(yaw_2_baselink.transform.rotation, roll, pitch, yaw);
+  if (getArmorId() == 0 || getArmorId() == 2)
+  {
+    graph_->setStartX(static_cast<int>((960 + 340 * sin(getArmorId() * M_PI_2 + yaw))));
+    graph_->setStartY(static_cast<int>((540 + 340 * cos(getArmorId() * M_PI_2 + yaw))));
+  }
+  else
+  {
+    graph_->setStartX(static_cast<int>((960 + 340 * sin(-getArmorId() * M_PI_2 + yaw))));
+    graph_->setStartY(static_cast<int>((540 + 340 * cos(-getArmorId() * M_PI_2 + yaw))));
+  }
 }
 
-CoverFlashUI::CoverFlashUI(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "cover")
+uint8_t ArmorFlashUi::getArmorId()
 {
+  if (graph_name_ == "armor0")
+    return 0;
+  else if (graph_name_ == "armor1")
+    return 1;
+  else if (graph_name_ == "armor2")
+    return 2;
+  else if (graph_name_ == "armor3")
+    return 3;
+  return 9;
 }
 
-void CoverFlashUI::display(const ros::Time& time)
+void ArmorFlashUi::updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_)
+{
+  hurt_type_ = data.hurt_type;
+  armor_id_ = data.armor_id;
+  display(last_get_);
+}
+
+void CoverFlashUi::display(const ros::Time& time)
 {
   if (cover_state_)
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
@@ -529,10 +567,23 @@ void CoverFlashUI::display(const ros::Time& time)
   graph_->sendUi(time);
 }
 
-void CoverFlashUI::coverStateCallBack(uint8_t cover_state)
+void CoverFlashUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_)
 {
-  cover_state = cover_state_;
-  display(ros::Time::now());
+  cover_state_ = data->cover_state;
+  display(last_get_);
 }
 
+void SpinFlashUi::display(const ros::Time& time)
+{
+  if (chassis_mode_ != rm_msgs::ChassisCmd::GYRO)
+    graph_->setOperation(rm_referee::GraphOperation::DELETE);
+  graph_->display(time, chassis_mode_ == rm_msgs::ChassisCmd::GYRO);
+  graph_->sendUi(time);
+}
+
+void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_)
+{
+  chassis_mode_ = data->mode;
+  display(last_get_);
+}
 }  // namespace rm_referee

@@ -55,6 +55,8 @@ public:
   virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_){};
   virtual void updateRadarData(const std_msgs::Int8MultiArrayConstPtr data){};
   virtual void updateRadarData(const std_msgs::Int8MultiArrayConstPtr data, const ros::Time& last_get_){};
+  virtual void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data){};
+  virtual void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_){};
 
 protected:
   Base& base_;
@@ -72,9 +74,7 @@ public:
   explicit TriggerChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name);
   virtual void setContent(const std::string& content);
   virtual void display();
-  virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false)
-  {
-  }
+  virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
 };
 class ChassisTriggerChangeUi : public TriggerChangeUi
 {
@@ -88,7 +88,6 @@ public:
 private:
   void display() override;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
-
   void displayInCapacity();
   static std::string getChassisState(uint8_t mode);
   uint8_t chassis_mode_, power_limit_state_, s_l_, s_r_, key_ctrl_, key_shift_, key_b_;
@@ -104,7 +103,6 @@ public:
 private:
   void display() override;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
-
   static std::string getShooterState(uint8_t mode);
   uint8_t shooter_mode_, shoot_frequency_;
 };
@@ -144,9 +142,8 @@ class FixedUi : public UiBase
 {
 public:
   explicit FixedUi(ros::NodeHandle& nh, Base& base) : UiBase(nh, base, "fixed"){};
+  void add() override;
   void display();
-
-private:
 };
 
 //// TimeChangeUi
@@ -155,32 +152,31 @@ class TimeChangeUi : public UiBase
 public:
   explicit TimeChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name);
   virtual void display(const ros::Time& time);
-  virtual void updateData();
+  virtual void updateConfig(){};
 };
 
 class CapacitorTimeChangeUI : public TimeChangeUi
 {
 public:
-  explicit CapacitorTimeChangeUI(ros::NodeHandle& nh, Base& base);
+  explicit CapacitorTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "capacitor"){};
   void add() override;
   void updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time) override;
 
 private:
   void display(const ros::Time& time) override;
-  void updateData() override;
+  void updateConfig() override;
   double cap_power_;
 };
 
 class EffortTimeChangeUI : public TimeChangeUi
 {
 public:
-  explicit EffortTimeChangeUI(ros::NodeHandle& nh, Base& base);
-
+  explicit EffortTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "effort"){};
   void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time) override;
 
 private:
   void display(const ros::Time& time) override;
-  void updateData() override;
+  void updateConfig() override;
   double joint_effort_;
   std::string joint_name_;
 };
@@ -188,13 +184,12 @@ private:
 class ProgressTimeChangeUI : public TimeChangeUi
 {
 public:
-  explicit ProgressTimeChangeUI(ros::NodeHandle& nh, Base& base);
-
-  void updateGameStatusData(const rm_msgs::GameStatus data, const ros::Time& time) override;
+  explicit ProgressTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "progress"){};
+  void updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data, const ros::Time& last_get_) override;
 
 private:
   void display(const ros::Time& time) override;
-  void updateData() override;
+  void updateConfig() override;
   uint32_t finished_data_, total_steps_;
   std::string step_name_;
 };
@@ -202,27 +197,13 @@ private:
 class DartStatusTimeChangeUI : public TimeChangeUi
 {
 public:
-  explicit DartStatusTimeChangeUI(ros::NodeHandle& nh, Base& base);
-
-  void dartLaunchOpeningStatusCallBack(uint8_t dart_launch_opening_status, const ros::Time& time);
+  explicit DartStatusTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "dart"){};
+  void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_) override;
 
 private:
   void display(const ros::Time& time) override;
-  void updateData() override;
+  void updateConfig() override;
   uint8_t dart_launch_opening_status_;
-};
-
-class OreRemindTimeChangeUI : public TimeChangeUi
-{
-public:
-  explicit OreRemindTimeChangeUI(ros::NodeHandle& nh, Base& base);
-
-  void stageRemainTimeCallBack(uint16_t stage_remain_time, const ros::Time& time);
-
-private:
-  void display(const ros::Time& time) override;
-  void updateData() override;
-  uint16_t stage_remain_time_;
 };
 
 //// FlashUi
@@ -230,22 +211,49 @@ class FlashUi : public UiBase
 {
 public:
   explicit FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name);
-  virtual void display(const ros::Time& time);
-  virtual void updateData();
+  virtual void display(const ros::Time& time){};
+  virtual void updateConfig(){};
 
 private:
 };
 
-class CoverFlashUI : public FlashUi
+class ArmorFlashUi : public FlashUi
 {
 public:
-  explicit CoverFlashUI(ros::NodeHandle& nh, Base& base_);
-  void coverStateCallBack(uint8_t cover_state);
+  explicit ArmorFlashUi(ros::NodeHandle& nh, Base& base, std::string graph_name) : FlashUi(nh, base, graph_name)
+  {
+    graph_name_ = graph_name;
+  };
+  void updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_) override;
 
 private:
   void display(const ros::Time& time) override;
-  void updateData() override;
+  void updateArmorPosition();
+  uint8_t getArmorId();
+
+  std::string graph_name_;
+  uint8_t hurt_type_, armor_id_;
+};
+
+class CoverFlashUi : public FlashUi
+{
+public:
+  explicit CoverFlashUi(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "cover"){};
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_) override;
+
+private:
+  void display(const ros::Time& time) override;
   uint8_t cover_state_;
 };
 
+class SpinFlashUi : public FlashUi
+{
+public:
+  explicit SpinFlashUi(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "spin"){};
+  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_) override;
+
+private:
+  void display(const ros::Time& time) override;
+  uint8_t chassis_mode_;
+};
 }  // namespace rm_referee

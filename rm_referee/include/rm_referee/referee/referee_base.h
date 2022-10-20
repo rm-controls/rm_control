@@ -64,12 +64,12 @@ public:
   EffortTimeChangeUI* effort_time_change_ui_{};
   ProgressTimeChangeUI* progress_time_change_ui_{};
   DartStatusTimeChangeUI* dart_status_time_change_ui_{};
-  OreRemindTimeChangeUI* ore_remind_time_change_ui_{};
-  TriggerChangeUi* exposure_trigger_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
-  CoverFlashUI* cover_flash_ui_{};
+  CoverFlashUi* cover_flash_ui_{};
+  SpinFlashUi* spin_flash_ui_{};
+  ArmorFlashUi *armor1_flash_ui_{}, *armor2_flash_ui_{}, *armor3_flash_ui_{}, *armor4_flash_ui_{};
 
   Base& base_;
   bool add_ui_flag_ = false;

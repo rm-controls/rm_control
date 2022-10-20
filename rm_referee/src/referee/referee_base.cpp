@@ -56,16 +56,26 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       progress_time_change_ui_ = new ProgressTimeChangeUI(ui_nh, base_);
     if (rpc_value[i]["name"] == "dart_status")
       dart_status_time_change_ui_ = new DartStatusTimeChangeUI(ui_nh, base_);
-    if (rpc_value[i]["name"] == "ore_remind")
-      ore_remind_time_change_ui_ = new OreRemindTimeChangeUI(ui_nh, base_);
   }
 
   fixed_ui_ = new FixedUi(ui_nh, base_);
 
   ui_nh.getParam("flash", rpc_value);
   for (int i = 0; i < rpc_value.size(); i++)
+  {
     if (rpc_value[i]["name"] == "cover")
-      cover_flash_ui_ = new CoverFlashUI(ui_nh, base_);
+      cover_flash_ui_ = new CoverFlashUi(ui_nh, base_);
+    if (rpc_value[i]["name"] == "spin")
+      spin_flash_ui_ = new SpinFlashUi(ui_nh, base_);
+    if (rpc_value[i]["name"] == "armor0")
+      armor1_flash_ui_ = new ArmorFlashUi(ui_nh, base_, "armor0");
+    if (rpc_value[i]["name"] == "armor1")
+      armor1_flash_ui_ = new ArmorFlashUi(ui_nh, base_, "armor1");
+    if (rpc_value[i]["name"] == "armor2")
+      armor1_flash_ui_ = new ArmorFlashUi(ui_nh, base_, "armor2");
+    if (rpc_value[i]["name"] == "armor3")
+      armor1_flash_ui_ = new ArmorFlashUi(ui_nh, base_, "armor3");
+  }
 }
 void RefereeBase::addUi()
 {
@@ -77,8 +87,6 @@ void RefereeBase::addUi()
     target_trigger_change_ui_->add();
   if (capacitor_time_change_ui_)
     capacitor_time_change_ui_->add();
-  if (exposure_trigger_change_ui_)
-    exposure_trigger_change_ui_->add();
 
   if (fixed_ui_)
     fixed_ui_->add();
@@ -89,8 +97,17 @@ void RefereeBase::addUi()
     progress_time_change_ui_->add();
   if (dart_status_time_change_ui_)
     dart_status_time_change_ui_->add();
-  if (ore_remind_time_change_ui_)
-    ore_remind_time_change_ui_->add();
+
+  if (spin_flash_ui_)
+    spin_flash_ui_->add();
+  if (armor1_flash_ui_)
+    armor1_flash_ui_->add();
+  if (armor2_flash_ui_)
+    armor2_flash_ui_->add();
+  if (armor3_flash_ui_)
+    armor3_flash_ui_->add();
+  if (armor4_flash_ui_)
+    armor4_flash_ui_->add();
 }
 
 void RefereeBase::run()
@@ -100,7 +117,7 @@ void RefereeBase::run()
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_)
 {
   if (fixed_ui_)
-    fixed_ui_->update();
+    fixed_ui_->display();
 }
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_)
 {
@@ -108,7 +125,7 @@ void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const 
 void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::Time& last_get_)
 {
   if (chassis_trigger_change_ui_)
-    chassis_trigger_change_ui_->capacityDataCallBack();
+    chassis_trigger_change_ui_->updateCapacityData(data);
   if (capacitor_time_change_ui_)
     capacitor_time_change_ui_->updateCapacityData(data, last_get_);
 }
@@ -117,6 +134,14 @@ void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, cons
 }
 void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ros::Time& last_get_)
 {
+  if (armor1_flash_ui_)
+    armor1_flash_ui_->updateRobotHurtData(data, last_get_);
+  if (armor2_flash_ui_)
+    armor2_flash_ui_->updateRobotHurtData(data, last_get_);
+  if (armor3_flash_ui_)
+    armor3_flash_ui_->updateRobotHurtData(data, last_get_);
+  if (armor4_flash_ui_)
+    armor4_flash_ui_->updateRobotHurtData(data, last_get_);
 }
 void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_)
 {
@@ -127,38 +152,24 @@ void RefereeBase::eventDataCallBack(const rm_msgs::EventData& data, const ros::T
 void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& data)
 {
   if (effort_time_change_ui_)
-  {
-    int max_index = 0;
-    {
-      if (!data->name.empty())
-      {
-        for (int i = 0; i < static_cast<int>(data->effort.size()); ++i)
-          if ((data->name[i] == "joint1" || data->name[i] == "joint2" || data->name[i] == "joint3" ||
-               data->name[i] == "joint4" || data->name[i] == "joint5") &&
-              data->effort[i] > data->effort[max_index])
-            max_index = i;
-      }
-    }
-    if (max_index != 0)
-    {
-      effort_time_change_ui_->EffortDataCallBack(data->name[max_index], data->effort[max_index]);
-    }
-  }
+    effort_time_change_ui_->updateJointStateData(data, ros::Time::now());
 }
 void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
 {
 }
 void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
 {
-  if (chassis_trigger_change_ui_)
-    chassis_trigger_change_ui_->DbusDataCallBack(data->s_l, data->s_r, data->key_ctrl, data->key_shift, data->key_b);
   if (data->s_r == rm_msgs::DbusData::UP)
     send_ui_flag_ = true;
+  if (chassis_trigger_change_ui_)
+    chassis_trigger_change_ui_->updateDbusData(data);
 }
 void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
 {
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateChassisCmdData(data);
+  if (spin_flash_ui_)
+    spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
 }
 void RefereeBase::vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data)
 {
@@ -166,14 +177,14 @@ void RefereeBase::vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& dat
 void RefereeBase::shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data)
 {
   if (shooter_trigger_change_ui_)
-    shooter_trigger_change_ui_->ShooterModeCallBack(data->mode);
+    shooter_trigger_change_ui_->updateShootCmdData(data);
   if (target_trigger_change_ui_)
-    target_trigger_change_ui_->ShooterCallBack();
+    target_trigger_change_ui_->updateShootCmdData(data);
 }
 void RefereeBase::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data)
 {
   if (gimbal_trigger_change_ui_)
-    gimbal_trigger_change_ui_->GimbalModeCallback(data->mode);
+    gimbal_trigger_change_ui_->updateGimbalCmdData(data);
 }
 void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 {
@@ -181,21 +192,20 @@ void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 void RefereeBase::engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data)
 {
   if (progress_time_change_ui_)
-    progress_time_change_ui_->progressDataCallBack(data->finished_step, data->total_steps, data->step_queue_name);
+    progress_time_change_ui_->updateEngineerCmdData(data, ros::Time::now());
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
   if (chassis_trigger_change_ui_)
-    chassis_trigger_change_ui_->PowerLimitStateCallBack(data->power_limit_state);
+    chassis_trigger_change_ui_->updateManualCmdData(data);
   if (shooter_trigger_change_ui_)
-    shooter_trigger_change_ui_->ShootFrequencyCallBack(data->shoot_frequency);
+    shooter_trigger_change_ui_->updateManualCmdData(data);
   if (gimbal_trigger_change_ui_)
-    gimbal_trigger_change_ui_->GimbalEjectCallBack(data->gimbal_eject);
+    gimbal_trigger_change_ui_->updateManualCmdData(data);
   if (target_trigger_change_ui_)
-    target_trigger_change_ui_->ManalToRefereeCallback(data->det_target, data->shoot_frequency, data->det_armor_target,
-                                                      data->det_color, data->gimbal_eject);
+    target_trigger_change_ui_->updateManualCmdData(data);
   if (cover_flash_ui_)
-    cover_flash_ui_->coverStateCallBack(data->cover_state);
+    cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
 }
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {
