@@ -344,7 +344,7 @@ TimeChangeUi::TimeChangeUi(ros::NodeHandle& nh, Base& base, const std::string& g
 
 void TimeChangeUi::display(const ros::Time& time)
 {
-  updateConfig();
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->display(time);
   graph_->sendUi(ros::Time::now());
 }
@@ -385,7 +385,6 @@ void CapacitorTimeChangeUI::updateConfig()
       graph_->setColor(rm_referee::GraphColor::GREEN);
     else
       graph_->setColor(rm_referee::GraphColor::YELLOW);
-    graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   }
 }
 

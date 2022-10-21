@@ -48,7 +48,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   ui_nh.getParam("time_change", rpc_value);
   for (int i = 0; i < rpc_value.size(); i++)
   {
-    if (rpc_value[i]["name"] == "ca")
+    if (rpc_value[i]["name"] == "capacitor")
       capacitor_time_change_ui_ = new CapacitorTimeChangeUI(ui_nh, base_);
     if (rpc_value[i]["name"] == "effort")
       effort_time_change_ui_ = new EffortTimeChangeUI(ui_nh, base_);
@@ -68,35 +68,35 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     if (rpc_value[i]["name"] == "spin")
       spin_flash_ui_ = new SpinFlashUi(ui_nh, base_);
     if (rpc_value[i]["name"] == "armor0")
-      armor1_flash_ui_ = new ArmorFlashUi(ui_nh, base_, "armor0");
+      armor0_flash_ui_ = new ArmorFlashUi(ui_nh, base_, "armor0");
     if (rpc_value[i]["name"] == "armor1")
       armor1_flash_ui_ = new ArmorFlashUi(ui_nh, base_, "armor1");
     if (rpc_value[i]["name"] == "armor2")
-      armor1_flash_ui_ = new ArmorFlashUi(ui_nh, base_, "armor2");
+      armor2_flash_ui_ = new ArmorFlashUi(ui_nh, base_, "armor2");
     if (rpc_value[i]["name"] == "armor3")
-      armor1_flash_ui_ = new ArmorFlashUi(ui_nh, base_, "armor3");
+      armor3_flash_ui_ = new ArmorFlashUi(ui_nh, base_, "armor3");
   }
 }
 void RefereeBase::addUi()
 {
-  //  if (chassis_trigger_change_ui_)
-  //    chassis_trigger_change_ui_->add();
-  //  if (gimbal_trigger_change_ui_)
-  //    gimbal_trigger_change_ui_->add();
-  //  if (target_trigger_change_ui_)
-  //    target_trigger_change_ui_->add();
-  //  usleep(200000);
-  //
-  //  if (fixed_ui_)
-  //    fixed_ui_->add();
-  //  usleep(200000);
-  //
-  //  if (effort_time_change_ui_)
-  //    effort_time_change_ui_->add();
-  //  if (progress_time_change_ui_)
-  //    progress_time_change_ui_->add();
-  //  if (dart_status_time_change_ui_)
-  //    dart_status_time_change_ui_->add();
+  if (chassis_trigger_change_ui_)
+    chassis_trigger_change_ui_->add();
+  if (gimbal_trigger_change_ui_)
+    gimbal_trigger_change_ui_->add();
+  if (target_trigger_change_ui_)
+    target_trigger_change_ui_->add();
+  usleep(200000);
+
+  if (fixed_ui_)
+    fixed_ui_->add();
+  usleep(200000);
+
+  if (effort_time_change_ui_)
+    effort_time_change_ui_->add();
+  if (progress_time_change_ui_)
+    progress_time_change_ui_->add();
+  if (dart_status_time_change_ui_)
+    dart_status_time_change_ui_->add();
   if (capacitor_time_change_ui_)
     capacitor_time_change_ui_->add();
   usleep(200000);
@@ -126,14 +126,14 @@ void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, cons
 }
 void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ros::Time& last_get_)
 {
+  if (armor0_flash_ui_)
+    armor0_flash_ui_->updateRobotHurtData(data, last_get_);
   if (armor1_flash_ui_)
     armor1_flash_ui_->updateRobotHurtData(data, last_get_);
   if (armor2_flash_ui_)
     armor2_flash_ui_->updateRobotHurtData(data, last_get_);
   if (armor3_flash_ui_)
     armor3_flash_ui_->updateRobotHurtData(data, last_get_);
-  if (armor4_flash_ui_)
-    armor4_flash_ui_->updateRobotHurtData(data, last_get_);
 }
 void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_)
 {

@@ -112,6 +112,7 @@ int Referee::unpack(uint8_t* rx_data)
           game_status_data_.sync_time_stamp = game_status_ref.sync_time_stamp_;
           game_status_data_.stamp = last_get_;
 
+          referee_ui_->gameStatusDataCallBack(game_status_data_, last_get_);
           game_status_pub_.publish(game_status_data_);
           break;
         }
