@@ -560,9 +560,9 @@ void ArmorFlashUi::updateRobotHurtData(const rm_msgs::RobotHurt data, const ros:
 
 void CoverFlashUi::display(const ros::Time& time)
 {
-  if (cover_state_)
+  if (!cover_state_)
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  graph_->display(time, !cover_state_, true);
+  graph_->display(time, cover_state_, true);
   graph_->sendUi(time);
 }
 
