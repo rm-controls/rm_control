@@ -49,7 +49,7 @@ namespace rm_common
 class PowerLimit
 {
 public:
-  PowerLimit(ros::NodeHandle& nh, const rm_msgs::ChassisCmd& chassis_cmd) : chassis_cmd_(chassis_cmd)
+  PowerLimit(ros::NodeHandle& nh)
 
   {
     if (!nh.getParam("safety_power", safety_power_))
@@ -92,13 +92,12 @@ public:
   {
     chassis_power_buffer_ = data.chassis_power_buffer;
   }
-
   void setCapacityData(const rm_msgs::CapacityData data)
   {
     capacity_is_online_ = data.is_online;
     cap_power_ = data.cap_power;
   }
-  void setRefereeStatus(bool status)
+  void setRefereeStatus(const rm_msgs::ChassisCmd& cmd, bool status)
   {
     referee_is_online_ = status;
   }
@@ -181,6 +180,7 @@ private:
       limit_power_ = chassis_power_limit_;
   }
 
+  rm_msgs::ChassisCmd chassis_cmd_;
   int game_progress_;
   int chassis_power_buffer_;
   int robot_id_, chassis_power_limit_;
@@ -193,7 +193,6 @@ private:
   double power_gain_{};
   uint8_t state_{};
 
-  const rm_msgs::ChassisCmd& chassis_cmd_;
   bool referee_is_online_;
   bool capacity_is_online_;
 };

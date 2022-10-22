@@ -77,22 +77,40 @@ public:
 
   void setStatusOfShooter(const rm_msgs::GameRobotStatus data)
   {
-    shooter_id_1_17_mm_cooling_limit_ = data.shooter_id_1_17_mm_cooling_limit;
-    shooter_id_2_17_mm_cooling_limit_ = data.shooter_id_2_17_mm_cooling_limit;
-    shooter_id_1_42_mm_cooling_limit_ = data.shooter_id_1_42_mm_cooling_limit;
-    shooter_id_1_17_mm_cooling_rate_ = data.shooter_id_1_17_mm_cooling_rate;
-    shooter_id_2_17_mm_cooling_rate_ = data.shooter_id_2_17_mm_cooling_rate;
-    shooter_id_1_42_mm_cooling_rate_ = data.shooter_id_1_42_mm_cooling_rate;
-    shooter_id_1_17_mm_speed_limit_ = data.shooter_id_1_17_mm_speed_limit;
-    shooter_id_2_17_mm_speed_limit_ = data.shooter_id_2_17_mm_speed_limit;
-    shooter_id_1_42_mm_speed_limit_ = data.shooter_id_1_42_mm_speed_limit;
+    if (type_ == "ID1_17MM")
+    {
+      shooter_cooling_limit_ = data.shooter_id_1_17_mm_cooling_limit;
+      shooter_cooling_rate_ = data.shooter_id_1_17_mm_cooling_rate;
+      shooter_speed_limit_ = data.shooter_id_1_17_mm_speed_limit;
+    }
+    else if (type_ == "ID2_17MM")
+    {
+      shooter_cooling_limit_ = data.shooter_id_2_17_mm_cooling_limit;
+      shooter_cooling_rate_ = data.shooter_id_2_17_mm_cooling_rate;
+      shooter_speed_limit_ = data.shooter_id_2_17_mm_speed_limit;
+    }
+    else if (type_ == "ID1_42MM")
+    {
+      shooter_cooling_limit_ = data.shooter_id_1_42_mm_cooling_limit;
+      shooter_cooling_rate_ = data.shooter_id_1_42_mm_cooling_rate;
+      shooter_speed_limit_ = data.shooter_id_1_42_mm_speed_limit;
+    }
   }
 
   void setCoolingHeatOfShooter(const rm_msgs::PowerHeatData data)
   {
-    shooter_id_1_17_mm_cooling_heat_ = data.shooter_id_1_17_mm_cooling_heat;
-    shooter_id_2_17_mm_cooling_heat_ = data.shooter_id_2_17_mm_cooling_heat;
-    shooter_id_1_42_mm_cooling_heat_ = data.shooter_id_1_42_mm_cooling_heat;
+    if (type_ == "ID1_17MM")
+    {
+      shooter_cooling_heat_ = data.shooter_id_1_17_mm_cooling_heat;
+    }
+    else if (type_ == "ID2_17MM")
+    {
+      shooter_cooling_heat_ = data.shooter_id_2_17_mm_cooling_heat;
+    }
+    else if (type_ == "ID1_42MM")
+    {
+      shooter_cooling_heat_ = data.shooter_id_1_42_mm_cooling_heat;
+    }
   }
 
   void setRefereeStatus(bool status)
@@ -106,34 +124,15 @@ public:
       return shoot_frequency_;
     if (!referee_is_online_)
       return safe_shoot_frequency_;
-    double cooling_limit{}, cooling_rate{}, cooling_heat{};
-    if (type_ == "ID1_17MM")
-    {
-      cooling_limit = shooter_id_1_17_mm_cooling_limit_;
-      cooling_rate = shooter_id_1_17_mm_cooling_rate_;
-      cooling_heat = shooter_id_1_17_mm_cooling_heat_;
-    }
-    else if (type_ == "ID2_17MM")
-    {
-      cooling_limit = shooter_id_2_17_mm_cooling_limit_;
-      cooling_rate = shooter_id_2_17_mm_cooling_rate_;
-      cooling_heat = shooter_id_2_17_mm_cooling_heat_;
-    }
-    else if (type_ == "ID1_42MM")
-    {
-      cooling_limit = shooter_id_1_42_mm_cooling_limit_;
-      cooling_rate = shooter_id_1_42_mm_cooling_rate_;
-      cooling_heat = shooter_id_1_42_mm_cooling_heat_;
-    }
 
-    if (cooling_limit - cooling_heat < bullet_heat_)
+    if (shooter_cooling_limit_ - shooter_cooling_heat_ < bullet_heat_)
       return 0.0;
-    else if (cooling_limit - cooling_heat == bullet_heat_)
-      return cooling_rate / bullet_heat_;
-    else if (cooling_limit - cooling_heat <= bullet_heat_ * heat_coeff_)
-      return (cooling_limit - cooling_heat) / (bullet_heat_ * heat_coeff_) *
-                 (shoot_frequency_ - cooling_rate / bullet_heat_) +
-             cooling_rate / bullet_heat_;
+    else if (shooter_cooling_limit_ - shooter_cooling_heat_ == bullet_heat_)
+      return shooter_cooling_rate_ / bullet_heat_;
+    else if (shooter_cooling_limit_ - shooter_cooling_heat_ <= bullet_heat_ * heat_coeff_)
+      return (shooter_cooling_limit_ - shooter_cooling_heat_) / (bullet_heat_ * heat_coeff_) *
+                 (shoot_frequency_ - shooter_cooling_rate_ / bullet_heat_) +
+             shooter_cooling_rate_ / bullet_heat_;
     else
       return shoot_frequency_;
   }
@@ -142,7 +141,7 @@ public:
   {
     updateExpectShootFrequency();
     if (type_ == "ID1_17MM")
-      switch (shooter_id_1_17_mm_speed_limit_)
+      switch (shooter_speed_limit_)
       {
         case 15:
           return rm_msgs::ShootCmd::SPEED_15M_PER_SECOND;
@@ -154,7 +153,7 @@ public:
           return rm_msgs::ShootCmd::SPEED_15M_PER_SECOND;  // Safety speed
       }
     else if (type_ == "ID2_17MM")
-      switch (shooter_id_2_17_mm_speed_limit_)
+      switch (shooter_speed_limit_)
       {
         case 15:
           return rm_msgs::ShootCmd::SPEED_15M_PER_SECOND;
@@ -166,7 +165,7 @@ public:
           return rm_msgs::ShootCmd::SPEED_15M_PER_SECOND;  // Safety speed
       }
     else if (type_ == "ID1_42MM")
-      switch (shooter_id_1_42_mm_speed_limit_)
+      switch (shooter_speed_limit_)
       {
         case 10:
           return rm_msgs::ShootCmd::SPEED_10M_PER_SECOND;
@@ -220,12 +219,7 @@ private:
       high_shoot_frequency_{}, burst_shoot_frequency_{};
 
   bool referee_is_online_;
-  int shooter_id_1_17_mm_cooling_limit_, shooter_id_1_17_mm_cooling_rate_, shooter_id_1_17_mm_cooling_heat_,
-      shooter_id_1_17_mm_speed_limit_;
-  int shooter_id_2_17_mm_cooling_limit_, shooter_id_2_17_mm_cooling_rate_, shooter_id_2_17_mm_cooling_heat_,
-      shooter_id_2_17_mm_speed_limit_;
-  int shooter_id_1_42_mm_cooling_limit_, shooter_id_1_42_mm_cooling_rate_, shooter_id_1_42_mm_cooling_heat_,
-      shooter_id_1_42_mm_speed_limit_;
+  int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_, shooter_speed_limit_;
 };
 
 }  // namespace rm_common

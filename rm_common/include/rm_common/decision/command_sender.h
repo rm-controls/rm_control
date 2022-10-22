@@ -199,7 +199,7 @@ public:
   explicit ChassisCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh)
   {
     XmlRpc::XmlRpcValue xml_rpc_value;
-    power_limit_ = new PowerLimit(nh, msg_);
+    power_limit_ = new PowerLimit(nh);
     if (!nh.getParam("accel_x", xml_rpc_value))
       ROS_ERROR("Accel X no defined (namespace: %s)", nh.getNamespace().c_str());
     else
@@ -213,28 +213,26 @@ public:
     else
       accel_z_.init(xml_rpc_value);
   }
+
   void updateGameStatus(const rm_msgs::GameStatus data) override
   {
     power_limit_->setGameProgress(data);
   }
-
   void updateGameRobotStatus(const rm_msgs::GameRobotStatus data) override
   {
     power_limit_->setGameRobotData(data);
   }
-
   void updatePowerHeatData(const rm_msgs::PowerHeatData data) override
   {
     power_limit_->setChassisPowerBuffer(data);
   }
-
   void updateCapacityData(const rm_msgs::CapacityData data) override
   {
     power_limit_->setCapacityData(data);
   }
   void updateRefereeStatus(bool status)
   {
-    power_limit_->setRefereeStatus(status);
+    power_limit_->setRefereeStatus(msg_, status);
   }
 
   void sendCommand(const ros::Time& time) override
