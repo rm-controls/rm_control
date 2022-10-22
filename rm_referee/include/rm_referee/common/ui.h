@@ -155,10 +155,10 @@ public:
   virtual void updateConfig(){};
 };
 
-class CapacitorTimeChangeUI : public TimeChangeUi
+class CapacitorTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit CapacitorTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "capacitor"){};
+  explicit CapacitorTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "capacitor"){};
   void add() override;
   void updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time) override;
 
@@ -168,10 +168,10 @@ private:
   double cap_power_;
 };
 
-class EffortTimeChangeUI : public TimeChangeUi
+class EffortTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit EffortTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "effort"){};
+  explicit EffortTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "effort"){};
   void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time) override;
 
 private:
@@ -181,10 +181,10 @@ private:
   std::string joint_name_;
 };
 
-class ProgressTimeChangeUI : public TimeChangeUi
+class ProgressTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit ProgressTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "progress"){};
+  explicit ProgressTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "progress"){};
   void updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data, const ros::Time& last_get_) override;
 
 private:
@@ -194,10 +194,10 @@ private:
   std::string step_name_;
 };
 
-class DartStatusTimeChangeUI : public TimeChangeUi
+class DartStatusTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit DartStatusTimeChangeUI(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "dart"){};
+  explicit DartStatusTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "dart"){};
   void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_) override;
 
 private:

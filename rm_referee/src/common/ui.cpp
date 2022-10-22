@@ -349,23 +349,23 @@ void TimeChangeUi::display(const ros::Time& time)
   graph_->sendUi(ros::Time::now());
 }
 
-void CapacitorTimeChangeUI::add()
+void CapacitorTimeChangeUi::add()
 {
-  if (cap_power_ != 0.)
-  {
-    graph_->setOperation(rm_referee::GraphOperation::ADD);
-    graph_->display(true);
-    graph_->sendUi(ros::Time::now());
-  }
+  //  if (cap_power_ != 0.)
+  //  {
+  graph_->setOperation(rm_referee::GraphOperation::ADD);
+  graph_->display(true);
+  graph_->sendUi(ros::Time::now());
+  //  }
 }
 
-void CapacitorTimeChangeUI::display(const ros::Time& time)
+void CapacitorTimeChangeUi::display(const ros::Time& time)
 {
   updateConfig();
   TimeChangeUi::display(time);
 }
 
-void CapacitorTimeChangeUI::updateConfig()
+void CapacitorTimeChangeUi::updateConfig()
 {
   if (cap_power_ != 0.)
   {
@@ -388,19 +388,19 @@ void CapacitorTimeChangeUI::updateConfig()
   }
 }
 
-void CapacitorTimeChangeUI::updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time)
+void CapacitorTimeChangeUi::updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time)
 {
   cap_power_ = data.cap_power;
   display(time);
 }
 
-void EffortTimeChangeUI::display(const ros::Time& time)
+void EffortTimeChangeUi::display(const ros::Time& time)
 {
   updateConfig();
   TimeChangeUi::display(time);
 }
 
-void EffortTimeChangeUI::updateConfig()
+void EffortTimeChangeUi::updateConfig()
 {
   char data_str[30] = { ' ' };
   sprintf(data_str, "%s:%.2f N.m", joint_name_.c_str(), joint_effort_);
@@ -414,7 +414,7 @@ void EffortTimeChangeUI::updateConfig()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
-void EffortTimeChangeUI::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
+void EffortTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
   int max_index = 0;
   if (!data->name.empty())
@@ -433,13 +433,13 @@ void EffortTimeChangeUI::updateJointStateData(const sensor_msgs::JointState::Con
   }
 }
 
-void ProgressTimeChangeUI::display(const ros::Time& time)
+void ProgressTimeChangeUi::display(const ros::Time& time)
 {
   updateConfig();
   TimeChangeUi::display(time);
 }
 
-void ProgressTimeChangeUI::updateConfig()
+void ProgressTimeChangeUi::updateConfig()
 {
   char data_str[30] = { ' ' };
   if (total_steps_ != 0)
@@ -450,20 +450,20 @@ void ProgressTimeChangeUI::updateConfig()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
-void ProgressTimeChangeUI::updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data, const ros::Time& last_get_)
+void ProgressTimeChangeUi::updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data, const ros::Time& last_get_)
 {
   total_steps_ = data->total_steps;
   finished_data_ = data->finished_step;
   display(last_get_);
 }
 
-void DartStatusTimeChangeUI::display(const ros::Time& time)
+void DartStatusTimeChangeUi::display(const ros::Time& time)
 {
   updateConfig();
   TimeChangeUi::display(time);
 }
 
-void DartStatusTimeChangeUI::updateConfig()
+void DartStatusTimeChangeUi::updateConfig()
 {
   char data_str[30] = { ' ' };
   if (dart_launch_opening_status_ == 1)
@@ -485,7 +485,7 @@ void DartStatusTimeChangeUI::updateConfig()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
-void DartStatusTimeChangeUI::updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_)
+void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_)
 {
   dart_launch_opening_status_ = data->dart_launch_opening_status;
   display(last_get_);
