@@ -49,13 +49,13 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   for (int i = 0; i < rpc_value.size(); i++)
   {
     if (rpc_value[i]["name"] == "capacitor")
-      capacitor_time_change_ui_ = new CapacitorTimeChangeUI(ui_nh, base_);
+      capacitor_time_change_ui_ = new CapacitorTimeChangeUi(ui_nh, base_);
     if (rpc_value[i]["name"] == "effort")
-      effort_time_change_ui_ = new EffortTimeChangeUI(ui_nh, base_);
+      effort_time_change_ui_ = new EffortTimeChangeUi(ui_nh, base_);
     if (rpc_value[i]["name"] == "progress")
-      progress_time_change_ui_ = new ProgressTimeChangeUI(ui_nh, base_);
+      progress_time_change_ui_ = new ProgressTimeChangeUi(ui_nh, base_);
     if (rpc_value[i]["name"] == "dart_status")
-      dart_status_time_change_ui_ = new DartStatusTimeChangeUI(ui_nh, base_);
+      dart_status_time_change_ui_ = new DartStatusTimeChangeUi(ui_nh, base_);
   }
 
   fixed_ui_ = new FixedUi(ui_nh, base_);

@@ -117,7 +117,6 @@ public:
 private:
   void display() override;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
-
   std::string getGimbalState(uint8_t mode);
   uint8_t gimbal_mode_, gimbal_eject_;
 };
@@ -132,7 +131,6 @@ public:
 private:
   void display() override;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
-
   std::string getTargetState(uint8_t target, uint8_t armor_target);
   uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
 };

@@ -60,10 +60,10 @@ public:
   GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
   TargetTriggerChangeUi* target_trigger_change_ui_{};
 
-  CapacitorTimeChangeUI* capacitor_time_change_ui_{};
-  EffortTimeChangeUI* effort_time_change_ui_{};
-  ProgressTimeChangeUI* progress_time_change_ui_{};
-  DartStatusTimeChangeUI* dart_status_time_change_ui_{};
+  CapacitorTimeChangeUi* capacitor_time_change_ui_{};
+  EffortTimeChangeUi* effort_time_change_ui_{};
+  ProgressTimeChangeUi* progress_time_change_ui_{};
+  DartStatusTimeChangeUi* dart_status_time_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
