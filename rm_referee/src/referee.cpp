@@ -47,10 +47,7 @@ void Referee::read()
     base_.serial_.read(rx_buffer_, rx_len_);
   }
   else
-  {
-    ROS_INFO("Port exception before read");
     return;
-  }
   checkUiAdd();
   uint8_t temp_buffer[256] = { 0 };
   int frame_len;
