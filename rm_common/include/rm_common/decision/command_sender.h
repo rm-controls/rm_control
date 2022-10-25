@@ -294,6 +294,7 @@ public:
     double moving_average_num;
     nh.param("accleration_moving_average_num", moving_average_num, 1.);
     acceleration_filter_ = new MovingAverageFilter<double>(moving_average_num);
+    acceleration_pub_ = nh.advertise<std_msgs::Float64>("target_acceleration", 10);
   }
   ~ShooterCommandSender()
   {
@@ -308,7 +309,9 @@ public:
     acceleration_filter_->input((current_target_vel - last_target_vel_).length() / (current_time - last_target_time_));
     last_target_vel_ = current_target_vel;
     last_target_time_ = current_time;
-    ROS_INFO_THROTTLE(0.5, "%lf", acceleration_filter_->output());
+    std_msgs::Float64 acceleration;
+    acceleration.data = acceleration_filter_->output();
+    acceleration_pub_.publish(acceleration);
   }
   void checkError(const rm_msgs::GimbalDesError& gimbal_des_error, const ros::Time& time)
   {
@@ -359,6 +362,7 @@ private:
   double last_target_time_ = 0.;
   const rm_msgs::TrackData& track_data_;
   MovingAverageFilter<double>* acceleration_filter_;
+  ros::Publisher acceleration_pub_;
 };
 
 class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::TwistStamped>
