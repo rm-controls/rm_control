@@ -232,12 +232,12 @@ public:
   }
   void updateRefereeStatus(bool status)
   {
-    power_limit_->setRefereeStatus(msg_, status);
+    power_limit_->setRefereeStatus(status);
   }
 
   void sendCommand(const ros::Time& time) override
   {
-    msg_.power_limit = power_limit_->getLimitPower();
+    power_limit_->setLimitPower(msg_);
     msg_.accel.linear.x = accel_x_.output(msg_.power_limit);
     msg_.accel.linear.y = accel_y_.output(msg_.power_limit);
     msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
