@@ -68,25 +68,26 @@ public:
   {
     // pub
     ros::NodeHandle root_nh;
-    referee_pub_ = root_nh.advertise<rm_msgs::Referee>("/referee_referee", 1);
-    super_capacitor_pub_ = root_nh.advertise<rm_msgs::SuperCapacitor>("/referee_super_capacitor", 1);
-    game_robot_status_pub_ = root_nh.advertise<rm_msgs::GameRobotStatus>("/referee_game_robot_status", 1);
-    game_status_pub_ = root_nh.advertise<rm_msgs::GameStatus>("/referee_game_status", 1);
-    capacity_data_pub_ = root_nh.advertise<rm_msgs::CapacityData>("/referee_capacity_data", 1);
-    power_heat_data_pub_ = root_nh.advertise<rm_msgs::PowerHeatData>("/referee_power_heat_data", 1);
-    game_robot_hp_pub_ = root_nh.advertise<rm_msgs::GameRobotHp>("/referee_game_robot_hp", 1);
-    event_data_pub_ = root_nh.advertise<rm_msgs::EventData>("/referee_event_data", 1);
-    dart_status_pub_ = root_nh.advertise<rm_msgs::DartStatus>("/referee_dart_status_data", 1);
+    ros::NodeHandle referee_nh(root_nh, "/referee");
+    referee_pub_ = referee_nh.advertise<rm_msgs::Referee>("referee", 1);
+    super_capacitor_pub_ = referee_nh.advertise<rm_msgs::SuperCapacitor>("super_capacitor", 1);
+    game_robot_status_pub_ = referee_nh.advertise<rm_msgs::GameRobotStatus>("game_robot_status", 1);
+    game_status_pub_ = referee_nh.advertise<rm_msgs::GameStatus>("game_status", 1);
+    capacity_data_pub_ = referee_nh.advertise<rm_msgs::CapacityData>("capacity_data", 1);
+    power_heat_data_pub_ = referee_nh.advertise<rm_msgs::PowerHeatData>("power_heat_data", 1);
+    game_robot_hp_pub_ = referee_nh.advertise<rm_msgs::GameRobotHp>("game_robot_hp", 1);
+    event_data_pub_ = referee_nh.advertise<rm_msgs::EventData>("event_data", 1);
+    dart_status_pub_ = referee_nh.advertise<rm_msgs::DartStatus>("dart_status_data", 1);
     icra_buff_debuff_zone_status_pub_ =
-        root_nh.advertise<rm_msgs::IcraBuffDebuffZoneStatus>("/referee_icra_buff_debuff_zone_status_data", 1);
+        referee_nh.advertise<rm_msgs::IcraBuffDebuffZoneStatus>("icra_buff_debuff_zone_status_data", 1);
     supply_projectile_action_pub_ =
-        root_nh.advertise<rm_msgs::SupplyProjectileAction>("/referee_supply_projectile_action_data", 1);
-    dart_remaining_time_pub_ = root_nh.advertise<rm_msgs::DartRemainingTime>("/referee_dart_remaining_time_data", 1);
-    robot_hurt_pub_ = root_nh.advertise<rm_msgs::RobotHurt>("/referee_robot_hurt_data", 1);
-    shoot_data_pub_ = root_nh.advertise<rm_msgs::ShootData>("/referee_shoot_data", 1);
-    bullet_remaining_pub_ = root_nh.advertise<rm_msgs::BulletRemaining>("/referee_bullet_remaining_data", 1);
-    rfid_status_pub_ = root_nh.advertise<rm_msgs::RfidStatus>("/referee_rfid_status_data", 1);
-    dart_client_cmd_pub_ = root_nh.advertise<rm_msgs::DartClientCmd>("/referee_dart_client_cmd_data", 1);
+        referee_nh.advertise<rm_msgs::SupplyProjectileAction>("supply_projectile_action_data", 1);
+    dart_remaining_time_pub_ = referee_nh.advertise<rm_msgs::DartRemainingTime>("dart_remaining_time_data", 1);
+    robot_hurt_pub_ = referee_nh.advertise<rm_msgs::RobotHurt>("robot_hurt_data", 1);
+    shoot_data_pub_ = referee_nh.advertise<rm_msgs::ShootData>("shoot_data", 1);
+    bullet_remaining_pub_ = referee_nh.advertise<rm_msgs::BulletRemaining>("bullet_remaining_data", 1);
+    rfid_status_pub_ = referee_nh.advertise<rm_msgs::RfidStatus>("rfid_status_data", 1);
+    dart_client_cmd_pub_ = referee_nh.advertise<rm_msgs::DartClientCmd>("dart_client_cmd_data", 1);
     // initSerial
     base_.initSerial();
   };
