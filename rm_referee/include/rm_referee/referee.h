@@ -69,7 +69,6 @@ public:
     // pub
     ros::NodeHandle root_nh;
     ros::NodeHandle referee_nh(root_nh, "/referee");
-    referee_pub_ = referee_nh.advertise<rm_msgs::Referee>("referee", 1);
     super_capacitor_pub_ = referee_nh.advertise<rm_msgs::SuperCapacitor>("super_capacitor", 1);
     game_robot_status_pub_ = referee_nh.advertise<rm_msgs::GameRobotStatus>("game_robot_status", 1);
     game_status_pub_ = referee_nh.advertise<rm_msgs::GameStatus>("game_status", 1);
@@ -112,7 +111,6 @@ public:
     rx_len_ = 0;
   }
 
-  ros::Publisher referee_pub_;
   ros::Publisher super_capacitor_pub_;
   ros::Publisher game_robot_status_pub_;
   ros::Publisher game_status_pub_;
@@ -131,7 +129,6 @@ public:
   ros::Publisher dart_client_cmd_pub_;
 
   Base base_;
-  rm_msgs::Referee referee_pub_data_;
   std::vector<uint8_t> rx_buffer_;
   rm_referee::RefereeBase* referee_ui_;
   int rx_len_;

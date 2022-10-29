@@ -263,14 +263,8 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_status_data.robot_level = game_robot_status_ref.robot_level_;
           game_robot_status_data.stamp = last_get_;
 
-          referee_pub_data_.is_online = base_.referee_data_is_online_;
-
-          referee_pub_data_.stamp = last_get_;
-
           referee_ui_->robotStatusDataCallBack(game_robot_status_data, last_get_);
-
           game_robot_status_pub_.publish(game_robot_status_data);
-          referee_pub_.publish(referee_pub_data_);
           break;
         }
         case rm_referee::RefereeCmdId::POWER_HEAT_DATA_CMD:
@@ -287,11 +281,8 @@ int Referee::unpack(uint8_t* rx_data)
           power_heat_data.chassis_volt = static_cast<uint16_t>(power_heat_ref.chassis_volt_ * 0.001);        // mV->V
           power_heat_data.chassis_current = static_cast<uint16_t>(power_heat_ref.chassis_current_ * 0.001);  // mA->A
 
-          referee_pub_data_.is_online = base_.referee_data_is_online_;
-          referee_pub_data_.stamp = last_get_;
           power_heat_data.stamp = last_get_;
 
-          referee_pub_.publish(referee_pub_data_);
           power_heat_data_pub_.publish(power_heat_data);
           break;
         }
@@ -323,13 +314,9 @@ int Referee::unpack(uint8_t* rx_data)
           robot_hurt_data.hurt_type = robot_hurt_ref.hurt_type_;
           robot_hurt_data.stamp = last_get_;
 
-          referee_pub_data_.is_online = base_.referee_data_is_online_;
-          referee_pub_data_.stamp = last_get_;
-
           referee_ui_->robotHurtDataCallBack(robot_hurt_data, last_get_);
 
           robot_hurt_pub_.publish(robot_hurt_data);
-          referee_pub_.publish(referee_pub_data_);
           break;
         }
         case rm_referee::RefereeCmdId::SHOOT_DATA_CMD:
@@ -345,11 +332,7 @@ int Referee::unpack(uint8_t* rx_data)
           shoot_data.shooter_id = shoot_data_ref.shooter_id_;
           shoot_data.stamp = last_get_;
 
-          referee_pub_data_.is_online = base_.referee_data_is_online_;
-          referee_pub_data_.stamp = last_get_;
-
           shoot_data_pub_.publish(shoot_data);
-          referee_pub_.publish(referee_pub_data_);
           break;
         }
         case rm_referee::RefereeCmdId::BULLET_REMAINING_CMD:
