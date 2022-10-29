@@ -33,7 +33,13 @@ protected:
 class TriggerChangeUi : public UiBase
 {
 public:
-  explicit TriggerChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name);
+  explicit TriggerChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name)
+    : UiBase(nh, base, "trigger_change")
+  {
+    for (auto graph : graph_vector_)
+      if (graph.first == graph_name)
+        graph_ = graph.second;
+  }
   virtual void setContent(const std::string& content);
   virtual void display();
   virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
@@ -41,7 +47,13 @@ public:
 class ChassisTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit ChassisTriggerChangeUi(ros::NodeHandle& nh, Base& base);
+  explicit ChassisTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "chassis")
+  {
+    if (base.robot_id_ == rm_referee::RobotId::RED_ENGINEER || base.robot_id_ == rm_referee::RobotId::BLUE_ENGINEER)
+      graph_->setContent("raw");
+    else
+      graph_->setContent("follow");
+  }
   void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
   void updateDbusData(const rm_msgs::DbusData::ConstPtr data);
@@ -58,7 +70,10 @@ private:
 class ShooterTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit ShooterTriggerChangeUi(ros::NodeHandle& nh, Base& base);
+  explicit ShooterTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "shooter")
+  {
+    graph_->setContent("0");
+  }
   void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
 
@@ -72,7 +87,10 @@ private:
 class GimbalTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit GimbalTriggerChangeUi(ros::NodeHandle& nh, Base& base);
+  explicit GimbalTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "gimbal")
+  {
+    graph_->setContent("0");
+  }
   void updateGimbalCmdData(const rm_msgs::GimbalCmd ::ConstPtr data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
 
@@ -86,7 +104,15 @@ private:
 class TargetTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit TargetTriggerChangeUi(ros::NodeHandle& nh, Base& base);
+  explicit TargetTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "target")
+  {
+    for (auto graph : graph_vector_)
+      graph_->setContent("armor");
+    if (base_.robot_color_ == "red")
+      graph_->setColor(rm_referee::GraphColor::CYAN);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
   void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
 
@@ -110,7 +136,13 @@ public:
 class TimeChangeUi : public UiBase
 {
 public:
-  explicit TimeChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name);
+  explicit TimeChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name)
+    : UiBase(nh, base, "time_change")
+  {
+    for (auto graph : graph_vector_)
+      if (graph.first == graph_name)
+        graph_ = graph.second;
+  }
   virtual void display(const ros::Time& time);
   virtual void updateConfig(){};
 };
@@ -170,7 +202,12 @@ private:
 class FlashUi : public UiBase
 {
 public:
-  explicit FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name);
+  explicit FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name) : UiBase(nh, base, "flash")
+  {
+    for (auto graph : graph_vector_)
+      if (graph.first == graph_name)
+        graph_ = graph.second;
+  }
   virtual void display(const ros::Time& time){};
   virtual void updateConfig(){};
 

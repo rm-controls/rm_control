@@ -43,14 +43,6 @@ void UiBase::add()
   graph_->sendUi(ros::Time::now());
 }
 
-TriggerChangeUi::TriggerChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name)
-  : UiBase(nh, base, "trigger_change")
-{
-  for (auto graph : graph_vector_)
-    if (graph.first == graph_name)
-      graph_ = graph.second;
-}
-
 void TriggerChangeUi::setContent(const std::string& content)
 {
   graph_->setContent(content);
@@ -62,14 +54,6 @@ void TriggerChangeUi::display()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->display();
   graph_->sendUi(ros::Time::now());
-}
-
-ChassisTriggerChangeUi::ChassisTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "chassis")
-{
-  if (base.robot_id_ == rm_referee::RobotId::RED_ENGINEER || base.robot_id_ == rm_referee::RobotId::BLUE_ENGINEER)
-    graph_->setContent("raw");
-  else
-    graph_->setContent("follow");
 }
 
 void ChassisTriggerChangeUi::display()
@@ -152,11 +136,6 @@ void ChassisTriggerChangeUi::updateCapacityData(const rm_msgs::CapacityData data
   displayInCapacity();
 }
 
-ShooterTriggerChangeUi::ShooterTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "shooter")
-{
-  graph_->setContent("0");
-}
-
 void ShooterTriggerChangeUi::display()
 {
   updateConfig(shooter_mode_, 0, shoot_frequency_, false);
@@ -197,11 +176,6 @@ void ShooterTriggerChangeUi::updateManualCmdData(rm_msgs::ManualToReferee::Const
   shoot_frequency_ = data->shoot_frequency;
 }
 
-GimbalTriggerChangeUi::GimbalTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "gimbal")
-{
-  graph_->setContent("0");
-}
-
 void GimbalTriggerChangeUi::display()
 {
   updateConfig(gimbal_mode_, gimbal_eject_);
@@ -240,16 +214,6 @@ void GimbalTriggerChangeUi::updateGimbalCmdData(const rm_msgs::GimbalCmd::ConstP
 void GimbalTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
 {
   gimbal_eject_ = data->gimbal_eject;
-}
-
-TargetTriggerChangeUi::TargetTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "target")
-{
-  for (auto graph : graph_vector_)
-    graph_->setContent("armor");
-  if (base_.robot_color_ == "red")
-    graph_->setColor(rm_referee::GraphColor::CYAN);
-  else
-    graph_->setColor(rm_referee::GraphColor::PINK);
 }
 
 void TargetTriggerChangeUi::display()
@@ -332,14 +296,6 @@ void FixedUi::display()
     graph.second->display();
     graph.second->sendUi(ros::Time::now());
   }
-}
-
-TimeChangeUi::TimeChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name)
-  : UiBase(nh, base, "time_change")
-{
-  for (auto graph : graph_vector_)
-    if (graph.first == graph_name)
-      graph_ = graph.second;
 }
 
 void TimeChangeUi::display(const ros::Time& time)
@@ -489,13 +445,6 @@ void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::C
 {
   dart_launch_opening_status_ = data->dart_launch_opening_status;
   display(last_get_);
-}
-
-FlashUi::FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name) : UiBase(nh, base, "flash")
-{
-  for (auto graph : graph_vector_)
-    if (graph.first == graph_name)
-      graph_ = graph.second;
 }
 
 void ArmorFlashUi::display(const ros::Time& time)
