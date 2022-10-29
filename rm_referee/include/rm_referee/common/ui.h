@@ -19,44 +19,6 @@ class UiBase
 public:
   explicit UiBase(ros::NodeHandle& nh, Base& base, const std::string& ui_type);
   virtual void add();
-  virtual void updateStatusData(const rm_msgs::GameRobotStatus data){};
-  virtual void updateStatusData(const rm_msgs::GameRobotStatus data, const ros::Time& last_get_){};
-  virtual void updateGameStatusData(const rm_msgs::GameStatus data){};
-  virtual void updateGameStatusData(const rm_msgs::GameStatus data, const ros::Time& last_get_){};
-  virtual void updateCapacityData(const rm_msgs::CapacityData data){};
-  virtual void updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& last_get_){};
-  virtual void updatePowerHeatData(const rm_msgs::PowerHeatData data){};
-  virtual void updatePowerHeatData(const rm_msgs::PowerHeatData data, const ros::Time& last_get_){};
-  virtual void updateRobotHurtData(const rm_msgs::RobotHurt data){};
-  virtual void updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_){};
-  virtual void updateInteractiveData(const rm_referee::InteractiveData data){};
-  virtual void updateInteractiveData(const rm_referee::InteractiveData data, const ros::Time& last_get_){};
-  virtual void updateEventDataData(const rm_msgs::EventData data){};
-  virtual void updateEventDataData(const rm_msgs::EventData data, const ros::Time& last_get_){};
-  virtual void updateJointStateData(const sensor_msgs::JointState::ConstPtr data){};
-  virtual void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& last_get_){};
-  virtual void updateActuatorStateData(const rm_msgs::ActuatorState::ConstPtr data){};
-  virtual void updateActuatorStateData(const rm_msgs::ActuatorState::ConstPtr data, const ros::Time& last_get_){};
-  virtual void updateDbusData(const rm_msgs::DbusData::ConstPtr data){};
-  virtual void updateDbusData(const rm_msgs::DbusData::ConstPtr data, const ros::Time& last_get_){};
-  virtual void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data){};
-  virtual void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_){};
-  virtual void updateVel2DCmdData(const geometry_msgs::Twist::ConstPtr data){};
-  virtual void updateVel2DCmdData(const geometry_msgs::Twist::ConstPtr data, const ros::Time& last_get_){};
-  virtual void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr dat){};
-  virtual void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data, const ros::Time& last_get_){};
-  virtual void updateGimbalCmdData(const rm_msgs::GimbalCmd::ConstPtr data){};
-  virtual void updateGimbalCmdData(const rm_msgs::GimbalCmd::ConstPtr data, const ros::Time& last_get_){};
-  virtual void updateCardCmdData(const rm_msgs::StateCmd::ConstPtr data){};
-  virtual void updateCardCmdData(const rm_msgs::StateCmd::ConstPtr data, const ros::Time& last_get_){};
-  virtual void updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data){};
-  virtual void updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data, const ros::Time& last_get_){};
-  virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data){};
-  virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_){};
-  virtual void updateRadarData(const std_msgs::Int8MultiArrayConstPtr data){};
-  virtual void updateRadarData(const std_msgs::Int8MultiArrayConstPtr data, const ros::Time& last_get_){};
-  virtual void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data){};
-  virtual void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_){};
 
 protected:
   Base& base_;
@@ -80,10 +42,10 @@ class ChassisTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit ChassisTriggerChangeUi(ros::NodeHandle& nh, Base& base);
-  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data) override;
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
-  void updateDbusData(const rm_msgs::DbusData::ConstPtr data) override;
-  void updateCapacityData(const rm_msgs::CapacityData data) override;
+  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data);
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
+  void updateDbusData(const rm_msgs::DbusData::ConstPtr data);
+  void updateCapacityData(const rm_msgs::CapacityData data);
 
 private:
   void display() override;
@@ -97,8 +59,8 @@ class ShooterTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit ShooterTriggerChangeUi(ros::NodeHandle& nh, Base& base);
-  void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data) override;
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
+  void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data);
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
 
 private:
   void display() override;
@@ -111,8 +73,8 @@ class GimbalTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit GimbalTriggerChangeUi(ros::NodeHandle& nh, Base& base);
-  void updateGimbalCmdData(const rm_msgs::GimbalCmd ::ConstPtr data) override;
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
+  void updateGimbalCmdData(const rm_msgs::GimbalCmd ::ConstPtr data);
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
 
 private:
   void display() override;
@@ -125,8 +87,8 @@ class TargetTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit TargetTriggerChangeUi(ros::NodeHandle& nh, Base& base);
-  void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data) override;
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
+  void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data);
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
 
 private:
   void display() override;
@@ -158,7 +120,7 @@ class CapacitorTimeChangeUi : public TimeChangeUi
 public:
   explicit CapacitorTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "capacitor"){};
   void add() override;
-  void updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time) override;
+  void updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time);
 
 private:
   void display(const ros::Time& time) override;
@@ -170,7 +132,7 @@ class EffortTimeChangeUi : public TimeChangeUi
 {
 public:
   explicit EffortTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "effort"){};
-  void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time) override;
+  void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
 
 private:
   void display(const ros::Time& time) override;
@@ -183,7 +145,7 @@ class ProgressTimeChangeUi : public TimeChangeUi
 {
 public:
   explicit ProgressTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "progress"){};
-  void updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data, const ros::Time& last_get_) override;
+  void updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data, const ros::Time& last_get_);
 
 private:
   void display(const ros::Time& time) override;
@@ -196,7 +158,7 @@ class DartStatusTimeChangeUi : public TimeChangeUi
 {
 public:
   explicit DartStatusTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "dart"){};
-  void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_) override;
+  void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_);
 
 private:
   void display(const ros::Time& time) override;
@@ -222,7 +184,7 @@ public:
   {
     graph_name_ = graph_name;
   };
-  void updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_) override;
+  void updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_);
 
 private:
   void display(const ros::Time& time) override;
@@ -237,7 +199,7 @@ class CoverFlashUi : public FlashUi
 {
 public:
   explicit CoverFlashUi(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "cover"){};
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_) override;
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_);
 
 private:
   void display(const ros::Time& time) override;
@@ -248,7 +210,7 @@ class SpinFlashUi : public FlashUi
 {
 public:
   explicit SpinFlashUi(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "spin"){};
-  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_) override;
+  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_);
 
 private:
   void display(const ros::Time& time) override;

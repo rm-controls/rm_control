@@ -68,7 +68,7 @@ public:
   {
     // pub
     ros::NodeHandle root_nh;
-    ros::NodeHandle referee_nh(root_nh, "/referee");
+    ros::NodeHandle referee_nh(root_nh, "referee");
     super_capacitor_pub_ = referee_nh.advertise<rm_msgs::SuperCapacitor>("super_capacitor", 1);
     game_robot_status_pub_ = referee_nh.advertise<rm_msgs::GameRobotStatus>("game_robot_status", 1);
     game_status_pub_ = referee_nh.advertise<rm_msgs::GameStatus>("game_status", 1);
