@@ -63,7 +63,6 @@ add_message_files(
         RfidStatus.msg
         DartClientCmd.msg
         ManualToReferee.msg
-        Referee.msg
         RadarData.msg
 )
 

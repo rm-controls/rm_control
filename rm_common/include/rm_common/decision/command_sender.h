@@ -47,6 +47,7 @@
 #include <rm_msgs/GimbalDesError.h>
 #include <rm_msgs/StateCmd.h>
 #include <rm_msgs/TrackData.h>
+#include <rm_msgs/GameRobotHp.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
@@ -79,6 +80,18 @@ public:
   virtual void sendCommand(const ros::Time& time)
   {
     pub_.publish(msg_);
+  }
+  virtual void updateGameRobotStatus(const rm_msgs::GameRobotStatus data)
+  {
+  }
+  virtual void updateGameStatus(const rm_msgs::GameStatus data)
+  {
+  }
+  virtual void updateCapacityData(const rm_msgs::CapacityData data)
+  {
+  }
+  virtual void updatePowerHeatData(const rm_msgs::PowerHeatData data)
+  {
   }
   virtual void setZero() = 0;
   MsgType* getMsg()
@@ -183,15 +196,10 @@ protected:
 class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisCmd>
 {
 public:
-  explicit ChassisCommandSender(ros::NodeHandle& nh, const rm_msgs::GameStatus& game_status_data,
-                                const rm_msgs::GameRobotStatus& game_robot_status_data,
-                                const rm_msgs::PowerHeatData& power_heat_data, const rm_msgs::Referee& referee_data,
-                                const rm_msgs::CapacityData& capacity_data)
-    : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh)
+  explicit ChassisCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh)
   {
     XmlRpc::XmlRpcValue xml_rpc_value;
-    power_limit_ = new PowerLimit(nh, msg_, game_status_data, game_robot_status_data, power_heat_data, referee_data,
-                                  capacity_data);
+    power_limit_ = new PowerLimit(nh);
     if (!nh.getParam("accel_x", xml_rpc_value))
       ROS_ERROR("Accel X no defined (namespace: %s)", nh.getNamespace().c_str());
     else
@@ -205,9 +213,31 @@ public:
     else
       accel_z_.init(xml_rpc_value);
   }
+
+  void updateGameStatus(const rm_msgs::GameStatus data) override
+  {
+    power_limit_->setGameProgress(data);
+  }
+  void updateGameRobotStatus(const rm_msgs::GameRobotStatus data) override
+  {
+    power_limit_->setGameRobotData(data);
+  }
+  void updatePowerHeatData(const rm_msgs::PowerHeatData data) override
+  {
+    power_limit_->setChassisPowerBuffer(data);
+  }
+  void updateCapacityData(const rm_msgs::CapacityData data) override
+  {
+    power_limit_->setCapacityData(data);
+  }
+  void updateRefereeStatus(bool status)
+  {
+    power_limit_->setRefereeStatus(status);
+  }
+
   void sendCommand(const ros::Time& time) override
   {
-    msg_.power_limit = power_limit_->getLimitPower();
+    power_limit_->setLimitPower(msg_);
     msg_.accel.linear.x = accel_x_.output(msg_.power_limit);
     msg_.accel.linear.y = accel_y_.output(msg_.power_limit);
     msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
@@ -272,13 +302,11 @@ private:
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd>
 {
 public:
-  explicit ShooterCommandSender(ros::NodeHandle& nh, const rm_msgs::TrackData& track_data,
-                                const rm_msgs::GameRobotStatus& robot_status_data,
-                                const rm_msgs::PowerHeatData& power_heat_data, const rm_msgs::Referee& referee_data)
+  explicit ShooterCommandSender(ros::NodeHandle& nh, const rm_msgs::TrackData& track_data)
     : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh), track_data_(track_data)
   {
     ros::NodeHandle limit_nh(nh, "heat_limit");
-    heat_limit_ = new HeatLimit(limit_nh, robot_status_data, power_heat_data, referee_data);
+    heat_limit_ = new HeatLimit(limit_nh);
     nh.param("speed_10m_per_speed", speed_10_, 10.);
     nh.param("speed_15m_per_speed", speed_15_, 15.);
     nh.param("speed_16m_per_speed", speed_16_, 16.);
@@ -294,11 +322,26 @@ public:
     double moving_average_num;
     nh.param("accleration_moving_average_num", moving_average_num, 1.);
     acceleration_filter_ = new MovingAverageFilter<double>(moving_average_num);
+    track_target_acceleration_ = 0.;
   }
   ~ShooterCommandSender()
   {
     delete heat_limit_;
   }
+
+  void updateGameRobotStatus(const rm_msgs::GameRobotStatus data) override
+  {
+    heat_limit_->setStatusOfShooter(data);
+  }
+  void updatePowerHeatData(const rm_msgs::PowerHeatData data) override
+  {
+    heat_limit_->setCoolingHeatOfShooter(data);
+  }
+  void updateRefereeStatus(bool status)
+  {
+    heat_limit_->setRefereeStatus(status);
+  }
+
   void computeTargetAcceleration()
   {
     auto target_vel = track_data_.target_vel;

@@ -49,7 +49,6 @@
 
 #include "rm_referee/common/protocol.h"
 
-#include <rm_msgs/Referee.h>
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/DbusData.h>
 #include <rm_msgs/StateCmd.h>
@@ -91,6 +90,7 @@ struct CapacityData
 class Base
 {
 public:
+
   serial::Serial serial_;
 
   int client_id_ = 0;  // recipient's id
