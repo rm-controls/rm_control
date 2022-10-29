@@ -64,7 +64,7 @@ private:
 class Referee
 {
 public:
-  Referee() : super_capacitor_(), last_get_(ros::Time::now())
+  Referee(ros::NodeHandle& nh) : referee_ui_(nh, base_), super_capacitor_(), last_get_(ros::Time::now())
   {
     // pub
     ros::NodeHandle root_nh;
@@ -93,17 +93,17 @@ public:
   void read();
   void checkUiAdd()
   {
-    if (referee_ui_->send_ui_flag_)
+    if (referee_ui_.send_ui_flag_)
     {
-      if (referee_ui_->add_ui_flag_)
+      if (referee_ui_.add_ui_flag_)
       {
-        referee_ui_->addUi();
+        referee_ui_.addUi();
         ROS_INFO("Add ui");
-        referee_ui_->add_ui_flag_ = false;
+        referee_ui_.add_ui_flag_ = false;
       }
     }
     else
-      referee_ui_->add_ui_flag_ = true;
+      referee_ui_.add_ui_flag_ = true;
   }
   void clearRxBuffer()
   {
@@ -130,7 +130,7 @@ public:
 
   Base base_;
   std::vector<uint8_t> rx_buffer_;
-  rm_referee::RefereeBase* referee_ui_;
+  rm_referee::RefereeBase referee_ui_;
   int rx_len_;
 
 private:

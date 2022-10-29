@@ -9,8 +9,7 @@ int main(int argc, char** argv)
   std::string robot;
   ros::init(argc, argv, "rm_referee");  // rm_referee
   ros::NodeHandle nh("~");
-  rm_referee::Referee referee;
-  referee.referee_ui_ = new rm_referee::RefereeBase(nh, referee.base_);
+  rm_referee::Referee referee(nh);
   ros::Rate loop_rate(80);
   while (ros::ok())
   {

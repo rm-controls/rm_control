@@ -109,7 +109,7 @@ int Referee::unpack(uint8_t* rx_data)
           game_status_data.sync_time_stamp = game_status_ref.sync_time_stamp_;
           game_status_data.stamp = last_get_;
 
-          referee_ui_->gameStatusDataCallBack(game_status_data, last_get_);
+          referee_ui_.gameStatusDataCallBack(game_status_data, last_get_);
           game_status_pub_.publish(game_status_data);
           break;
         }
@@ -263,7 +263,7 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_status_data.robot_level = game_robot_status_ref.robot_level_;
           game_robot_status_data.stamp = last_get_;
 
-          referee_ui_->robotStatusDataCallBack(game_robot_status_data, last_get_);
+          referee_ui_.robotStatusDataCallBack(game_robot_status_data, last_get_);
           game_robot_status_pub_.publish(game_robot_status_data);
           break;
         }
@@ -314,7 +314,7 @@ int Referee::unpack(uint8_t* rx_data)
           robot_hurt_data.hurt_type = robot_hurt_ref.hurt_type_;
           robot_hurt_data.stamp = last_get_;
 
-          referee_ui_->robotHurtDataCallBack(robot_hurt_data, last_get_);
+          referee_ui_.robotHurtDataCallBack(robot_hurt_data, last_get_);
 
           robot_hurt_pub_.publish(robot_hurt_data);
           break;
@@ -458,7 +458,7 @@ void Referee::publishCapacityData()
   capacity_data.limit_power = super_capacitor_.capacity_data_.limit_power;
   capacity_data.stamp = last_get_;
 
-  referee_ui_->capacityDataCallBack(capacity_data, last_get_);
+  referee_ui_.capacityDataCallBack(capacity_data, last_get_);
 
   super_capacitor_pub_.publish(super_capacitor_data);
   capacity_data_pub_.publish(capacity_data);
