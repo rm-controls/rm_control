@@ -90,7 +90,6 @@ struct CapacityData
 class Base
 {
 public:
-
   serial::Serial serial_;
 
   int client_id_ = 0;  // recipient's id
