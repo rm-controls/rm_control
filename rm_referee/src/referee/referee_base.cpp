@@ -36,26 +36,26 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   for (int i = 0; i < rpc_value.size(); i++)
   {
     if (rpc_value[i]["name"] == "chassis")
-      chassis_trigger_change_ui_ = new ChassisTriggerChangeUi(rpc_value, base_);
+      chassis_trigger_change_ui_ = new ChassisTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "shooter")
-      shooter_trigger_change_ui_ = new ShooterTriggerChangeUi(rpc_value, base_);
+      shooter_trigger_change_ui_ = new ShooterTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "gimbal")
-      gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value, base_);
+      gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "target")
-      target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value, base_);
+      target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
   }
 
   ui_nh.getParam("time_change", rpc_value);
   for (int i = 0; i < rpc_value.size(); i++)
   {
     if (rpc_value[i]["name"] == "capacitor")
-      capacitor_time_change_ui_ = new CapacitorTimeChangeUi(rpc_value, base_);
+      capacitor_time_change_ui_ = new CapacitorTimeChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "effort")
-      effort_time_change_ui_ = new EffortTimeChangeUi(rpc_value, base_);
+      effort_time_change_ui_ = new EffortTimeChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "progress")
-      progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value, base_);
+      progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "dart_status")
-      dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value, base_);
+      dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_);
   }
 
   fixed_ui_ = new FixedUi(rpc_value, base_);
@@ -64,17 +64,17 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   for (int i = 0; i < rpc_value.size(); i++)
   {
     if (rpc_value[i]["name"] == "cover")
-      cover_flash_ui_ = new CoverFlashUi(rpc_value, base_);
+      cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "spin")
-      spin_flash_ui_ = new SpinFlashUi(rpc_value, base_);
+      spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "armor0")
-      armor0_flash_ui_ = new ArmorFlashUi(rpc_value, base_, "armor0");
+      armor0_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor0");
     if (rpc_value[i]["name"] == "armor1")
-      armor1_flash_ui_ = new ArmorFlashUi(rpc_value, base_, "armor1");
+      armor1_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor1");
     if (rpc_value[i]["name"] == "armor2")
-      armor2_flash_ui_ = new ArmorFlashUi(rpc_value, base_, "armor2");
+      armor2_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor2");
     if (rpc_value[i]["name"] == "armor3")
-      armor3_flash_ui_ = new ArmorFlashUi(rpc_value, base_, "armor3");
+      armor3_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor3");
   }
 }
 void RefereeBase::addUi()

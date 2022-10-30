@@ -34,16 +34,10 @@ class TriggerChangeUi : public UiBase
 public:
   explicit TriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name) : UiBase(base)
   {
-    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
-    {
-      if (rpc_value[i]["name"] == graph_name)
-      {
-        if (graph_name == "chassis")
-          graph_ = new Graph(rpc_value[i]["config"], base_, 1);
-        else
-          graph_ = new Graph(rpc_value[i]["config"], base_, id_++);
-      }
-    }
+    if (graph_name == "chassis")
+      graph_ = new Graph(rpc_value["config"], base_, 1);
+    else
+      graph_ = new Graph(rpc_value["config"], base_, id_++);
   }
   virtual void setContent(const std::string& content);
   virtual void display();
@@ -153,16 +147,7 @@ class TimeChangeUi : public UiBase
 public:
   explicit TimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name) : UiBase(base)
   {
-    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
-    {
-      if (rpc_value[i]["name"] == graph_name)
-      {
-        if (graph_name == "chassis")
-          graph_ = new Graph(rpc_value[i]["config"], base_, 1);
-        else
-          graph_ = new Graph(rpc_value[i]["config"], base_, id_++);
-      }
-    }
+    graph_ = new Graph(rpc_value["config"], base_, id_++);
   }
   virtual void display(const ros::Time& time);
   virtual void updateConfig(){};
@@ -227,16 +212,7 @@ class FlashUi : public UiBase
 public:
   explicit FlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name) : UiBase(base)
   {
-    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
-    {
-      if (rpc_value[i]["name"] == graph_name)
-      {
-        if (graph_name == "chassis")
-          graph_ = new Graph(rpc_value[i]["config"], base_, 1);
-        else
-          graph_ = new Graph(rpc_value[i]["config"], base_, id_++);
-      }
-    }
+    graph_ = new Graph(rpc_value["config"], base_, id_++);
   }
   virtual void display(const ros::Time& time){};
   virtual void updateConfig(){};
