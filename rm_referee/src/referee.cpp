@@ -449,7 +449,7 @@ void Referee::publishCapacityData()
   super_capacitor_data.chassis_power_buffer = static_cast<uint16_t>(super_capacitor_.capacity_data_.buffer_power);
   super_capacitor_data.limit_power = static_cast<float>(super_capacitor_.capacity_data_.limit_power);
   super_capacitor_data.chassis_power = static_cast<float>(super_capacitor_.capacity_data_.chassis_power);
-  super_capacitor_data.stamp = super_capacitor_.last_get_data_;
+  super_capacitor_data.stamp = super_capacitor_.last_get_data_time_;
 
   capacity_data.buffer_power = super_capacitor_.capacity_data_.buffer_power;
   capacity_data.is_online = super_capacitor_.capacity_data_.is_online;
@@ -491,7 +491,7 @@ void SuperCapacitor::read(const std::vector<uint8_t>& rx_buffer)
     capacity_data_.buffer_power = 0.;
   if (capacity_data_.cap_power >= 1.)
     capacity_data_.cap_power = 1.;
-  if (ros::Time::now() - last_get_data_ > ros::Duration(0.1))
+  if (ros::Time::now() - last_get_data_time_ > ros::Duration(0.1))
     capacity_data_.is_online = false;
 }
 
@@ -499,7 +499,7 @@ void SuperCapacitor::receiveCallBack(unsigned char package_id, const unsigned ch
 {
   if (package_id == 0)
   {
-    last_get_data_ = ros::Time::now();
+    last_get_data_time_ = ros::Time::now();
     capacity_data_.is_online = true;
     capacity_data_.chassis_power = static_cast<double>(int16ToFloat((data[0] << 8) | data[1]));
     capacity_data_.limit_power = static_cast<double>(int16ToFloat((data[2] << 8) | data[3]));

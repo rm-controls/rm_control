@@ -47,9 +47,9 @@ namespace rm_referee
 class SuperCapacitor
 {
 public:
-  explicit SuperCapacitor() : last_get_data_(ros::Time::now()){};
+  explicit SuperCapacitor() : last_get_data_time_(ros::Time::now()){};
   void read(const std::vector<uint8_t>& rx_buffer);
-  ros::Time last_get_data_;
+  ros::Time last_get_data_time_;
   rm_referee::CapacityData capacity_data_;
 
 private:
