@@ -18,6 +18,7 @@ class UiBase
 {
 public:
   explicit UiBase(Base& base) : base_(base), tf_listener_(tf_buffer_){};
+  ~UiBase() = default;
   virtual void add();
 
 protected:
