@@ -17,7 +17,7 @@ namespace rm_referee
 class UiBase
 {
 public:
-  explicit UiBase(ros::NodeHandle& nh, Base& base, const std::string& ui_type);
+  explicit UiBase(Base& base) : base_(base), tf_listener_(tf_buffer_){};
   virtual void add();
 
 protected:
@@ -26,19 +26,24 @@ protected:
   static int id_;
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
-  std::map<std::string, Graph*> graph_vector_;
 };
 
 // TriggerChangeUi
 class TriggerChangeUi : public UiBase
 {
 public:
-  explicit TriggerChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name)
-    : UiBase(nh, base, "trigger_change")
+  explicit TriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name) : UiBase(base)
   {
-    for (auto graph : graph_vector_)
-      if (graph.first == graph_name)
-        graph_ = graph.second;
+    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
+    {
+      if (rpc_value[i]["name"] == graph_name)
+      {
+        if (graph_name == "chassis")
+          graph_ = new Graph(rpc_value[i]["config"], base_, 1);
+        else
+          graph_ = new Graph(rpc_value[i]["config"], base_, id_++);
+      }
+    }
   }
   virtual void setContent(const std::string& content);
   virtual void display();
@@ -47,7 +52,8 @@ public:
 class ChassisTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit ChassisTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "chassis")
+  explicit ChassisTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "chassis")
   {
     if (base.robot_id_ == rm_referee::RobotId::RED_ENGINEER || base.robot_id_ == rm_referee::RobotId::BLUE_ENGINEER)
       graph_->setContent("raw");
@@ -70,7 +76,8 @@ private:
 class ShooterTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit ShooterTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "shooter")
+  explicit ShooterTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "shooter")
   {
     graph_->setContent("0");
   }
@@ -87,7 +94,8 @@ private:
 class GimbalTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit GimbalTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "gimbal")
+  explicit GimbalTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "gimbal")
   {
     graph_->setContent("0");
   }
@@ -104,10 +112,10 @@ private:
 class TargetTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit TargetTriggerChangeUi(ros::NodeHandle& nh, Base& base) : TriggerChangeUi(nh, base, "target")
+  explicit TargetTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "target")
   {
-    for (auto graph : graph_vector_)
-      graph_->setContent("armor");
+    graph_->setContent("armor");
     if (base_.robot_color_ == "red")
       graph_->setColor(rm_referee::GraphColor::CYAN);
     else
@@ -127,21 +135,34 @@ private:
 class FixedUi : public UiBase
 {
 public:
-  explicit FixedUi(ros::NodeHandle& nh, Base& base) : UiBase(nh, base, "fixed"){};
+  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : UiBase(base)
+  {
+    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
+      graph_vector_.insert(
+          std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
+  };
   void add() override;
   void display();
+
+  std::map<std::string, Graph*> graph_vector_;
 };
 
 //// TimeChangeUi
 class TimeChangeUi : public UiBase
 {
 public:
-  explicit TimeChangeUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name)
-    : UiBase(nh, base, "time_change")
+  explicit TimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name) : UiBase(base)
   {
-    for (auto graph : graph_vector_)
-      if (graph.first == graph_name)
-        graph_ = graph.second;
+    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
+    {
+      if (rpc_value[i]["name"] == graph_name)
+      {
+        if (graph_name == "chassis")
+          graph_ = new Graph(rpc_value[i]["config"], base_, 1);
+        else
+          graph_ = new Graph(rpc_value[i]["config"], base_, id_++);
+      }
+    }
   }
   virtual void display(const ros::Time& time);
   virtual void updateConfig(){};
@@ -150,7 +171,8 @@ public:
 class CapacitorTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit CapacitorTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "capacitor"){};
+  explicit CapacitorTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TimeChangeUi(rpc_value, base, "capacitor"){};
   void add() override;
   void updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time);
 
@@ -163,7 +185,7 @@ private:
 class EffortTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit EffortTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "effort"){};
+  explicit EffortTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TimeChangeUi(rpc_value, base, "effort"){};
   void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
 
 private:
@@ -176,7 +198,8 @@ private:
 class ProgressTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit ProgressTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "progress"){};
+  explicit ProgressTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TimeChangeUi(rpc_value, base, "progress"){};
   void updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data, const ros::Time& last_get_);
 
 private:
@@ -189,7 +212,7 @@ private:
 class DartStatusTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit DartStatusTimeChangeUi(ros::NodeHandle& nh, Base& base) : TimeChangeUi(nh, base, "dart"){};
+  explicit DartStatusTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TimeChangeUi(rpc_value, base, "dart"){};
   void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_);
 
 private:
@@ -202,22 +225,28 @@ private:
 class FlashUi : public UiBase
 {
 public:
-  explicit FlashUi(ros::NodeHandle& nh, Base& base, const std::string& graph_name) : UiBase(nh, base, "flash")
+  explicit FlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name) : UiBase(base)
   {
-    for (auto graph : graph_vector_)
-      if (graph.first == graph_name)
-        graph_ = graph.second;
+    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
+    {
+      if (rpc_value[i]["name"] == graph_name)
+      {
+        if (graph_name == "chassis")
+          graph_ = new Graph(rpc_value[i]["config"], base_, 1);
+        else
+          graph_ = new Graph(rpc_value[i]["config"], base_, id_++);
+      }
+    }
   }
   virtual void display(const ros::Time& time){};
   virtual void updateConfig(){};
-
-private:
 };
 
 class ArmorFlashUi : public FlashUi
 {
 public:
-  explicit ArmorFlashUi(ros::NodeHandle& nh, Base& base, std::string graph_name) : FlashUi(nh, base, graph_name)
+  explicit ArmorFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::string graph_name)
+    : FlashUi(rpc_value, base, graph_name)
   {
     graph_name_ = graph_name;
   };
@@ -235,7 +264,7 @@ private:
 class CoverFlashUi : public FlashUi
 {
 public:
-  explicit CoverFlashUi(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "cover"){};
+  explicit CoverFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : FlashUi(rpc_value, base, "cover"){};
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_);
 
 private:
@@ -246,7 +275,7 @@ private:
 class SpinFlashUi : public FlashUi
 {
 public:
-  explicit SpinFlashUi(ros::NodeHandle& nh, Base& base) : FlashUi(nh, base, "spin"){};
+  explicit SpinFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : FlashUi(rpc_value, base, "spin"){};
   void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_);
 
 private:

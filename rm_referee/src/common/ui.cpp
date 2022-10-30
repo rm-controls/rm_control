@@ -8,34 +8,6 @@
 namespace rm_referee
 {
 int UiBase::id_(2);
-UiBase::UiBase(ros::NodeHandle& nh, Base& base, const std::string& ui_type) : base_(base), tf_listener_(tf_buffer_)
-{
-  XmlRpc::XmlRpcValue rpc_value;
-  if (!nh.getParam(ui_type, rpc_value))
-  {
-    ROS_ERROR("%s no defined (namespace %s)", ui_type.c_str(), nh.getNamespace().c_str());
-    return;
-  }
-  try
-  {
-    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
-    {
-      if (rpc_value[i]["name"] == "chassis")
-        graph_vector_.insert(
-            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, 1)));
-      else
-        graph_vector_.insert(
-            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
-    }
-  }
-  catch (XmlRpc::XmlRpcException& e)
-  {
-    ROS_ERROR("Wrong ui parameter: %s", e.getMessage().c_str());
-  }
-  for (auto graph : graph_vector_)
-    graph.second->setOperation(rm_referee::GraphOperation::DELETE);
-}
-
 void UiBase::add()
 {
   graph_->setOperation(rm_referee::GraphOperation::ADD);
