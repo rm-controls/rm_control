@@ -279,12 +279,12 @@ void TimeChangeUi::display(const ros::Time& time)
 
 void CapacitorTimeChangeUi::add()
 {
-  //  if (cap_power_ != 0.)
-  //  {
-  graph_->setOperation(rm_referee::GraphOperation::ADD);
-  graph_->display(true);
-  graph_->sendUi(ros::Time::now());
-  //  }
+  if (cap_power_ != 0.)
+  {
+    graph_->setOperation(rm_referee::GraphOperation::ADD);
+    graph_->display(true);
+    graph_->sendUi(ros::Time::now());
+  }
 }
 
 void CapacitorTimeChangeUi::display(const ros::Time& time)
@@ -295,18 +295,12 @@ void CapacitorTimeChangeUi::display(const ros::Time& time)
 
 void CapacitorTimeChangeUi::updateConfig()
 {
-  if (cap_power_ != 0.)
+  if (cap_power_ > 0.)
   {
-    if (cap_power_ > 0.)
-    {
-      graph_->setStartX(610);
-      graph_->setStartY(100);
-
-      graph_->setEndX(610 + 600 * cap_power_);
-      graph_->setEndY(100);
-    }
-    else
-      return;
+    graph_->setStartX(610);
+    graph_->setStartY(100);
+    graph_->setEndX(610 + 600 * cap_power_);
+    graph_->setEndY(100);
     if (cap_power_ < 0.3)
       graph_->setColor(rm_referee::GraphColor::ORANGE);
     else if (cap_power_ > 0.7)
@@ -314,6 +308,8 @@ void CapacitorTimeChangeUi::updateConfig()
     else
       graph_->setColor(rm_referee::GraphColor::YELLOW);
   }
+  else
+    return;
 }
 
 void CapacitorTimeChangeUi::updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time)
@@ -437,16 +433,16 @@ void ArmorFlashUi::display(const ros::Time& time)
 
 void ArmorFlashUi::updateArmorPosition()
 {
-  geometry_msgs::TransformStamped yaw_2_baselink;
+  geometry_msgs::TransformStamped yaw2base;
   double roll, pitch, yaw;
   try
   {
-    yaw_2_baselink = tf_buffer_.lookupTransform("yaw", "base_link", ros::Time(0));
+    yaw2base = tf_buffer_.lookupTransform("yaw", "base_link", ros::Time(0));
   }
   catch (tf2::TransformException& ex)
   {
   }
-  quatToRPY(yaw_2_baselink.transform.rotation, roll, pitch, yaw);
+  quatToRPY(yaw2base.transform.rotation, roll, pitch, yaw);
   if (getArmorId() == 0 || getArmorId() == 2)
   {
     graph_->setStartX(static_cast<int>((960 + 340 * sin(getArmorId() * M_PI_2 + yaw))));
