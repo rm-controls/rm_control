@@ -51,7 +51,7 @@ void Referee::read()
   checkUiAdd();
   uint8_t temp_buffer[256] = { 0 };
   int frame_len;
-  if (ros::Time::now() - last_get_ > ros::Duration(0.1))
+  if (ros::Time::now() - last_get_data_time_ > ros::Duration(0.1))
     base_.referee_data_is_online_ = false;
   if (rx_len_ < k_unpack_buffer_length_)
   {
@@ -107,9 +107,9 @@ int Referee::unpack(uint8_t* rx_data)
           game_status_data.game_progress = game_status_ref.game_progress_;
           game_status_data.stage_remain_time = game_status_ref.stage_remain_time_;
           game_status_data.sync_time_stamp = game_status_ref.sync_time_stamp_;
-          game_status_data.stamp = last_get_;
+          game_status_data.stamp = last_get_data_time_;
 
-          referee_ui_.gameStatusDataCallBack(game_status_data, last_get_);
+          referee_ui_.gameStatusDataCallBack(game_status_data, last_get_data_time_);
           game_status_pub_.publish(game_status_data);
           break;
         }
@@ -137,7 +137,7 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_hp_data.red_4_robot_hp = game_robot_hp_ref.red_4_robot_hp_;
           game_robot_hp_data.red_5_robot_hp = game_robot_hp_ref.red_5_robot_hp_;
           game_robot_hp_data.red_7_robot_hp = game_robot_hp_ref.red_7_robot_hp_;
-          game_robot_hp_data.stamp = last_get_;
+          game_robot_hp_data.stamp = last_get_data_time_;
 
           game_robot_hp_pub_.publish(game_robot_hp_data);
           break;
@@ -150,7 +150,7 @@ int Referee::unpack(uint8_t* rx_data)
 
           dart_status_data.dart_belong = dart_status_ref.dart_belong_;
           dart_status_data.stage_remaining_time = dart_status_ref.stage_remaining_time_;
-          dart_status_data.stamp = last_get_;
+          dart_status_data.stamp = last_get_data_time_;
 
           dart_status_pub_.publish(dart_status_data);
           break;
@@ -183,7 +183,7 @@ int Referee::unpack(uint8_t* rx_data)
           icra_buff_debuff_zone_status_data.f_6_zone_buff_debuff_status =
               icra_buff_debuff_zone_status_ref.f_6_zone_buff_debuff_status_;
           icra_buff_debuff_zone_status_data.f_6_zone_status = icra_buff_debuff_zone_status_ref.f_6_zone_status_;
-          icra_buff_debuff_zone_status_data.stamp = last_get_;
+          icra_buff_debuff_zone_status_data.stamp = last_get_data_time_;
 
           icra_buff_debuff_zone_status_pub_.publish(icra_buff_debuff_zone_status_data);
           break;
@@ -195,7 +195,7 @@ int Referee::unpack(uint8_t* rx_data)
           memcpy(&event_ref, rx_data + 7, sizeof(rm_referee::EventData));
 
           event_data.event_data = event_ref.event_type_;
-          event_data.stamp = last_get_;
+          event_data.stamp = last_get_data_time_;
 
           event_data_pub_.publish(event_data);
           break;
@@ -210,7 +210,7 @@ int Referee::unpack(uint8_t* rx_data)
           supply_projectile_action_data.supply_projectile_num = supply_projectile_action_ref.supply_projectile_num_;
           supply_projectile_action_data.supply_projectile_step = supply_projectile_action_ref.supply_projectile_step_;
           supply_projectile_action_data.supply_robot_id = supply_projectile_action_ref.supply_robot_id_;
-          supply_projectile_action_data.stamp = last_get_;
+          supply_projectile_action_data.stamp = last_get_data_time_;
 
           supply_projectile_action_pub_.publish(supply_projectile_action_data);
           break;
@@ -228,7 +228,7 @@ int Referee::unpack(uint8_t* rx_data)
           memcpy(&dart_remaining_time_ref, rx_data + 7, sizeof(rm_referee::DartRemainingTime));
 
           dart_remaining_time_data.dart_remaining_time = dart_remaining_time_ref.dart_remaining_time_;
-          dart_remaining_time_data.stamp = last_get_;
+          dart_remaining_time_data.stamp = last_get_data_time_;
 
           dart_remaining_time_pub_.publish(dart_remaining_time_data);
           break;
@@ -261,9 +261,9 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_status_data.robot_id = game_robot_status_ref.robot_id_;
           base_.robot_id_ = game_robot_status_ref.robot_id_;
           game_robot_status_data.robot_level = game_robot_status_ref.robot_level_;
-          game_robot_status_data.stamp = last_get_;
+          game_robot_status_data.stamp = last_get_data_time_;
 
-          referee_ui_.robotStatusDataCallBack(game_robot_status_data, last_get_);
+          referee_ui_.robotStatusDataCallBack(game_robot_status_data, last_get_data_time_);
           game_robot_status_pub_.publish(game_robot_status_data);
           break;
         }
@@ -281,7 +281,7 @@ int Referee::unpack(uint8_t* rx_data)
           power_heat_data.chassis_volt = static_cast<uint16_t>(power_heat_ref.chassis_volt_ * 0.001);        // mV->V
           power_heat_data.chassis_current = static_cast<uint16_t>(power_heat_ref.chassis_current_ * 0.001);  // mA->A
 
-          power_heat_data.stamp = last_get_;
+          power_heat_data.stamp = last_get_data_time_;
 
           power_heat_data_pub_.publish(power_heat_data);
           break;
@@ -312,9 +312,9 @@ int Referee::unpack(uint8_t* rx_data)
 
           robot_hurt_data.armor_id = robot_hurt_ref.armor_id_;
           robot_hurt_data.hurt_type = robot_hurt_ref.hurt_type_;
-          robot_hurt_data.stamp = last_get_;
+          robot_hurt_data.stamp = last_get_data_time_;
 
-          referee_ui_.robotHurtDataCallBack(robot_hurt_data, last_get_);
+          referee_ui_.robotHurtDataCallBack(robot_hurt_data, last_get_data_time_);
 
           robot_hurt_pub_.publish(robot_hurt_data);
           break;
@@ -330,7 +330,7 @@ int Referee::unpack(uint8_t* rx_data)
           shoot_data.bullet_speed = shoot_data_ref.bullet_speed_;
           shoot_data.bullet_type = shoot_data_ref.bullet_type_;
           shoot_data.shooter_id = shoot_data_ref.shooter_id_;
-          shoot_data.stamp = last_get_;
+          shoot_data.stamp = last_get_data_time_;
 
           shoot_data_pub_.publish(shoot_data);
           break;
@@ -344,7 +344,7 @@ int Referee::unpack(uint8_t* rx_data)
           bullet_remaining_data.bullet_remaining_num_17_mm = bullet_remaining_ref.bullet_remaining_num_17_mm_;
           bullet_remaining_data.bullet_remaining_num_42_mm = bullet_remaining_ref.bullet_remaining_num_42_mm_;
           bullet_remaining_data.coin_remaining_num = bullet_remaining_ref.coin_remaining_num_;
-          bullet_remaining_data.stamp = last_get_;
+          bullet_remaining_data.stamp = last_get_data_time_;
 
           bullet_remaining_pub_.publish(bullet_remaining_data);
           break;
@@ -356,7 +356,7 @@ int Referee::unpack(uint8_t* rx_data)
           memcpy(&rfid_status_ref, rx_data + 7, sizeof(rm_referee::RfidStatus));
 
           rfid_status_data.rfid_status = rfid_status_ref.rfid_status_;
-          rfid_status_data.stamp = last_get_;
+          rfid_status_data.stamp = last_get_data_time_;
 
           rfid_status_pub_.publish(rfid_status_data);
           break;
@@ -376,7 +376,7 @@ int Referee::unpack(uint8_t* rx_data)
           dart_client_cmd_data.last_dart_launch_time = dart_client_cmd_ref.last_dart_launch_time_;
           dart_client_cmd_data.operate_launch_cmd_time = dart_client_cmd_ref.operate_launch_cmd_time_;
           dart_client_cmd_data.target_change_time = dart_client_cmd_ref.target_change_time_;
-          dart_client_cmd_data.stamp = last_get_;
+          dart_client_cmd_data.stamp = last_get_data_time_;
 
           dart_client_cmd_pub_.publish(dart_client_cmd_data);
           break;
@@ -392,7 +392,7 @@ int Referee::unpack(uint8_t* rx_data)
           break;
       }
       base_.referee_data_is_online_ = true;
-      last_get_ = ros::Time::now();
+      last_get_data_time_ = ros::Time::now();
       return frame_len;
     }
   }
@@ -456,9 +456,9 @@ void Referee::publishCapacityData()
   capacity_data.cap_power = super_capacitor_.capacity_data_.cap_power;
   capacity_data.chassis_power = super_capacitor_.capacity_data_.chassis_power;
   capacity_data.limit_power = super_capacitor_.capacity_data_.limit_power;
-  capacity_data.stamp = last_get_;
+  capacity_data.stamp = last_get_data_time_;
 
-  referee_ui_.capacityDataCallBack(capacity_data, last_get_);
+  referee_ui_.capacityDataCallBack(capacity_data, last_get_data_time_);
 
   super_capacitor_pub_.publish(super_capacitor_data);
   capacity_data_pub_.publish(capacity_data);

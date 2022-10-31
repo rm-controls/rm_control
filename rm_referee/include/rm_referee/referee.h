@@ -64,7 +64,7 @@ private:
 class Referee
 {
 public:
-  Referee(ros::NodeHandle& nh) : referee_ui_(nh, base_), last_get_(ros::Time::now())
+  Referee(ros::NodeHandle& nh) : referee_ui_(nh, base_), last_get_data_time_(ros::Time::now())
   {
     // pub
     super_capacitor_pub_ = nh.advertise<rm_msgs::SuperCapacitor>("super_capacitor", 1);
@@ -136,7 +136,7 @@ private:
   void publishCapacityData();
 
   SuperCapacitor super_capacitor_;
-  ros::Time last_get_;
+  ros::Time last_get_data_time_;
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
   const int k_unpack_buffer_length_ = 256;
   uint8_t unpack_buffer_[256]{};

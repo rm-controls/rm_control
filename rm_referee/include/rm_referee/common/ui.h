@@ -186,7 +186,7 @@ class ProgressTimeChangeUi : public TimeChangeUi
 public:
   explicit ProgressTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
     : TimeChangeUi(rpc_value, base, "progress"){};
-  void updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data, const ros::Time& last_get_);
+  void updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data, const ros::Time& last_get_data_time_);
 
 private:
   void display(const ros::Time& time) override;
@@ -199,7 +199,7 @@ class DartStatusTimeChangeUi : public TimeChangeUi
 {
 public:
   explicit DartStatusTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TimeChangeUi(rpc_value, base, "dart"){};
-  void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_);
+  void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_data_time_);
 
 private:
   void display(const ros::Time& time) override;
@@ -227,7 +227,7 @@ public:
   {
     graph_name_ = graph_name;
   };
-  void updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_);
+  void updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_data_time_);
 
 private:
   void display(const ros::Time& time) override;
@@ -242,7 +242,7 @@ class CoverFlashUi : public FlashUi
 {
 public:
   explicit CoverFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : FlashUi(rpc_value, base, "cover"){};
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_);
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time_);
 
 private:
   void display(const ros::Time& time) override;
@@ -253,7 +253,7 @@ class SpinFlashUi : public FlashUi
 {
 public:
   explicit SpinFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : FlashUi(rpc_value, base, "spin"){};
-  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_);
+  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_data_time_);
 
 private:
   void display(const ros::Time& time) override;

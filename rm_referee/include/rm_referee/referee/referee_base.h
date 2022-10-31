@@ -20,13 +20,16 @@ public:
 
   // unpack call back
   virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data_,
-                                       const ros::Time& last_get_);
-  virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data_, const ros::Time& last_get_);
-  virtual void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data_, ros::Time& last_get_);
-  virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data_, const ros::Time& last_get_);
-  virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data_, const ros::Time& last_get_);
-  virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data_, const ros::Time& last_get_);
-  virtual void eventDataCallBack(const rm_msgs::EventData& event_data_, const ros::Time& last_get_);
+                                       const ros::Time& last_get_data_time_);
+  virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data_,
+                                      const ros::Time& last_get_data_time_);
+  virtual void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data_, ros::Time& last_get_data_time_);
+  virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data_,
+                                     const ros::Time& last_get_data_time_);
+  virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data_, const ros::Time& last_get_data_time_);
+  virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data_,
+                                       const ros::Time& last_get_data_time_);
+  virtual void eventDataCallBack(const rm_msgs::EventData& event_data_, const ros::Time& last_get_data_time_);
 
   // sub call back
   virtual void jointStateCallback(const sensor_msgs::JointState::ConstPtr& joint_state);
