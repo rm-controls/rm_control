@@ -102,10 +102,6 @@ void RefereeBase::addUi()
   usleep(200000);
 }
 
-void RefereeBase::run()
-{
-}
-
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time_)
 {
   if (fixed_ui_)

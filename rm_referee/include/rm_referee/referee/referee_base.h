@@ -15,7 +15,6 @@ class RefereeBase
 {
 public:
   explicit RefereeBase(ros::NodeHandle& nh, Base& base);
-  virtual void run();
   virtual void addUi();
 
   // unpack call back
