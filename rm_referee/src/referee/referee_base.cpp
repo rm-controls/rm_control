@@ -88,12 +88,8 @@ void RefereeBase::addUi()
     shooter_trigger_change_ui_->add();
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->add();
-  usleep(200000);
-
   if (fixed_ui_)
     fixed_ui_->add();
-  usleep(200000);
-
   if (effort_time_change_ui_)
     effort_time_change_ui_->add();
   if (progress_time_change_ui_)
@@ -102,7 +98,6 @@ void RefereeBase::addUi()
     dart_status_time_change_ui_->add();
   if (capacitor_time_change_ui_)
     capacitor_time_change_ui_->add();
-  usleep(200000);
 }
 
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time_)
