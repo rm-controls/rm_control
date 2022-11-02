@@ -20,6 +20,8 @@ public:
   explicit UiBase(Base& base) : base_(base), tf_listener_(tf_buffer_){};
   ~UiBase() = default;
   virtual void add();
+  virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
+  virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time_);
 
 protected:
   Base& base_;
@@ -56,7 +58,7 @@ public:
       graph_->setContent("follow");
   }
   void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data);
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
   void updateDbusData(const rm_msgs::DbusData::ConstPtr data);
   void updateCapacityData(const rm_msgs::CapacityData data);
 
@@ -77,7 +79,7 @@ public:
     graph_->setContent("0");
   }
   void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data);
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
 
 private:
   void display() override;
@@ -95,7 +97,7 @@ public:
     graph_->setContent("0");
   }
   void updateGimbalCmdData(const rm_msgs::GimbalCmd ::ConstPtr data);
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
 
 private:
   void display() override;
@@ -117,7 +119,7 @@ public:
       graph_->setColor(rm_referee::GraphColor::PINK);
   }
   void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data);
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
 
 private:
   void display() override;
@@ -242,7 +244,7 @@ class CoverFlashUi : public FlashUi
 {
 public:
   explicit CoverFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : FlashUi(rpc_value, base, "cover"){};
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time_);
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time_) override;
 
 private:
   void display(const ros::Time& time) override;
