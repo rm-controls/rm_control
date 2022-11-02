@@ -20,8 +20,9 @@ public:
   explicit UiBase(Base& base) : base_(base), tf_listener_(tf_buffer_){};
   ~UiBase() = default;
   virtual void add();
-  virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data);
-  virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time_);
+  virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data){};
+  virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data,
+                                   const ros::Time& last_get_data_time_){};
 
 protected:
   Base& base_;
