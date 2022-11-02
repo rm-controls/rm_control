@@ -58,6 +58,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_);
   }
 
+  ui_nh.getParam("fixed", rpc_value);
   fixed_ui_ = new FixedUi(rpc_value, base_);
 
   ui_nh.getParam("flash", rpc_value);
@@ -83,6 +84,8 @@ void RefereeBase::addUi()
     chassis_trigger_change_ui_->add();
   if (gimbal_trigger_change_ui_)
     gimbal_trigger_change_ui_->add();
+  if (shooter_trigger_change_ui_)
+    shooter_trigger_change_ui_->add();
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->add();
   usleep(200000);
