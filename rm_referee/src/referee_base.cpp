@@ -2,7 +2,7 @@
 // Created by ljq on 2022/5/17.
 //
 
-#include "rm_referee/referee/referee_base.h"
+#include "rm_referee/referee_base.h"
 
 namespace rm_referee
 {

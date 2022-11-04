@@ -40,7 +40,7 @@
 #include <ros/ros.h>
 
 #include "rm_referee/common/data.h"
-#include "rm_referee/referee/referee_base.h"
+#include "rm_referee/referee_base.h"
 
 namespace rm_referee
 {

@@ -5,7 +5,7 @@
 #pragma once
 
 #include "rm_referee/common/data.h"
-#include <rm_common/ros_utilities.h>
+#include "rm_common/ros_utilities.h"
 
 namespace rm_referee
 {
