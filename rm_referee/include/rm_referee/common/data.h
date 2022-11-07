@@ -49,7 +49,6 @@
 
 #include "rm_referee/common/protocol.h"
 
-#include <rm_msgs/Referee.h>
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/DbusData.h>
 #include <rm_msgs/StateCmd.h>
@@ -107,7 +106,6 @@ public:
   // pub data
   rm_msgs::EventData event_data_;
   rm_msgs::ShootData shoot_data_;
-  rm_msgs::Referee referee_pub_data_;
   rm_msgs::RobotHurt robot_hurt_data_;
   rm_msgs::CapacityData capacity_data_;
   rm_msgs::RfidStatus rfid_status_data_;
