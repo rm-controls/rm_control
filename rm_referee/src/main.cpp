@@ -2,7 +2,7 @@
 // Created by ljq on 2022/5/17.
 //
 
-#include "rm_referee/receive_data/referee.h"
+#include "rm_referee/referee.h"
 
 int main(int argc, char** argv)
 {

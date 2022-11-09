@@ -4,13 +4,14 @@
 
 #pragma once
 
+#include <rm_common/ros_utilities.h>
+#include <rm_common/decision/command_sender.h>
+
 #include "rm_referee/ui/ui_base.h"
 #include "rm_referee/ui/trigger_change_ui.h"
 #include "rm_referee/ui/time_change_ui.h"
 #include "rm_referee/ui/flash_ui.h"
 
-#include "rm_common/ros_utilities.h"
-#include "rm_common/decision/command_sender.h"
 namespace rm_referee
 {
 class RefereeBase
