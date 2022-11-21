@@ -32,6 +32,7 @@ catkin_package(
         include
         ${EIGEN3_INCLUDE_DIR}
         CATKIN_DEPENDS
+        control_toolbox
         tf
         rm_msgs
         geometry_msgs
@@ -44,7 +45,6 @@ catkin_package(
         DEPENDS
         LIBRARIES
         rm_common
-        control_toolbox
 )
 
 include_directories(
