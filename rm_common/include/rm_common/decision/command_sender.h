@@ -52,6 +52,7 @@
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Float64.h>
+#include <control_toolbox/pid.h>
 
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
@@ -105,7 +106,108 @@ protected:
   ros::Publisher pub_;
   MsgType msg_;
 };
+class ReversalCommandSender
+{
+public:
+    explicit ReversalCommandSender(ros::NodeHandle& nh)
+    {
+        XmlRpc::XmlRpcValue motor_config;
+        ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "roll");
+        ros::NodeHandle nh_pid_pitch = ros::NodeHandle(nh, "pitch");
+        ros::NodeHandle nh_pid_translation = ros::NodeHandle(nh, "translation");
+        if (!nh.getParam("translate", motor_config))
+            ROS_ERROR("Translate motor group configuration set no defined (namespace: %s)", nh.getNamespace().c_str());
+        else
+        {
+            for (int i = 0; i < motor_config.size(); i++)
+            {
+                translate_.push_back(xmlRpcGetDouble(motor_config[i]));
+            }
+        }
+        if (!nh.getParam("rev_roll", motor_config))
+            ROS_ERROR("Reversal roll motor group configuration set no defined (namespace: %s)", nh.getNamespace().c_str());
+        else
+        {
+            for (int i = 0; i < motor_config.size(); i++)
+            {
+                rev_roll_.push_back(xmlRpcGetDouble(motor_config[i]));
+            }
+        }
+        if (!nh.getParam("rev_pitch", motor_config))
+            ROS_ERROR("Reversal pitch motor group configuration set no defined (namespace: %s)", nh.getNamespace().c_str());
+        else
+        {
+            for (int i = 0; i < motor_config.size(); i++)
+            {
+                rev_pitch_.push_back(xmlRpcGetDouble(motor_config[i]));
+            }
+        }
+        pid_roll_.init(ros::NodeHandle(nh_pid_roll, "pid"));
+        pid_pitch_.init(ros::NodeHandle(nh_pid_pitch, "pid"));
+        pid_translation_.init(ros::NodeHandle(nh_pid_translation, "pid"));
+        queue_size_ = getParam(nh, "queue_size", 1);
+        pub_p_f_ = nh.advertise<std_msgs::Float64>("/controllers/pitch_front_controller/command", queue_size_);
+        pub_p_b_ = nh.advertise<std_msgs::Float64>("/controllers/pitch_behind_controller/command", queue_size_);
+        pub_r_l_ = nh.advertise<std_msgs::Float64>("/controllers/roll_left_controller/command", queue_size_);
+        pub_r_r_ = nh.advertise<std_msgs::Float64>("/controllers/roll_right_controller/command", queue_size_);
+        ROS_ASSERT(nh.getParam("translate_max_speed", translate_vel_) && nh.getParam("reversal_max_speed", reversal_vel_));
+    };
 
+    void VisionReversal(double error_roll, double error_pitch, double error_translation, ros::Duration period){
+        double roll_scales{},pitch_scales{},translation_scales{};
+        roll_scales = pid_roll_.computeCommand(error_roll, period)/M_PI;
+        pitch_scales = pid_pitch_.computeCommand(error_pitch, period)/(2 * M_PI);
+        translation_scales = pid_translation_.computeCommand(error_translation, period);
+        setGroupVel(roll_scales,pitch_scales,translation_scales);
+    }
+
+    void setGroupVel(double roll_scales, double pitch_scales, double translation_scales) {
+        double input{};
+        if (roll_scales + pitch_scales != 0) {
+            input = abs(roll_scales) > abs(pitch_scales) ? roll_scales : pitch_scales;
+            if (abs(roll_scales) > abs(pitch_scales)) {
+                msg_p_f_.data = reversal_vel_ * rev_roll_[0] * abs(input);
+                msg_p_b_.data = reversal_vel_ * rev_roll_[1] * abs(input);
+                msg_r_l_.data = reversal_vel_ * rev_roll_[2] * input;
+                msg_r_r_.data = reversal_vel_ * rev_roll_[3] * input;
+            } else if (abs(roll_scales) < abs(pitch_scales)) {
+                msg_p_f_.data = reversal_vel_ * rev_pitch_[0] * input;
+                msg_p_b_.data = reversal_vel_ * rev_pitch_[1] * input;
+                msg_r_l_.data = reversal_vel_ * rev_pitch_[2] * abs(input);
+                msg_r_r_.data = reversal_vel_ * rev_pitch_[3] * abs(input);
+            }
+        } else if (translation_scales != 0) {
+            input = translation_scales;
+            msg_p_f_.data = translate_vel_ * translate_[0] * input;
+            msg_p_b_.data = translate_vel_ * translate_[1] * input;
+            msg_r_l_.data = translate_vel_ * translate_[2] * input;
+            msg_r_r_.data = translate_vel_ * translate_[3] * input;
+        }else if (roll_scales + pitch_scales + translation_scales == 0)
+            setZero();
+    }
+
+    void sendCommand()
+    {
+        pub_p_f_.publish(msg_p_f_) ;
+        pub_p_b_.publish(msg_p_b_) ;
+        pub_r_l_.publish(msg_r_l_) ;
+        pub_r_r_.publish(msg_r_r_) ;
+    }
+    void setZero()
+    {
+        msg_p_f_.data = 0;
+        msg_p_b_.data = 0;
+        msg_r_l_.data = 0;
+        msg_r_r_.data = 0;
+    }
+protected:
+    uint32_t queue_size_;
+    double reversal_vel_,translate_vel_;
+    ros::Publisher pub_r_l_,pub_r_r_,pub_p_f_,pub_p_b_;
+    std::vector<double> translate_,rev_roll_,rev_pitch_;
+    std_msgs::Float64 msg_p_f_,msg_p_b_,msg_r_l_,msg_r_r_;
+    control_toolbox::Pid pid_roll_,pid_pitch_,pid_translation_;
+};
 template <class MsgType>
 class TimeStampCommandSenderBase : public CommandSenderBase<MsgType>
 {

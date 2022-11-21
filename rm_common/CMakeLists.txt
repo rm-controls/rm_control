@@ -19,6 +19,7 @@ find_package(catkin REQUIRED
         rm_msgs
         geometry_msgs
         control_msgs
+        control_toolbox
         controller_manager_msgs
         imu_complementary_filter
         imu_filter_madgwick
