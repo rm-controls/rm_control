@@ -44,6 +44,7 @@ catkin_package(
         DEPENDS
         LIBRARIES
         rm_common
+        control_toolbox
 )
 
 include_directories(
