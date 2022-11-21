@@ -192,7 +192,10 @@ public:
       msg_r_r_.data = translate_vel_ * translate_[3] * input;
     }
     else if (roll_scales + pitch_scales + translation_scales == 0)
-      setZero();
+    {
+      msg_p_f_.data = translate_vel_ * translate_[0] * -0.1;
+      msg_p_b_.data = translate_vel_ * translate_[1] * -0.1;
+    }
   }
 
   void sendCommand()
