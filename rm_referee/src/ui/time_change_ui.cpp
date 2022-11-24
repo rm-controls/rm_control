@@ -111,11 +111,11 @@ void ProgressTimeChangeUi::updateConfig()
 }
 
 void ProgressTimeChangeUi::updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data,
-                                                 const ros::Time& last_get_data_time_)
+                                                 const ros::Time& last_get_data_time)
 {
   total_steps_ = data->total_steps;
   finished_data_ = data->finished_step;
-  display(last_get_data_time_);
+  display(last_get_data_time);
 }
 
 void DartStatusTimeChangeUi::display(const ros::Time& time)
@@ -147,9 +147,9 @@ void DartStatusTimeChangeUi::updateConfig()
 }
 
 void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data,
-                                                 const ros::Time& last_get_data_time_)
+                                                 const ros::Time& last_get_data_time)
 {
   dart_launch_opening_status_ = data->dart_launch_opening_status;
-  display(last_get_data_time_);
+  display(last_get_data_time);
 }
 }  // namespace rm_referee

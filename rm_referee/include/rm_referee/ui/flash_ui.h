@@ -27,7 +27,7 @@ public:
   {
     graph_name_ = graph_name;
   };
-  void updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_data_time_);
+  void updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_data_time);
 
 private:
   void display(const ros::Time& time) override;
@@ -42,7 +42,7 @@ class CoverFlashUi : public FlashUi
 {
 public:
   explicit CoverFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : FlashUi(rpc_value, base, "cover"){};
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time_) override;
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time) override;
 
 private:
   void display(const ros::Time& time) override;
@@ -53,7 +53,7 @@ class SpinFlashUi : public FlashUi
 {
 public:
   explicit SpinFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : FlashUi(rpc_value, base, "spin"){};
-  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_data_time_);
+  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_data_time);
 
 private:
   void display(const ros::Time& time) override;

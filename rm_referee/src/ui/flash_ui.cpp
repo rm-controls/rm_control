@@ -59,11 +59,11 @@ uint8_t ArmorFlashUi::getArmorId()
   return 9;
 }
 
-void ArmorFlashUi::updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_data_time_)
+void ArmorFlashUi::updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_data_time)
 {
   hurt_type_ = data.hurt_type;
   armor_id_ = data.armor_id;
-  display(last_get_data_time_);
+  display(last_get_data_time);
 }
 
 void CoverFlashUi::display(const ros::Time& time)
@@ -75,10 +75,10 @@ void CoverFlashUi::display(const ros::Time& time)
 }
 
 void CoverFlashUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data,
-                                       const ros::Time& last_get_data_time_)
+                                       const ros::Time& last_get_data_time)
 {
   cover_state_ = data->cover_state;
-  display(last_get_data_time_);
+  display(last_get_data_time);
 }
 
 void SpinFlashUi::display(const ros::Time& time)
@@ -89,9 +89,9 @@ void SpinFlashUi::display(const ros::Time& time)
   graph_->sendUi(time);
 }
 
-void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_data_time_)
+void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_data_time)
 {
   chassis_mode_ = data->mode;
-  display(last_get_data_time_);
+  display(last_get_data_time);
 }
 }  // namespace rm_referee
