@@ -2,6 +2,47 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.16 (2022-11-24)
+-------------------
+* Merge branch 'master' into new_ui_test
+* Merge branch 'master' into dev/command_sender
+* Merge pull request `#79 <https://github.com/ye-luo-xi-tui/rm_control/issues/79>`_ from ye-luo-xi-tui/rm_imu_handle
+  Add RmImuSensorInterface and add a service to enable or disable imus in rm_gazebo
+* Add RmImuSensorInterface.
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#70 <https://github.com/ye-luo-xi-tui/rm_control/issues/70>`_ from chenhuiYu00/rm_referee_pr
+  Complete the referee part of manual separation.
+* Merge branch 'rm-controls:master' into master
+* Merge branch 'dev'
+* Merge branch 'rm-controls:master' into master
+* Merge branch 'master' into rm_referee_pr
+* Merge pull request `#74 <https://github.com/ye-luo-xi-tui/rm_control/issues/74>`_ from ye-luo-xi-tui/dev
+  Update 0.1.15
+* Merge pull request `#72 <https://github.com/ye-luo-xi-tui/rm_control/issues/72>`_ from ye-luo-xi-tui/dev
+  Fix realtime loop
+* Type conversion.
+* Merge branch 'master' into rm_referee_pr_buffer
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/power_limit.h
+* Merge pull request `#69 <https://github.com/ye-luo-xi-tui/rm_control/issues/69>`_ from Edwinlinks/gpio-name-modify
+  Modify the name of gpio manager which was misnamed before by his developers.
+* Merge pull request `#68 <https://github.com/ye-luo-xi-tui/rm_control/issues/68>`_ from Edwinlinks/modify-tof-can
+  Add continue which was missing in the previous development.
+* Modify the name of gpio manager which was misnamed before.
+* Add continue in tof data parsing.
+* Merge branch 'master' into referee
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/service_caller.h
+  #	rm_msgs/CMakeLists.txt
+  #	rm_msgs/msg/referee/GameRobotStatus.msg
+  #	rm_msgs/msg/referee/GameStatus.msg
+* Merge branch 'master' into referee1
+* Merge branch 'master' into referee1
+* Merge branch 'master' into referee1
+* Fixed for test manual,Immature work.
+* Ljq update,fixed for test manual,Immature work.
+* Contributors: Edwinlinks, QiayuanLiao, ye-luo-xi-tui, yezi, yuchen, 吕骏骐
+
 0.1.15 (2022-09-02)
 -------------------
 * Add namespace.

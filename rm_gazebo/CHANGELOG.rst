@@ -2,6 +2,28 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.16 (2022-11-24)
+-------------------
+* Merge branch 'master' into new_ui_test
+* Merge branch 'master' into dev/command_sender
+* Merge pull request `#79 <https://github.com/ye-luo-xi-tui/rm_control/issues/79>`_ from ye-luo-xi-tui/rm_imu_handle
+  Add RmImuSensorInterface and add a service to enable or disable imus in rm_gazebo
+* Add RmImuSensorInterface.
+* Add a service to enable or disable imus.
+* Merge branch 'dev'
+* Merge branch 'rm-controls:master' into master
+* Merge branch 'master' into rm_referee_pr
+* Merge pull request `#74 <https://github.com/ye-luo-xi-tui/rm_control/issues/74>`_ from ye-luo-xi-tui/dev
+  Update 0.1.15
+* Merge branch 'master' into referee
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/service_caller.h
+  #	rm_msgs/CMakeLists.txt
+  #	rm_msgs/msg/referee/GameRobotStatus.msg
+  #	rm_msgs/msg/referee/GameStatus.msg
+* Merge branch 'master' into referee1
+* Contributors: ye-luo-xi-tui, yezi, yuchen, 吕骏骐
+
 0.1.15 (2022-09-02)
 -------------------
 

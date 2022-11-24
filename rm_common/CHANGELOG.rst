@@ -2,6 +2,104 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.16 (2022-11-24)
+-------------------
+* Merge branch 'master' into new_ui_test
+* Merge pull request `#78 <https://github.com/ye-luo-xi-tui/rm_control/issues/78>`_ from chenhuiYu00/dev/command_sender
+  Check the modification of command sender.
+* Cancel passing msg in constructor.
+* Cancel constructor transfer cmd.
+* Optimize command sender.
+* Merge branch 'master' into dev/command_sender
+* Delete referee msg and update command sender.
+* Merge pull request `#79 <https://github.com/ye-luo-xi-tui/rm_control/issues/79>`_ from ye-luo-xi-tui/rm_imu_handle
+  Add RmImuSensorInterface and add a service to enable or disable imus in rm_gazebo
+* Add RmImuSensorInterface.
+* Merge pull request `#76 <https://github.com/ye-luo-xi-tui/rm_control/issues/76>`_ from chenhuiYu00/accleration_Initial_value
+  Add accleration initial value.
+* Merge branch 'rm-controls:master' into master
+* Add accleration initial value.
+* Merge pull request `#70 <https://github.com/ye-luo-xi-tui/rm_control/issues/70>`_ from chenhuiYu00/rm_referee_pr
+  Complete the referee part of manual separation.
+* Conflict resolution.
+* Updata befor merge.
+* Merge pull request `#73 <https://github.com/ye-luo-xi-tui/rm_control/issues/73>`_ from 1moule/chassis_power_buffer
+  Add power buffer to power limit.
+* Modified some variable names.
+* Merge pull request `#71 <https://github.com/ye-luo-xi-tui/rm_control/issues/71>`_ from Edwinlinks/dart-command-sender
+  Add command sender for dart command sending.
+* Merge pull request `#75 <https://github.com/ye-luo-xi-tui/rm_control/issues/75>`_ from ye-luo-xi-tui/master
+  Reset imu_filter when robot relive
+* Merge branch 'dev'
+* Modified some variable names.
+* Merge branch 'rm-controls:master' into master
+* Merge branch 'master' into rm_referee_pr
+* Merge pull request `#74 <https://github.com/ye-luo-xi-tui/rm_control/issues/74>`_ from ye-luo-xi-tui/dev
+  Update 0.1.15
+* Modify prompt information.
+* Add power buffer to power limit.
+* Add RobotID enum.
+* Delete /common/data.h, Update power_limit and heat_limit.
+* Update date acquisition in command_sender.
+* Move referee part from rm_common to rm_referee and modify ui sending logic.
+* Reset imu_filter when robot relive.
+* Delete unnecessary offset
+* Modify getIndex() function.
+* Add command's offset for servo control
+* Add ManualToReferee msg.
+* Modify joint point command sender for dat manual.
+* Merge and fixed conflict.
+* Merge branch 'master' into referee
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/service_caller.h
+  #	rm_msgs/CMakeLists.txt
+  #	rm_msgs/msg/referee/GameRobotStatus.msg
+  #	rm_msgs/msg/referee/GameStatus.msg
+* Merge branch 'master' into referee1
+* Add defect code.
+* Merge branch 'master' into referee1
+* Merge branch 'referee1' of github.com:chenhuiYu00/rm_control into referee1
+   Conflicts:
+  	rm_common/include/rm_common/decision/command_sender.h
+  	rm_common/include/rm_common/decision/service_caller.h
+  	rm_msgs/msg/referee/CalibrationStatus.msg
+  	rm_msgs/msg/referee/CapacityData.msg
+  	rm_msgs/msg/referee/DetectionStatus.msg
+  	rm_msgs/msg/referee/EngineerCmd.msg
+  	rm_msgs/msg/referee/GameRobotHp.msg
+  	rm_msgs/msg/referee/GameRobotStatus.msg
+  	rm_msgs/msg/referee/GameStatus.msg
+  	rm_msgs/msg/referee/PowerHeatData.msg
+  	rm_msgs/msg/referee/StateCmd.msg
+  	rm_referee/config/standard3.yaml
+  	rm_referee/include/rm_referee/common/data.h
+  	rm_referee/include/rm_referee/common/referee_base.h
+  	rm_referee/include/rm_referee/engineer_referee.h
+  	rm_referee/include/rm_referee/hero_referee.h
+  	rm_referee/include/rm_referee/referee/referee.h
+  	rm_referee/include/rm_referee/referee/ui.h
+  	rm_referee/include/rm_referee/robot_referee.h
+  	rm_referee/include/rm_referee/standard_referee.h
+  	rm_referee/launch/load.launch
+  	rm_referee/src/common/referee_base.cpp
+  	rm_referee/src/engineer_referee.cpp
+  	rm_referee/src/hero_referee.cpp
+  	rm_referee/src/main.cpp
+  	rm_referee/src/referee/referee.cpp
+  	rm_referee/src/referee/ui.cpp
+  	rm_referee/src/robot_referee.cpp
+  	rm_referee/src/standard_referee.cpp
+* Merge branch 'master' into referee1
+* Fixed for test manual,Immature work.
+* Merge branch 'rm_referee1' into referee1
+* Ljq update,fixed for test manual,Immature work.
+* Update calibration_status_pub's position
+* Update game_robot_status, game_status, capacity_data's pub
+* Add detection_state pub
+* Update stateCommandSender
+* Add calibration_status_pub
+* Contributors: 1moule, Chenhui, Edwinlinks, QiayuanLiao, ljq-lv, ye-luo-xi-tui, yezi, yuchen, 吕骏骐
+
 0.1.15 (2022-09-02)
 -------------------
 

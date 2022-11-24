@@ -2,6 +2,83 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.16 (2022-11-24)
+-------------------
+* Merge pull request `#81 <https://github.com/ye-luo-xi-tui/rm_control/issues/81>`_ from LJT666666/master
+  Add "distance_to_image_center" to detection message type
+* Add "distance_to_image_center" to detection message type
+* Merge branch 'master' into new_ui_test
+* Merge pull request `#78 <https://github.com/ye-luo-xi-tui/rm_control/issues/78>`_ from chenhuiYu00/dev/command_sender
+  Check the modification of command sender.
+* Delete referee msg and update command sender.
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#70 <https://github.com/ye-luo-xi-tui/rm_control/issues/70>`_ from chenhuiYu00/rm_referee_pr
+  Complete the referee part of manual separation.
+* Merge branch 'dev'
+* Merge branch 'rm-controls:master' into master
+* Merge branch 'master' into rm_referee_pr
+* Merge pull request `#74 <https://github.com/ye-luo-xi-tui/rm_control/issues/74>`_ from ye-luo-xi-tui/dev
+  Update 0.1.15
+* Add RobotID enum.
+* Delete /common/data.h, Update power_limit and heat_limit.
+* Move referee part from rm_common to rm_referee and modify ui sending logic.
+* Add referee is_online msg.
+* Add ManualToReferee msg.
+* Add referee msg.
+* Merge and fixed conflict.
+* Merge branch 'master' into referee
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/service_caller.h
+  #	rm_msgs/CMakeLists.txt
+  #	rm_msgs/msg/referee/GameRobotStatus.msg
+  #	rm_msgs/msg/referee/GameStatus.msg
+* Merge branch 'master' into referee1
+* Add radar part.
+* Merge branch 'master' into referee1
+* Ui work success,ore ui is in test.
+* Merge branch 'referee1' of github.com:chenhuiYu00/rm_control into referee1
+   Conflicts:
+  	rm_common/include/rm_common/decision/command_sender.h
+  	rm_common/include/rm_common/decision/service_caller.h
+  	rm_msgs/msg/referee/CalibrationStatus.msg
+  	rm_msgs/msg/referee/CapacityData.msg
+  	rm_msgs/msg/referee/DetectionStatus.msg
+  	rm_msgs/msg/referee/EngineerCmd.msg
+  	rm_msgs/msg/referee/GameRobotHp.msg
+  	rm_msgs/msg/referee/GameRobotStatus.msg
+  	rm_msgs/msg/referee/GameStatus.msg
+  	rm_msgs/msg/referee/PowerHeatData.msg
+  	rm_msgs/msg/referee/StateCmd.msg
+  	rm_referee/config/standard3.yaml
+  	rm_referee/include/rm_referee/common/data.h
+  	rm_referee/include/rm_referee/common/referee_base.h
+  	rm_referee/include/rm_referee/engineer_referee.h
+  	rm_referee/include/rm_referee/hero_referee.h
+  	rm_referee/include/rm_referee/referee/referee.h
+  	rm_referee/include/rm_referee/referee/ui.h
+  	rm_referee/include/rm_referee/robot_referee.h
+  	rm_referee/include/rm_referee/standard_referee.h
+  	rm_referee/launch/load.launch
+  	rm_referee/src/common/referee_base.cpp
+  	rm_referee/src/engineer_referee.cpp
+  	rm_referee/src/hero_referee.cpp
+  	rm_referee/src/main.cpp
+  	rm_referee/src/referee/referee.cpp
+  	rm_referee/src/referee/ui.cpp
+  	rm_referee/src/robot_referee.cpp
+  	rm_referee/src/standard_referee.cpp
+* Merge branch 'master' into referee1
+* Fixed topic naming, add time stamp in referee msgs.
+* Fixed for test manual,Immature work.
+* Merge branch 'rm_referee1' into referee1
+* Ljq update,fixed for test manual,Immature work.
+* Add PowerHearData.msg and GameRObotHp.msg
+* Add related msg of referee
+* Add related msg of referee
+* Add related msg of referee
+* Fixed the wrong type
+* Contributors: Chenhui, LJT666666, QiayuanLiao, ljq-lv, ye-luo-xi-tui, yezi, yuchen, 吕骏骐
+
 0.1.15 (2022-09-02)
 -------------------
 
