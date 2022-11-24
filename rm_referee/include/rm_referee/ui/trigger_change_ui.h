@@ -4,7 +4,7 @@
 #pragma once
 
 #include "rm_referee/ui/ui_base.h"
-#include "rm_common/decision/power_limit.h"
+#include <rm_common/decision/power_limit.h>
 
 namespace rm_referee
 {
