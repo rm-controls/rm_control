@@ -100,39 +100,39 @@ void RefereeBase::addUi()
     capacitor_time_change_ui_->add();
 }
 
-void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time_)
+void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
 {
   if (fixed_ui_)
     fixed_ui_->display();
 }
-void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time_)
+void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {
 }
-void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::Time& last_get_data_time_)
+void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::Time& last_get_data_time)
 {
   if (capacitor_time_change_ui_)
-    capacitor_time_change_ui_->updateCapacityData(data, last_get_data_time_);
+    capacitor_time_change_ui_->updateCapacityData(data, last_get_data_time);
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateCapacityData(data);
 }
-void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_data_time_)
+void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_data_time)
 {
 }
-void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ros::Time& last_get_data_time_)
+void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ros::Time& last_get_data_time)
 {
   if (armor0_flash_ui_)
-    armor0_flash_ui_->updateRobotHurtData(data, last_get_data_time_);
+    armor0_flash_ui_->updateRobotHurtData(data, last_get_data_time);
   if (armor1_flash_ui_)
-    armor1_flash_ui_->updateRobotHurtData(data, last_get_data_time_);
+    armor1_flash_ui_->updateRobotHurtData(data, last_get_data_time);
   if (armor2_flash_ui_)
-    armor2_flash_ui_->updateRobotHurtData(data, last_get_data_time_);
+    armor2_flash_ui_->updateRobotHurtData(data, last_get_data_time);
   if (armor3_flash_ui_)
-    armor3_flash_ui_->updateRobotHurtData(data, last_get_data_time_);
+    armor3_flash_ui_->updateRobotHurtData(data, last_get_data_time);
 }
-void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time_)
+void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
 {
 }
-void RefereeBase::eventDataCallBack(const rm_msgs::EventData& data, const ros::Time& last_get_data_time_)
+void RefereeBase::eventDataCallBack(const rm_msgs::EventData& data, const ros::Time& last_get_data_time)
 {
 }
 void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& data)
