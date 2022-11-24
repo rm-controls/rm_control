@@ -2,8 +2,8 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.16 (2022-11-24)
+-------------------
 * Merge branch 'dev'
 * Merge branch 'rm-controls:master' into master
 * Merge branch 'master' into rm_referee_pr

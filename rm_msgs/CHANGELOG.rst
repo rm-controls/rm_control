@@ -2,8 +2,8 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.16 (2022-11-24)
+-------------------
 * Merge pull request `#81 <https://github.com/ye-luo-xi-tui/rm_control/issues/81>`_ from LJT666666/master
   Add "distance_to_image_center" to detection message type
 * Add "distance_to_image_center" to detection message type

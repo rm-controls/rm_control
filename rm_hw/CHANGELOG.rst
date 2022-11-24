@@ -2,8 +2,8 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.16 (2022-11-24)
+-------------------
 * Merge branch 'master' into new_ui_test
 * Merge branch 'master' into dev/command_sender
 * Merge pull request `#79 <https://github.com/ye-luo-xi-tui/rm_control/issues/79>`_ from ye-luo-xi-tui/rm_imu_handle

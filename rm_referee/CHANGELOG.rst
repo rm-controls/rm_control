@@ -2,8 +2,8 @@
 Changelog for package rm_referee
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.16 (2022-11-24)
+-------------------
 * Merge pull request `#80 <https://github.com/ye-luo-xi-tui/rm_control/issues/80>`_ from ljq-lv/new_ui_test
   Improve the Ui to reduce data transport
 * Modified the braces of rm_common
