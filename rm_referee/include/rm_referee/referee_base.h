@@ -4,10 +4,13 @@
 
 #pragma once
 
-#include "rm_referee/common/ui.h"
-
 #include <rm_common/ros_utilities.h>
 #include <rm_common/decision/command_sender.h>
+
+#include "rm_referee/ui/ui_base.h"
+#include "rm_referee/ui/trigger_change_ui.h"
+#include "rm_referee/ui/time_change_ui.h"
+#include "rm_referee/ui/flash_ui.h"
 
 namespace rm_referee
 {
@@ -15,18 +18,18 @@ class RefereeBase
 {
 public:
   explicit RefereeBase(ros::NodeHandle& nh, Base& base);
-  virtual void run();
   virtual void addUi();
 
   // unpack call back
-  virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data_,
-                                       const ros::Time& last_get_);
-  virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data_, const ros::Time& last_get_);
-  virtual void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data_, const ros::Time& last_get_);
-  virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data_, const ros::Time& last_get_);
-  virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data_, const ros::Time& last_get_);
-  virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data_, const ros::Time& last_get_);
-  virtual void eventDataCallBack(const rm_msgs::EventData& event_data_, const ros::Time& last_get_);
+  virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data,
+                                       const ros::Time& last_get_data_time);
+  virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data, const ros::Time& last_get_data_time);
+  virtual void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data, ros::Time& last_get_data_time);
+  virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data, const ros::Time& last_get_data_time);
+  virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data, const ros::Time& last_get_data_time);
+  virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data,
+                                       const ros::Time& last_get_data_time);
+  virtual void eventDataCallBack(const rm_msgs::EventData& event_data, const ros::Time& last_get_data_time);
 
   // sub call back
   virtual void jointStateCallback(const sensor_msgs::JointState::ConstPtr& joint_state);
@@ -55,8 +58,25 @@ public:
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
 
+  ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
+  ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
+  GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
+  TargetTriggerChangeUi* target_trigger_change_ui_{};
+
+  CapacitorTimeChangeUi* capacitor_time_change_ui_{};
+  EffortTimeChangeUi* effort_time_change_ui_{};
+  ProgressTimeChangeUi* progress_time_change_ui_{};
+  DartStatusTimeChangeUi* dart_status_time_change_ui_{};
+
+  FixedUi* fixed_ui_{};
+
+  CoverFlashUi* cover_flash_ui_{};
+  SpinFlashUi* spin_flash_ui_{};
+  ArmorFlashUi *armor0_flash_ui_{}, *armor1_flash_ui_{}, *armor2_flash_ui_{}, *armor3_flash_ui_{};
+
   Base& base_;
   bool add_ui_flag_ = false;
+  bool send_ui_flag_ = false;
   Graph* interactive_data_sender_;
   ros::NodeHandle nh_;
 };

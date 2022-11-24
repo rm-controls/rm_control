@@ -40,22 +40,22 @@
 #include <ros/ros.h>
 
 #include "rm_referee/common/data.h"
-#include "rm_referee/referee/referee_base.h"
+#include "rm_referee/referee_base.h"
 
 namespace rm_referee
 {
 class SuperCapacitor
 {
 public:
-  explicit SuperCapacitor(rm_referee::CapacityData& data) : last_get_data_(ros::Time::now()), data_(data){};
+  explicit SuperCapacitor() : last_get_data_time_(ros::Time::now()){};
   void read(const std::vector<uint8_t>& rx_buffer);
-  ros::Time last_get_data_;
+  ros::Time last_get_data_time_;
+  rm_referee::CapacityData capacity_data_;
 
 private:
   void dtpReceivedCallBack(unsigned char receive_byte);
   void receiveCallBack(unsigned char package_id, const unsigned char* data);
   static float int16ToFloat(unsigned short data0);
-  rm_referee::CapacityData& data_;
   unsigned char receive_buffer_[1024] = { 0 };
   unsigned char ping_pong_buffer_[1024] = { 0 };
   unsigned int receive_buf_counter_ = 0;
@@ -64,46 +64,43 @@ private:
 class Referee
 {
 public:
-  Referee() : super_capacitor_(base_.capacity_data_ref_), last_get_(ros::Time::now())
+  Referee(ros::NodeHandle& nh) : referee_ui_(nh, base_), last_get_data_time_(ros::Time::now())
   {
-    base_.robot_hurt_data_.hurt_type = 0x09;
     // pub
-    ros::NodeHandle root_nh;
-    super_capacitor_pub_ = root_nh.advertise<rm_msgs::SuperCapacitor>("/super_capacitor", 1);
-    game_robot_status_pub_ = root_nh.advertise<rm_msgs::GameRobotStatus>("/game_robot_status", 1);
-    game_status_pub_ = root_nh.advertise<rm_msgs::GameStatus>("/game_status", 1);
-    capacity_data_pub_ = root_nh.advertise<rm_msgs::CapacityData>("/capacity_data", 1);
-    power_heat_data_pub_ = root_nh.advertise<rm_msgs::PowerHeatData>("/power_heat_data", 1);
-    game_robot_hp_pub_ = root_nh.advertise<rm_msgs::GameRobotHp>("/game_robot_hp", 1);
-    event_data_pub_ = root_nh.advertise<rm_msgs::EventData>("/event_data", 1);
-    dart_status_pub_ = root_nh.advertise<rm_msgs::DartStatus>("/dart_status_data", 1);
+    super_capacitor_pub_ = nh.advertise<rm_msgs::SuperCapacitor>("super_capacitor", 1);
+    game_robot_status_pub_ = nh.advertise<rm_msgs::GameRobotStatus>("game_robot_status", 1);
+    game_status_pub_ = nh.advertise<rm_msgs::GameStatus>("game_status", 1);
+    capacity_data_pub_ = nh.advertise<rm_msgs::CapacityData>("capacity_data", 1);
+    power_heat_data_pub_ = nh.advertise<rm_msgs::PowerHeatData>("power_heat_data", 1);
+    game_robot_hp_pub_ = nh.advertise<rm_msgs::GameRobotHp>("game_robot_hp", 1);
+    event_data_pub_ = nh.advertise<rm_msgs::EventData>("event_data", 1);
+    dart_status_pub_ = nh.advertise<rm_msgs::DartStatus>("dart_status_data", 1);
     icra_buff_debuff_zone_status_pub_ =
-        root_nh.advertise<rm_msgs::IcraBuffDebuffZoneStatus>("/icra_buff_debuff_zone_status_data", 1);
-    supply_projectile_action_pub_ =
-        root_nh.advertise<rm_msgs::SupplyProjectileAction>("/supply_projectile_action_data", 1);
-    dart_remaining_time_pub_ = root_nh.advertise<rm_msgs::DartRemainingTime>("/dart_remaining_time_data", 1);
-    robot_hurt_pub_ = root_nh.advertise<rm_msgs::RobotHurt>("/robot_hurt_data", 1);
-    shoot_data_pub_ = root_nh.advertise<rm_msgs::ShootData>("/shoot_data", 1);
-    bullet_remaining_pub_ = root_nh.advertise<rm_msgs::BulletRemaining>("/bullet_remaining_data", 1);
-    rfid_status_pub_ = root_nh.advertise<rm_msgs::RfidStatus>("/rfid_status_data", 1);
-    dart_client_cmd_pub_ = root_nh.advertise<rm_msgs::DartClientCmd>("/dart_client_cmd_data", 1);
+        nh.advertise<rm_msgs::IcraBuffDebuffZoneStatus>("icra_buff_debuff_zone_status_data", 1);
+    supply_projectile_action_pub_ = nh.advertise<rm_msgs::SupplyProjectileAction>("supply_projectile_action_data", 1);
+    dart_remaining_time_pub_ = nh.advertise<rm_msgs::DartRemainingTime>("dart_remaining_time_data", 1);
+    robot_hurt_pub_ = nh.advertise<rm_msgs::RobotHurt>("robot_hurt_data", 1);
+    shoot_data_pub_ = nh.advertise<rm_msgs::ShootData>("shoot_data", 1);
+    bullet_remaining_pub_ = nh.advertise<rm_msgs::BulletRemaining>("bullet_remaining_data", 1);
+    rfid_status_pub_ = nh.advertise<rm_msgs::RfidStatus>("rfid_status_data", 1);
+    dart_client_cmd_pub_ = nh.advertise<rm_msgs::DartClientCmd>("dart_client_cmd_data", 1);
     // initSerial
     base_.initSerial();
   };
   void read();
   void checkUiAdd()
   {
-    if (referee_ui_->base_.dbus_data_.s_r == rm_msgs::DbusData::UP)
+    if (referee_ui_.send_ui_flag_)
     {
-      if (referee_ui_->add_ui_flag_)
+      if (referee_ui_.add_ui_flag_)
       {
-        referee_ui_->addUi();
+        referee_ui_.addUi();
         ROS_INFO("Add ui");
-        referee_ui_->add_ui_flag_ = false;
+        referee_ui_.add_ui_flag_ = false;
       }
     }
     else
-      referee_ui_->add_ui_flag_ = true;
+      referee_ui_.add_ui_flag_ = true;
   }
   void clearRxBuffer()
   {
@@ -111,7 +108,6 @@ public:
     rx_len_ = 0;
   }
 
-  ros::Publisher referee_pub_;
   ros::Publisher super_capacitor_pub_;
   ros::Publisher game_robot_status_pub_;
   ros::Publisher game_status_pub_;
@@ -131,7 +127,7 @@ public:
 
   Base base_;
   std::vector<uint8_t> rx_buffer_;
-  rm_referee::RefereeBase* referee_ui_;
+  rm_referee::RefereeBase referee_ui_;
   int rx_len_;
 
 private:
@@ -140,7 +136,7 @@ private:
   void publishCapacityData();
 
   SuperCapacitor super_capacitor_;
-  ros::Time last_get_;
+  ros::Time last_get_data_time_;
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
   const int k_unpack_buffer_length_ = 256;
   uint8_t unpack_buffer_[256]{};
