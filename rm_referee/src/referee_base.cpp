@@ -56,6 +56,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "dart_status")
       dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_);
+    if (rpc_value[i]["name"] == "lane_line")
+      lane_line_time_change_ui_ = new LaneLineTimeChangeUi(rpc_value[i], base_);
   }
 
   ui_nh.getParam("fixed", rpc_value);
@@ -98,6 +100,8 @@ void RefereeBase::addUi()
     dart_status_time_change_ui_->add();
   if (capacitor_time_change_ui_)
     capacitor_time_change_ui_->add();
+  if (lane_line_time_change_ui_)
+    lane_line_time_change_ui_->add();
 }
 
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
@@ -139,6 +143,8 @@ void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& da
 {
   if (effort_time_change_ui_)
     effort_time_change_ui_->updateJointStateData(data, ros::Time::now());
+  if (lane_line_time_change_ui_)
+    lane_line_time_change_ui_->updateJointStateData(data, ros::Time::now());
 }
 void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
 {
