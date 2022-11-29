@@ -60,15 +60,15 @@ bool RmRobotHW::parseActCoeffs(XmlRpc::XmlRpcValue& act_coeffs)
       if (it->second.hasMember("act2pos"))
         act_coeff.act2pos = xmlRpcGetDouble(act_coeffs[it->first], "act2pos", 0.);
       else
-        ROS_ERROR_STREAM("Actuator type " << it->first << " has no associated act2pos.");
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated act2pos.");
       if (it->second.hasMember("act2vel"))
         act_coeff.act2vel = xmlRpcGetDouble(act_coeffs[it->first], "act2vel", 0.);
       else
-        ROS_ERROR_STREAM("Actuator type " << it->first << " has no associated act2vel.");
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated act2vel.");
       if (it->second.hasMember("act2effort"))
         act_coeff.act2effort = xmlRpcGetDouble(act_coeffs[it->first], "act2effort", 0.);
       else
-        ROS_ERROR_STREAM("Actuator type " << it->first << " has no associated act2effort.");
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated act2effort.");
       if (it->second.hasMember("pos2act"))
         act_coeff.pos2act = xmlRpcGetDouble(act_coeffs[it->first], "pos2act", 0.);
       else
@@ -80,7 +80,7 @@ bool RmRobotHW::parseActCoeffs(XmlRpc::XmlRpcValue& act_coeffs)
       if (it->second.hasMember("effort2act"))
         act_coeff.effort2act = xmlRpcGetDouble(act_coeffs[it->first], "effort2act", 0.0);
       else
-        ROS_ERROR_STREAM("Actuator type " << it->first << " has no associated effort2act.");
+        ROS_DEBUG_STREAM("Actuator type " << it->first << " has no associated effort2act.");
       if (it->second.hasMember("max_out"))
         act_coeff.max_out = xmlRpcGetDouble(act_coeffs[it->first], "max_out", 0.0);
       else
@@ -214,15 +214,22 @@ bool RmRobotHW::parseActData(XmlRpc::XmlRpcValue& act_datas, ros::NodeHandle& ro
         effort_act_interface_.registerHandle(
             hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].exe_effort));
       }
+      // stepper motors are position actuator
+      else if (type.find("stepper") != std::string::npos)
+      {
+          position_act_interface_.registerHandle(
+                  hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].cmd_pos));
+      }
       else
       {
-        ROS_ERROR_STREAM("Actuator " << it->first << "'s type neither RoboMaster(rm_xxx) nor Cheetah(cheetah_xxx)");
+        ROS_ERROR_STREAM("Actuator " << it->first << "'s type isn't RoboMaster(rm_xxx) , Cheetah(cheetah_xxx) or stepper");
         return false;
       }
     }
     registerInterface(&act_state_interface_);
     registerInterface(&act_extra_interface_);
     registerInterface(&effort_act_interface_);
+    registerInterface(&position_act_interface_);
     is_actuator_specified_ = true;
   }
   catch (XmlRpc::XmlRpcException& e)

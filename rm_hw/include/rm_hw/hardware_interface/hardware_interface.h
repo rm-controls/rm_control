@@ -171,6 +171,7 @@ private:
   hardware_interface::ActuatorStateInterface act_state_interface_;
   rm_control::ActuatorExtraInterface act_extra_interface_;
   hardware_interface::EffortActuatorInterface effort_act_interface_;
+  hardware_interface::PositionActuatorInterface position_act_interface_;
   rm_control::RobotStateInterface robot_state_interface_;
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
   std::unique_ptr<transmission_interface::TransmissionInterfaceLoader> transmission_loader_{};

@@ -30,3 +30,4 @@ actuator_coefficient:
     act2effort_offset: -18.0
     kp2act: 8.19            # 4095/500
     kd2act: 819             # 4095/5
+  stepper: # stepper motor
