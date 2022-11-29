@@ -153,10 +153,25 @@ void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::C
   display(last_get_data_time);
 }
 
+void LaneLineTimeChangeUi::add()
+{
+  graph_left_->setOperation(rm_referee::GraphOperation::ADD);
+  graph_left_->display(true);
+  graph_left_->sendUi(ros::Time::now());
+  graph_right_->setOperation(rm_referee::GraphOperation::ADD);
+  graph_right_->display(true);
+  graph_right_->sendUi(ros::Time::now());
+}
 void LaneLineTimeChangeUi::display(const ros::Time& time)
 {
   updateConfig();
-  TimeChangeUi::display(time);
+
+  graph_left_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_left_->display(ros::Time::now());
+  graph_left_->sendUi(ros::Time::now());
+  graph_right_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_right_->display(ros::Time::now());
+  graph_right_->sendUi(ros::Time::now());
 }
 
 void LaneLineTimeChangeUi::updateConfig()
@@ -169,20 +184,20 @@ void LaneLineTimeChangeUi::updateConfig()
          dy_b = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_b_angle_ - pitch_angle_);
 
   graph_left_->setStartX(screen_x_ / 2 - dx_a);
-  graph_left_->setStartY(screen_y_ / 2 + dy_a);
+  graph_left_->setStartY(screen_y_ / 2 - dy_a);
   graph_left_->setEndX(screen_x_ / 2 - dx_b);
-  graph_left_->setEndY(screen_y_ / 2 + dy_b);
+  graph_left_->setEndY(screen_y_ / 2 - dy_b);
 
-  graph_right_.setStartX(screen_x_ / 2 + dx_a);
-  graph_right_.setStartY(screen_y_ / 2 + dy_a);
-  graph_right_.setEndX(screen_x_ / 2 + dx_b);
-  graph_right_.setEndY(screen_y_ / 2 + dy_b);
+  graph_right_->setStartX(screen_x_ / 2 + dx_a);
+  graph_right_->setStartY(screen_y_ / 2 - dy_a);
+  graph_right_->setEndX(screen_x_ / 2 + dx_b);
+  graph_right_->setEndY(screen_y_ / 2 - dy_b);
 }
 
 void LaneLineTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
   if (!data->position.empty())
-    pitch_angle_ = data->position[9];
+    pitch_angle_ = data->position[4] < 0.5 ? 0.5 : data->position[4];
   else
     return;
   end_point_a_angle_ = camera_range_ / 2 + pitch_angle_;
