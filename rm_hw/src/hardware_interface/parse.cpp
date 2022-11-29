@@ -217,12 +217,13 @@ bool RmRobotHW::parseActData(XmlRpc::XmlRpcValue& act_datas, ros::NodeHandle& ro
       // stepper motors are position actuator
       else if (type.find("stepper") != std::string::npos)
       {
-          position_act_interface_.registerHandle(
-                  hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].cmd_pos));
+        position_act_interface_.registerHandle(
+            hardware_interface::ActuatorHandle(act_state, &bus_id2act_data_[bus][id].cmd_pos));
       }
       else
       {
-        ROS_ERROR_STREAM("Actuator " << it->first << "'s type isn't RoboMaster(rm_xxx) , Cheetah(cheetah_xxx) or stepper");
+        ROS_ERROR_STREAM("Actuator " << it->first
+                                     << "'s type isn't RoboMaster(rm_xxx) , Cheetah(cheetah_xxx) or stepper");
         return false;
       }
     }

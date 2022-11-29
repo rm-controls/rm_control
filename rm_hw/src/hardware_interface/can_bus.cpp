@@ -110,18 +110,18 @@ void CanBus::write()
     else if (item.second.type.find("stepper") != std::string::npos)
     {
       int id = item.first - 0x301;
-      double cmd =item.second.cmd_pos;
+      double cmd = item.second.cmd_pos;
       if (-1 < id && id < 4)
       {
-          rm_frame0_.data[2 * id] = (uint8_t)(static_cast<int16_t>(cmd) >> 8u);
-          rm_frame0_.data[2 * id + 1] = (uint8_t)cmd;
-          has_write_frame0 = true;
+        rm_frame0_.data[2 * id] = (uint8_t)(static_cast<int16_t>(cmd) >> 8u);
+        rm_frame0_.data[2 * id + 1] = (uint8_t)cmd;
+        has_write_frame0 = true;
       }
       else if (3 < id && id < 8)
       {
-          rm_frame1_.data[2 * (id - 4)] = (uint8_t)(static_cast<int16_t>(cmd) >> 8u);
-          rm_frame1_.data[2 * (id - 4) + 1] = (uint8_t)cmd;
-          has_write_frame1 = true;
+        rm_frame1_.data[2 * (id - 4)] = (uint8_t)(static_cast<int16_t>(cmd) >> 8u);
+        rm_frame1_.data[2 * (id - 4) + 1] = (uint8_t)cmd;
+        has_write_frame1 = true;
       }
     }
   }
