@@ -14,7 +14,7 @@ rm_hw:
 #     need calibration: true  #set to true when this actuator need to be calibrated and it defaults to false when it is not been set.
     left_front_wheel_motor:
       bus: can0
-      id: 0x301
+      id: 0
       type: stepper
       lp_cutoff_frequency: 150
   imus:

@@ -109,7 +109,7 @@ void CanBus::write()
     }
     else if (item.second.type.find("stepper") != std::string::npos)
     {
-      int id = item.first - 0x301;
+      int id = item.first;
       double cmd = item.second.cmd_pos;
       if (-1 < id && id < 4)
       {
