@@ -12,6 +12,11 @@ rm_hw:
       type: rm_3508
       lp_cutoff_frequency: 150
 #     need calibration: true  #set to true when this actuator need to be calibrated and it defaults to false when it is not been set.
+    left_front_wheel_motor:
+      bus: can0
+      id: 0x301
+      type: stepper
+      lp_cutoff_frequency: 150
   imus:
     gimbal_imu:
       frame_id: gimbal_imu
