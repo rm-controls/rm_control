@@ -77,24 +77,25 @@ class LaneLineTimeChangeUi : public TimeChangeUi
 public:
   explicit LaneLineTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TimeChangeUi(rpc_value, base, "lane_line")
   {
-    XmlRpc::XmlRpcValue& data = rpc_value["data"];
-    if (data.hasMember("radius") && data.hasMember("height") && data.hasMember("camera_range"))
+    if (rpc_value.hasMember("data"))
     {
+      XmlRpc::XmlRpcValue& data = rpc_value["data"];
       robot_radius_ = data["radius"];
       robot_height_ = data["height"];
       camera_range_ = data["camera_range"];
+      surface_coefficient_ = data["surface_coefficient"];
     }
     else
-      ROS_WARN("LaneLineUi unable to get parameters from yaml.");
+      ROS_WARN("LaneLineUi config 's member 'data' not defined.");
     graph_left_ = UiBase::graph_;
     graph_right_ = new Graph(rpc_value["config"], base_, UiBase::id_++);
-  };
+  }
   void add() override;
   void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
 
 protected:
   Graph *graph_left_, *graph_right_;
-  double robot_radius_, robot_height_, camera_range_;
+  double robot_radius_, robot_height_, camera_range_, surface_coefficient_ = 0.5;
   double pitch_angle_ = 0., screen_x_ = 1920, screen_y_ = 1080;
   double end_point_a_angle_, end_point_b_angle_;
 

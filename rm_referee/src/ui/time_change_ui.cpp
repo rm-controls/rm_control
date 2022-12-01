@@ -185,21 +185,18 @@ void LaneLineTimeChangeUi::updateConfig()
 
   graph_left_->setStartX(screen_x_ / 2 - dx_a);
   graph_left_->setStartY(screen_y_ / 2 - dy_a);
-  graph_left_->setEndX(screen_x_ / 2 - dx_b);
+  graph_left_->setEndX(screen_x_ / 2 - dx_b * surface_coefficient_);
   graph_left_->setEndY(screen_y_ / 2 - dy_b);
 
   graph_right_->setStartX(screen_x_ / 2 + dx_a);
   graph_right_->setStartY(screen_y_ / 2 - dy_a);
-  graph_right_->setEndX(screen_x_ / 2 + dx_b);
+  graph_right_->setEndX(screen_x_ / 2 + dx_b * surface_coefficient_);
   graph_right_->setEndY(screen_y_ / 2 - dy_b);
 }
 
 void LaneLineTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
-  if (!data->position.empty())
-    pitch_angle_ = data->position[4] < 0.5 ? 0.5 : data->position[4];
-  else
-    return;
+  pitch_angle_ = data->position[4];
   end_point_a_angle_ = camera_range_ / 2 + pitch_angle_;
   end_point_b_angle_ = 0.6 * (0.25 + pitch_angle_);
   display(time);
