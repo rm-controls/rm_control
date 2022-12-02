@@ -19,6 +19,7 @@ public:
   explicit UiBase(Base& base) : base_(base), tf_listener_(tf_buffer_){};
   ~UiBase() = default;
   virtual void add();
+  virtual void erasure();
   virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data){};
   virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time){};
 
@@ -40,6 +41,7 @@ public:
           std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
   };
   void add() override;
+  void erasure() override;
   void display();
 
   std::map<std::string, Graph*> graph_vector_;

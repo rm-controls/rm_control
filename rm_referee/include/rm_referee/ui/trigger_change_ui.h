@@ -103,4 +103,26 @@ private:
   std::string getTargetState(uint8_t target, uint8_t armor_target);
   uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
 };
+
+class BloodVolumeTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit BloodVolumeTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "blood_volume"){};
+  void add() override;
+  void erasure() override;
+  std::string getRobotName(uint8_t id);
+  int getRobotHp(uint8_t id);
+  void updateRobotHpDate(const rm_msgs::GameRobotHp data)
+  {
+    robot_hp_ = data;
+  }
+  void updateTrackData(const rm_msgs::TrackData::ConstPtr data, const ros::Time& time);
+
+private:
+  bool is_deleted_;
+  int next_pos_x_, next_pos_y_;
+  rm_msgs::GameRobotHp robot_hp_;
+  void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
+};
 }  // namespace rm_referee

@@ -15,6 +15,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::dbus_sub_ = nh.subscribe<rm_msgs::DbusData>("/dbus_data", 10, &RefereeBase::dbusDataCallback, this);
   RefereeBase::chassis_cmd_sub_ = nh.subscribe<rm_msgs::ChassisCmd>("/controllers/chassis_controller/command", 10,
                                                                     &RefereeBase::chassisCmdDataCallback, this);
+  RefereeBase::track_sub_ = nh.subscribe<rm_msgs::TrackData>("/track", 10, &RefereeBase::trackCallback, this);
   RefereeBase::vel2D_cmd_sub_ =
       nh.subscribe<geometry_msgs::Twist>("/cmd_vel", 10, &RefereeBase::vel2DCmdDataCallback, this);
   RefereeBase::shoot_cmd_sub_ = nh.subscribe<rm_msgs::ShootCmd>("/controllers/shooter_controller/command", 10,
@@ -43,6 +44,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "target")
       target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
+    if (rpc_value[i]["name"] == "blood_volume")
+      blood_volume_trigger_change_ui_ = new BloodVolumeTriggerChangeUi(rpc_value[i], base_);
   }
 
   ui_nh.getParam("time_change", rpc_value);
@@ -88,6 +91,8 @@ void RefereeBase::addUi()
     shooter_trigger_change_ui_->add();
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->add();
+  if (blood_volume_trigger_change_ui_)
+    blood_volume_trigger_change_ui_->add();
   if (fixed_ui_)
     fixed_ui_->add();
   if (effort_time_change_ui_)
@@ -114,6 +119,11 @@ void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::T
     capacitor_time_change_ui_->updateCapacityData(data, last_get_data_time);
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateCapacityData(data);
+}
+void RefereeBase::gameRobotHpDataCallback(const rm_msgs::GameRobotHp& data, const ros::Time& last_get_data_time)
+{
+  if (blood_volume_trigger_change_ui_)
+    blood_volume_trigger_change_ui_->updateRobotHpDate(data);
 }
 void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_data_time)
 {
@@ -151,6 +161,11 @@ void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
     send_ui_flag_ = false;
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateDbusData(data);
+}
+void RefereeBase::trackCallback(const rm_msgs::TrackData::ConstPtr& data)
+{
+  if (blood_volume_trigger_change_ui_)
+    blood_volume_trigger_change_ui_->updateTrackData(data, ros::Time::now());
 }
 void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
 {
