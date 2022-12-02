@@ -112,16 +112,16 @@ public:
   explicit ReversalCommandSender(ros::NodeHandle& nh)
   {
     XmlRpc::XmlRpcValue roll_config, pitch_config, translation_config;
-    ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "roll");
-    ros::NodeHandle nh_pid_pitch = ros::NodeHandle(nh, "pitch");
-    ros::NodeHandle nh_pid_translation = ros::NodeHandle(nh, "translation");
+    ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "pid_roll");
+    ros::NodeHandle nh_pid_pitch = ros::NodeHandle(nh, "pid_pitch");
+    ros::NodeHandle nh_pid_translation = ros::NodeHandle(nh, "pid_translation");
     ROS_ASSERT(nh.getParam("translate_max_speed", translate_vel_) && nh.getParam("reversal_max_speed", reversal_vel_));
-    ROS_ASSERT(nh.getParam("translate", translation_config)&&nh.getParam("rev_roll", roll_config)&& nh.getParam("rev_pitch", pitch_config));
+    ROS_ASSERT(nh.getParam("translate", translation_config)&&nh.getParam("roll", roll_config)&& nh.getParam("pitch", pitch_config));
     for (int i = 0; i < translation_config.size(); i++)
       {
         translate_.push_back(xmlRpcGetDouble(translation_config[i]));
         roll_.push_back(xmlRpcGetDouble(roll_config[i]));
-        roll_.push_back(xmlRpcGetDouble(pitch_config[i]));
+        pitch_.push_back(xmlRpcGetDouble(pitch_config[i]));
       }
     pid_roll_.init(ros::NodeHandle(nh_pid_roll, "pid"));
     pid_pitch_.init(ros::NodeHandle(nh_pid_pitch, "pid"));
