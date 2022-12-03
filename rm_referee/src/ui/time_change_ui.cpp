@@ -176,27 +176,30 @@ void LaneLineTimeChangeUi::display(const ros::Time& time)
 
 void LaneLineTimeChangeUi::updateConfig()
 {
-  double dx_a = robot_radius_ * screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) /
-                (cos(end_point_a_angle_ - pitch_angle_) * robot_height_ / sin(end_point_a_angle_)),
-         dx_b = robot_radius_ * screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) /
-                (cos(end_point_b_angle_ - pitch_angle_) * robot_height_ / sin(end_point_b_angle_)),
-         dy_a = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_a_angle_ - pitch_angle_),
-         dy_b = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_b_angle_ - pitch_angle_);
+  double spacing_x_a = robot_radius_ * screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) /
+                       (cos(end_point_a_angle_ - pitch_angle_) * robot_height_ / sin(end_point_a_angle_)),
+         spacing_x_b = robot_radius_ * screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) /
+                       (cos(end_point_b_angle_ - pitch_angle_) * robot_height_ / sin(end_point_b_angle_)),
+         spacing_y_a = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_a_angle_ - pitch_angle_),
+         spacing_y_b = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_b_angle_ - pitch_angle_);
 
-  graph_left_->setStartX(screen_x_ / 2 - dx_a);
-  graph_left_->setStartY(screen_y_ / 2 - dy_a);
-  graph_left_->setEndX(screen_x_ / 2 - dx_b * surface_coefficient_);
-  graph_left_->setEndY(screen_y_ / 2 - dy_b);
+  graph_left_->setStartX(screen_x_ / 2 - spacing_x_a);
+  graph_left_->setStartY(screen_y_ / 2 - spacing_y_a);
+  graph_left_->setEndX(screen_x_ / 2 - spacing_x_b * surface_coefficient_);
+  graph_left_->setEndY(screen_y_ / 2 - spacing_y_b);
 
-  graph_right_->setStartX(screen_x_ / 2 + dx_a);
-  graph_right_->setStartY(screen_y_ / 2 - dy_a);
-  graph_right_->setEndX(screen_x_ / 2 + dx_b * surface_coefficient_);
-  graph_right_->setEndY(screen_y_ / 2 - dy_b);
+  graph_right_->setStartX(screen_x_ / 2 + spacing_x_a);
+  graph_right_->setStartY(screen_y_ / 2 - spacing_y_a);
+  graph_right_->setEndX(screen_x_ / 2 + spacing_x_b * surface_coefficient_);
+  graph_right_->setEndY(screen_y_ / 2 - spacing_y_b);
 }
 
 void LaneLineTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
-  pitch_angle_ = data->position[4];
+  for (unsigned int i = 0; i < data->name.size(); i++)
+    if (data->name[i] == "pitch_joint")
+      pitch_angle_ = data->position[i];
+
   end_point_a_angle_ = camera_range_ / 2 + pitch_angle_;
   end_point_b_angle_ = 0.6 * (0.25 + pitch_angle_);
   display(time);
