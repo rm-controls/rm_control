@@ -137,8 +137,8 @@ public:
   void visionReversal(double error_roll, double error_pitch, double error_translation, ros::Duration period)
   {
     double roll_scales{}, pitch_scales{}, translation_scales{};
-    roll_scales = pid_roll_.computeCommand(error_roll, period) / M_PI;
-    pitch_scales = pid_pitch_.computeCommand(error_pitch, period) / (2 * M_PI);
+    roll_scales = pid_roll_.computeCommand(error_roll, period);
+    pitch_scales = pid_pitch_.computeCommand(error_pitch, period);
     translation_scales = pid_translation_.computeCommand(error_translation, period);
     setGroupVel(roll_scales, pitch_scales, translation_scales);
   }
@@ -151,32 +151,31 @@ public:
       input = abs(roll_scales) > abs(pitch_scales) ? roll_scales : pitch_scales;
       if (abs(roll_scales) > abs(pitch_scales))
       {
-        msg_p_f_.data = reversal_vel_ * roll_[0] * abs(input);
-        msg_p_b_.data = reversal_vel_ * roll_[1] * abs(input);
-        msg_r_l_.data = reversal_vel_ * roll_[2] * input;
-        msg_r_r_.data = reversal_vel_ * roll_[3] * input;
+        rev_p_f_.data = reversal_vel_ * roll_[0] * abs(input);
+        rev_p_b_.data = reversal_vel_ * roll_[1] * abs(input);
+        rev_r_l_.data = reversal_vel_ * roll_[2] * input;
+        rev_r_r_.data = reversal_vel_ * roll_[3] * input;
       }
       else if (abs(roll_scales) < abs(pitch_scales))
       {
-        msg_p_f_.data = reversal_vel_ * pitch_[0] * input;
-        msg_p_b_.data = reversal_vel_ * pitch_[1] * input;
-        msg_r_l_.data = reversal_vel_ * pitch_[2] * abs(input);
-        msg_r_r_.data = reversal_vel_ * pitch_[3] * abs(input);
+        rev_p_f_.data = reversal_vel_ * pitch_[0] * input;
+        rev_p_b_.data = reversal_vel_ * pitch_[1] * input;
+        rev_r_l_.data = reversal_vel_ * pitch_[2] * abs(input);
+        rev_r_r_.data = reversal_vel_ * pitch_[3] * abs(input);
       }
     }
-    else if (translation_scales != 0)
+    if (translation_scales != 0)
     {
       input = translation_scales;
-      msg_p_f_.data = translate_vel_ * translate_[0] * input;
-      msg_p_b_.data = translate_vel_ * translate_[1] * input;
-      msg_r_l_.data = translate_vel_ * translate_[2] * input;
-      msg_r_r_.data = translate_vel_ * translate_[3] * input;
+      tra_p_f_.data = translate_vel_ * translate_[0] * input;
+      tra_p_b_.data = translate_vel_ * translate_[1] * input;
+      tra_r_l_.data = translate_vel_ * translate_[2] * input;
+      tra_r_r_.data = translate_vel_ * translate_[3] * input;
     }
-    else if (roll_scales + pitch_scales + translation_scales == 0)
-    {
-      msg_p_f_.data = translate_vel_ * translate_[0] * 0.;
-      msg_p_b_.data = translate_vel_ * translate_[1] * 0.;
-    }
+    msg_p_f_.data = rev_p_f_.data + tra_p_f_.data;
+    msg_p_b_.data = rev_p_b_.data + tra_p_b_.data;
+    msg_r_l_.data = rev_r_l_.data + tra_r_l_.data;
+    msg_r_r_.data = rev_r_r_.data + tra_r_r_.data;
   }
 
   void sendCommand()
@@ -186,20 +185,12 @@ public:
     pub_r_l_.publish(msg_r_l_);
     pub_r_r_.publish(msg_r_r_);
   }
-  void setZero()
-  {
-    msg_p_f_.data = 0;
-    msg_p_b_.data = 0;
-    msg_r_l_.data = 0;
-    msg_r_r_.data = 0;
-  }
-
 protected:
   uint32_t queue_size_;
   double reversal_vel_, translate_vel_;
   ros::Publisher pub_r_l_, pub_r_r_, pub_p_f_, pub_p_b_;
   std::vector<double> translate_, roll_, pitch_;
-  std_msgs::Float64 msg_p_f_, msg_p_b_, msg_r_l_, msg_r_r_;
+  std_msgs::Float64 msg_p_f_{}, msg_p_b_{}, msg_r_l_{}, msg_r_r_{},rev_p_f_{},rev_p_b_{},rev_r_l_{},rev_r_r_{},tra_p_f_{},tra_p_b_{},tra_r_l_{},tra_r_r_{};
   control_toolbox::Pid pid_roll_, pid_pitch_, pid_translation_;
 };
 template <class MsgType>
