@@ -21,6 +21,7 @@
     <depend>dynamic_reconfigure</depend>
     <depend>eigen</depend>
     <depend>control_msgs</depend>
+    <depend>control_toolbox</depend>
     <depend>controller_manager_msgs</depend>
 
     <!-- The export tag contains other, unspecified, tags -->

@@ -52,6 +52,7 @@
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Float64.h>
+#include <control_toolbox/pid.h>
 
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
@@ -105,7 +106,93 @@ protected:
   ros::Publisher pub_;
   MsgType msg_;
 };
+class ReversalCommandSender
+{
+public:
+  explicit ReversalCommandSender(ros::NodeHandle& nh)
+  {
+    XmlRpc::XmlRpcValue roll_config, pitch_config, translation_config;
+    ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "pid_roll");
+    ros::NodeHandle nh_pid_pitch = ros::NodeHandle(nh, "pid_pitch");
+    ros::NodeHandle nh_pid_translation = ros::NodeHandle(nh, "pid_translation");
+    ROS_ASSERT(nh.getParam("translate_max_speed", translate_vel_) && nh.getParam("reversal_max_speed", reversal_vel_));
+    ROS_ASSERT(nh.getParam("translate", translation_config) && nh.getParam("roll", roll_config) &&
+               nh.getParam("pitch", pitch_config));
+    for (int i = 0; i < translation_config.size(); i++)
+    {
+      translate_.push_back(xmlRpcGetDouble(translation_config[i]));
+      roll_.push_back(xmlRpcGetDouble(roll_config[i]));
+      pitch_.push_back(xmlRpcGetDouble(pitch_config[i]));
+    }
+    pid_roll_.init(ros::NodeHandle(nh_pid_roll, "pid"));
+    pid_pitch_.init(ros::NodeHandle(nh_pid_pitch, "pid"));
+    pid_translation_.init(ros::NodeHandle(nh_pid_translation, "pid"));
+    queue_size_ = getParam(nh, "queue_size", 1);
+    pub_p_f_ = nh.advertise<std_msgs::Float64>("/controllers/pitch_front_controller/command", queue_size_);
+    pub_p_b_ = nh.advertise<std_msgs::Float64>("/controllers/pitch_behind_controller/command", queue_size_);
+    pub_r_l_ = nh.advertise<std_msgs::Float64>("/controllers/roll_left_controller/command", queue_size_);
+    pub_r_r_ = nh.advertise<std_msgs::Float64>("/controllers/roll_right_controller/command", queue_size_);
+  };
 
+  void visionReversal(double error_roll, double error_pitch, double error_translation, ros::Duration period)
+  {
+    double roll_scales{}, pitch_scales{}, translation_scales{};
+    roll_scales = pid_roll_.computeCommand(error_roll, period);
+    pitch_scales = pid_pitch_.computeCommand(error_pitch, period);
+    translation_scales = pid_translation_.computeCommand(error_translation, period);
+    setGroupVel(roll_scales, pitch_scales, translation_scales);
+  }
+
+  void setGroupVel(double roll_scales, double pitch_scales, double translation_scales)
+  {
+    double input{};
+    if (roll_scales + pitch_scales != 0)
+    {
+      input = abs(roll_scales) > abs(pitch_scales) ? roll_scales : pitch_scales;
+      if (abs(roll_scales) > abs(pitch_scales))
+      {
+        rev_p_f_.data = reversal_vel_ * roll_[0] * abs(input);
+        rev_p_b_.data = reversal_vel_ * roll_[1] * abs(input);
+        rev_r_l_.data = reversal_vel_ * roll_[2] * input;
+        rev_r_r_.data = reversal_vel_ * roll_[3] * input;
+      }
+      else if (abs(roll_scales) < abs(pitch_scales))
+      {
+        rev_p_f_.data = reversal_vel_ * pitch_[0] * input;
+        rev_p_b_.data = reversal_vel_ * pitch_[1] * input;
+        rev_r_l_.data = reversal_vel_ * pitch_[2] * abs(input);
+        rev_r_r_.data = reversal_vel_ * pitch_[3] * abs(input);
+      }
+    }
+    if (translation_scales != 0)
+    {
+      input = translation_scales;
+      tra_p_f_.data = translate_vel_ * translate_[0] * input;
+      tra_p_b_.data = translate_vel_ * translate_[1] * input;
+      tra_r_l_.data = translate_vel_ * translate_[2] * input;
+      tra_r_r_.data = translate_vel_ * translate_[3] * input;
+    }
+    msg_p_f_.data = rev_p_f_.data + tra_p_f_.data;
+    msg_p_b_.data = rev_p_b_.data + tra_p_b_.data;
+    msg_r_l_.data = rev_r_l_.data + tra_r_l_.data;
+    msg_r_r_.data = rev_r_r_.data + tra_r_r_.data;
+  }
+
+  void sendCommand()
+  {
+    pub_p_f_.publish(msg_p_f_);
+    pub_p_b_.publish(msg_p_b_);
+    pub_r_l_.publish(msg_r_l_);
+    pub_r_r_.publish(msg_r_r_);
+  }
+protected:
+  uint32_t queue_size_;
+  double reversal_vel_, translate_vel_;
+  ros::Publisher pub_r_l_, pub_r_r_, pub_p_f_, pub_p_b_;
+  std::vector<double> translate_, roll_, pitch_;
+  std_msgs::Float64 msg_p_f_{}, msg_p_b_{}, msg_r_l_{}, msg_r_r_{},rev_p_f_{},rev_p_b_{},rev_r_l_{},rev_r_r_{},tra_p_f_{},tra_p_b_{},tra_r_l_{},tra_r_r_{};
+  control_toolbox::Pid pid_roll_, pid_pitch_, pid_translation_;
+};
 template <class MsgType>
 class TimeStampCommandSenderBase : public CommandSenderBase<MsgType>
 {

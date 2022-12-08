@@ -24,6 +24,7 @@ add_message_files(
         SuperCapacitor.msg
         GpioData.msg
         TofRadarData.msg
+        ReversalCmd.msg
 )
 
 add_service_files(

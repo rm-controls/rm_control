@@ -19,6 +19,7 @@ find_package(catkin REQUIRED
         rm_msgs
         geometry_msgs
         control_msgs
+        control_toolbox
         controller_manager_msgs
         imu_complementary_filter
         imu_filter_madgwick
@@ -31,6 +32,7 @@ catkin_package(
         include
         ${EIGEN3_INCLUDE_DIR}
         CATKIN_DEPENDS
+        control_toolbox
         tf
         rm_msgs
         geometry_msgs
