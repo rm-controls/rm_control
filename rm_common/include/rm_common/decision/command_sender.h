@@ -548,19 +548,19 @@ public:
   void rise()
   {
     msg_.data = rise_pos_;
-    state = true;
+    state = "rise";
   }
   void down()
   {
     msg_.data = down_pos_;
-    state = false;
+    state = "down";
   }
   void up()
   {
     msg_.data = up_pos_;
-    state = false;
+    state = "up";
   }
-  bool getState() const
+  std::string getState() const
   {
     return state;
   }
@@ -571,7 +571,7 @@ public:
   void setZero() override{};
 
 private:
-  bool state{};
+  std::string state{};
   double rise_pos_{}, down_pos_{}, up_pos_{};
 };
 
