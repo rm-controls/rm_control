@@ -543,16 +543,21 @@ class JointPositionBinaryCommandSender : public CommandSenderBase<std_msgs::Floa
 public:
   explicit JointPositionBinaryCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
   {
-    ROS_ASSERT(nh.getParam("on_pos", on_pos_) && nh.getParam("off_pos", off_pos_));
+    ROS_ASSERT(nh.getParam("rise_pos", rise_pos_) && nh.getParam("down_pos", down_pos_) && nh.getParam("up_pos", up_pos_));
   }
-  void on()
+  void rise()
   {
-    msg_.data = on_pos_;
+    msg_.data = rise_pos_;
     state = true;
   }
-  void off()
+  void down()
   {
-    msg_.data = off_pos_;
+    msg_.data = down_pos_;
+    state = false;
+  }
+  void up()
+  {
+    msg_.data = up_pos_;
     state = false;
   }
   bool getState() const
@@ -567,7 +572,7 @@ public:
 
 private:
   bool state{};
-  double on_pos_{}, off_pos_{};
+  double rise_pos_{}, down_pos_{}, up_pos_{};
 };
 
 class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
