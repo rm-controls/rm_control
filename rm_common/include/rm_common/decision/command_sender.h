@@ -111,7 +111,7 @@ class ReversalCommandSender
 public:
   explicit ReversalCommandSender(ros::NodeHandle& nh)
   {
-    XmlRpc::XmlRpcValue roll_config, pitch_config, translation_config;
+    XmlRpc::XmlRpcValue roll_config{}, pitch_config{}, translation_config{};
     ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "pid_roll");
     ros::NodeHandle nh_pid_pitch = ros::NodeHandle(nh, "pid_pitch");
     ros::NodeHandle nh_pid_translation = ros::NodeHandle(nh, "pid_translation");
