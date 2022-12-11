@@ -543,54 +543,11 @@ class JointPositionBinaryCommandSender : public CommandSenderBase<std_msgs::Floa
 public:
   explicit JointPositionBinaryCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
   {
-    ROS_ASSERT(nh.getParam("rise_pos", rise_pos_) && nh.getParam("down_pos", down_pos_) && nh.getParam("up_pos", up_pos_));
+    ROS_ASSERT(nh.getParam("on_pos", on_pos_) && nh.getParam("off_pos", off_pos_));
   }
-  void rise()
+  void on()
   {
-    msg_.data = rise_pos_;
-    state = "rise";
-  }
-  void down()
-  {
-    msg_.data = down_pos_;
-    state = "down";
-  }
-  void up()
-  {
-    msg_.data = up_pos_;
-    state = "up";
-  }
-  std::string getState() const
-  {
-    return state;
-  }
-  void sendCommand(const ros::Time& time) override
-  {
-    CommandSenderBase<std_msgs::Float64>::sendCommand(time);
-  }
-  void setZero() override{};
-
-private:
-  std::string state{};
-  double rise_pos_{}, down_pos_{}, up_pos_{};
-};
-
-class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
-{
-public:
-  explicit CardCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
-  {
-    ROS_ASSERT(nh.getParam("long_pos", long_pos_) && nh.getParam("short_pos", short_pos_) &&
-               nh.getParam("off_pos", off_pos_));
-  }
-  void long_on()
-  {
-    msg_.data = long_pos_;
-    state = true;
-  }
-  void short_on()
-  {
-    msg_.data = short_pos_;
+    msg_.data = on_pos_;
     state = true;
   }
   void off()
@@ -610,7 +567,45 @@ public:
 
 private:
   bool state{};
-  double long_pos_{}, short_pos_{}, off_pos_{};
+  double on_pos_{}, off_pos_{};
+};
+
+class ThreeSwitchCommandSender : public CommandSenderBase<std_msgs::Float64>
+{
+public:
+  explicit ThreeSwitchCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
+  {
+    ROS_ASSERT(nh.getParam("first_pos", first_pos_) && nh.getParam("second_pos", second_pos_) &&
+               nh.getParam("third_pos", third_pos_));
+  }
+  void first_pos()
+  {
+    msg_.data =first_pos_;
+    state = true;
+  }
+  void second_pos()
+  {
+    msg_.data = second_pos_;
+    state = true;
+  }
+  void third_pos()
+  {
+    msg_.data = third_pos_;
+    state = false;
+  }
+  bool getState() const
+  {
+    return state;
+  }
+  void sendCommand(const ros::Time& time) override
+  {
+    CommandSenderBase<std_msgs::Float64>::sendCommand(time);
+  }
+  void setZero() override{};
+
+private:
+  bool state{};
+  double first_pos_{}, second_pos_{}, third_pos_{};
 };
 
 class JointJogCommandSender : public CommandSenderBase<std_msgs::Float64>
