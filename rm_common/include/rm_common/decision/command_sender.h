@@ -341,6 +341,10 @@ public:
   {
     heat_limit_->setRefereeStatus(status);
   }
+  void updateGimbalDesError(const rm_msgs::GimbalDesError& error)
+  {
+    gimbal_des_error = error;
+  }
 
   void computeTargetAcceleration()
   {
@@ -355,7 +359,7 @@ public:
     acceleration_filter_->input(track_target_acceleration_);
     track_target_acceleration_ = acceleration_filter_->output();
   }
-  void checkError(const rm_msgs::GimbalDesError& gimbal_des_error, const ros::Time& time)
+  void checkError(const ros::Time& time)
   {
     if ((gimbal_des_error.error > gimbal_error_tolerance_ && time - gimbal_des_error.stamp < ros::Duration(0.1)) ||
         (track_target_acceleration_ > target_acceleration_tolerance_))
@@ -404,6 +408,7 @@ private:
   double last_target_vel_ = 0.;
   double last_target_time_ = 0.;
   const rm_msgs::TrackData& track_data_;
+  rm_msgs::GimbalDesError gimbal_des_error;
   MovingAverageFilter<double>* acceleration_filter_;
 };
 
