@@ -302,8 +302,7 @@ private:
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd>
 {
 public:
-  explicit ShooterCommandSender(ros::NodeHandle& nh, const rm_msgs::TrackData& track_data)
-    : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh), track_data_(track_data)
+  explicit ShooterCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh)
   {
     ros::NodeHandle limit_nh(nh, "heat_limit");
     heat_limit_ = new HeatLimit(limit_nh);
@@ -344,6 +343,10 @@ public:
   void updateGimbalDesError(const rm_msgs::GimbalDesError& error)
   {
     gimbal_des_error = error;
+  }
+  void updateTrackData(const rm_msgs::TrackData& data)
+  {
+    track_data_ = data;
   }
 
   void computeTargetAcceleration()
@@ -407,7 +410,7 @@ private:
   double track_target_acceleration_;
   double last_target_vel_ = 0.;
   double last_target_time_ = 0.;
-  const rm_msgs::TrackData& track_data_;
+  rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error;
   MovingAverageFilter<double>* acceleration_filter_;
 };
