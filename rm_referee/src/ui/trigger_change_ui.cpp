@@ -247,12 +247,6 @@ void BloodVolumeTriggerChangeUi::add()
   UiBase::add();
 }
 
-void BloodVolumeTriggerChangeUi::erasure()
-{
-  is_deleted_ = true;
-  UiBase::erasure();
-}
-
 std::string BloodVolumeTriggerChangeUi::getRobotName(uint8_t id)
 {
   if (id == rm_msgs::GameRobotStatus::RED_ENGINEER)
@@ -280,7 +274,7 @@ std::string BloodVolumeTriggerChangeUi::getRobotName(uint8_t id)
   else if (id == rm_msgs::GameRobotStatus::BLUE_STANDARD_5)
     return "BLUE_STANDARD5";
   else
-    return "error";
+    return "null";
 }
 
 int BloodVolumeTriggerChangeUi::getRobotHp(uint8_t id)
@@ -316,8 +310,16 @@ int BloodVolumeTriggerChangeUi::getRobotHp(uint8_t id)
 void BloodVolumeTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
   graph_->setColor(sub_flag ? rm_referee::GraphColor::PINK : rm_referee::GraphColor::CYAN);
-  graph_->setTitle(getRobotName(main_mode) + ": ");
-  graph_->setContent("+" + std::to_string(getRobotHp(main_mode)));
+  if (getRobotName(main_mode) != "null" && getRobotHp(main_mode) != -1)
+  {
+    graph_->setTitle(getRobotName(main_mode) + ": ");
+    graph_->setContent("+" + std::to_string(getRobotHp(main_mode)));
+  }
+  else
+  {
+    graph_->setTitle(" ");
+    graph_->setContent(" ");
+  }
 
   if (!is_deleted_)
     display();
@@ -331,8 +333,6 @@ void BloodVolumeTriggerChangeUi::updateTrackData(const rm_msgs::TrackData::Const
     updateConfig(data->id, true, 0, false);
   else if (data->id > 0)
     updateConfig(data->id, true, 1, true);
-  else
-    erasure();
 }
 
 }  // namespace rm_referee

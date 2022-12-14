@@ -110,7 +110,6 @@ public:
   explicit BloodVolumeTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
     : TriggerChangeUi(rpc_value, base, "blood_volume"){};
   void add() override;
-  void erasure() override;
   std::string getRobotName(uint8_t id);
   int getRobotHp(uint8_t id);
   void updateRobotHpDate(const rm_msgs::GameRobotHp data)
