@@ -342,7 +342,7 @@ public:
   }
   void updateGimbalDesError(const rm_msgs::GimbalDesError& error)
   {
-    gimbal_des_error = error;
+    gimbal_des_error_ = error;
   }
   void updateTrackData(const rm_msgs::TrackData& data)
   {
@@ -364,7 +364,7 @@ public:
   }
   void checkError(const ros::Time& time)
   {
-    if ((gimbal_des_error.error > gimbal_error_tolerance_ && time - gimbal_des_error.stamp < ros::Duration(0.1)) ||
+    if ((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
         (track_target_acceleration_ > target_acceleration_tolerance_))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
         setMode(rm_msgs::ShootCmd::READY);
@@ -411,7 +411,7 @@ private:
   double last_target_vel_ = 0.;
   double last_target_time_ = 0.;
   rm_msgs::TrackData track_data_;
-  rm_msgs::GimbalDesError gimbal_des_error;
+  rm_msgs::GimbalDesError gimbal_des_error_;
   MovingAverageFilter<double>* acceleration_filter_;
 };
 
