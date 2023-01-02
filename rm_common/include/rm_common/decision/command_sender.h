@@ -115,7 +115,8 @@ public:
     ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "pid_roll");
     ros::NodeHandle nh_pid_pitch = ros::NodeHandle(nh, "pid_pitch");
     ros::NodeHandle nh_pid_translation = ros::NodeHandle(nh, "pid_translation");
-    ROS_ASSERT(nh.getParam("translate_max_speed", translate_max_speed_) && nh.getParam("reversal_max_speed", reversal_max_speed_));
+    ROS_ASSERT(nh.getParam("translate_max_speed", translate_max_speed_) &&
+               nh.getParam("reversal_max_speed", reversal_max_speed_));
     ROS_ASSERT(nh.getParam("translate", translation_config) && nh.getParam("roll", roll_config) &&
                nh.getParam("pitch", pitch_config));
     for (int i = 0; i < translation_config.size(); i++)
@@ -136,11 +137,11 @@ public:
 
   void visionReversal(double error_roll, double error_pitch, double error_translation, ros::Duration period)
   {
-    double roll_scales{}, pitch_scales{}, translation_scales{};
-    roll_scales = pid_roll_.computeCommand(error_roll, period);
-    pitch_scales = pid_pitch_.computeCommand(error_pitch, period);
-    translation_scales = pid_translation_.computeCommand(error_translation, period);
-    setGroupVel(roll_scales, pitch_scales, translation_scales);
+    double roll_scale{}, pitch_scale{}, translation_scale{};
+    roll_scale = pid_roll_.computeCommand(error_roll, period);
+    pitch_scale = pid_pitch_.computeCommand(error_pitch, period);
+    translation_scale = pid_translation_.computeCommand(error_translation, period);
+    setGroupVel(roll_scale, pitch_scale, translation_scale);
   }
 
   void setGroupVel(double roll_scales, double pitch_scales, double translation_scales)
@@ -185,12 +186,14 @@ public:
     pub_r_l_.publish(msg_r_l_);
     pub_r_r_.publish(msg_r_r_);
   }
+
 protected:
   uint32_t queue_size_;
   double reversal_max_speed_, translate_max_speed_;
   ros::Publisher pub_r_l_, pub_r_r_, pub_p_f_, pub_p_b_;
   std::vector<double> translate_config_, roll_config_, pitch_config_;
-  std_msgs::Float64 msg_p_f_{}, msg_p_b_{}, msg_r_l_{}, msg_r_r_{},rev_p_f_{},rev_p_b_{},rev_r_l_{},rev_r_r_{},tra_p_f_{},tra_p_b_{},tra_r_l_{},tra_r_r_{};
+  std_msgs::Float64 msg_p_f_{}, msg_p_b_{}, msg_r_l_{}, msg_r_r_{}, rev_p_f_{}, rev_p_b_{}, rev_r_l_{}, rev_r_r_{},
+      tra_p_f_{}, tra_p_b_{}, tra_r_l_{}, tra_r_r_{};
   control_toolbox::Pid pid_roll_, pid_pitch_, pid_translation_;
 };
 template <class MsgType>
@@ -580,7 +583,7 @@ public:
   }
   void first_pos()
   {
-    msg_.data =first_pos_;
+    msg_.data = first_pos_;
     state = true;
   }
   void second_pos()
