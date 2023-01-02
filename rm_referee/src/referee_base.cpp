@@ -123,7 +123,7 @@ void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::T
 void RefereeBase::gameRobotHpDataCallback(const rm_msgs::GameRobotHp& data, const ros::Time& last_get_data_time)
 {
   if (blood_volume_trigger_change_ui_)
-    blood_volume_trigger_change_ui_->updateRobotHpDate(data);
+    blood_volume_trigger_change_ui_->updateRobotHpData(data);
 }
 void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_data_time)
 {

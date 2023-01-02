@@ -112,7 +112,7 @@ public:
   void add() override;
   std::string getRobotName(uint8_t id);
   int getRobotHp(uint8_t id);
-  void updateRobotHpDate(const rm_msgs::GameRobotHp data)
+  void updateRobotHpData(const rm_msgs::GameRobotHp data)
   {
     robot_hp_ = data;
   }
