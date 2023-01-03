@@ -11,12 +11,14 @@ on:
 jobs:
   pre-commit:
     name: pre-commit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - name: Install clang-format-10
-        run: sudo apt-get install clang-format-10
+        run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
+          sudo apt-get install clang-format-10
       - name: Install catkin-lint
         run: |
           lsb_release -sc
