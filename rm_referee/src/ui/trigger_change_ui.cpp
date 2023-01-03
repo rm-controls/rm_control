@@ -274,7 +274,7 @@ std::string BloodVolumeTriggerChangeUi::getRobotName(uint8_t id)
   else if (id == rm_msgs::GameRobotStatus::BLUE_STANDARD_5)
     return "BLUE_STANDARD5";
   else
-    return "null";
+    return "NULL";
 }
 
 int BloodVolumeTriggerChangeUi::getRobotHp(uint8_t id)
