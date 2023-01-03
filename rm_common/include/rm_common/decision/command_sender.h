@@ -178,15 +178,15 @@ public:
   }
   void setZero()
   {
-      msg_p_f_.data = 0;
-      msg_p_b_.data = 0;
-      msg_r_l_.data = 0;
-      msg_r_r_.data = 0;
+    msg_p_f_.data = 0;
+    msg_p_b_.data = 0;
+    msg_r_l_.data = 0;
+    msg_r_r_.data = 0;
   }
   void sendCommand()
   {
-    if(msg_p_b_.data+msg_p_f_.data+msg_r_l_.data+msg_r_r_.data<=0.1)
-        setZero();
+    if (msg_p_b_.data + msg_p_f_.data + msg_r_l_.data + msg_r_r_.data <= 0.1)
+      setZero();
     pub_p_f_.publish(msg_p_f_);
     pub_p_b_.publish(msg_p_b_);
     pub_r_l_.publish(msg_r_l_);
