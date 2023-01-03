@@ -116,12 +116,12 @@ public:
   {
     robot_hp_ = data;
   }
-  void updateTrackData(const rm_msgs::TrackData::ConstPtr data, const ros::Time& time);
+  void updateConfig(const rm_msgs::TrackData::ConstPtr data, const ros::Time& time);
 
 private:
   bool is_deleted_;
   int next_pos_x_, next_pos_y_;
   rm_msgs::GameRobotHp robot_hp_;
-  void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
+  void updateConfig(uint8_t robot_id, bool is_red, uint8_t sub_mode = 0, bool sub_flag = false) override;
 };
 }  // namespace rm_referee

@@ -165,7 +165,7 @@ void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
 void RefereeBase::trackCallback(const rm_msgs::TrackData::ConstPtr& data)
 {
   if (blood_volume_trigger_change_ui_)
-    blood_volume_trigger_change_ui_->updateTrackData(data, ros::Time::now());
+    blood_volume_trigger_change_ui_->updateConfig(data, ros::Time::now());
 }
 void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
 {

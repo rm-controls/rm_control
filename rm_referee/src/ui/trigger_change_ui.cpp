@@ -307,13 +307,13 @@ int BloodVolumeTriggerChangeUi::getRobotHp(uint8_t id)
     return -1;
 }
 
-void BloodVolumeTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
+void BloodVolumeTriggerChangeUi::updateConfig(uint8_t robot_id, bool is_red, uint8_t sub_mode, bool sub_flag)
 {
-  graph_->setColor(sub_flag ? rm_referee::GraphColor::PINK : rm_referee::GraphColor::CYAN);
-  if (getRobotName(main_mode) != "null" && getRobotHp(main_mode) != -1)
+  graph_->setColor(is_red ? rm_referee::GraphColor::PINK : rm_referee::GraphColor::CYAN);
+  if (getRobotName(robot_id) != "NULL" && getRobotHp(robot_id) != -1)
   {
-    graph_->setTitle(getRobotName(main_mode) + ": ");
-    graph_->setContent("+" + std::to_string(getRobotHp(main_mode)));
+    graph_->setTitle(getRobotName(robot_id) + ": ");
+    graph_->setContent("+" + std::to_string(getRobotHp(robot_id)));
   }
   else
   {
@@ -327,12 +327,12 @@ void BloodVolumeTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag,
     add();
 }
 
-void BloodVolumeTriggerChangeUi::updateTrackData(const rm_msgs::TrackData::ConstPtr data, const ros::Time& time)
+void BloodVolumeTriggerChangeUi::updateConfig(const rm_msgs::TrackData::ConstPtr data, const ros::Time& time)
 {
   if (data->id > 100)
-    updateConfig(data->id, true, 0, false);
+    updateConfig(data->id, false);
   else if (data->id > 0)
-    updateConfig(data->id, true, 1, true);
+    updateConfig(data->id, true);
 }
 
 }  // namespace rm_referee
