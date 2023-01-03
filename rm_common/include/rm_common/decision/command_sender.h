@@ -142,20 +142,20 @@ public:
     translation_scale = pid_translation_.computeCommand(error_translation, period);
     setGroupVel(roll_scale, pitch_scale, translation_scale);
   }
-  void setGroupVel(double roll_scales, double pitch_scales, double translation_scales)
+  void setGroupVel(double roll_scale, double pitch_scale, double translation_scale)
   {
     double input{};
-    if (roll_scales && pitch_scales)
+    if (roll_scale || pitch_scale)
     {
-      input = abs(roll_scales) > abs(pitch_scales) ? roll_scales : pitch_scales;
-      if (abs(roll_scales) > abs(pitch_scales))
+      input = abs(roll_scale) > abs(pitch_scale) ? roll_scale : pitch_scale;
+      if (abs(roll_scale) > abs(pitch_scale))
       {
         rev_p_f_.data = reversal_max_speed_ * roll_config_[0] * abs(input);
         rev_p_b_.data = reversal_max_speed_ * roll_config_[1] * abs(input);
         rev_r_l_.data = reversal_max_speed_ * roll_config_[2] * input;
         rev_r_r_.data = reversal_max_speed_ * roll_config_[3] * input;
       }
-      else if (abs(roll_scales) < abs(pitch_scales))
+      else if (abs(roll_scale) < abs(pitch_scale))
       {
         rev_p_f_.data = reversal_max_speed_ * pitch_config_[0] * input;
         rev_p_b_.data = reversal_max_speed_ * pitch_config_[1] * input;
@@ -163,9 +163,9 @@ public:
         rev_r_r_.data = reversal_max_speed_ * pitch_config_[3] * abs(input);
       }
     }
-    if (translation_scales)
+    if (translation_scale)
     {
-      input = translation_scales;
+      input = translation_scale;
       tra_p_f_.data = translate_max_speed_ * translate_config_[0] * input;
       tra_p_b_.data = translate_max_speed_ * translate_config_[1] * input;
       tra_r_l_.data = translate_max_speed_ * translate_config_[2] * input;
@@ -176,8 +176,17 @@ public:
     msg_r_l_.data = rev_r_l_.data + tra_r_l_.data;
     msg_r_r_.data = rev_r_r_.data + tra_r_r_.data;
   }
+  void setZero()
+  {
+      msg_p_f_.data = 0;
+      msg_p_b_.data = 0;
+      msg_r_l_.data = 0;
+      msg_r_r_.data = 0;
+  }
   void sendCommand()
   {
+    if(msg_p_b_.data+msg_p_f_.data+msg_r_l_.data+msg_r_r_.data<=0.1)
+        setZero();
     pub_p_f_.publish(msg_p_f_);
     pub_p_b_.publish(msg_p_b_);
     pub_r_l_.publish(msg_r_l_);
