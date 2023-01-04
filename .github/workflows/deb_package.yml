@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     #if: ${{ github.repository == 'rm-controls/rm_control' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - uses: ros-tooling/setup-ros@v0.2
