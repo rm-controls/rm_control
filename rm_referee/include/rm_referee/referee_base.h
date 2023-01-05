@@ -41,6 +41,10 @@ public:
   virtual void gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data);
   virtual void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data);
   virtual void engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data);
+  virtual void stepUiDataCallback(const rm_msgs::EngineerUi ::ConstPtr& data);
+  virtual void dragUiDataCallback(const rm_msgs::EngineerUi ::ConstPtr& data);
+  virtual void reversalUiDataCallback(const rm_msgs::EngineerUi ::ConstPtr& data);
+  virtual void stoneUiDataCallback(const rm_msgs::EngineerUi ::ConstPtr& data);
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
 
@@ -55,6 +59,10 @@ public:
   ros::Subscriber card_cmd_sub_;
   ros::Subscriber calibration_status_sub_;
   ros::Subscriber engineer_cmd_sub_;
+  ros::Subscriber step_ui_sub_;
+  ros::Subscriber drag_ui_sub_;
+  ros::Subscriber reversal_ui_sub_;
+  ros::Subscriber stone_ui_sub_;
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
 
@@ -62,6 +70,10 @@ public:
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
   GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
   TargetTriggerChangeUi* target_trigger_change_ui_{};
+  StepTriggerChangeUi* step_trigger_change_ui_{};
+  DragTriggerChangeUi* drag_trigger_change_ui_{};
+  ReversalTriggerChangeUi* reversal_trigger_change_ui_{};
+  StoneTriggerChangeUi* stone_trigger_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};

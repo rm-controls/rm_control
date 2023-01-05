@@ -49,6 +49,7 @@
 
 #include "rm_referee/common/protocol.h"
 
+#include <rm_msgs/EngineerUi.h>
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/DbusData.h>
 #include <rm_msgs/StateCmd.h>
