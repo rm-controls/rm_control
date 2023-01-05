@@ -27,13 +27,13 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::engineer_cmd_sub_ =
       nh.subscribe<rm_msgs::EngineerCmd>("/engineer_cmd", 10, &RefereeBase::engineerCmdDataCallback, this);
   RefereeBase::step_ui_sub_ =
-      nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 10, &::rm_referee::RefereeBase::stepUiDataCallback, this);
+      nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 15, &::rm_referee::RefereeBase::stepUiDataCallback, this);
   RefereeBase::drag_ui_sub_ =
-      nh.subscribe<rm_msgs::EngineerUi>("/drag_ui", 10, &::rm_referee::RefereeBase::dragUiDataCallback, this);
+      nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 15, &::rm_referee::RefereeBase::dragUiDataCallback, this);
   RefereeBase::reversal_ui_sub_ =
-      nh.subscribe<rm_msgs::EngineerUi>("/reversal_ui", 10, &::rm_referee::RefereeBase::reversalUiDataCallback, this);
+      nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 15, &::rm_referee::RefereeBase::reversalUiDataCallback, this);
   RefereeBase::stone_ui_sub_ =
-      nh.subscribe<rm_msgs::EngineerUi>("/stone_ui", 10, &::rm_referee::RefereeBase::stoneUiDataCallback, this);
+      nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 15, &::rm_referee::RefereeBase::stoneUiDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
