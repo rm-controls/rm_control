@@ -185,12 +185,14 @@ public:
     pub_r_l_.publish(msg_r_l_);
     pub_r_r_.publish(msg_r_r_);
   }
+
 protected:
   uint32_t queue_size_;
   double reversal_vel_, translate_vel_;
   ros::Publisher pub_r_l_, pub_r_r_, pub_p_f_, pub_p_b_;
   std::vector<double> translate_, roll_, pitch_;
-  std_msgs::Float64 msg_p_f_{}, msg_p_b_{}, msg_r_l_{}, msg_r_r_{},rev_p_f_{},rev_p_b_{},rev_r_l_{},rev_r_r_{},tra_p_f_{},tra_p_b_{},tra_r_l_{},tra_r_r_{};
+  std_msgs::Float64 msg_p_f_{}, msg_p_b_{}, msg_r_l_{}, msg_r_r_{}, rev_p_f_{}, rev_p_b_{}, rev_r_l_{}, rev_r_r_{},
+      tra_p_f_{}, tra_p_b_{}, tra_r_l_{}, tra_r_r_{};
   control_toolbox::Pid pid_roll_, pid_pitch_, pid_translation_;
 };
 template <class MsgType>

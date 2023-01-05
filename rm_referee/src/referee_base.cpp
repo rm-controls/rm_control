@@ -209,31 +209,31 @@ void RefereeBase::engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr&
 }
 void RefereeBase::stepUiDataCallback(const rm_msgs::EngineerUi ::ConstPtr& data)
 {
-    if (step_trigger_change_ui_)
-    {
-        step_trigger_change_ui_->updateStepUiData(data);
-    }
+  if (step_trigger_change_ui_)
+  {
+    step_trigger_change_ui_->updateStepUiData(data);
+  }
 }
 void RefereeBase::dragUiDataCallback(const rm_msgs::EngineerUi ::ConstPtr& data)
 {
-    if (drag_trigger_change_ui_)
-    {
-        drag_trigger_change_ui_->updateDragUiData(data);
-    }
+  if (drag_trigger_change_ui_)
+  {
+    drag_trigger_change_ui_->updateDragUiData(data);
+  }
 }
 void RefereeBase::stoneUiDataCallback(const rm_msgs::EngineerUi ::ConstPtr& data)
 {
-    if (stone_trigger_change_ui_)
-    {
-        stone_trigger_change_ui_->updateStoneUiData(data);
-    }
+  if (stone_trigger_change_ui_)
+  {
+    stone_trigger_change_ui_->updateStoneUiData(data);
+  }
 }
 void RefereeBase::reversalUiDataCallback(const rm_msgs::EngineerUi ::ConstPtr& data)
 {
-    if (reversal_trigger_change_ui_)
-    {
-        reversal_trigger_change_ui_->updateReversalUiData(data);
-    }
+  if (reversal_trigger_change_ui_)
+  {
+    reversal_trigger_change_ui_->updateReversalUiData(data);
+  }
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
