@@ -197,7 +197,7 @@ void LaneLineTimeChangeUi::updateConfig()
 void LaneLineTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
   for (unsigned int i = 0; i < data->name.size(); i++)
-    if (data->name[i] == "pitch_joint")
+    if (data->name[i] == reference_joint_)
       pitch_angle_ = data->position[i];
 
   end_point_a_angle_ = camera_range_ / 2 + pitch_angle_;

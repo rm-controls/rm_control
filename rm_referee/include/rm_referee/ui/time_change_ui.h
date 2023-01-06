@@ -87,6 +87,14 @@ public:
     }
     else
       ROS_WARN("LaneLineUi config 's member 'data' not defined.");
+
+    if (rpc_value.hasMember("reference_joint"))
+    {
+      reference_joint_ = static_cast<std::string>(rpc_value["reference_joint"]);
+    }
+    else
+      ROS_WARN("LaneLineUi config 's member 'reference_joint' not defined.");
+
     graph_left_ = UiBase::graph_;
     graph_right_ = new Graph(rpc_value["config"], base_, UiBase::id_++);
   }
@@ -95,6 +103,7 @@ public:
 
 protected:
   Graph *graph_left_, *graph_right_;
+  std::string reference_joint_;
   double robot_radius_, robot_height_, camera_range_, surface_coefficient_ = 0.5;
   double pitch_angle_ = 0., screen_x_ = 1920, screen_y_ = 1080;
   double end_point_a_angle_, end_point_b_angle_;
