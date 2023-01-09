@@ -249,62 +249,23 @@ void BloodVolumeTriggerChangeUi::add()
 
 std::string BloodVolumeTriggerChangeUi::getRobotName(uint8_t id)
 {
-  if (id == rm_msgs::GameRobotStatus::RED_ENGINEER)
-    return "RED_ENGINEER";
-  else if (id == rm_msgs::GameRobotStatus::RED_SENTRY)
-    return "RED_SENTRY";
-  else if (id == rm_msgs::GameRobotStatus::RED_HERO)
-    return "RED_HERO";
-  else if (id == rm_msgs::GameRobotStatus::RED_STANDARD_3)
-    return "RED_STANDARD3";
-  else if (id == rm_msgs::GameRobotStatus::RED_STANDARD_4)
-    return "RED_STANDARD4";
-  else if (id == rm_msgs::GameRobotStatus::RED_STANDARD_5)
-    return "RED_STANDARD5";
-  else if (id == rm_msgs::GameRobotStatus::BLUE_ENGINEER)
-    return "BLUE_ENGINEER";
-  else if (id == rm_msgs::GameRobotStatus::BLUE_SENTRY)
-    return "BLUE_SENTRY";
-  else if (id == rm_msgs::GameRobotStatus::BLUE_HERO)
-    return "BLUE_HERO";
-  else if (id == rm_msgs::GameRobotStatus::BLUE_STANDARD_3)
-    return "BLUE_STANDARD3";
-  else if (id == rm_msgs::GameRobotStatus::BLUE_STANDARD_4)
-    return "BLUE_STANDARD4";
-  else if (id == rm_msgs::GameRobotStatus::BLUE_STANDARD_5)
-    return "BLUE_STANDARD5";
-  else
-    return "NULL";
+  for (auto robot : robot_name_vector_)
+  {
+    if (robot.first == id)
+      return robot.second;
+  }
+  return "NULL";
 }
 
 int BloodVolumeTriggerChangeUi::getRobotHp(uint8_t id)
 {
-  if (id == rm_msgs::GameRobotStatus::RED_ENGINEER)
-    return robot_hp_.red_2_robot_hp;
-  else if (id == rm_msgs::GameRobotStatus::RED_SENTRY)
-    return robot_hp_.red_7_robot_hp;
-  else if (id == rm_msgs::GameRobotStatus::RED_HERO)
-    return robot_hp_.red_1_robot_hp;
-  else if (id == rm_msgs::GameRobotStatus::RED_STANDARD_3)
-    return robot_hp_.red_3_robot_hp;
-  else if (id == rm_msgs::GameRobotStatus::RED_STANDARD_4)
-    return robot_hp_.red_4_robot_hp;
-  else if (id == rm_msgs::GameRobotStatus::RED_STANDARD_5)
-    return robot_hp_.red_5_robot_hp;
-  else if (id == rm_msgs::GameRobotStatus::BLUE_ENGINEER)
-    return robot_hp_.blue_2_robot_hp;
-  else if (id == rm_msgs::GameRobotStatus::BLUE_SENTRY)
-    return robot_hp_.blue_7_robot_hp;
-  else if (id == rm_msgs::GameRobotStatus::BLUE_HERO)
-    return robot_hp_.blue_1_robot_hp;
-  else if (id == rm_msgs::GameRobotStatus::BLUE_STANDARD_3)
-    return robot_hp_.blue_3_robot_hp;
-  else if (id == rm_msgs::GameRobotStatus::BLUE_STANDARD_4)
-    return robot_hp_.blue_4_robot_hp;
-  else if (id == rm_msgs::GameRobotStatus::BLUE_STANDARD_5)
-    return robot_hp_.blue_5_robot_hp;
-  else
-    return -1;
+  for (auto hp : robot_hp_vector_)
+  {
+    if (hp.first == id)
+      return *hp.second;
+  }
+  ROS_ERROR("Can't get %s's hp", getRobotName(id).c_str());
+  return -1;
 }
 
 void BloodVolumeTriggerChangeUi::updateConfig(uint8_t robot_id, bool is_red, uint8_t sub_mode, bool sub_flag)

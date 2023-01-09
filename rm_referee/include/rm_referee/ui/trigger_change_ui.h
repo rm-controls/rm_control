@@ -108,7 +108,9 @@ class BloodVolumeTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit BloodVolumeTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
-    : TriggerChangeUi(rpc_value, base, "blood_volume"){};
+    : TriggerChangeUi(rpc_value, base, "blood_volume"){
+
+    };
   void add() override;
   std::string getRobotName(uint8_t id);
   int getRobotHp(uint8_t id);
@@ -119,9 +121,37 @@ public:
   void updateConfig(const rm_msgs::TrackData::ConstPtr data, const ros::Time& time);
 
 private:
-  bool is_deleted_;
-  int next_pos_x_, next_pos_y_;
-  rm_msgs::GameRobotHp robot_hp_;
   void updateConfig(uint8_t robot_id, bool is_red, uint8_t sub_mode = 0, bool sub_flag = false) override;
+  bool is_deleted_;
+  rm_msgs::GameRobotHp robot_hp_;
+  std::map<int, std::string> robot_name_vector_ = {
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::RED_ENGINEER, "RED_ENGINEER"),
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::RED_SENTRY, "RED_SENTRY"),
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::RED_HERO, "RED_HERO"),
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::RED_STANDARD_3, "RED_STANDARD3"),
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::RED_STANDARD_4, "RED_STANDARD4"),
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::RED_STANDARD_5, "RED_STANDARD5"),
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::BLUE_ENGINEER, "BLUE_ENGINEER"),
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::BLUE_SENTRY, "BLUE_SENTRY"),
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::BLUE_HERO, "BLUE_HERO"),
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::BLUE_STANDARD_3, "BLUE_STANDARD3"),
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::BLUE_STANDARD_4, "BLUE_STANDARD4"),
+    std::make_pair<int, std::string>(rm_msgs::GameRobotStatus::BLUE_STANDARD_5, "BLUE_STANDARD5")
+
+  };
+  std::map<int, uint16_t*> robot_hp_vector_ = {
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::RED_ENGINEER, &robot_hp_.red_2_robot_hp),
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::RED_SENTRY, &robot_hp_.red_7_robot_hp),
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::RED_HERO, &robot_hp_.red_1_robot_hp),
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::RED_STANDARD_3, &robot_hp_.red_3_robot_hp),
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::RED_STANDARD_4, &robot_hp_.red_4_robot_hp),
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::RED_STANDARD_5, &robot_hp_.red_5_robot_hp),
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::BLUE_ENGINEER, &robot_hp_.blue_2_robot_hp),
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::BLUE_SENTRY, &robot_hp_.blue_7_robot_hp),
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::BLUE_HERO, &robot_hp_.blue_1_robot_hp),
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::BLUE_STANDARD_3, &robot_hp_.blue_3_robot_hp),
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::BLUE_STANDARD_4, &robot_hp_.blue_4_robot_hp),
+    std::make_pair<int, uint16_t*>(rm_msgs::GameRobotStatus::BLUE_STANDARD_5, &robot_hp_.blue_5_robot_hp)
+  };
 };
 }  // namespace rm_referee
