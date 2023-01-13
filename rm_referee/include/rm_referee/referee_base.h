@@ -67,6 +67,7 @@ public:
   EffortTimeChangeUi* effort_time_change_ui_{};
   ProgressTimeChangeUi* progress_time_change_ui_{};
   DartStatusTimeChangeUi* dart_status_time_change_ui_{};
+  LaneLineTimeChangeUi* lane_line_time_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
