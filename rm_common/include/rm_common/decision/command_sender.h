@@ -111,96 +111,96 @@ class ReversalCommandSender
 public:
   explicit ReversalCommandSender(ros::NodeHandle& nh)
   {
-    XmlRpc::XmlRpcValue roll_config{}, pitch_config{}, translation_config{};
+    XmlRpc::XmlRpcValue roll_config{}, pitch_config{}, yaw_config{}, x_config{}, y_config{}, z_config{};
     ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "pid_roll");
     ros::NodeHandle nh_pid_pitch = ros::NodeHandle(nh, "pid_pitch");
-    ros::NodeHandle nh_pid_translation = ros::NodeHandle(nh, "pid_translation");
+    ros::NodeHandle nh_pid_yaw = ros::NodeHandle(nh, "pid_yaw");
+    ros::NodeHandle nh_pid_x = ros::NodeHandle(nh, "pid_x");
+    ros::NodeHandle nh_pid_y = ros::NodeHandle(nh, "pid_y");
+    ros::NodeHandle nh_pid_z = ros::NodeHandle(nh, "pid_z");
     ROS_ASSERT(nh.getParam("translate_max_speed", translate_max_speed_) &&
                nh.getParam("reversal_max_speed", reversal_max_speed_));
-    ROS_ASSERT(nh.getParam("translate", translation_config) && nh.getParam("roll", roll_config) &&
-               nh.getParam("pitch", pitch_config));
-    for (int i = 0; i < translation_config.size(); i++)
+    ROS_ASSERT(nh.getParam("roll", roll_config) &&
+               nh.getParam("pitch", pitch_config) && nh.getParam("yaw", yaw_config) && nh.getParam("x", x_config) && nh.getParam("y", y_config) && nh.getParam("z", z_config));
+    for (int i = 0; i < x_config.size(); i++)
     {
-      translate_config_.push_back(xmlRpcGetDouble(translation_config[i]));
       roll_config_.push_back(xmlRpcGetDouble(roll_config[i]));
       pitch_config_.push_back(xmlRpcGetDouble(pitch_config[i]));
+      yaw_config_.push_back(xmlRpcGetDouble(yaw_config[i]));
+      x_config_.push_back(xmlRpcGetDouble(x_config[i]));
+      y_config_.push_back(xmlRpcGetDouble(y_config[i]));
+      z_config_.push_back(xmlRpcGetDouble(z_config[i]));
     }
     pid_roll_.init(ros::NodeHandle(nh_pid_roll, "pid"));
     pid_pitch_.init(ros::NodeHandle(nh_pid_pitch, "pid"));
-    pid_translation_.init(ros::NodeHandle(nh_pid_translation, "pid"));
+    pid_yaw_.init(ros::NodeHandle(nh_pid_yaw, "pid"));
+    pid_x_.init(ros::NodeHandle(nh_pid_x, "pid"));
+    pid_y_.init(ros::NodeHandle(nh_pid_y, "pid"));
+    pid_z_.init(ros::NodeHandle(nh_pid_z, "pid"));
     queue_size_ = getParam(nh, "queue_size", 1);
-    pub_p_f_ = nh.advertise<std_msgs::Float64>("/controllers/pitch_front_controller/command", queue_size_);
-    pub_p_b_ = nh.advertise<std_msgs::Float64>("/controllers/pitch_behind_controller/command", queue_size_);
-    pub_r_l_ = nh.advertise<std_msgs::Float64>("/controllers/roll_left_controller/command", queue_size_);
-    pub_r_r_ = nh.advertise<std_msgs::Float64>("/controllers/roll_right_controller/command", queue_size_);
+    pub_motor1_ = nh.advertise<std_msgs::Float64>("/controllers/motor1_controller/command", queue_size_);
+    pub_motor2_ = nh.advertise<std_msgs::Float64>("/controllers/motor2_controller/command", queue_size_);
+    pub_motor3_ = nh.advertise<std_msgs::Float64>("/controllers/motor3_controller/command", queue_size_);
+    pub_motor4_ = nh.advertise<std_msgs::Float64>("/controllers/motor4_controller/command", queue_size_);
   };
   void visionReversal(double error_roll, double error_pitch, double error_translation, ros::Duration period)
   {
     double roll_scale{}, pitch_scale{}, translation_scale{};
     roll_scale = pid_roll_.computeCommand(error_roll, period);
     pitch_scale = pid_pitch_.computeCommand(error_pitch, period);
-    translation_scale = pid_translation_.computeCommand(error_translation, period);
-    setGroupVel(roll_scale, pitch_scale, translation_scale);
   }
-  void setGroupVel(double roll_scale, double pitch_scale, double translation_scale)
+  void setGroupVel(double roll_scale, double pitch_scale, double yaw_scale, double x_scale, double y_scale, double z_scale)
   {
-    double input{};
-    if (roll_scale || pitch_scale)
-    {
-      input = abs(roll_scale) > abs(pitch_scale) ? roll_scale : pitch_scale;
-      if (abs(roll_scale) > abs(pitch_scale))
-      {
-        rev_p_f_.data = reversal_max_speed_ * roll_config_[0] * abs(input);
-        rev_p_b_.data = reversal_max_speed_ * roll_config_[1] * abs(input);
-        rev_r_l_.data = reversal_max_speed_ * roll_config_[2] * input;
-        rev_r_r_.data = reversal_max_speed_ * roll_config_[3] * input;
-      }
-      else if (abs(roll_scale) < abs(pitch_scale))
-      {
-        rev_p_f_.data = reversal_max_speed_ * pitch_config_[0] * input;
-        rev_p_b_.data = reversal_max_speed_ * pitch_config_[1] * input;
-        rev_r_l_.data = reversal_max_speed_ * pitch_config_[2] * abs(input);
-        rev_r_r_.data = reversal_max_speed_ * pitch_config_[3] * abs(input);
-      }
-    }
-    if (translation_scale)
-    {
-      input = translation_scale;
-      tra_p_f_.data = translate_max_speed_ * translate_config_[0] * input;
-      tra_p_b_.data = translate_max_speed_ * translate_config_[1] * input;
-      tra_r_l_.data = translate_max_speed_ * translate_config_[2] * input;
-      tra_r_r_.data = translate_max_speed_ * translate_config_[3] * input;
-    }
-    msg_p_f_.data = rev_p_f_.data + tra_p_f_.data;
-    msg_p_b_.data = rev_p_b_.data + tra_p_b_.data;
-    msg_r_l_.data = rev_r_l_.data + tra_r_l_.data;
-    msg_r_r_.data = rev_r_r_.data + tra_r_r_.data;
+    std_msgs::Float64 rev_motor1{}, rev_motor2{}, rev_motor3{}, rev_motor4{},tra_motor1{}, tra_motor2{}, tra_motor3{}, tra_motor4{};
+    double rev_motor1_scale{}, tra_motor1_scale{}, rev_motor2_scale{}, tra_motor2_scale{}, rev_motor3_scale{}, tra_motor3_scale{}, rev_motor4_scale{}, tra_motor4_scale{};
+    rev_motor1_scale = (roll_config_[0] * roll_scale) + (pitch_config_[0] * pitch_scale) + (yaw_config_[0] * yaw_scale);
+    rev_motor2_scale = (roll_config_[1] * roll_scale) + (pitch_config_[1] * pitch_scale) + (yaw_config_[1] * yaw_scale);
+    rev_motor3_scale = (roll_config_[2] * roll_scale) + (pitch_config_[2] * pitch_scale) + (yaw_config_[2] * yaw_scale);
+    rev_motor4_scale = (roll_config_[3] * roll_scale) + (pitch_config_[3] * pitch_scale) + (yaw_config_[3] * yaw_scale);
+
+    rev_motor1.data = reversal_max_speed_ * rev_motor1_scale;
+    rev_motor2.data = reversal_max_speed_ * rev_motor2_scale;
+    rev_motor3.data = reversal_max_speed_ * rev_motor3_scale;
+    rev_motor4.data = reversal_max_speed_ * rev_motor4_scale;
+
+    tra_motor1_scale = (x_config_[0] * x_scale) + (y_config_[0] * y_scale) + (z_config_[0] * z_scale);
+    tra_motor2_scale = (x_config_[1] * x_scale) + (y_config_[1] * y_scale) + (z_config_[1] * z_scale);
+    tra_motor3_scale = (x_config_[2] * x_scale) + (y_config_[2] * y_scale) + (z_config_[2] * z_scale);
+    tra_motor4_scale = (x_config_[3] * x_scale) + (y_config_[3] * y_scale) + (z_config_[3] * z_scale);
+
+    tra_motor1.data = translate_max_speed_ * tra_motor1_scale;
+    tra_motor2.data = translate_max_speed_ * tra_motor2_scale;
+    tra_motor3.data = translate_max_speed_ * tra_motor3_scale;
+    tra_motor4.data = translate_max_speed_ * tra_motor4_scale;
+
+
+    msg_motor1_.data = rev_motor1.data + tra_motor1.data;
+    msg_motor2_.data = rev_motor2.data + tra_motor2.data;
+    msg_motor3_.data = rev_motor3.data + tra_motor3.data;
+    msg_motor4_.data = rev_motor4.data + tra_motor4.data;
   }
   void setZero()
   {
-    msg_p_f_.data = 0;
-    msg_p_b_.data = 0;
-    msg_r_l_.data = 0;
-    msg_r_r_.data = 0;
+    msg_motor1_.data = 0;
+    msg_motor2_.data = 0;
+    msg_motor3_.data = 0;
+    msg_motor4_.data = 0;
   }
   void sendCommand()
   {
-    if (msg_p_b_.data + msg_p_f_.data + msg_r_l_.data + msg_r_r_.data <= 0.1)
-      setZero();
-    pub_p_f_.publish(msg_p_f_);
-    pub_p_b_.publish(msg_p_b_);
-    pub_r_l_.publish(msg_r_l_);
-    pub_r_r_.publish(msg_r_r_);
+    pub_motor1_.publish(msg_motor1_);
+    pub_motor2_.publish(msg_motor2_);
+    pub_motor3_.publish(msg_motor3_);
+    pub_motor4_.publish(msg_motor4_);
   }
 
 protected:
   uint32_t queue_size_;
   double reversal_max_speed_, translate_max_speed_;
-  ros::Publisher pub_r_l_, pub_r_r_, pub_p_f_, pub_p_b_;
-  std::vector<double> translate_config_, roll_config_, pitch_config_;
-  std_msgs::Float64 msg_p_f_{}, msg_p_b_{}, msg_r_l_{}, msg_r_r_{}, rev_p_f_{}, rev_p_b_{}, rev_r_l_{}, rev_r_r_{},
-      tra_p_f_{}, tra_p_b_{}, tra_r_l_{}, tra_r_r_{};
-  control_toolbox::Pid pid_roll_, pid_pitch_, pid_translation_;
+  ros::Publisher pub_motor1_, pub_motor2_, pub_motor3_, pub_motor4_;
+  std::vector<double> roll_config_, pitch_config_, yaw_config_, x_config_, y_config_, z_config_;
+  std_msgs::Float64 msg_motor1_{}, msg_motor2_{}, msg_motor3_{}, msg_motor4_{};
+  control_toolbox::Pid pid_roll_, pid_pitch_, pid_yaw_, pid_x_, pid_y_, pid_z_;
 };
 
 template <class MsgType>
