@@ -106,10 +106,10 @@ protected:
   ros::Publisher pub_;
   MsgType msg_;
 };
-class ReversalCommandSender
+class MultiDofCommandSender
 {
 public:
-  explicit ReversalCommandSender(ros::NodeHandle& nh)
+  explicit MultiDofCommandSender(ros::NodeHandle& nh)
   {
     XmlRpc::XmlRpcValue roll_config{}, pitch_config{}, yaw_config{}, x_config{}, y_config{}, z_config{};
     ROS_ASSERT(nh.getParam("translate_max_speed", translate_max_speed_) &&
@@ -127,16 +127,11 @@ public:
     pub_motor3_ = nh.advertise<std_msgs::Float64>("/controllers/motor3_controller/command", queue_size_);
     pub_motor4_ = nh.advertise<std_msgs::Float64>("/controllers/motor4_controller/command", queue_size_);
   };
-  void visionReversal(double error_roll, double error_pitch, double error_translation, ros::Duration period)
+  void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y, double error_z, ros::Duration period)
   {
-    double roll_scale{}, pitch_scale{}, translation_scale{};
-    roll_scale = pid_roll_.computeCommand(error_roll, period);
-    pitch_scale = pid_pitch_.computeCommand(error_pitch, period);
   }
   void setGroupVel(double roll_scale, double pitch_scale, double yaw_scale, double x_scale, double y_scale, double z_scale)
   {
-    std_msgs::Float64 rev_motor1{}, rev_motor2{}, rev_motor3{}, rev_motor4{},tra_motor1{}, tra_motor2{}, tra_motor3{}, tra_motor4{};
-    double motor1_scale{}, motor2_scale{}, motor3_scale{}, motor4_scale{};
     msg_motor1_.data = reversal_max_speed_ * (roll_config_[0] * roll_scale) + (pitch_config_[0] * pitch_scale) + (yaw_config_[0] * yaw_scale) + translate_max_speed_ * (x_config_[0] * x_scale) + (y_config_[0] * y_scale) + (z_config_[0] * z_scale);
     msg_motor2_.data = reversal_max_speed_ * (roll_config_[1] * roll_scale) + (pitch_config_[1] * pitch_scale) + (yaw_config_[1] * yaw_scale) + translate_max_speed_ * (x_config_[1] * x_scale) + (y_config_[1] * y_scale) + (z_config_[1] * z_scale);
     msg_motor3_.data = reversal_max_speed_ * (roll_config_[2] * roll_scale) + (pitch_config_[2] * pitch_scale) + (yaw_config_[2] * yaw_scale) + translate_max_speed_ * (x_config_[2] * x_scale) + (y_config_[2] * y_scale) + (z_config_[2] * z_scale);
