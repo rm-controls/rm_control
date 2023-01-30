@@ -116,10 +116,10 @@ public:
                nh.getParam("reversal_max_speed", reversal_max_speed_));
     if (nh.getParam("roll", roll_config))
     {
-        for (int i = 0; i < roll_config.size(); ++i)
-          roll_config_.push_back(xmlRpcGetDouble(roll_config[i]));
-        ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "pid_roll");
-        pid_roll_.init(ros::NodeHandle(nh_pid_roll, "pid"));
+      for (int i = 0; i < roll_config.size(); ++i)
+        roll_config_.push_back(xmlRpcGetDouble(roll_config[i]));
+      ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "pid_roll");
+      pid_roll_.init(ros::NodeHandle(nh_pid_roll, "pid"));
     }
     queue_size_ = getParam(nh, "queue_size", 1);
     pub_motor1_ = nh.advertise<std_msgs::Float64>("/controllers/motor1_controller/command", queue_size_);
@@ -127,15 +127,25 @@ public:
     pub_motor3_ = nh.advertise<std_msgs::Float64>("/controllers/motor3_controller/command", queue_size_);
     pub_motor4_ = nh.advertise<std_msgs::Float64>("/controllers/motor4_controller/command", queue_size_);
   };
-  void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y, double error_z, ros::Duration period)
+  void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y,
+                      double error_z, ros::Duration period)
   {
   }
-  void setGroupVel(double roll_scale, double pitch_scale, double yaw_scale, double x_scale, double y_scale, double z_scale)
+  void setGroupVel(double roll_scale, double pitch_scale, double yaw_scale, double x_scale, double y_scale,
+                   double z_scale)
   {
-    msg_motor1_.data = reversal_max_speed_ * (roll_config_[0] * roll_scale) + (pitch_config_[0] * pitch_scale) + (yaw_config_[0] * yaw_scale) + translate_max_speed_ * (x_config_[0] * x_scale) + (y_config_[0] * y_scale) + (z_config_[0] * z_scale);
-    msg_motor2_.data = reversal_max_speed_ * (roll_config_[1] * roll_scale) + (pitch_config_[1] * pitch_scale) + (yaw_config_[1] * yaw_scale) + translate_max_speed_ * (x_config_[1] * x_scale) + (y_config_[1] * y_scale) + (z_config_[1] * z_scale);
-    msg_motor3_.data = reversal_max_speed_ * (roll_config_[2] * roll_scale) + (pitch_config_[2] * pitch_scale) + (yaw_config_[2] * yaw_scale) + translate_max_speed_ * (x_config_[2] * x_scale) + (y_config_[2] * y_scale) + (z_config_[2] * z_scale);
-    msg_motor4_.data = reversal_max_speed_ * (roll_config_[3] * roll_scale) + (pitch_config_[3] * pitch_scale) + (yaw_config_[3] * yaw_scale) + translate_max_speed_ * (x_config_[3] * x_scale) + (y_config_[3] * y_scale) + (z_config_[3] * z_scale);
+    msg_motor1_.data = reversal_max_speed_ * (roll_config_[0] * roll_scale) + (pitch_config_[0] * pitch_scale) +
+                       (yaw_config_[0] * yaw_scale) + translate_max_speed_ * (x_config_[0] * x_scale) +
+                       (y_config_[0] * y_scale) + (z_config_[0] * z_scale);
+    msg_motor2_.data = reversal_max_speed_ * (roll_config_[1] * roll_scale) + (pitch_config_[1] * pitch_scale) +
+                       (yaw_config_[1] * yaw_scale) + translate_max_speed_ * (x_config_[1] * x_scale) +
+                       (y_config_[1] * y_scale) + (z_config_[1] * z_scale);
+    msg_motor3_.data = reversal_max_speed_ * (roll_config_[2] * roll_scale) + (pitch_config_[2] * pitch_scale) +
+                       (yaw_config_[2] * yaw_scale) + translate_max_speed_ * (x_config_[2] * x_scale) +
+                       (y_config_[2] * y_scale) + (z_config_[2] * z_scale);
+    msg_motor4_.data = reversal_max_speed_ * (roll_config_[3] * roll_scale) + (pitch_config_[3] * pitch_scale) +
+                       (yaw_config_[3] * yaw_scale) + translate_max_speed_ * (x_config_[3] * x_scale) +
+                       (y_config_[3] * y_scale) + (z_config_[3] * z_scale);
   }
   void setZero()
   {
