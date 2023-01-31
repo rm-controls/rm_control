@@ -114,9 +114,8 @@ public:
     XmlRpc::XmlRpcValue roll_config{}, pitch_config{}, yaw_config{}, x_config{}, y_config{}, z_config{};
     ROS_ASSERT(nh.getParam("translate_max_speed", translate_max_speed_) &&
                nh.getParam("reversal_max_speed", reversal_max_speed_));
-    ROS_ASSERT(nh.getParam("topic_joint1", topic_joint1_) &&
-                 nh.getParam("topic_joint2", topic_joint2_) && nh.getParam("topic_joint3", topic_joint3_) &&
-                 nh.getParam("topic_joint4", topic_joint4_));
+    ROS_ASSERT(nh.getParam("topic_joint1", topic_joint1_) && nh.getParam("topic_joint2", topic_joint2_) &&
+               nh.getParam("topic_joint3", topic_joint3_) && nh.getParam("topic_joint4", topic_joint4_));
     if (nh.getParam("roll", roll_config))
     {
       for (int i = 0; i < roll_config.size(); ++i)
