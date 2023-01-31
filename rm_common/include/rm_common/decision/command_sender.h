@@ -114,6 +114,9 @@ public:
     XmlRpc::XmlRpcValue roll_config{}, pitch_config{}, yaw_config{}, x_config{}, y_config{}, z_config{};
     ROS_ASSERT(nh.getParam("translate_max_speed", translate_max_speed_) &&
                nh.getParam("reversal_max_speed", reversal_max_speed_));
+    ROS_ASSERT(nh.getParam("topic_joint1", topic_joint1_) &&
+                 nh.getParam("topic_joint2", topic_joint2_) && nh.getParam("topic_joint3", topic_joint3_) &&
+                 nh.getParam("topic_joint4", topic_joint4_));
     if (nh.getParam("roll", roll_config))
     {
       for (int i = 0; i < roll_config.size(); ++i)
@@ -122,10 +125,10 @@ public:
       pid_roll_.init(ros::NodeHandle(nh_pid_roll, "pid"));
     }
     queue_size_ = getParam(nh, "queue_size", 1);
-    pub_motor1_ = nh.advertise<std_msgs::Float64>("/controllers/motor1_controller/command", queue_size_);
-    pub_motor2_ = nh.advertise<std_msgs::Float64>("/controllers/motor2_controller/command", queue_size_);
-    pub_motor3_ = nh.advertise<std_msgs::Float64>("/controllers/motor3_controller/command", queue_size_);
-    pub_motor4_ = nh.advertise<std_msgs::Float64>("/controllers/motor4_controller/command", queue_size_);
+    pub_joint1_ = nh.advertise<std_msgs::Float64>(topic_joint1_, queue_size_);
+    pub_joint2_ = nh.advertise<std_msgs::Float64>(topic_joint2_, queue_size_);
+    pub_joint3_ = nh.advertise<std_msgs::Float64>(topic_joint3_, queue_size_);
+    pub_joint4_ = nh.advertise<std_msgs::Float64>(topic_joint4_, queue_size_);
   };
   void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y,
                       double error_z, ros::Duration period)
@@ -134,40 +137,41 @@ public:
   void setGroupVel(double roll_scale, double pitch_scale, double yaw_scale, double x_scale, double y_scale,
                    double z_scale)
   {
-    msg_motor1_.data = reversal_max_speed_ * (roll_config_[0] * roll_scale) + (pitch_config_[0] * pitch_scale) +
+    msg_joint1_.data = reversal_max_speed_ * (roll_config_[0] * roll_scale) + (pitch_config_[0] * pitch_scale) +
                        (yaw_config_[0] * yaw_scale) + translate_max_speed_ * (x_config_[0] * x_scale) +
                        (y_config_[0] * y_scale) + (z_config_[0] * z_scale);
-    msg_motor2_.data = reversal_max_speed_ * (roll_config_[1] * roll_scale) + (pitch_config_[1] * pitch_scale) +
+    msg_joint2_.data = reversal_max_speed_ * (roll_config_[1] * roll_scale) + (pitch_config_[1] * pitch_scale) +
                        (yaw_config_[1] * yaw_scale) + translate_max_speed_ * (x_config_[1] * x_scale) +
                        (y_config_[1] * y_scale) + (z_config_[1] * z_scale);
-    msg_motor3_.data = reversal_max_speed_ * (roll_config_[2] * roll_scale) + (pitch_config_[2] * pitch_scale) +
+    msg_joint3_.data = reversal_max_speed_ * (roll_config_[2] * roll_scale) + (pitch_config_[2] * pitch_scale) +
                        (yaw_config_[2] * yaw_scale) + translate_max_speed_ * (x_config_[2] * x_scale) +
                        (y_config_[2] * y_scale) + (z_config_[2] * z_scale);
-    msg_motor4_.data = reversal_max_speed_ * (roll_config_[3] * roll_scale) + (pitch_config_[3] * pitch_scale) +
+    msg_joint4_.data = reversal_max_speed_ * (roll_config_[3] * roll_scale) + (pitch_config_[3] * pitch_scale) +
                        (yaw_config_[3] * yaw_scale) + translate_max_speed_ * (x_config_[3] * x_scale) +
                        (y_config_[3] * y_scale) + (z_config_[3] * z_scale);
   }
   void setZero()
   {
-    msg_motor1_.data = 0;
-    msg_motor2_.data = 0;
-    msg_motor3_.data = 0;
-    msg_motor4_.data = 0;
+    msg_joint1_.data = 0;
+    msg_joint2_.data = 0;
+    msg_joint3_.data = 0;
+    msg_joint4_.data = 0;
   }
   void sendCommand()
   {
-    pub_motor1_.publish(msg_motor1_);
-    pub_motor2_.publish(msg_motor2_);
-    pub_motor3_.publish(msg_motor3_);
-    pub_motor4_.publish(msg_motor4_);
+    pub_joint1_.publish(msg_joint1_);
+    pub_joint2_.publish(msg_joint2_);
+    pub_joint3_.publish(msg_joint3_);
+    pub_joint4_.publish(msg_joint4_);
   }
 
 protected:
   uint32_t queue_size_;
   double reversal_max_speed_, translate_max_speed_;
-  ros::Publisher pub_motor1_, pub_motor2_, pub_motor3_, pub_motor4_;
+  ros::Publisher pub_joint1_, pub_joint2_, pub_joint3_, pub_joint4_;
+  std::string topic_joint1_, topic_joint2_, topic_joint3_, topic_joint4_;
   std::vector<double> roll_config_, pitch_config_, yaw_config_, x_config_, y_config_, z_config_;
-  std_msgs::Float64 msg_motor1_{}, msg_motor2_{}, msg_motor3_{}, msg_motor4_{};
+  std_msgs::Float64 msg_joint1_{}, msg_joint2_{}, msg_joint3_{}, msg_joint4_{};
   control_toolbox::Pid pid_roll_, pid_pitch_, pid_yaw_, pid_x_, pid_y_, pid_z_;
 };
 
