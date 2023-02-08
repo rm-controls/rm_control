@@ -24,7 +24,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::card_cmd_sub_ = nh.subscribe<rm_msgs::StateCmd>("/controllers/card_controller/command", 10,
                                                                &RefereeBase::cardCmdDataCallback, this);
   RefereeBase::engineer_cmd_sub_ =
-      nh.subscribe<rm_msgs::EngineerCmd>("/engineer_cmd", 10, &RefereeBase::engineerCmdDataCallback, this);
+      nh.subscribe<rm_msgs::StepQueueState>("/step_queue_state", 10, &RefereeBase::stepQueueStateDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
@@ -183,10 +183,10 @@ void RefereeBase::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data
 void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 {
 }
-void RefereeBase::engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data)
+void RefereeBase::stepQueueStateDataCallback(const rm_msgs::StepQueueState ::ConstPtr& data)
 {
   if (progress_time_change_ui_)
-    progress_time_change_ui_->updateEngineerCmdData(data, ros::Time::now());
+    progress_time_change_ui_->updateStepQueueStateData(data, ros::Time::now());
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
