@@ -180,7 +180,7 @@ void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 void RefereeBase::stepQueueStateDataCallback(const rm_msgs::StepQueueState ::ConstPtr& data)
 {
   if (progress_time_change_ui_)
-    progress_time_change_ui_->updateEngineerCmdData(data, ros::Time::now());
+    progress_time_change_ui_->updateStepQueueStateData(data, ros::Time::now());
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
