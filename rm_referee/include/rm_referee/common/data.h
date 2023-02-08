@@ -60,7 +60,7 @@
 #include <rm_msgs/ChassisCmd.h>
 #include <rm_msgs/GameStatus.h>
 #include <rm_msgs/RfidStatus.h>
-#include <rm_msgs/EngineerCmd.h>
+#include <rm_msgs/StepQueueState.h>
 #include <rm_msgs/GameRobotHp.h>
 #include <rm_msgs/CapacityData.h>
 #include <rm_msgs/DartClientCmd.h>

@@ -110,7 +110,7 @@ void ProgressTimeChangeUi::updateConfig()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
-void ProgressTimeChangeUi::updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data,
+void ProgressTimeChangeUi::updateEngineerCmdData(const rm_msgs::StepQueueState::ConstPtr data,
                                                  const ros::Time& last_get_data_time)
 {
   total_steps_ = data->total_steps;
