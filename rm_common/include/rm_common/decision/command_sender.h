@@ -111,7 +111,8 @@ class MultiDofCommandSender
 public:
   explicit MultiDofCommandSender(ros::NodeHandle& nh)
   {
-    uint32_t queue_size = getParam(nh, "queue_size", 1);;
+    uint32_t queue_size = getParam(nh, "queue_size", 1);
+    ;
     std::string topic_joint1, topic_joint2, topic_joint3, topic_joint4;
     XmlRpc::XmlRpcValue roll_config{}, pitch_config{}, yaw_config{}, x_config{}, y_config{}, z_config{};
     ROS_ASSERT(nh.getParam("translate_max_speed", translate_max_speed_) &&
