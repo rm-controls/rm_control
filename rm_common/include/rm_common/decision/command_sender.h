@@ -111,11 +111,13 @@ class MultiDofCommandSender
 public:
   explicit MultiDofCommandSender(ros::NodeHandle& nh)
   {
+    uint32_t queue_size = getParam(nh, "queue_size", 1);;
+    std::string topic_joint1, topic_joint2, topic_joint3, topic_joint4;
     XmlRpc::XmlRpcValue roll_config{}, pitch_config{}, yaw_config{}, x_config{}, y_config{}, z_config{};
     ROS_ASSERT(nh.getParam("translate_max_speed", translate_max_speed_) &&
                nh.getParam("reversal_max_speed", reversal_max_speed_));
-    ROS_ASSERT(nh.getParam("topic_joint1", topic_joint1_) && nh.getParam("topic_joint2", topic_joint2_) &&
-               nh.getParam("topic_joint3", topic_joint3_) && nh.getParam("topic_joint4", topic_joint4_));
+    ROS_ASSERT(nh.getParam("topic_joint1", topic_joint1) && nh.getParam("topic_joint2", topic_joint2) &&
+               nh.getParam("topic_joint3", topic_joint3) && nh.getParam("topic_joint4", topic_joint4));
     if (nh.getParam("roll", roll_config))
     {
       for (int i = 0; i < roll_config.size(); ++i)
@@ -123,11 +125,10 @@ public:
       ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "pid_roll");
       pid_roll_.init(ros::NodeHandle(nh_pid_roll, "pid"));
     }
-    queue_size_ = getParam(nh, "queue_size", 1);
-    pub_joint1_ = nh.advertise<std_msgs::Float64>(topic_joint1_, queue_size_);
-    pub_joint2_ = nh.advertise<std_msgs::Float64>(topic_joint2_, queue_size_);
-    pub_joint3_ = nh.advertise<std_msgs::Float64>(topic_joint3_, queue_size_);
-    pub_joint4_ = nh.advertise<std_msgs::Float64>(topic_joint4_, queue_size_);
+    pub_joint1_ = nh.advertise<std_msgs::Float64>(topic_joint1, queue_size);
+    pub_joint2_ = nh.advertise<std_msgs::Float64>(topic_joint2, queue_size);
+    pub_joint3_ = nh.advertise<std_msgs::Float64>(topic_joint3, queue_size);
+    pub_joint4_ = nh.advertise<std_msgs::Float64>(topic_joint4, queue_size);
   };
   void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y,
                       double error_z, ros::Duration period)
@@ -165,10 +166,8 @@ public:
   }
 
 protected:
-  uint32_t queue_size_;
   double reversal_max_speed_, translate_max_speed_;
   ros::Publisher pub_joint1_, pub_joint2_, pub_joint3_, pub_joint4_;
-  std::string topic_joint1_, topic_joint2_, topic_joint3_, topic_joint4_;
   std::vector<double> roll_config_, pitch_config_, yaw_config_, x_config_, y_config_, z_config_;
   std_msgs::Float64 msg_joint1_{}, msg_joint2_{}, msg_joint3_{}, msg_joint4_{};
   control_toolbox::Pid pid_roll_, pid_pitch_, pid_yaw_, pid_x_, pid_y_, pid_z_;
