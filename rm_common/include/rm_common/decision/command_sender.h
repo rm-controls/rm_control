@@ -149,14 +149,14 @@ public:
     if (nh.getParam("y", y_config))
     {
       for (int i = 0; i < x_config.size(); ++i)
-          y_config_.push_back(xmlRpcGetDouble(y_config[i]));
+        y_config_.push_back(xmlRpcGetDouble(y_config[i]));
       ros::NodeHandle nh_pid_y = ros::NodeHandle(nh, "pid_y");
       pid_y_.init(ros::NodeHandle(nh_pid_y, "pid"));
     }
     if (nh.getParam("z", z_config))
     {
       for (int i = 0; i < z_config.size(); ++i)
-          z_config_.push_back(xmlRpcGetDouble(z_config[i]));
+        z_config_.push_back(xmlRpcGetDouble(z_config[i]));
       ros::NodeHandle nh_pid_z = ros::NodeHandle(nh, "pid_z");
       pid_z_.init(ros::NodeHandle(nh_pid_z, "pid"));
     }
@@ -168,13 +168,13 @@ public:
   void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y,
                       double error_z, ros::Duration period)
   {
-      double roll_scale = pid_roll_.computeCommand(error_roll,period);
-      double pitch_scale = pid_pitch_.computeCommand(error_pitch,period);
-      double yaw_scale = pid_yaw_.computeCommand(error_yaw,period);
-      double x_scale = pid_x_.computeCommand(error_x,period);
-      double y_scale = pid_y_.computeCommand(error_y,period);
-      double z_scale = pid_z_.computeCommand(error_roll,period);
-      setGroupVel(roll_scale,pitch_scale,yaw_scale,x_scale,y_scale,z_scale);
+    double roll_scale = pid_roll_.computeCommand(error_roll, period);
+    double pitch_scale = pid_pitch_.computeCommand(error_pitch, period);
+    double yaw_scale = pid_yaw_.computeCommand(error_yaw, period);
+    double x_scale = pid_x_.computeCommand(error_x, period);
+    double y_scale = pid_y_.computeCommand(error_y, period);
+    double z_scale = pid_z_.computeCommand(error_roll, period);
+    setGroupVel(roll_scale, pitch_scale, yaw_scale, x_scale, y_scale, z_scale);
   }
   void setGroupVel(double roll_scale, double pitch_scale, double yaw_scale, double x_scale, double y_scale,
                    double z_scale)
