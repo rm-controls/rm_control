@@ -125,6 +125,41 @@ public:
       ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "pid_roll");
       pid_roll_.init(ros::NodeHandle(nh_pid_roll, "pid"));
     }
+    if (nh.getParam("pitch", pitch_config))
+    {
+      for (int i = 0; i < pitch_config.size(); ++i)
+        pitch_config_.push_back(xmlRpcGetDouble(pitch_config[i]));
+      ros::NodeHandle nh_pid_pitch = ros::NodeHandle(nh, "pid_pitch");
+      pid_pitch_.init(ros::NodeHandle(nh_pid_pitch, "pid"));
+    }
+    if (nh.getParam("yaw", yaw_config))
+    {
+      for (int i = 0; i < yaw_config.size(); ++i)
+        yaw_config_.push_back(xmlRpcGetDouble(yaw_config[i]));
+      ros::NodeHandle nh_pid_yaw = ros::NodeHandle(nh, "pid_yaw");
+      pid_yaw_.init(ros::NodeHandle(nh_pid_yaw, "pid"));
+    }
+    if (nh.getParam("x", x_config))
+    {
+      for (int i = 0; i < x_config.size(); ++i)
+        x_config_.push_back(xmlRpcGetDouble(x_config[i]));
+      ros::NodeHandle nh_pid_x = ros::NodeHandle(nh, "pid_x");
+      pid_x_.init(ros::NodeHandle(nh_pid_x, "pid"));
+    }
+    if (nh.getParam("y", y_config))
+    {
+      for (int i = 0; i < x_config.size(); ++i)
+          y_config_.push_back(xmlRpcGetDouble(y_config[i]));
+      ros::NodeHandle nh_pid_y = ros::NodeHandle(nh, "pid_y");
+      pid_y_.init(ros::NodeHandle(nh_pid_y, "pid"));
+    }
+    if (nh.getParam("z", z_config))
+    {
+      for (int i = 0; i < z_config.size(); ++i)
+          z_config_.push_back(xmlRpcGetDouble(z_config[i]));
+      ros::NodeHandle nh_pid_z = ros::NodeHandle(nh, "pid_z");
+      pid_z_.init(ros::NodeHandle(nh_pid_z, "pid"));
+    }
     pub_joint1_ = nh.advertise<std_msgs::Float64>(topic_joint1, queue_size);
     pub_joint2_ = nh.advertise<std_msgs::Float64>(topic_joint2, queue_size);
     pub_joint3_ = nh.advertise<std_msgs::Float64>(topic_joint3, queue_size);
@@ -133,6 +168,13 @@ public:
   void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y,
                       double error_z, ros::Duration period)
   {
+      double roll_scale = pid_roll_.computeCommand(error_roll,period);
+      double pitch_scale = pid_pitch_.computeCommand(error_pitch,period);
+      double yaw_scale = pid_yaw_.computeCommand(error_yaw,period);
+      double x_scale = pid_x_.computeCommand(error_x,period);
+      double y_scale = pid_y_.computeCommand(error_y,period);
+      double z_scale = pid_z_.computeCommand(error_roll,period);
+      setGroupVel(roll_scale,pitch_scale,yaw_scale,x_scale,y_scale,z_scale);
   }
   void setGroupVel(double roll_scale, double pitch_scale, double yaw_scale, double x_scale, double y_scale,
                    double z_scale)
