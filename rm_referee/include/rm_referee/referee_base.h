@@ -40,7 +40,7 @@ public:
   virtual void shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data);
   virtual void gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data);
   virtual void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data);
-  virtual void engineerCmdDataCallback(const rm_msgs::EngineerCmd ::ConstPtr& data);
+  virtual void stepQueueStateDataCallback(const rm_msgs::StepQueueState ::ConstPtr& data);
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
 
@@ -67,6 +67,7 @@ public:
   EffortTimeChangeUi* effort_time_change_ui_{};
   ProgressTimeChangeUi* progress_time_change_ui_{};
   DartStatusTimeChangeUi* dart_status_time_change_ui_{};
+  LaneLineTimeChangeUi* lane_line_time_change_ui_{};
 
   FixedUi* fixed_ui_{};
 

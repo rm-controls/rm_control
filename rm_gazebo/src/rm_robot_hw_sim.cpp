@@ -78,9 +78,9 @@ void RmRobotHWSim::readSim(ros::Time time, ros::Duration period)
       imu.angular_vel[0] = rate.X();
       imu.angular_vel[1] = rate.Y();
       imu.angular_vel[2] = rate.Z();
-      ignition::math::Vector3d accel = imu.link_ptr->RelativeLinearAccel();
-      // TODO(qiayuan): Add gravity
-      // https://github.com/tu-darmstadt-ros-pkg/hector_gazebo/blob/melodic-devel/hector_gazebo_plugins/src/gazebo_ros_imu.cpp
+
+      ignition::math::Vector3d gravity = { 0., 0., -9.81 };
+      ignition::math::Vector3d accel = imu.link_ptr->RelativeLinearAccel() - pose.Rot().RotateVectorReverse(gravity);
       imu.linear_acc[0] = accel.X();
       imu.linear_acc[1] = accel.Y();
       imu.linear_acc[2] = accel.Z();

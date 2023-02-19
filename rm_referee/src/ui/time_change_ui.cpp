@@ -110,8 +110,8 @@ void ProgressTimeChangeUi::updateConfig()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
-void ProgressTimeChangeUi::updateEngineerCmdData(const rm_msgs::EngineerCmd ::ConstPtr data,
-                                                 const ros::Time& last_get_data_time)
+void ProgressTimeChangeUi::updateStepQueueStateData(const rm_msgs::StepQueueState::ConstPtr data,
+                                                    const ros::Time& last_get_data_time)
 {
   total_steps_ = data->total_steps;
   finished_data_ = data->finished_step;
@@ -151,5 +151,57 @@ void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::C
 {
   dart_launch_opening_status_ = data->dart_launch_opening_status;
   display(last_get_data_time);
+}
+
+void LaneLineTimeChangeUi::add()
+{
+  graph_left_->setOperation(rm_referee::GraphOperation::ADD);
+  graph_left_->display(true);
+  graph_left_->sendUi(ros::Time::now());
+  graph_right_->setOperation(rm_referee::GraphOperation::ADD);
+  graph_right_->display(true);
+  graph_right_->sendUi(ros::Time::now());
+}
+void LaneLineTimeChangeUi::display(const ros::Time& time)
+{
+  updateConfig();
+
+  graph_left_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_left_->display(ros::Time::now());
+  graph_left_->sendUi(ros::Time::now());
+  graph_right_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_right_->display(ros::Time::now());
+  graph_right_->sendUi(ros::Time::now());
+}
+
+void LaneLineTimeChangeUi::updateConfig()
+{
+  double spacing_x_a = robot_radius_ * screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) /
+                       (cos(end_point_a_angle_ - pitch_angle_) * robot_height_ / sin(end_point_a_angle_)),
+         spacing_x_b = robot_radius_ * screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) /
+                       (cos(end_point_b_angle_ - pitch_angle_) * robot_height_ / sin(end_point_b_angle_)),
+         spacing_y_a = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_a_angle_ - pitch_angle_),
+         spacing_y_b = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_b_angle_ - pitch_angle_);
+
+  graph_left_->setStartX(screen_x_ / 2 - spacing_x_a);
+  graph_left_->setStartY(screen_y_ / 2 - spacing_y_a);
+  graph_left_->setEndX(screen_x_ / 2 - spacing_x_b * surface_coefficient_);
+  graph_left_->setEndY(screen_y_ / 2 - spacing_y_b);
+
+  graph_right_->setStartX(screen_x_ / 2 + spacing_x_a);
+  graph_right_->setStartY(screen_y_ / 2 - spacing_y_a);
+  graph_right_->setEndX(screen_x_ / 2 + spacing_x_b * surface_coefficient_);
+  graph_right_->setEndY(screen_y_ / 2 - spacing_y_b);
+}
+
+void LaneLineTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
+{
+  for (unsigned int i = 0; i < data->name.size(); i++)
+    if (data->name[i] == reference_joint_)
+      pitch_angle_ = data->position[i];
+
+  end_point_a_angle_ = camera_range_ / 2 + pitch_angle_;
+  end_point_b_angle_ = 0.6 * (0.25 + pitch_angle_);
+  display(time);
 }
 }  // namespace rm_referee
