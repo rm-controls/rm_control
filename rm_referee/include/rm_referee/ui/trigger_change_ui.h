@@ -103,4 +103,85 @@ private:
   std::string getTargetState(uint8_t target, uint8_t armor_target);
   uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
 };
+
+class StepTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit StepTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TriggerChangeUi(rpc_value, base, "step")
+  {
+    graph_->setContent("step_name");
+    if (base_.robot_color_ == "red")
+      graph_->setColor(rm_referee::GraphColor::CYAN);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
+  void updateStepUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+
+private:
+  void display() override;
+  void stepUpdateConfig(std::string step_name);
+  std::string getStepName(std::string step_name);
+  std::string step_name_;
+};
+
+class DragTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit DragTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TriggerChangeUi(rpc_value, base, "drag")
+  {
+    graph_->setContent("drag:");
+    if (base_.robot_color_ == "red")
+      graph_->setColor(rm_referee::GraphColor::CYAN);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
+  void updateDragUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+
+private:
+  void display() override;
+  void dragUpdateConfig(std::string drag_state);
+  std::string getDragState(std::string drag_state);
+  std::string drag_state_;
+};
+
+class ReversalTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit ReversalTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "reversal")
+  {
+    graph_->setContent("reversal:");
+    if (base_.robot_color_ == "red")
+      graph_->setColor(rm_referee::GraphColor::CYAN);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
+  void updateReversalUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+
+private:
+  void display() override;
+  void reversalUpdateConfig(std::string reversal_state);
+  std::string getReversalState(std::string reversal_state);
+  std::string reversal_state_;
+};
+
+class StoneTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit StoneTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TriggerChangeUi(rpc_value, base, "stone")
+  {
+    graph_->setContent("stone:");
+    if (base_.robot_color_ == "red")
+      graph_->setColor(rm_referee::GraphColor::CYAN);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
+  void updateStoneUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+
+private:
+  void display() override;
+  void stoneUpdateConfig(uint8_t stone_num);
+  std::string getStoneNum(uint8_t stone_num);
+  uint8_t stone_num_;
+};
 }  // namespace rm_referee

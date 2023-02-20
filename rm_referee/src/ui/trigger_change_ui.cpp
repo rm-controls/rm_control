@@ -240,4 +240,94 @@ void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr
 {
   display();
 }
+
+void StepTriggerChangeUi::updateStepUiData(const rm_msgs::EngineerUi ::ConstPtr data)
+{
+  step_name_ = data->current_step_name;
+  display();
+}
+
+void StepTriggerChangeUi::display()
+{
+  stepUpdateConfig(step_name_);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_->displayTwice(true);
+  graph_->sendUi(ros::Time::now());
+}
+
+void StepTriggerChangeUi::stepUpdateConfig(std::string step_name)
+{
+  graph_->setContent(step_name);
+  graph_->setColor(rm_referee::GraphColor::YELLOW);
+}
+
+void DragTriggerChangeUi::updateDragUiData(const rm_msgs::EngineerUi ::ConstPtr data)
+{
+  drag_state_ = data->drag_state;
+  display();
+}
+
+void DragTriggerChangeUi::display()
+{
+  dragUpdateConfig(drag_state_);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_->displayTwice(true);
+  graph_->sendUi(ros::Time::now());
+}
+
+void DragTriggerChangeUi::dragUpdateConfig(std::string drag_state)
+{
+  graph_->setContent(drag_state);
+  graph_->setColor(rm_referee::GraphColor::YELLOW);
+}
+
+void ReversalTriggerChangeUi::updateReversalUiData(const rm_msgs::EngineerUi ::ConstPtr data)
+{
+  reversal_state_ = data->reversal_state;
+  display();
+}
+
+void ReversalTriggerChangeUi::display()
+{
+  reversalUpdateConfig(reversal_state_);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_->displayTwice(true);
+  graph_->sendUi(ros::Time::now());
+}
+
+void ReversalTriggerChangeUi::reversalUpdateConfig(std::string reversal_state)
+{
+  graph_->setContent(reversal_state);
+  graph_->setColor(rm_referee::GraphColor::YELLOW);
+}
+
+void StoneTriggerChangeUi::updateStoneUiData(const rm_msgs::EngineerUi ::ConstPtr data)
+{
+  stone_num_ = data->stone_num;
+  display();
+}
+
+void StoneTriggerChangeUi::display()
+{
+  stoneUpdateConfig(stone_num_);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_->displayTwice(true);
+  graph_->sendUi(ros::Time::now());
+}
+
+void StoneTriggerChangeUi::stoneUpdateConfig(uint8_t stone_num)
+{
+  graph_->setContent(getStoneNum(stone_num));
+  graph_->setColor(rm_referee::GraphColor::YELLOW);
+}
+
+std::string StoneTriggerChangeUi::getStoneNum(uint8_t stone_num)
+{
+  if (!stone_num)
+    return "0";
+  else if (stone_num)
+    return "1";
+  else
+    return "2";
+}
 }  // namespace rm_referee
