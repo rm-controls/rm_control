@@ -172,14 +172,15 @@ public:
   }
 
 protected:
-  std::vector<control_toolbox::Pid> pids_ = std::vector<control_toolbox::Pid>(6);
-  control_toolbox::Pid pid_roll_, pid_pitch_, pid_yaw_, pid_x_, pid_y_, pid_z_;
+  double translate_max_speed_{},reversal_max_speed_{};
   std::vector<std::vector<double>> configs_{ 6 };
+  std::vector<double> roll_config_, pitch_config_, yaw_config_, x_config_, y_config_, z_config_;
+
   std::vector<ros::Publisher> pubs_{ 4 };
   std::vector<std_msgs::Float64> msgs_{ 4 };
-  std::vector<double> roll_config_, pitch_config_, yaw_config_, x_config_, y_config_, z_config_;
-  double translate_max_speed_;
-  double reversal_max_speed_;
+
+  std::vector<control_toolbox::Pid> pids_ = std::vector<control_toolbox::Pid>(6);
+  control_toolbox::Pid pid_roll_, pid_pitch_, pid_yaw_, pid_x_, pid_y_, pid_z_;
 };
 
 template <class MsgType>
