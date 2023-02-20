@@ -185,12 +185,14 @@ public:
     pub_r_l_.publish(msg_r_l_);
     pub_r_r_.publish(msg_r_r_);
   }
+
 protected:
   uint32_t queue_size_;
   double reversal_vel_, translate_vel_;
   ros::Publisher pub_r_l_, pub_r_r_, pub_p_f_, pub_p_b_;
   std::vector<double> translate_, roll_, pitch_;
-  std_msgs::Float64 msg_p_f_{}, msg_p_b_{}, msg_r_l_{}, msg_r_r_{},rev_p_f_{},rev_p_b_{},rev_r_l_{},rev_r_r_{},tra_p_f_{},tra_p_b_{},tra_r_l_{},tra_r_r_{};
+  std_msgs::Float64 msg_p_f_{}, msg_p_b_{}, msg_r_l_{}, msg_r_r_{}, rev_p_f_{}, rev_p_b_{}, rev_r_l_{}, rev_r_r_{},
+      tra_p_f_{}, tra_p_b_{}, tra_r_l_{}, tra_r_r_{};
   control_toolbox::Pid pid_roll_, pid_pitch_, pid_translation_;
 };
 template <class MsgType>
@@ -581,39 +583,39 @@ private:
 class ThreeSwitchCommandSender : public CommandSenderBase<std_msgs::Float64>
 {
 public:
-    explicit ThreeSwitchCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
-    {
-        ROS_ASSERT(nh.getParam("first_pos", first_pos_) && nh.getParam("second_pos", second_pos_) &&
-                   nh.getParam("third_pos", third_pos_));
-    }
-    void first_pos()
-    {
-        msg_.data = first_pos_;
-        state = true;
-    }
-    void second_pos()
-    {
-        msg_.data = second_pos_;
-        state = false;
-    }
-    void third_pos()
-    {
-        msg_.data = third_pos_;
-        state = false;
-    }
-    bool getState() const
-    {
-        return state;
-    }
-    void sendCommand(const ros::Time& time) override
-    {
-        CommandSenderBase<std_msgs::Float64>::sendCommand(time);
-    }
-    void setZero() override{};
+  explicit ThreeSwitchCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
+  {
+    ROS_ASSERT(nh.getParam("first_pos", first_pos_) && nh.getParam("second_pos", second_pos_) &&
+               nh.getParam("third_pos", third_pos_));
+  }
+  void first_pos()
+  {
+    msg_.data = first_pos_;
+    state = true;
+  }
+  void second_pos()
+  {
+    msg_.data = second_pos_;
+    state = false;
+  }
+  void third_pos()
+  {
+    msg_.data = third_pos_;
+    state = false;
+  }
+  bool getState() const
+  {
+    return state;
+  }
+  void sendCommand(const ros::Time& time) override
+  {
+    CommandSenderBase<std_msgs::Float64>::sendCommand(time);
+  }
+  void setZero() override{};
 
 private:
-    bool state{};
-    double first_pos_{}, second_pos_{}, third_pos_{};
+  bool state{};
+  double first_pos_{}, second_pos_{}, third_pos_{};
 };
 
 class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
