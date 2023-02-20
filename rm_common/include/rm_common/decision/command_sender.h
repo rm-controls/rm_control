@@ -112,30 +112,30 @@ class MultiDofCommandSender
 public:
   explicit MultiDofCommandSender(ros::NodeHandle& nh)
   {
-    uint32_t queue_size = getParam(nh, "queue_size", 1);
     XmlRpc::XmlRpcValue config{};
-    std::vector<std::string> topic_names{ "topic_joint1", "topic_joint2", "topic_joint3", "topic_joint4" };
+    uint32_t queue_size = getParam(nh, "queue_size", 1);
     std::vector<std::string> topics{ "topic1", "topic2", "topic3", "topic4" };
     std::vector<std::string> config_names{ "roll_config", "pitch_config", "yaw_config",
                                            "x_config",    "y_config",     "z_config" };
     std::vector<std::string> pid_names{ "pid_roll", "pid_pitch", "pid_yaw", "pid_x", "pid_y", "pid_z" };
+    std::vector<std::string> topic_names{ "topic_joint1", "topic_joint2", "topic_joint3", "topic_joint4" };
     configs_ = { roll_config_, pitch_config_, yaw_config_, x_config_, y_config_, z_config_ };
     ROS_ASSERT(nh.getParam("translate_max_speed", translate_max_speed_) &&
                nh.getParam("reversal_max_speed", reversal_max_speed_));
-    for (int i = 0; i < topics.size(); ++i)
+    for (size_t i = 0; i < topics.size(); ++i)
     {
       ROS_ASSERT(nh.getParam(topic_names[i], topics[i]));
       pubs_[i] = nh.advertise<std_msgs::Float64>(topics[i], queue_size);
     }
-    for (int i = 0; i < config_names.size(); ++i)
+    for (size_t i = 0; i < config_names.size(); ++i)
     {
       if (nh.getParam(config_names[i], config))
       {
-        for (int j = 0; i < configs_[i].size(); ++j)
+        for (size_t j = 0; i < configs_[i].size(); ++j)
           configs_[i].push_back(xmlRpcGetDouble(config[j]));
       }
     }
-    for (int i = 0; i < pid_names.size(); ++i)
+    for (size_t i = 0; i < pid_names.size(); ++i)
       pids_[i].init(ros::NodeHandle(nh, pid_names[i]), "pid");
   };
   void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y,
@@ -152,22 +152,22 @@ public:
                    double z_scale)
   {
     std::vector<double> scales = { roll_scale, pitch_scale, yaw_scale, x_scale, y_scale, z_scale };
-    for (int i = 0; i < msgs_.size(); ++i)
+    for (size_t i = 0; i < msgs_.size(); ++i)
     {
-      for (int j = 0; j < configs_.size() / 2; ++j)
+      for (size_t j = 0; j < configs_.size() / 2; ++j)
         msgs_[i].data += reversal_max_speed_ * configs_[j][i] * scales[j];
-      for (int j = configs_.size() / 2; j < configs_.size(); ++j)
+      for (size_t j = configs_.size() / 2; j < configs_.size(); ++j)
         msgs_[i].data += translate_max_speed_ * configs_[j][i] * scales[j];
     }
   }
   void setZero()
   {
-    for (int i = 0; i < msgs_.size(); ++i)
+    for (size_t i = 0; i < msgs_.size(); ++i)
       msgs_[i].data = 0;
   }
   void sendCommand()
   {
-    for (int i = 0; i < pubs_.size(); ++i)
+    for (size_t i = 0; i < pubs_.size(); ++i)
       pubs_[i].publish(msgs_[i]);
   }
 
