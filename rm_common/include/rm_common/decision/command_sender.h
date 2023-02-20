@@ -172,7 +172,7 @@ public:
   }
 
 protected:
-  double translate_max_speed_{},reversal_max_speed_{};
+  double translate_max_speed_{}, reversal_max_speed_{};
   std::vector<std::vector<double>> configs_{ 6 };
   std::vector<double> roll_config_, pitch_config_, yaw_config_, x_config_, y_config_, z_config_;
 
