@@ -109,110 +109,145 @@ protected:
 class MultiDofCommandSender
 {
 public:
-  explicit MultiDofCommandSender(ros::NodeHandle& nh)
-  {
-    uint32_t queue_size = getParam(nh, "queue_size", 1);
-    std::string topic_joint1, topic_joint2, topic_joint3, topic_joint4;
-    XmlRpc::XmlRpcValue roll_config{}, pitch_config{}, yaw_config{}, x_config{}, y_config{}, z_config{};
-    ROS_ASSERT(nh.getParam("translate_max_speed", translate_max_speed_) &&
-               nh.getParam("reversal_max_speed", reversal_max_speed_));
-    ROS_ASSERT(nh.getParam("topic_joint1", topic_joint1) && nh.getParam("topic_joint2", topic_joint2) &&
-               nh.getParam("topic_joint3", topic_joint3) && nh.getParam("topic_joint4", topic_joint4));
-    if (nh.getParam("roll", roll_config))
+    explicit MultiDofCommandSender(ros::NodeHandle& nh)
     {
-      for (int i = 0; i < roll_config.size(); ++i)
-        roll_config_.push_back(xmlRpcGetDouble(roll_config[i]));
-      ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "pid_roll");
-      pid_roll_.init(ros::NodeHandle(nh_pid_roll, "pid"));
-    }
-    if (nh.getParam("pitch", pitch_config))
+        uint32_t queue_size = getParam(nh, "queue_size", 1);
+        ros::NodeHandle nh_pid_zero = ros::NodeHandle(nh, "pid_zero");
+        std::string topic_joint1, topic_joint2, topic_joint3, topic_joint4;
+        XmlRpc::XmlRpcValue roll_config{}, pitch_config{}, yaw_config{}, x_config{}, y_config{}, z_config{};
+        ROS_ASSERT(nh.getParam("translate_max_speed", translate_max_speed_) &&
+                   nh.getParam("reversal_max_speed", reversal_max_speed_));
+        ROS_ASSERT(nh.getParam("topic_joint1", topic_joint1) && nh.getParam("topic_joint2", topic_joint2) &&
+                   nh.getParam("topic_joint3", topic_joint3) && nh.getParam("topic_joint4", topic_joint4));
+        if (nh.getParam("roll", roll_config))
+        {
+            for (int i = 0; i < roll_config.size(); ++i)
+                roll_config_.push_back(xmlRpcGetDouble(roll_config[i]));
+            ros::NodeHandle nh_pid_roll = ros::NodeHandle(nh, "pid_roll");
+            pid_roll_.init(ros::NodeHandle(nh_pid_roll, "pid"));
+        }
+        else
+        {
+            roll_config_ = { 0., 0., 0., 0. };
+            pid_roll_.init(ros::NodeHandle(nh_pid_zero, "pid"));
+        }
+        if (nh.getParam("pitch", pitch_config))
+        {
+            for (int i = 0; i < pitch_config.size(); ++i)
+                pitch_config_.push_back(xmlRpcGetDouble(pitch_config[i]));
+            ros::NodeHandle nh_pid_pitch = ros::NodeHandle(nh, "pid_pitch");
+            pid_pitch_.init(ros::NodeHandle(nh_pid_pitch, "pid"));
+        }
+        else
+        {
+            pitch_config_ = { 0., 0., 0., 0. };
+            pid_pitch_.init(ros::NodeHandle(nh_pid_zero, "pid"));
+        }
+        if (nh.getParam("yaw", yaw_config))
+        {
+            for (int i = 0; i < yaw_config.size(); ++i)
+                yaw_config_.push_back(xmlRpcGetDouble(yaw_config[i]));
+            ros::NodeHandle nh_pid_yaw = ros::NodeHandle(nh, "pid_yaw");
+            pid_yaw_.init(ros::NodeHandle(nh_pid_yaw, "pid"));
+        }
+        else
+        {
+            yaw_config_ = { 0., 0., 0., 0. };
+            pid_yaw_.init(ros::NodeHandle(nh_pid_zero, "pid"));
+        }
+        if (nh.getParam("x", x_config))
+        {
+            for (int i = 0; i < x_config.size(); ++i)
+                x_config_.push_back(xmlRpcGetDouble(x_config[i]));
+            ros::NodeHandle nh_pid_x = ros::NodeHandle(nh, "pid_x");
+            pid_x_.init(ros::NodeHandle(nh_pid_x, "pid"));
+        }
+        else
+        {
+            x_config_ = { 0., 0., 0., 0. };
+            pid_x_.init(ros::NodeHandle(nh_pid_zero, "pid"));
+        }
+        if (nh.getParam("y", y_config))
+        {
+            for (int i = 0; i < y_config.size(); ++i)
+                y_config_.push_back(xmlRpcGetDouble(y_config[i]));
+            ros::NodeHandle nh_pid_y = ros::NodeHandle(nh, "pid_y");
+            pid_y_.init(ros::NodeHandle(nh_pid_y, "pid"));
+        }
+        else
+        {
+            y_config_ = { 0., 0., 0., 0. };
+            pid_y_.init(ros::NodeHandle(nh_pid_zero, "pid"));
+        }
+        if (nh.getParam("z", z_config))
+        {
+            for (int i = 0; i < z_config.size(); ++i)
+                z_config_.push_back(xmlRpcGetDouble(z_config[i]));
+            ros::NodeHandle nh_pid_z = ros::NodeHandle(nh, "pid_z");
+            pid_z_.init(ros::NodeHandle(nh_pid_z, "pid"));
+        }
+        else
+        {
+            z_config_ = { 0., 0., 0., 0. };
+            pid_z_.init(ros::NodeHandle(nh_pid_zero, "pid"));
+        }
+        pub_joint1_ = nh.advertise<std_msgs::Float64>(topic_joint1, queue_size);
+        pub_joint2_ = nh.advertise<std_msgs::Float64>(topic_joint2, queue_size);
+        pub_joint3_ = nh.advertise<std_msgs::Float64>(topic_joint3, queue_size);
+        pub_joint4_ = nh.advertise<std_msgs::Float64>(topic_joint4, queue_size);
+    };
+    void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y,
+                        double error_z, ros::Duration period)
     {
-      for (int i = 0; i < pitch_config.size(); ++i)
-        pitch_config_.push_back(xmlRpcGetDouble(pitch_config[i]));
-      ros::NodeHandle nh_pid_pitch = ros::NodeHandle(nh, "pid_pitch");
-      pid_pitch_.init(ros::NodeHandle(nh_pid_pitch, "pid"));
+        double roll_scale = pid_roll_.computeCommand(error_roll, period);
+        double pitch_scale = pid_pitch_.computeCommand(error_pitch, period);
+        double yaw_scale = pid_yaw_.computeCommand(error_yaw, period);
+        double x_scale = pid_x_.computeCommand(error_x, period);
+        double y_scale = pid_y_.computeCommand(error_y, period);
+        double z_scale = pid_z_.computeCommand(error_z, period);
+        setGroupVel(roll_scale, pitch_scale, yaw_scale, x_scale, y_scale, z_scale);
     }
-    if (nh.getParam("yaw", yaw_config))
+    void setGroupVel(double roll_scale, double pitch_scale, double yaw_scale, double x_scale, double y_scale,
+                     double z_scale)
     {
-      for (int i = 0; i < yaw_config.size(); ++i)
-        yaw_config_.push_back(xmlRpcGetDouble(yaw_config[i]));
-      ros::NodeHandle nh_pid_yaw = ros::NodeHandle(nh, "pid_yaw");
-      pid_yaw_.init(ros::NodeHandle(nh_pid_yaw, "pid"));
+        msg_joint1_.data =
+                reversal_max_speed_ *
+                ((roll_config_[0] * roll_scale) + (pitch_config_[0] * pitch_scale) + (yaw_config_[0] * yaw_scale)) +
+                translate_max_speed_ * ((x_config_[0] * x_scale) + (y_config_[0] * y_scale) + (z_config_[0] * z_scale));
+        msg_joint2_.data =
+                reversal_max_speed_ *
+                ((roll_config_[1] * roll_scale) + (pitch_config_[1] * pitch_scale) + (yaw_config_[1] * yaw_scale)) +
+                translate_max_speed_ * ((x_config_[1] * x_scale) + (y_config_[1] * y_scale) + (z_config_[1] * z_scale));
+        msg_joint3_.data =
+                reversal_max_speed_ *
+                ((roll_config_[2] * roll_scale) + (pitch_config_[2] * pitch_scale) + (yaw_config_[2] * yaw_scale)) +
+                translate_max_speed_ * ((x_config_[2] * x_scale) + (y_config_[2] * y_scale) + (z_config_[2] * z_scale));
+        msg_joint4_.data =
+                reversal_max_speed_ *
+                ((roll_config_[3] * roll_scale) + (pitch_config_[3] * pitch_scale) + (yaw_config_[3] * yaw_scale)) +
+                translate_max_speed_ * ((x_config_[3] * x_scale) + (y_config_[3] * y_scale) + (z_config_[3] * z_scale));
     }
-    if (nh.getParam("x", x_config))
+    void setZero()
     {
-      for (int i = 0; i < x_config.size(); ++i)
-        x_config_.push_back(xmlRpcGetDouble(x_config[i]));
-      ros::NodeHandle nh_pid_x = ros::NodeHandle(nh, "pid_x");
-      pid_x_.init(ros::NodeHandle(nh_pid_x, "pid"));
+        msg_joint1_.data = 0;
+        msg_joint2_.data = 0;
+        msg_joint3_.data = 0;
+        msg_joint4_.data = 0;
     }
-    if (nh.getParam("y", y_config))
+    void sendCommand()
     {
-      for (int i = 0; i < x_config.size(); ++i)
-        y_config_.push_back(xmlRpcGetDouble(y_config[i]));
-      ros::NodeHandle nh_pid_y = ros::NodeHandle(nh, "pid_y");
-      pid_y_.init(ros::NodeHandle(nh_pid_y, "pid"));
+        pub_joint1_.publish(msg_joint1_);
+        pub_joint2_.publish(msg_joint2_);
+        pub_joint3_.publish(msg_joint3_);
+        pub_joint4_.publish(msg_joint4_);
     }
-    if (nh.getParam("z", z_config))
-    {
-      for (int i = 0; i < z_config.size(); ++i)
-        z_config_.push_back(xmlRpcGetDouble(z_config[i]));
-      ros::NodeHandle nh_pid_z = ros::NodeHandle(nh, "pid_z");
-      pid_z_.init(ros::NodeHandle(nh_pid_z, "pid"));
-    }
-    pub_joint1_ = nh.advertise<std_msgs::Float64>(topic_joint1, queue_size);
-    pub_joint2_ = nh.advertise<std_msgs::Float64>(topic_joint2, queue_size);
-    pub_joint3_ = nh.advertise<std_msgs::Float64>(topic_joint3, queue_size);
-    pub_joint4_ = nh.advertise<std_msgs::Float64>(topic_joint4, queue_size);
-  };
-  void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y,
-                      double error_z, ros::Duration period)
-  {
-    double roll_scale = pid_roll_.computeCommand(error_roll, period);
-    double pitch_scale = pid_pitch_.computeCommand(error_pitch, period);
-    double yaw_scale = pid_yaw_.computeCommand(error_yaw, period);
-    double x_scale = pid_x_.computeCommand(error_x, period);
-    double y_scale = pid_y_.computeCommand(error_y, period);
-    double z_scale = pid_z_.computeCommand(error_roll, period);
-    setGroupVel(roll_scale, pitch_scale, yaw_scale, x_scale, y_scale, z_scale);
-  }
-  void setGroupVel(double roll_scale, double pitch_scale, double yaw_scale, double x_scale, double y_scale,
-                   double z_scale)
-  {
-    msg_joint1_.data = reversal_max_speed_ * (roll_config_[0] * roll_scale) + (pitch_config_[0] * pitch_scale) +
-                       (yaw_config_[0] * yaw_scale) + translate_max_speed_ * (x_config_[0] * x_scale) +
-                       (y_config_[0] * y_scale) + (z_config_[0] * z_scale);
-    msg_joint2_.data = reversal_max_speed_ * (roll_config_[1] * roll_scale) + (pitch_config_[1] * pitch_scale) +
-                       (yaw_config_[1] * yaw_scale) + translate_max_speed_ * (x_config_[1] * x_scale) +
-                       (y_config_[1] * y_scale) + (z_config_[1] * z_scale);
-    msg_joint3_.data = reversal_max_speed_ * (roll_config_[2] * roll_scale) + (pitch_config_[2] * pitch_scale) +
-                       (yaw_config_[2] * yaw_scale) + translate_max_speed_ * (x_config_[2] * x_scale) +
-                       (y_config_[2] * y_scale) + (z_config_[2] * z_scale);
-    msg_joint4_.data = reversal_max_speed_ * (roll_config_[3] * roll_scale) + (pitch_config_[3] * pitch_scale) +
-                       (yaw_config_[3] * yaw_scale) + translate_max_speed_ * (x_config_[3] * x_scale) +
-                       (y_config_[3] * y_scale) + (z_config_[3] * z_scale);
-  }
-  void setZero()
-  {
-    msg_joint1_.data = 0;
-    msg_joint2_.data = 0;
-    msg_joint3_.data = 0;
-    msg_joint4_.data = 0;
-  }
-  void sendCommand()
-  {
-    pub_joint1_.publish(msg_joint1_);
-    pub_joint2_.publish(msg_joint2_);
-    pub_joint3_.publish(msg_joint3_);
-    pub_joint4_.publish(msg_joint4_);
-  }
 
 protected:
-  double reversal_max_speed_, translate_max_speed_;
-  ros::Publisher pub_joint1_, pub_joint2_, pub_joint3_, pub_joint4_;
-  std::vector<double> roll_config_, pitch_config_, yaw_config_, x_config_, y_config_, z_config_;
-  std_msgs::Float64 msg_joint1_{}, msg_joint2_{}, msg_joint3_{}, msg_joint4_{};
-  control_toolbox::Pid pid_roll_, pid_pitch_, pid_yaw_, pid_x_, pid_y_, pid_z_;
+    double reversal_max_speed_, translate_max_speed_;
+    ros::Publisher pub_joint1_, pub_joint2_, pub_joint3_, pub_joint4_;
+    std::vector<double> roll_config_, pitch_config_, yaw_config_, x_config_, y_config_, z_config_;
+    std_msgs::Float64 msg_joint1_{}, msg_joint2_{}, msg_joint3_{}, msg_joint4_{};
+    control_toolbox::Pid pid_roll_, pid_pitch_, pid_yaw_, pid_x_, pid_y_, pid_z_;
 };
 
 template <class MsgType>
