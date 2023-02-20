@@ -578,6 +578,44 @@ private:
   double on_pos_{}, off_pos_{};
 };
 
+class ThreeSwitchCommandSender : public CommandSenderBase<std_msgs::Float64>
+{
+public:
+    explicit ThreeSwitchCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
+    {
+        ROS_ASSERT(nh.getParam("first_pos", first_pos_) && nh.getParam("second_pos", second_pos_) &&
+                   nh.getParam("third_pos", third_pos_));
+    }
+    void first_pos()
+    {
+        msg_.data = first_pos_;
+        state = true;
+    }
+    void second_pos()
+    {
+        msg_.data = second_pos_;
+        state = false;
+    }
+    void third_pos()
+    {
+        msg_.data = third_pos_;
+        state = false;
+    }
+    bool getState() const
+    {
+        return state;
+    }
+    void sendCommand(const ros::Time& time) override
+    {
+        CommandSenderBase<std_msgs::Float64>::sendCommand(time);
+    }
+    void setZero() override{};
+
+private:
+    bool state{};
+    double first_pos_{}, second_pos_{}, third_pos_{};
+};
+
 class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
 {
 public:
