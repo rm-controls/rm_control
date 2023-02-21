@@ -2,8 +2,8 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.17 (2023-02-21)
+-------------------
 * Merge pull request `#99 <https://github.com/ye-luo-xi-tui/rm_control/issues/99>`_ from ye-luo-xi-tui/master
   Fix bug
 * Fix bug.

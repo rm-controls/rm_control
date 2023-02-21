@@ -2,8 +2,8 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.17 (2023-02-21)
+-------------------
 * Merge pull request `#95 <https://github.com/ye-luo-xi-tui/rm_control/issues/95>`_ from Edwinlinks/for-location
   Change tf to tf2 in ori_tool for rm_location.
 * Change tf to tf2 in ori_tool for rm_location.
