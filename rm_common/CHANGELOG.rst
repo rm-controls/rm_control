@@ -2,6 +2,25 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.17 (2023-02-21)
+-------------------
+* Merge pull request `#95 <https://github.com/ye-luo-xi-tui/rm_control/issues/95>`_ from Edwinlinks/for-location
+  Change tf to tf2 in ori_tool for rm_location.
+* Change tf to tf2 in ori_tool for rm_location.
+* Merge branch 'rm-controls:master' into master
+* Merge branch 'master' into balance_state
+* Merge pull request `#90 <https://github.com/ye-luo-xi-tui/rm_control/issues/90>`_ from chenhuiYu00/dev/commander_sender
+  Update gimbal error and track data in the command sender.
+* Code style.
+* Update shooter command sender.
+* Cancel storage of gimbal error data.
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#84 <https://github.com/ye-luo-xi-tui/rm_control/issues/84>`_ from ye-luo-xi-tui/master
+  0.1.16
+* Merge branch 'rm-controls:master' into master
+* Merge branch 'rm-controls:master' into master
+* Contributors: Edwinlinks, ye-luo-xi-tui, yezi, yuchen, 吕骏骐
+
 0.1.16 (2022-11-24)
 -------------------
 * Merge branch 'master' into new_ui_test

@@ -2,6 +2,20 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.17 (2023-02-21)
+-------------------
+* Merge pull request `#100 <https://github.com/ye-luo-xi-tui/rm_control/issues/100>`_ from ljq-lv/modified_msgs_name
+  Modified msgs name
+* Modified the msg "EngineerCmd" name
+* Merge pull request `#94 <https://github.com/ye-luo-xi-tui/rm_control/issues/94>`_ from ye-luo-xi-tui/balance_state
+  Update balance_state
+* Add BalanceState.msg for new balance standard.
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#84 <https://github.com/ye-luo-xi-tui/rm_control/issues/84>`_ from ye-luo-xi-tui/master
+  0.1.16
+* Merge branch 'rm-controls:master' into master
+* Contributors: ljq-lv, ye-luo-xi-tui, yezi, 吕骏骐
+
 0.1.16 (2022-11-24)
 -------------------
 * Merge pull request `#81 <https://github.com/ye-luo-xi-tui/rm_control/issues/81>`_ from LJT666666/master

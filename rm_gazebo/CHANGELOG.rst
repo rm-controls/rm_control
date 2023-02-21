@@ -2,6 +2,18 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.17 (2023-02-21)
+-------------------
+* Merge pull request `#99 <https://github.com/ye-luo-xi-tui/rm_control/issues/99>`_ from ye-luo-xi-tui/master
+  Fix bug
+* Fix bug.
+* Add gravity.
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#84 <https://github.com/ye-luo-xi-tui/rm_control/issues/84>`_ from ye-luo-xi-tui/master
+  0.1.16
+* Merge branch 'rm-controls:master' into master
+* Contributors: ye-luo-xi-tui, yezi, 吕骏骐
+
 0.1.16 (2022-11-24)
 -------------------
 * Merge branch 'master' into new_ui_test
