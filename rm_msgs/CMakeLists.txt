@@ -49,7 +49,7 @@ add_message_files(
         GameRobotStatus.msg
         GameStatus.msg
         StateCmd.msg
-        EngineerCmd.msg
+        StepQueueState.msg
         GameRobotHp.msg
         PowerHeatData.msg
         EventData.msg
@@ -63,7 +63,6 @@ add_message_files(
         RfidStatus.msg
         DartClientCmd.msg
         ManualToReferee.msg
-        Referee.msg
         RadarData.msg
 )
 

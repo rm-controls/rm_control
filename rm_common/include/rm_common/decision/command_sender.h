@@ -47,6 +47,7 @@
 #include <rm_msgs/GimbalDesError.h>
 #include <rm_msgs/StateCmd.h>
 #include <rm_msgs/TrackData.h>
+#include <rm_msgs/GameRobotHp.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
@@ -79,6 +80,18 @@ public:
   virtual void sendCommand(const ros::Time& time)
   {
     pub_.publish(msg_);
+  }
+  virtual void updateGameRobotStatus(const rm_msgs::GameRobotStatus data)
+  {
+  }
+  virtual void updateGameStatus(const rm_msgs::GameStatus data)
+  {
+  }
+  virtual void updateCapacityData(const rm_msgs::CapacityData data)
+  {
+  }
+  virtual void updatePowerHeatData(const rm_msgs::PowerHeatData data)
+  {
   }
   virtual void setZero() = 0;
   MsgType* getMsg()
@@ -183,15 +196,10 @@ protected:
 class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisCmd>
 {
 public:
-  explicit ChassisCommandSender(ros::NodeHandle& nh, const rm_msgs::GameStatus& game_status_data,
-                                const rm_msgs::GameRobotStatus& game_robot_status_data,
-                                const rm_msgs::PowerHeatData& power_heat_data, const rm_msgs::Referee& referee_data,
-                                const rm_msgs::CapacityData& capacity_data)
-    : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh)
+  explicit ChassisCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::ChassisCmd>(nh)
   {
     XmlRpc::XmlRpcValue xml_rpc_value;
-    power_limit_ = new PowerLimit(nh, msg_, game_status_data, game_robot_status_data, power_heat_data, referee_data,
-                                  capacity_data);
+    power_limit_ = new PowerLimit(nh);
     if (!nh.getParam("accel_x", xml_rpc_value))
       ROS_ERROR("Accel X no defined (namespace: %s)", nh.getNamespace().c_str());
     else
@@ -205,9 +213,31 @@ public:
     else
       accel_z_.init(xml_rpc_value);
   }
+
+  void updateGameStatus(const rm_msgs::GameStatus data) override
+  {
+    power_limit_->setGameProgress(data);
+  }
+  void updateGameRobotStatus(const rm_msgs::GameRobotStatus data) override
+  {
+    power_limit_->setGameRobotData(data);
+  }
+  void updatePowerHeatData(const rm_msgs::PowerHeatData data) override
+  {
+    power_limit_->setChassisPowerBuffer(data);
+  }
+  void updateCapacityData(const rm_msgs::CapacityData data) override
+  {
+    power_limit_->setCapacityData(data);
+  }
+  void updateRefereeStatus(bool status)
+  {
+    power_limit_->setRefereeStatus(status);
+  }
+
   void sendCommand(const ros::Time& time) override
   {
-    msg_.power_limit = power_limit_->getLimitPower();
+    power_limit_->setLimitPower(msg_);
     msg_.accel.linear.x = accel_x_.output(msg_.power_limit);
     msg_.accel.linear.y = accel_y_.output(msg_.power_limit);
     msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
@@ -272,13 +302,10 @@ private:
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd>
 {
 public:
-  explicit ShooterCommandSender(ros::NodeHandle& nh, const rm_msgs::TrackData& track_data,
-                                const rm_msgs::GameRobotStatus& robot_status_data,
-                                const rm_msgs::PowerHeatData& power_heat_data, const rm_msgs::Referee& referee_data)
-    : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh), track_data_(track_data)
+  explicit ShooterCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::ShootCmd>(nh)
   {
     ros::NodeHandle limit_nh(nh, "heat_limit");
-    heat_limit_ = new HeatLimit(limit_nh, robot_status_data, power_heat_data, referee_data);
+    heat_limit_ = new HeatLimit(limit_nh);
     nh.param("speed_10m_per_speed", speed_10_, 10.);
     nh.param("speed_15m_per_speed", speed_15_, 15.);
     nh.param("speed_16m_per_speed", speed_16_, 16.);
@@ -295,11 +322,34 @@ public:
     nh.param("accleration_moving_average_num", moving_average_num, 1.);
     acceleration_filter_ = new MovingAverageFilter<double>(moving_average_num);
     acceleration_pub_ = nh.advertise<std_msgs::Float64>("target_acceleration", 10);
+    track_target_acceleration_ = 0.;
   }
   ~ShooterCommandSender()
   {
     delete heat_limit_;
   }
+
+  void updateGameRobotStatus(const rm_msgs::GameRobotStatus data) override
+  {
+    heat_limit_->setStatusOfShooter(data);
+  }
+  void updatePowerHeatData(const rm_msgs::PowerHeatData data) override
+  {
+    heat_limit_->setCoolingHeatOfShooter(data);
+  }
+  void updateRefereeStatus(bool status)
+  {
+    heat_limit_->setRefereeStatus(status);
+  }
+  void updateGimbalDesError(const rm_msgs::GimbalDesError& error)
+  {
+    gimbal_des_error_ = error;
+  }
+  void updateTrackData(const rm_msgs::TrackData& data)
+  {
+    track_data_ = data;
+  }
+
   void computeTargetAcceleration()
   {
     tf2::Vector3 current_target_vel{ track_data_.target_vel.x, track_data_.target_vel.y, track_data_.target_vel.z };
@@ -313,10 +363,10 @@ public:
     acceleration.data = acceleration_filter_->output();
     acceleration_pub_.publish(acceleration);
   }
-  void checkError(const rm_msgs::GimbalDesError& gimbal_des_error, const ros::Time& time)
+  void checkError(const ros::Time& time)
   {
-    if ((gimbal_des_error.error > gimbal_error_tolerance_ && time - gimbal_des_error.stamp < ros::Duration(0.1)) ||
-        (std::abs(acceleration_filter_->output()) > target_acceleration_tolerance_))
+    if ((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
+        (track_target_acceleration_ > target_acceleration_tolerance_))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
         setMode(rm_msgs::ShootCmd::READY);
   }
@@ -358,9 +408,11 @@ private:
   double speed_10_, speed_15_, speed_16_, speed_18_, speed_30_;
   double gimbal_error_tolerance_{};
   double target_acceleration_tolerance_{};
+  double track_target_acceleration_;
   tf2::Vector3 last_target_vel_{ 0, 0, 0 };
   double last_target_time_ = 0.;
-  const rm_msgs::TrackData& track_data_;
+  rm_msgs::TrackData track_data_;
+  rm_msgs::GimbalDesError gimbal_des_error_;
   MovingAverageFilter<double>* acceleration_filter_;
   ros::Publisher acceleration_pub_;
 };

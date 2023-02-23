@@ -54,14 +54,14 @@ double yawFromQuat(const geometry_msgs::Quaternion& q)
   return yaw;
 }
 
-tf::Quaternion getAverageQuaternion(const std::vector<tf::Quaternion>& quaternions, const std::vector<double>& weights)
+tf2::Quaternion getAverageQuaternion(const std::vector<tf2::Quaternion>& quaternions, const std::vector<double>& weights)
 {
   Eigen::MatrixXd Q = Eigen::MatrixXd::Zero(4, quaternions.size());
   Eigen::Vector3d vec;
   for (size_t i = 0; i < quaternions.size(); ++i)
   {
     // Weigh the quaternions according to their associated weight
-    tf::Quaternion quat = quaternions[i] * weights[i];
+    tf2::Quaternion quat = quaternions[i] * weights[i];
     // Append the weighted Quaternion to a matrix Q.
     Q(0, i) = quat.x();
     Q(1, i) = quat.y();
@@ -85,15 +85,15 @@ tf::Quaternion getAverageQuaternion(const std::vector<tf::Quaternion>& quaternio
   }
   // Get corresponding Eigenvector, normalize it and return it as the average quat
   auto eigenvector = es.eigenvectors().col(max_idx).normalized();
-  tf::Quaternion mean_orientation(eigenvector[0].real(), eigenvector[1].real(), eigenvector[2].real(),
-                                  eigenvector[3].real());
+  tf2::Quaternion mean_orientation(eigenvector[0].real(), eigenvector[1].real(), eigenvector[2].real(),
+                                   eigenvector[3].real());
   return mean_orientation;
 }
 
-tf::Quaternion rotationMatrixToQuaternion(const Eigen::Map<Eigen::Matrix3d>& rot)
+tf2::Quaternion rotationMatrixToQuaternion(const Eigen::Map<Eigen::Matrix3d>& rot)
 {
   Eigen::Matrix3d r = rot.transpose();
-  tf::Quaternion quat;
+  tf2::Quaternion quat;
   double trace = r.trace();
   if (trace > 0.0)
   {
