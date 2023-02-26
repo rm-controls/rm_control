@@ -131,12 +131,19 @@ public:
     {
       if (nh.getParam(config_names[i], config))
       {
-        for (size_t j = 0; i < configs_[i].size(); ++j)
+        for (size_t j = 0; j < topics.size(); ++j)
           configs_[i].push_back(xmlRpcGetDouble(config[j]));
       }
+      else
+        configs_[i] = { 0., 0., 0., 0. };
     }
     for (size_t i = 0; i < pid_names.size(); ++i)
-      pids_[i].init(ros::NodeHandle(nh, pid_names[i]), "pid");
+    {
+      if (nh.getParam(pid_names[i], config))
+        pids_[i].init(ros::NodeHandle(nh, pid_names[i]), "pid");
+      else
+        pids_[i].init(ros::NodeHandle(nh, "pid_zero"), "pid");
+    }
   };
   void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y,
                       double error_z, ros::Duration period)
@@ -151,14 +158,22 @@ public:
   void setGroupVel(double roll_scale, double pitch_scale, double yaw_scale, double x_scale, double y_scale,
                    double z_scale)
   {
-    std::vector<double> scales = { roll_scale, pitch_scale, yaw_scale, x_scale, y_scale, z_scale };
-    for (size_t i = 0; i < msgs_.size(); ++i)
-    {
-      for (size_t j = 0; j < configs_.size() / 2; ++j)
-        msgs_[i].data += reversal_max_speed_ * configs_[j][i] * scales[j];
-      for (size_t j = configs_.size() / 2; j < configs_.size(); ++j)
-        msgs_[i].data += translate_max_speed_ * configs_[j][i] * scales[j];
-    }
+    msgs_[0].data =
+        reversal_max_speed_ *
+            ((configs_[0][0] * abs(roll_scale)) + (configs_[1][0] * pitch_scale) + (configs_[2][0] * yaw_scale)) +
+        translate_max_speed_ * ((configs_[3][0] * x_scale) + (configs_[4][0] * y_scale) + (configs_[5][0] * z_scale));
+    msgs_[1].data =
+        reversal_max_speed_ *
+            ((configs_[0][1] * abs(roll_scale)) + (configs_[1][1] * pitch_scale) + (configs_[2][1] * yaw_scale)) +
+        translate_max_speed_ * ((configs_[3][1] * x_scale) + (configs_[4][1] * y_scale) + (configs_[5][1] * z_scale));
+    msgs_[2].data =
+        reversal_max_speed_ *
+            ((configs_[0][2] * roll_scale) + (configs_[1][2] * abs(pitch_scale)) + (configs_[2][2] * yaw_scale)) +
+        translate_max_speed_ * ((configs_[3][2] * x_scale) + (configs_[4][2] * y_scale) + (configs_[5][2] * z_scale));
+    msgs_[3].data =
+        reversal_max_speed_ *
+            ((configs_[0][3] * roll_scale) + (configs_[1][3] * abs(pitch_scale)) + (configs_[2][3] * yaw_scale)) +
+        translate_max_speed_ * ((configs_[3][3] * x_scale) + (configs_[4][3] * y_scale) + (configs_[5][3] * z_scale));
   }
   void setZero()
   {
