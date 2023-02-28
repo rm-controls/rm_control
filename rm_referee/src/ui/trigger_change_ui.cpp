@@ -240,4 +240,24 @@ void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr
 {
   display();
 }
+
+void PolygonTriggerChangeGroupUi::display()
+{
+  for (auto graph : graph_vector_)
+  {
+    graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
+    graph.second->display();
+    graph.second->sendUi(ros::Time::now());
+  }
+}
+
+void TestTriggerChangeGroupUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
+{
+}
+
+void TestTriggerChangeGroupUi::updateDbusData(const rm_msgs::DbusData::ConstPtr& data)
+{
+  display();
+}
+
 }  // namespace rm_referee
