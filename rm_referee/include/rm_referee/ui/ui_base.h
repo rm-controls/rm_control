@@ -42,26 +42,22 @@ public:
   ~GroupUiBase() = default;
   virtual void add() override;
   virtual void erasure() override;
-  void display();
+  virtual void display();
 
 protected:
   std::string group_name_;
   std::map<std::string, Graph*> graph_vector_;
 };
 
-class FixedUi : public UiBase
+class FixedUi : public GroupUiBase
 {
 public:
-  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : UiBase(base)
+  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : GroupUiBase(rpc_value, base)
   {
     for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
       graph_vector_.insert(
           std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
   };
-  void add() override;
-  void display();
-
-  std::map<std::string, Graph*> graph_vector_;
 };
 
 class PolygonUi : public GroupUiBase
