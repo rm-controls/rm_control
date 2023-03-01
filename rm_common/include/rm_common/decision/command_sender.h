@@ -142,7 +142,7 @@ public:
       if (nh.getParam(pid_names[i], config))
         pids_[i].init(ros::NodeHandle(nh, pid_names[i]), "pid");
       else
-        pids_[i].init(ros::NodeHandle(nh, "pid_zero"), "pid");
+        pids_[i].initPid(0.0, 0.0, 0.0, 0.0, 0.0);
     }
   };
   void visionReversal(double error_roll, double error_pitch, double error_yaw, double error_x, double error_y,
