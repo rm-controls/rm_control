@@ -135,12 +135,14 @@ public:
           configs_[i].push_back(xmlRpcGetDouble(config[j]));
       }
       else
+      {
         configs_[i] = { 0., 0., 0., 0. };
+      }
     }
     for (size_t i = 0; i < pid_names.size(); ++i)
     {
       if (nh.getParam(pid_names[i], config))
-        pids_[i].init(ros::NodeHandle(nh, pid_names[i]), "pid");
+        pids_[i].init(ros::NodeHandle(ros::NodeHandle(nh, pid_names[i]), "pid"));
       else
         pids_[i].initPid(0.0, 0.0, 0.0, 0.0, 0.0);
     }
