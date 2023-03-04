@@ -99,5 +99,3 @@ install(
 #      test/test_ros_package_template.cpp)
 #  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_core)
 #endif ()
-
-

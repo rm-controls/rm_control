@@ -101,5 +101,3 @@ if (${CATKIN_ENABLE_TESTING})
             test/LqrTest.cpp)
     target_link_libraries(lqr_test rm_common)
 endif ()
-
-
