@@ -10,7 +10,6 @@
 
     <buildtool_depend>catkin</buildtool_depend>
     <depend>roscpp</depend>
-    <depend>roslint</depend>
 
     <depend>tf</depend>
     <depend>geometry_msgs</depend>

@@ -14,7 +14,6 @@ find_package(Eigen3 REQUIRED)
 find_package(catkin REQUIRED
         COMPONENTS
         roscpp
-        roslint
         tf
         rm_msgs
         geometry_msgs
@@ -102,5 +101,3 @@ if (${CATKIN_ENABLE_TESTING})
             test/LqrTest.cpp)
     target_link_libraries(lqr_test rm_common)
 endif ()
-
-roslint_cpp()
