@@ -170,7 +170,7 @@ private:
   {
     if (cap_power_ > capacitor_threshold_)
     {
-      if (chassis_cmd.mode == rm_msgs::ChassisCmd::GYRO)
+      if (chassis_cmd.mode == rm_msgs::ChassisCmd::RAW)
         chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
       else
         chassis_cmd.power_limit = burst_power_;

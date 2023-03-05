@@ -66,8 +66,6 @@ std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
     return "raw";
   else if (mode == rm_msgs::ChassisCmd::FOLLOW)
     return "follow";
-  else if (mode == rm_msgs::ChassisCmd::GYRO)
-    return "gyro";
   else if (mode == rm_msgs::ChassisCmd::TWIST)
     return "twist";
   else
