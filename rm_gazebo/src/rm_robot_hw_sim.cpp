@@ -97,6 +97,7 @@ void RmRobotHWSim::readSim(ros::Time time, ros::Duration period)
 void RmRobotHWSim::parseImu(XmlRpc::XmlRpcValue& imu_datas, const gazebo::physics::ModelPtr& parent_model)
 {
   ROS_ASSERT(imu_datas.getType() == XmlRpc::XmlRpcValue::TypeStruct);
+  imu_datas_.reserve(imu_datas.size());
   for (auto it = imu_datas.begin(); it != imu_datas.end(); ++it)
   {
     if (!it->second.hasMember("frame_id"))
