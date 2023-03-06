@@ -114,6 +114,11 @@ public:
     for (int i = 0; i < 3; i++)
       filter_vector_[i]->input(vector[i]);
   }
+  void clear()
+  {
+    for (int i = 0; i < 3; i++)
+      filter_vector_[i]->clear();
+  }
   T x()
   {
     return filter_vector_[0]->output();
