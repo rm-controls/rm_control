@@ -101,7 +101,8 @@ public:
    * @param period Current time - last time
    */
   void write(const ros::Time& time, const ros::Duration& period) override;
-
+  void readGpio();
+  void writeGpio();
   void setCanBusThreadPriority(int thread_priority);
 
 private:
