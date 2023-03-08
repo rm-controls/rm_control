@@ -79,7 +79,7 @@ private:
   hardware_interface::ImuSensorInterface imu_sensor_interface_;
   rm_control::RmImuSensorInterface rm_imu_sensor_interface_;
   gazebo::physics::WorldPtr world_;
-  std::vector<ImuData> imu_datas_;
+  std::list<ImuData> imu_datas_;
   ros::ServiceServer switch_imu_service_;
   static bool disable_imu_;
 };
