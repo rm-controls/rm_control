@@ -13,7 +13,6 @@
     <!-- build_depend: dependencies only used in source files -->
     <!-- depend: build, export, and execution dependency -->
     <depend>roscpp</depend>
-    <depend>roslint</depend>
 
     <depend>rm_common</depend>
     <depend>rm_msgs</depend>
