@@ -294,7 +294,6 @@ public:
   }
 
 private:
-  ros::Time last_track_;
   double max_yaw_rate_{}, max_pitch_vel_{}, track_timeout_{}, eject_sensitivity_ = 1.;
   bool eject_flag_{};
 };
@@ -318,10 +317,6 @@ public:
       target_acceleration_tolerance_ = 0.;
       ROS_INFO("target_acceleration_tolerance no defined(namespace: %s), set to zero.", nh.getNamespace().c_str());
     }
-    double moving_average_num;
-    nh.param("accleration_moving_average_num", moving_average_num, 1.);
-    acceleration_filter_ = new MovingAverageFilter<double>(moving_average_num);
-    track_target_acceleration_ = 0.;
   }
   ~ShooterCommandSender()
   {
@@ -348,24 +343,10 @@ public:
   {
     track_data_ = data;
   }
-
-  void computeTargetAcceleration()
-  {
-    auto target_vel = track_data_.target_vel;
-    double current_target_vel = sqrt(pow(target_vel.x, 2) + pow(target_vel.y, 2) + pow(target_vel.z, 2));
-    double current_time = track_data_.header.stamp.toSec();
-    if (current_time == last_target_time_)
-      return;
-    track_target_acceleration_ = (current_target_vel - last_target_vel_) / (current_time - last_target_time_);
-    last_target_vel_ = current_target_vel;
-    last_target_time_ = current_time;
-    acceleration_filter_->input(track_target_acceleration_);
-    track_target_acceleration_ = acceleration_filter_->output();
-  }
   void checkError(const ros::Time& time)
   {
     if ((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
-        (track_target_acceleration_ > target_acceleration_tolerance_))
+        (track_data_.accel > target_acceleration_tolerance_))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
         setMode(rm_msgs::ShootCmd::READY);
   }
@@ -407,12 +388,8 @@ private:
   double speed_10_, speed_15_, speed_16_, speed_18_, speed_30_;
   double gimbal_error_tolerance_{};
   double target_acceleration_tolerance_{};
-  double track_target_acceleration_;
-  double last_target_vel_ = 0.;
-  double last_target_time_ = 0.;
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
-  MovingAverageFilter<double>* acceleration_filter_;
 };
 
 class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::TwistStamped>

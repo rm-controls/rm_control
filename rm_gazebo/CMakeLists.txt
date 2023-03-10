@@ -13,7 +13,6 @@ add_definitions(-Wall -Werror)
 find_package(catkin REQUIRED
         COMPONENTS
         roscpp
-        roslint
         rm_common
 
         gazebo_ros
@@ -111,9 +110,3 @@ install(FILES rm_robot_hw_sim_plugins.xml
 #      test/AlgorithmTest.cpp)
 #  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_core)
 #endif ()
-
-##########################
-## Static code analysis ##
-##########################
-
-roslint_cpp()
