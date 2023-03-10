@@ -234,10 +234,9 @@ public:
   {
     power_limit_->setRefereeStatus(status);
   }
-
-  void sendCommand(const ros::Time& time) override
+  void sendChassisCommand(const ros::Time& time, bool is_gyro)
   {
-    power_limit_->setLimitPower(msg_);
+    power_limit_->setLimitPower(msg_, is_gyro);
     msg_.accel.linear.x = accel_x_.output(msg_.power_limit);
     msg_.accel.linear.y = accel_y_.output(msg_.power_limit);
     msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
