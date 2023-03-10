@@ -150,14 +150,4 @@ public:
   virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
 };
 
-class TestTriggerChangeGroupUi : public PolygonTriggerChangeGroupUi
-{
-public:
-  explicit TestTriggerChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
-    : PolygonTriggerChangeGroupUi(rpc_value["config"][0], base)
-  {
-  }
-  void updateDbusData(const rm_msgs::DbusData::ConstPtr& data);
-  void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
-};
 }  // namespace rm_referee

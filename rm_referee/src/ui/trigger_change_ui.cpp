@@ -251,13 +251,4 @@ void PolygonTriggerChangeGroupUi::display()
   }
 }
 
-void TestTriggerChangeGroupUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
-{
-}
-
-void TestTriggerChangeGroupUi::updateDbusData(const rm_msgs::DbusData::ConstPtr& data)
-{
-  display();
-}
-
 }  // namespace rm_referee
