@@ -5,6 +5,7 @@
 
 #include "rm_referee/ui/ui_base.h"
 #include <rm_common/decision/power_limit.h>
+#include "std_msgs/String.h"
 
 namespace rm_referee
 {
@@ -103,4 +104,20 @@ private:
   std::string getTargetState(uint8_t target, uint8_t armor_target);
   uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
 };
+
+class CameraTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit CameraTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "camera")
+  {
+    graph_->setContent("hk_camera");
+  }
+  void updateCameraName(const std_msgs::StringConstPtr& data);
+
+private:
+  void display() override;
+  std::string camera_name_{};
+};
+
 }  // namespace rm_referee

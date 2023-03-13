@@ -240,4 +240,16 @@ void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr
 {
   display();
 }
+
+void CameraTriggerChangeUi::updateCameraName(const std_msgs::StringConstPtr& data)
+{
+  camera_name_ = data->data;
+}
+
+void CameraTriggerChangeUi::display()
+{
+  graph_->setContent(camera_name_);
+  graph_->setColor(ORANGE);
+  TriggerChangeUi::display();
+}
 }  // namespace rm_referee

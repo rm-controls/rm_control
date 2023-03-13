@@ -621,6 +621,6 @@ public:
   void setZero() override{};
 
 private:
-  std::string long_camera_name_, short_camera_name_;
+  std::string long_camera_name_{}, short_camera_name_{};
 };
 }  // namespace rm_common
