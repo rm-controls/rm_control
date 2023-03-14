@@ -244,18 +244,18 @@ void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr
 void CameraTriggerChangeUi::updateCameraName(const std_msgs::StringConstPtr& data)
 {
   camera_name_ = data->data;
+  display();
 }
 
 void CameraTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
   graph_->setContent(camera_name_);
   if (camera_name_ == "hk_camera")
-    graph_->setColor(rm_referee::CYAN);
-  else if(camera_name_=="galaxy_camera")
-    graph_->setColor(rm_referee::ORANGE);
+    graph_->setColor(rm_referee::GraphColor::CYAN);
+  else if (camera_name_ == "galaxy_camera")
+    graph_->setColor(rm_referee::GraphColor::ORANGE);
   else
-    graph_->setColor(rm_referee::WHITE);
-
+    graph_->setColor(rm_referee::GraphColor::WHITE);
 }
 void CameraTriggerChangeUi::display()
 {
