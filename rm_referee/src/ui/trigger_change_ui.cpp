@@ -246,10 +246,22 @@ void CameraTriggerChangeUi::updateCameraName(const std_msgs::StringConstPtr& dat
   camera_name_ = data->data;
 }
 
-void CameraTriggerChangeUi::display()
+void CameraTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
   graph_->setContent(camera_name_);
-  graph_->setColor(ORANGE);
+  if (camera_name_ == "hk_camera")
+    graph_->setColor(rm_referee::CYAN);
+  else if(camera_name_=="galaxy_camera")
+    graph_->setColor(rm_referee::ORANGE);
+  else
+    graph_->setColor(rm_referee::WHITE);
+
+}
+void CameraTriggerChangeUi::display()
+{
+  updateConfig();
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   TriggerChangeUi::display();
+  graph_->sendUi(ros::Time::now());
 }
 }  // namespace rm_referee

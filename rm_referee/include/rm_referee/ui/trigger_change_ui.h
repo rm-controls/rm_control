@@ -109,7 +109,7 @@ class CameraTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit CameraTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
-    : TriggerChangeUi(rpc_value, base, "camera")
+    : TriggerChangeUi(rpc_value, base, "hero_camera")
   {
     graph_->setContent("hk_camera");
   }
@@ -117,6 +117,7 @@ public:
 
 private:
   void display() override;
+  void updateConfig(uint8_t main_mode = 0, bool main_flag = false, uint8_t sub_mode = 0, bool sub_flag = false) override;
   std::string camera_name_{};
 };
 

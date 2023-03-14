@@ -44,7 +44,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "target")
       target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "camera")
+    if (rpc_value[i]["name"] == "hero_camera")
       camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
   }
 
