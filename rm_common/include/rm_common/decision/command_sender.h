@@ -48,6 +48,7 @@
 #include <rm_msgs/StateCmd.h>
 #include <rm_msgs/TrackData.h>
 #include <rm_msgs/GameRobotHp.h>
+#include <rm_msgs/SentryData.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
@@ -605,5 +606,28 @@ private:
   std::string joint_{};
   int index_{};
   const sensor_msgs::JointState& joint_state_;
+};
+
+class SentryDataCommandSender : public CommandSenderBase<rm_msgs::SentryData>
+{
+public:
+  explicit SentryDataCommandSender(ros::NodeHandle& nh) : CommandSenderBase<rm_msgs::SentryData>(nh)
+  {
+    ROS_ASSERT(!nh.getParam("initial_mode", initial_mode_));
+    msg_.mode = initial_mode_;
+  }
+
+  void setCruiseGyro()
+  {
+    msg_.mode = msg_.CRUISE_GYRO;
+  }
+  void sendCommand(const ros::Time& time) override
+  {
+    CommandSenderBase<rm_msgs::SentryData>::sendCommand(time);
+  }
+  void setZero() override{};
+
+private:
+  int initial_mode_;
 };
 }  // namespace rm_common
