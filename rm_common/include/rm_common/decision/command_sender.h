@@ -613,13 +613,17 @@ class SentryDataCommandSender : public CommandSenderBase<rm_msgs::SentryData>
 public:
   explicit SentryDataCommandSender(ros::NodeHandle& nh) : CommandSenderBase<rm_msgs::SentryData>(nh)
   {
-    ROS_ASSERT(!nh.getParam("initial_mode", initial_mode_));
+    ROS_ASSERT(nh.getParam("initial_mode", initial_mode_));
     msg_.mode = initial_mode_;
   }
 
   void setCruiseGyro()
   {
     msg_.mode = msg_.CRUISE_GYRO;
+  }
+  void setCruiseState()
+  {
+    msg_.mode = msg_.CRUISE;
   }
   void sendCommand(const ros::Time& time) override
   {
