@@ -216,6 +216,15 @@ void Graph::sendInteractiveData(int data_cmd_id, int receiver_id, uint8_t data)
   pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(rm_referee::InteractiveData));
   tx_len_ =
       k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::InteractiveData) + k_tail_length_);
+  try
+  {
+    base_.serial_.write(tx_buffer_, tx_len_);
+  }
+  catch (serial::PortNotOpenedException& e)
+  {
+  }
+
+  clearTxBuffer();
 }
 
 void Graph::addUi(const rm_referee::GraphConfig& config, const std::string& content, bool priority_flag)

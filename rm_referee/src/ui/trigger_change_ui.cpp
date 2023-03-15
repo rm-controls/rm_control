@@ -240,4 +240,63 @@ void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr
 {
   display();
 }
+
+void SentryInteractiveDataTriggerChangeUi::display()
+{
+  updateConfig(sentry_mode, 0);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  graph_->displayTwice(true);
+  graph_->sendUi(ros::Time::now());
+}
+
+void SentryInteractiveDataTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode,
+                                                        bool sub_flag)
+{
+  if (base_.robot_id_ == rm_referee::RobotId::BLUE_SENTRY || base_.robot_id_ == rm_referee::RobotId::RED_SENTRY)
+    graph_->setContent(getSentryState(main_mode));
+}
+
+std::string SentryInteractiveDataTriggerChangeUi::getSentryState(uint8_t mode)
+{
+  if (mode == rm_msgs::SentryData ::CALIBRATION)
+    return "CALIBRATION";
+  else if (mode == rm_msgs::SentryData::MANUAL)
+    return "MANUAL";
+  else if (mode == rm_msgs::SentryData::CRUISE)
+    return "CRUISE";
+  else if (mode == rm_msgs::SentryData::CRUISE_GYRO)
+    return "CRUISE_GYRO";
+  else
+    return "error";
+}
+
+void SentryInteractiveDataTriggerChangeUi::updateSentryStateData(const rm_msgs::SentryData::ConstPtr data)
+{
+  if (data->mode != rm_msgs::SentryData::CRUISE_GYRO)
+  {
+    if (base_.robot_id_ < 100)
+    {
+      sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
+                                                          rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA,
+                                                      rm_msgs::GameRobotStatus::RED_SENTRY, data->mode);
+    }
+    else if (base_.robot_id_ > 100)
+    {
+      sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
+                                                          rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA,
+                                                      rm_msgs::GameRobotStatus::BLUE_SENTRY, data->mode);
+    }
+  }
+}
+void SentryInteractiveDataTriggerChangeUi::updateInteractiveData(const rm_referee::InteractiveData& interactive_data,
+                                                                 const ros::Time& time)
+{
+  if (interactive_data.header_data_.data_cmd_id_ !=
+      rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA)
+    return;
+  if (interactive_data.header_data_.sender_id_ == rm_msgs::GameRobotStatus::RED_SENTRY ||
+      interactive_data.header_data_.sender_id_ == rm_msgs::GameRobotStatus::BLUE_SENTRY)
+    return;
+  sentry_mode = interactive_data.data_;
+}
 }  // namespace rm_referee

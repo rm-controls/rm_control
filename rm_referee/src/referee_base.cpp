@@ -27,6 +27,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::StepQueueState>("/step_queue_state", 10, &RefereeBase::stepQueueStateDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
+  RefereeBase::sentry_data_sub =
+      nh.subscribe<rm_msgs::SentryData>("/sentry/state", 10, &RefereeBase::sentryDataCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
@@ -43,6 +45,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "target")
       target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
+    if (rpc_value[i]["name"] == "sentry_data")
+      sentry_interactive_data_trigger_change_ui = new SentryInteractiveDataTriggerChangeUi(rpc_value[i], base_);
   }
 
   ui_nh.getParam("time_change", rpc_value);
@@ -135,6 +139,17 @@ void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ro
 }
 void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
 {
+  if (sentry_interactive_data_trigger_change_ui)
+  {
+    sentry_interactive_data_trigger_change_ui->updateInteractiveData(data, last_get_data_time);
+  }
+}
+void RefereeBase::sentryDataCallBack(const rm_msgs::SentryDataConstPtr& data)
+{
+  if (sentry_interactive_data_trigger_change_ui)
+  {
+    sentry_interactive_data_trigger_change_ui->updateSentryStateData(data);
+  }
 }
 void RefereeBase::eventDataCallBack(const rm_msgs::EventData& data, const ros::Time& last_get_data_time)
 {

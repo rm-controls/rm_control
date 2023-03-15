@@ -385,6 +385,7 @@ int Referee::unpack(uint8_t* rx_data)
         {
           rm_referee::InteractiveData interactive_data_ref;  // local variable temporarily before moving referee data
           memcpy(&interactive_data_ref, rx_data + 7, sizeof(rm_referee::InteractiveData));
+          referee_ui_.interactiveDataCallBack(interactive_data_ref, last_get_data_time_);
           break;
         }
         default:

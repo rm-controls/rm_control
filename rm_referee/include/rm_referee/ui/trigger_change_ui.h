@@ -103,4 +103,27 @@ private:
   std::string getTargetState(uint8_t target, uint8_t armor_target);
   uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
 };
+
+class SentryInteractiveDataTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit SentryInteractiveDataTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base_, "sentry_state")
+  {
+    graph_->setContent("manual");
+    if (base_.robot_color_ == "red")
+      graph_->setColor(rm_referee::GraphColor::CYAN);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
+  void updateSentryStateData(const rm_msgs::SentryData::ConstPtr data);
+  void updateInteractiveData(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
+
+private:
+  void display() override;
+  Graph* sentry_interactive_sender_;
+  void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
+  std::string getSentryState(uint8_t mode);
+  uint16_t sentry_mode;
+};
 }  // namespace rm_referee
