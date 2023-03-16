@@ -5,6 +5,5 @@ time stamp
 uint8 mode
 
 # VELOCITY/POSITION
-string motion_name
 geometry_msgs/Twist values
 
