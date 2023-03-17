@@ -52,7 +52,6 @@
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Float64.h>
-#include <std_msgs/String.h>
 
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
@@ -583,44 +582,5 @@ private:
   std::string joint_{};
   int index_{};
   const sensor_msgs::JointState& joint_state_;
-};
-
-class CameraSwitchCommandSender : public CommandSenderBase<std_msgs::String>
-{
-public:
-  explicit CameraSwitchCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::String>(nh)
-  {
-    ROS_ASSERT(nh.getParam("long_camera_name", long_camera_name_) &&
-               nh.getParam("short_camera_name", short_camera_name_));
-    msg_.data = short_camera_name_;
-  }
-  void switchLongCamera()
-  {
-    msg_.data = long_camera_name_;
-  }
-  void switchShortCamera()
-  {
-    msg_.data = short_camera_name_;
-  }
-  std::string getLongCameraName()
-  {
-    return long_camera_name_;
-  }
-  std::string getShortCameraName()
-  {
-    return short_camera_name_;
-  }
-  std::string getCurrentCameraName()
-  {
-    return msg_.data;
-  }
-  void sendCommand(const ros::Time& time) override
-  {
-    CommandSenderBase<std_msgs::String>::sendCommand(time);
-  }
-  void setZero() override{};
-
-private:
-  std::string long_camera_name_{}, short_camera_name_{};
 };
 }  // namespace rm_common
