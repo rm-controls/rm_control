@@ -19,6 +19,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<geometry_msgs::Twist>("/cmd_vel", 10, &RefereeBase::vel2DCmdDataCallback, this);
   RefereeBase::shoot_cmd_sub_ = nh.subscribe<rm_msgs::ShootCmd>("/controllers/shooter_controller/command", 10,
                                                                 &RefereeBase::shootCmdDataCallback, this);
+  RefereeBase::shoot_state_sub_ = nh.subscribe<rm_msgs::ShootState>("/controllers/shooter_controller/state", 10,
+                                                                    &RefereeBase::shootStateCallback, this);
   RefereeBase::gimbal_cmd_sub_ = nh.subscribe<rm_msgs::GimbalCmd>("/controllers/gimbal_controller/command", 10,
                                                                   &RefereeBase::gimbalCmdDataCallback, this);
   RefereeBase::card_cmd_sub_ = nh.subscribe<rm_msgs::StateCmd>("/controllers/card_controller/command", 10,
@@ -170,10 +172,13 @@ void RefereeBase::vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& dat
 }
 void RefereeBase::shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data)
 {
-  if (shooter_trigger_change_ui_)
-    shooter_trigger_change_ui_->updateShootCmdData(data);
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->updateShootCmdData(data);
+}
+void RefereeBase::shootStateCallback(const rm_msgs::ShootState::ConstPtr& data)
+{
+  if (shooter_trigger_change_ui_)
+    shooter_trigger_change_ui_->updateShootStateData(data);
 }
 void RefereeBase::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data)
 {
