@@ -16,6 +16,7 @@ add_message_files(
         DbusData.msg
         ChassisCmd.msg
         ShootCmd.msg
+        ShootState.msg
         GimbalCmd.msg
         GimbalDesError.msg
         LpData.msg
