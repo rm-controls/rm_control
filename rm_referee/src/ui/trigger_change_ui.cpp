@@ -238,7 +238,7 @@ void TargetTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::
   gimbal_eject_ = data->gimbal_eject;
 }
 
-void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data)
+void TargetTriggerChangeUi::updateShootStateData(const rm_msgs::ShootState::ConstPtr& data)
 {
   display();
 }

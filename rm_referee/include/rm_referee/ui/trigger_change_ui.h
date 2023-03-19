@@ -94,7 +94,7 @@ public:
     else
       graph_->setColor(rm_referee::GraphColor::PINK);
   }
-  void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data);
+  void updateShootStateData(const rm_msgs::ShootState::ConstPtr& data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
 
 private:

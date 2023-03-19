@@ -37,7 +37,6 @@ public:
   virtual void dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data);
   virtual void chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data);
   virtual void vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data);
-  virtual void shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data);
   virtual void shootStateCallback(const rm_msgs::ShootState::ConstPtr& data);
   virtual void gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data);
   virtual void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data);
@@ -50,7 +49,6 @@ public:
   ros::Subscriber dbus_sub_;
   ros::Subscriber chassis_cmd_sub_;
   ros::Subscriber vel2D_cmd_sub_;
-  ros::Subscriber shoot_cmd_sub_;
   ros::Subscriber shoot_state_sub_;
   ros::Subscriber gimbal_cmd_sub_;
   ros::Subscriber detection_status_sub_;
