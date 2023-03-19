@@ -590,24 +590,24 @@ class CameraSwitchCommandSender : public CommandSenderBase<std_msgs::String>
 public:
   explicit CameraSwitchCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::String>(nh)
   {
-    ROS_ASSERT(nh.getParam("camera_one_name", camera_one_name_) && nh.getParam("camera_two_name", camera_two_name_));
-    msg_.data = camera_one_name_;
+    ROS_ASSERT(nh.getParam("camera1_name", camera1_name_) && nh.getParam("camera2_name", camera2_name_));
+    msg_.data = camera1_name_;
   }
   void switchCameraOne()
   {
-    msg_.data = camera_one_name_;
+    msg_.data = camera1_name_;
   }
   void switchCameraTwo()
   {
-    msg_.data = camera_two_name_;
+    msg_.data = camera2_name_;
   }
   std::string getCameraOneName()
   {
-    return camera_one_name_;
+    return camera1_name_;
   }
   std::string getCameraTwoName()
   {
-    return camera_two_name_;
+    return camera2_name_;
   }
   std::string getCurrentCameraName()
   {
@@ -620,6 +620,6 @@ public:
   void setZero() override{};
 
 private:
-  std::string camera_one_name_{}, camera_two_name_{};
+  std::string camera1_name_{}, camera2_name_{};
 };
 }  // namespace rm_common
