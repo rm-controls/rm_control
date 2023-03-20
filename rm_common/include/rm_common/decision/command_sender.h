@@ -593,25 +593,9 @@ public:
     ROS_ASSERT(nh.getParam("camera1_name", camera1_name_) && nh.getParam("camera2_name", camera2_name_));
     msg_.data = camera1_name_;
   }
-  void switchCameraOne()
+  void switchCamera()
   {
-    msg_.data = camera1_name_;
-  }
-  void switchCameraTwo()
-  {
-    msg_.data = camera2_name_;
-  }
-  std::string getCameraOneName()
-  {
-    return camera1_name_;
-  }
-  std::string getCameraTwoName()
-  {
-    return camera2_name_;
-  }
-  std::string getCurrentCameraName()
-  {
-    return msg_.data;
+    msg_.data = msg_.data == camera1_name_ ? camera2_name_ : camera1_name_;
   }
   void sendCommand(const ros::Time& time) override
   {
