@@ -24,6 +24,7 @@ public:
   virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data,
                                        const ros::Time& last_get_data_time);
   virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data, const ros::Time& last_get_data_time);
+  virtual void gameRobotHpDataCallback(const rm_msgs::GameRobotHp& data, const ros::Time& last_get_data_time);
   virtual void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data, ros::Time& last_get_data_time);
   virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data, const ros::Time& last_get_data_time);
   virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data, const ros::Time& last_get_data_time);
@@ -35,6 +36,7 @@ public:
   virtual void jointStateCallback(const sensor_msgs::JointState::ConstPtr& joint_state);
   virtual void actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data);
   virtual void dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data);
+  virtual void trackCallback(const rm_msgs::TrackData::ConstPtr& data);
   virtual void chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data);
   virtual void vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data);
   virtual void shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data);
@@ -47,6 +49,7 @@ public:
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
   ros::Subscriber dbus_sub_;
+  ros::Subscriber track_sub_;
   ros::Subscriber chassis_cmd_sub_;
   ros::Subscriber vel2D_cmd_sub_;
   ros::Subscriber shoot_cmd_sub_;
@@ -62,6 +65,7 @@ public:
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
   GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
   TargetTriggerChangeUi* target_trigger_change_ui_{};
+  BloodVolumeTriggerChangeUi* blood_volume_trigger_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};

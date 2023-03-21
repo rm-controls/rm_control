@@ -37,6 +37,10 @@ public:
   {
     config_.color_ = color;
   }
+  void setTitle(const std::string& title)
+  {
+    title_ = title;
+  }
   void setContent(const std::string& content)
   {
     content_ = content;

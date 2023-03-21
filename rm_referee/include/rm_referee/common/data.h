@@ -56,6 +56,7 @@
 #include <rm_msgs/GimbalCmd.h>
 #include <rm_msgs/RobotHurt.h>
 #include <rm_msgs/ShootData.h>
+#include <rm_msgs/TrackData.h>
 #include <rm_msgs/DartStatus.h>
 #include <rm_msgs/ChassisCmd.h>
 #include <rm_msgs/GameStatus.h>

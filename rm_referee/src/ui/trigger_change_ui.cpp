@@ -240,4 +240,60 @@ void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr
 {
   display();
 }
+
+void BloodVolumeTriggerChangeUi::add()
+{
+  is_deleted_ = false;
+  UiBase::add();
+}
+
+std::string BloodVolumeTriggerChangeUi::getRobotName(uint8_t id)
+{
+  for (auto robot : robot_name_vector_)
+  {
+    if (robot.first == id)
+      return robot.second;
+  }
+  return "NULL";
+}
+
+int BloodVolumeTriggerChangeUi::getRobotHp(uint8_t id)
+{
+  for (auto hp : robot_hp_vector_)
+  {
+    if (hp.first == id)
+      return *hp.second;
+  }
+  ROS_ERROR("Can't get %s's hp", getRobotName(id).c_str());
+  return -1;
+}
+
+void BloodVolumeTriggerChangeUi::updateConfig(uint8_t robot_id, bool is_red, uint8_t sub_mode, bool sub_flag)
+{
+  graph_->setColor(is_red ? rm_referee::GraphColor::PINK : rm_referee::GraphColor::CYAN);
+  if (getRobotName(robot_id) != "NULL" && getRobotHp(robot_id) != -1)
+  {
+    graph_->setTitle(getRobotName(robot_id) + ": ");
+    graph_->setContent("+" + std::to_string(getRobotHp(robot_id)));
+  }
+  else
+  {
+    graph_->setTitle(" ");
+    graph_->setContent(" ");
+  }
+
+  if (!is_deleted_)
+    display();
+  else
+    add();
+}
+
+void BloodVolumeTriggerChangeUi::updateConfig(const rm_msgs::TrackData::ConstPtr data, const ros::Time& time)
+{
+  if (data->id > 100)
+    updateConfig(data->id, false);
+  else if (data->id > 0)
+    updateConfig(data->id, true);
+}
+
 }  // namespace rm_referee
