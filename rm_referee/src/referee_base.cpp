@@ -45,7 +45,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "target")
       target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "sentry_data")
+    if (rpc_value[i]["name"] == "sentry")
       sentry_interactive_data_trigger_change_ui = new SentryInteractiveDataTriggerChangeUi(rpc_value[i], base_);
   }
 
@@ -106,6 +106,8 @@ void RefereeBase::addUi()
     capacitor_time_change_ui_->add();
   if (lane_line_time_change_ui_)
     lane_line_time_change_ui_->add();
+  if (sentry_interactive_data_trigger_change_ui)
+    sentry_interactive_data_trigger_change_ui->add();
 }
 
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
@@ -144,11 +146,11 @@ void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& dat
     sentry_interactive_data_trigger_change_ui->updateInteractiveData(data, last_get_data_time);
   }
 }
-void RefereeBase::sentryDataCallBack(const rm_msgs::SentryDataConstPtr& data)
+void RefereeBase::sentryDataCallBack(const rm_msgs::SentryData::ConstPtr& data)
 {
   if (sentry_interactive_data_trigger_change_ui)
   {
-    sentry_interactive_data_trigger_change_ui->updateSentryStateData(data);
+    sentry_interactive_data_trigger_change_ui->sendSentryStateData(data);
   }
 }
 void RefereeBase::eventDataCallBack(const rm_msgs::EventData& data, const ros::Time& last_get_data_time)

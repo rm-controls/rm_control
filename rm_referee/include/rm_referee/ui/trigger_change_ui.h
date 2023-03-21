@@ -108,15 +108,16 @@ class SentryInteractiveDataTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit SentryInteractiveDataTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
-    : TriggerChangeUi(rpc_value, base_, "sentry_state")
+    : TriggerChangeUi(rpc_value, base, "sentry")
   {
     graph_->setContent("manual");
     if (base_.robot_color_ == "red")
       graph_->setColor(rm_referee::GraphColor::CYAN);
     else
       graph_->setColor(rm_referee::GraphColor::PINK);
+    sentry_interactive_sender_ = new Graph(base_);
   }
-  void updateSentryStateData(const rm_msgs::SentryData::ConstPtr data);
+  void sendSentryStateData(const rm_msgs::SentryData::ConstPtr data);
   void updateInteractiveData(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
 
 private:
@@ -124,6 +125,8 @@ private:
   Graph* sentry_interactive_sender_;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
   std::string getSentryState(uint8_t mode);
-  uint16_t sentry_mode;
+  rm_msgs::SentryData sentry_state;
+  ros::NodeHandle state_nh_;
+  ros::Publisher sentry_state_pub_ = state_nh_.advertise<rm_msgs::SentryData>("/state", 10);
 };
 }  // namespace rm_referee

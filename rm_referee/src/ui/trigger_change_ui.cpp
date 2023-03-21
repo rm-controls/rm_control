@@ -243,7 +243,7 @@ void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr
 
 void SentryInteractiveDataTriggerChangeUi::display()
 {
-  updateConfig(sentry_mode, 0);
+  updateConfig(sentry_state.mode, 0);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->displayTwice(true);
   graph_->sendUi(ros::Time::now());
@@ -252,8 +252,7 @@ void SentryInteractiveDataTriggerChangeUi::display()
 void SentryInteractiveDataTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode,
                                                         bool sub_flag)
 {
-  if (base_.robot_id_ == rm_referee::RobotId::BLUE_SENTRY || base_.robot_id_ == rm_referee::RobotId::RED_SENTRY)
-    graph_->setContent(getSentryState(main_mode));
+  graph_->setContent(getSentryState(main_mode));
 }
 
 std::string SentryInteractiveDataTriggerChangeUi::getSentryState(uint8_t mode)
@@ -270,9 +269,9 @@ std::string SentryInteractiveDataTriggerChangeUi::getSentryState(uint8_t mode)
     return "error";
 }
 
-void SentryInteractiveDataTriggerChangeUi::updateSentryStateData(const rm_msgs::SentryData::ConstPtr data)
+void SentryInteractiveDataTriggerChangeUi::sendSentryStateData(const rm_msgs::SentryData::ConstPtr data)
 {
-  if (data->mode != rm_msgs::SentryData::CRUISE_GYRO)
+  if (data->mode != rm_msgs::SentryData::CRUISE_GYRO || data->mode != rm_msgs::SentryData::CRUISE)
   {
     if (base_.robot_id_ < 100)
     {
@@ -294,9 +293,7 @@ void SentryInteractiveDataTriggerChangeUi::updateInteractiveData(const rm_refere
   if (interactive_data.header_data_.data_cmd_id_ !=
       rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA)
     return;
-  if (interactive_data.header_data_.sender_id_ == rm_msgs::GameRobotStatus::RED_SENTRY ||
-      interactive_data.header_data_.sender_id_ == rm_msgs::GameRobotStatus::BLUE_SENTRY)
-    return;
-  sentry_mode = interactive_data.data_;
+  sentry_state.mode = interactive_data.data_;
+  sentry_state_pub_.publish(sentry_state);
 }
 }  // namespace rm_referee
