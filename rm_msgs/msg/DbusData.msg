@@ -33,6 +33,5 @@ bool key_x
 bool key_c
 bool key_v
 bool key_b
-bool key_t
 
 time stamp
