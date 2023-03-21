@@ -20,8 +20,8 @@ uint8 det_exposure
 #sentry
 uint8 SENTRY_INTERACTIVE_DATA = 1
 
-uint8 CRUISE = 1
-uint8 CRUISE_GYRO = 2
+uint8 CRUISE = 0
+uint8 CRUISE_GYRO = 1
 
 uint8 sentry_state
 
