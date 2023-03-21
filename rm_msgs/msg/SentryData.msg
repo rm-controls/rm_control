@@ -1,8 +1,0 @@
-uint8 SENTRY_INTERACTIVE_DATA = 1
-
-uint8 CALIBRATION = 0
-uint8 MANUAL = 1
-uint8 CRUISE = 2
-uint8 CRUISE_GYRO = 3
-
-uint8 mode
