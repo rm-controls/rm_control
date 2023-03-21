@@ -217,6 +217,8 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
     target_trigger_change_ui_->updateManualCmdData(data);
   if (cover_flash_ui_)
     cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
+  if (sentry_interactive_data_trigger_change_ui)
+    sentry_interactive_data_trigger_change_ui->updateManualCmdData(data);
 }
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {

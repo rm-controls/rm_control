@@ -118,6 +118,7 @@ public:
     sentry_interactive_sender_ = new Graph(base_);
   }
   void sendSentryStateData(const rm_msgs::SentryData::ConstPtr data);
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
   void updateInteractiveData(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
 
 private:
@@ -126,7 +127,8 @@ private:
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
   std::string getSentryState(uint8_t mode);
   rm_msgs::SentryData sentry_state;
+  rm_msgs::ManualToReferee state;
   ros::NodeHandle state_nh_;
-  ros::Publisher sentry_state_pub_ = state_nh_.advertise<rm_msgs::SentryData>("/state", 10);
+  ros::Publisher sentry_state_pub_ = state_nh_.advertise<rm_msgs::ManualToReferee>("/state", 10);
 };
 }  // namespace rm_referee

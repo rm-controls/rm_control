@@ -271,7 +271,7 @@ std::string SentryInteractiveDataTriggerChangeUi::getSentryState(uint8_t mode)
 
 void SentryInteractiveDataTriggerChangeUi::sendSentryStateData(const rm_msgs::SentryData::ConstPtr data)
 {
-  if (data->mode != rm_msgs::SentryData::CRUISE_GYRO || data->mode != rm_msgs::SentryData::CRUISE)
+  if (data->mode != rm_msgs::ManualToReferee::CRUISE_GYRO || data->mode != rm_msgs::ManualToReferee::CRUISE)
   {
     if (base_.robot_id_ < 100)
     {
@@ -287,13 +287,29 @@ void SentryInteractiveDataTriggerChangeUi::sendSentryStateData(const rm_msgs::Se
     }
   }
 }
+void SentryInteractiveDataTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
+{
+  state.mode = data->mode;
+  if (base_.robot_id_ < 100)
+  {
+    sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
+                                                        rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA,
+                                                    rm_msgs::GameRobotStatus::RED_SENTRY, data->mode);
+  }
+  else if (base_.robot_id_ > 100)
+  {
+    sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
+                                                        rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA,
+                                                    rm_msgs::GameRobotStatus::BLUE_SENTRY, data->mode);
+  }
+}
 void SentryInteractiveDataTriggerChangeUi::updateInteractiveData(const rm_referee::InteractiveData& interactive_data,
                                                                  const ros::Time& time)
 {
   if (interactive_data.header_data_.data_cmd_id_ !=
       rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA)
     return;
-  sentry_state.mode = interactive_data.data_;
-  sentry_state_pub_.publish(sentry_state);
+  state.mode = interactive_data.data_;
+  sentry_state_pub_.publish(state);
 }
 }  // namespace rm_referee
