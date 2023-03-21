@@ -23,6 +23,6 @@ uint8 SENTRY_INTERACTIVE_DATA = 1
 uint8 CRUISE = 1
 uint8 CRUISE_GYRO = 2
 
-uint8 mode
+uint8 sentry_state
 
 time stamp
