@@ -250,9 +250,9 @@ void CameraTriggerChangeUi::updateCameraName(const std_msgs::StringConstPtr& dat
 void CameraTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
   graph_->setContent(camera_name_);
-  if (camera_name_ == "hk_camera")
+  if (ui_content_[0]["camera1_name"] == camera_name_)
     graph_->setColor(rm_referee::GraphColor::CYAN);
-  else if (camera_name_ == "galaxy_camera")
+  else if (ui_content_[1]["camera2_name"] == camera_name_)
     graph_->setColor(rm_referee::GraphColor::ORANGE);
   else
     graph_->setColor(rm_referee::GraphColor::WHITE);

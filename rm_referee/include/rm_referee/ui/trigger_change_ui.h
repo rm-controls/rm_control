@@ -111,7 +111,9 @@ public:
   explicit CameraTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
     : TriggerChangeUi(rpc_value, base, "hero_camera")
   {
-    graph_->setContent("hk_camera");
+    ros::NodeHandle nh("camera");
+    nh.getParam("camera_name", ui_content_);
+    graph_->setContent(camera_name_);
   }
   void updateCameraName(const std_msgs::StringConstPtr& data);
 
@@ -119,6 +121,7 @@ private:
   void display() override;
   void updateConfig(uint8_t main_mode = 0, bool main_flag = false, uint8_t sub_mode = 0, bool sub_flag = false) override;
   std::string camera_name_{};
+  XmlRpc::XmlRpcValue ui_content_{};
 };
 
 }  // namespace rm_referee
