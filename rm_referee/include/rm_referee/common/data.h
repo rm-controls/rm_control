@@ -75,7 +75,6 @@
 #include <rm_msgs/StatusChangeRequest.h>
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
-#include <rm_msgs/SentryData.h>
 
 namespace rm_referee
 {
