@@ -70,7 +70,9 @@ namespace rm_hw
 class RmRobotHW : public hardware_interface::RobotHW
 {
 public:
-  RmRobotHW() = default;
+  RmRobotHW() : gpio_manager_(gpio_mutex_)
+  {
+  }
   /** \brief Get necessary params from param server. Init hardware_interface.
    *
    * Get params from param server and check whether these params are set. Load urdf of robot. Set up transmission and
@@ -101,8 +103,7 @@ public:
    * @param period Current time - last time
    */
   void write(const ros::Time& time, const ros::Duration& period) override;
-  void readGpio();
-  void writeGpio();
+
   void setCanBusThreadPriority(int thread_priority);
 
 private:
@@ -181,9 +182,12 @@ private:
 
   bool is_actuator_specified_ = false;
   int thread_priority_;
+
+  std::mutex gpio_mutex_;
+
   // Interface
   std::vector<CanBus*> can_buses_{};
-  GpioManager gpio_manager_{};
+  GpioManager gpio_manager_;
   rm_control::GpioStateInterface gpio_state_interface_;
   rm_control::GpioCommandInterface gpio_command_interface_;
   hardware_interface::ActuatorStateInterface act_state_interface_;

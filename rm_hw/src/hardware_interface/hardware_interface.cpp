@@ -170,20 +170,7 @@ void RmRobotHW::write(const ros::Time& time, const ros::Duration& period)
   }
   for (auto& bus : can_buses_)
     bus->write();
-
   publishActuatorState(time);
-}
-
-void RmRobotHW::readGpio()
-{
-  // Gpio read
-  gpio_manager_.readGpio();
-}
-
-void RmRobotHW::writeGpio()
-{
-  // Gpio write
-  gpio_manager_.writeGpio();
 }
 
 void RmRobotHW::setCanBusThreadPriority(int thread_priority)

@@ -75,16 +75,8 @@ RmRobotHWLoop::RmRobotHWLoop(ros::NodeHandle& nh, std::shared_ptr<RmRobotHW> har
         update();
     }
   });
-  gpio_thread_ = std::thread([&]() {
-    while (loop_running_)
-    {
-      if (loop_running_)
-        gpioUpdate();
-    }
-  });
   sched_param sched{ .sched_priority = thread_priority };
-  if (pthread_setschedparam(loop_thread_.native_handle(), SCHED_FIFO, &sched) != 0 ||
-      pthread_setschedparam(gpio_thread_.native_handle(), SCHED_FIFO, &sched) != 0)
+  if (pthread_setschedparam(loop_thread_.native_handle(), SCHED_FIFO, &sched) != 0)
     ROS_WARN("Failed to set threads priority (one possible reason could be that the user and the group permissions "
              "are not set properly.).\n");
 }
@@ -123,18 +115,10 @@ void RmRobotHWLoop::update()
   std::this_thread::sleep_until(sleep_till);
 }
 
-void RmRobotHWLoop::gpioUpdate()
-{
-  hardware_interface_->readGpio();
-  hardware_interface_->writeGpio();
-}
-
 RmRobotHWLoop::~RmRobotHWLoop()
 {
   loop_running_ = false;
   if (loop_thread_.joinable())
     loop_thread_.join();
-  if (gpio_thread_.joinable())
-    gpio_thread_.join();
 }
 }  // namespace rm_hw

@@ -6,13 +6,6 @@
 
 namespace rm_hw
 {
-GpioManager::GpioManager()
-{
-}
-
-GpioManager::~GpioManager()
-{
-}
 void GpioManager::setGpioDirection(rm_control::GpioData gpioData)
 {
   std::string file = "/sys/class/gpio/gpio" + std::to_string(gpioData.pin) + "/direction";
@@ -50,7 +43,7 @@ void GpioManager::readGpio()
     {
       std::string file = "/sys/class/gpio/gpio" + std::to_string(iter->pin) + "/value";
       FILE* fp = fopen(file.c_str(), "r");
-      if (fp == NULL)
+      if (fp == nullptr)
       {
         ROS_ERROR("[gpio]Unable to read /sys/class/gpio/gpio%d/value", iter->pin);
       }
@@ -97,4 +90,13 @@ void GpioManager::writeGpio()
     close(fd);
   }
 }
+
+void GpioManager::gpioUpdate()
+{
+  std::lock_guard<std::mutex> guard(gpio_mutex_);
+
+  readGpio();
+  writeGpio();
+}
+
 }  // namespace rm_hw

@@ -73,7 +73,6 @@ public:
    */
 
   void update();
-  void gpioUpdate();
 
 private:
   // Startup and shutdown of the internal node inside a roscpp program
@@ -84,7 +83,6 @@ private:
 
   // Timing
   std::thread loop_thread_;
-  std::thread gpio_thread_;
   std::atomic_bool loop_running_;
   double loop_hz_{};
   ros::Duration elapsed_time_;

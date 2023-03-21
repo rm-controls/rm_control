@@ -399,6 +399,8 @@ bool rm_hw::RmRobotHW::parseImuData(XmlRpc::XmlRpcValue& imu_datas, ros::NodeHan
 
 bool RmRobotHW::parseGpioData(XmlRpc::XmlRpcValue& gpio_datas, ros::NodeHandle& robot_hw_nh)
 {
+  std::lock_guard<std::mutex> guard(gpio_mutex_);
+
   for (auto it = gpio_datas.begin(); it != gpio_datas.end(); ++it)
   {
     if (it->second.hasMember("pin"))
