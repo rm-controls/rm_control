@@ -292,6 +292,10 @@ public:
   {
     return eject_flag_;
   }
+  void setPoint(geometry_msgs::PointStamped point)
+  {
+    msg_.target_pos = point;
+  }
 
 private:
   double max_yaw_rate_{}, max_pitch_vel_{}, track_timeout_{}, eject_sensitivity_ = 1.;
