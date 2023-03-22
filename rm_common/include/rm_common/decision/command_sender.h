@@ -381,6 +381,10 @@ public:
   {
     return heat_limit_->getShootFrequencyMode();
   }
+  uint8_t getMode()
+  {
+    return msg_.mode;
+  }
   void setZero() override{};
   HeatLimit* heat_limit_{};
 
