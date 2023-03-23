@@ -257,27 +257,27 @@ void SentryInteractiveDataTriggerChangeUi::updateConfig(uint8_t main_mode, bool 
 
 std::string SentryInteractiveDataTriggerChangeUi::getSentryState(uint8_t mode)
 {
-  if (mode == rm_msgs::ManualToReferee::CRUISE)
+  if (mode == rm_msgs::SentryData::CRUISE)
     return "CRUISE";
-  else if (mode == rm_msgs::ManualToReferee::CRUISE_GYRO)
+  else if (mode == rm_msgs::SentryData::CRUISE_GYRO)
     return "CRUISE_GYRO";
   else
     return "error";
 }
 
-void SentryInteractiveDataTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
+void SentryInteractiveDataTriggerChangeUi::sendSentryData(const rm_msgs::SentryData::ConstPtr data)
 {
   state_.sentry_state = data->sentry_state;
   if (base_.robot_id_ < 100)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ManualToReferee ::SENTRY_INTERACTIVE_DATA,
+                                                        rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA,
                                                     rm_msgs::GameRobotStatus::RED_SENTRY, data->sentry_state);
   }
   else if (base_.robot_id_ > 100)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ManualToReferee ::SENTRY_INTERACTIVE_DATA,
+                                                        rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA,
                                                     rm_msgs::GameRobotStatus::BLUE_SENTRY, data->sentry_state);
   }
 }
@@ -285,7 +285,7 @@ void SentryInteractiveDataTriggerChangeUi::updateInteractiveData(const rm_refere
                                                                  const ros::Time& time)
 {
   if (interactive_data.header_data_.data_cmd_id_ !=
-      rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + rm_msgs::ManualToReferee::SENTRY_INTERACTIVE_DATA)
+      rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA)
     return;
   state_.sentry_state = interactive_data.data_;
   sentry_state_pub_.publish(state_);

@@ -27,6 +27,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::StepQueueState>("/step_queue_state", 10, &RefereeBase::stepQueueStateDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
+  RefereeBase::sentry_data_sub_ =
+      nh.subscribe<rm_msgs::SentryData>("/sentry/state", 10, &RefereeBase::sentryDataCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
@@ -208,11 +210,14 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
     target_trigger_change_ui_->updateManualCmdData(data);
   if (cover_flash_ui_)
     cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
-  if (sentry_interactive_data_trigger_change_ui)
-    sentry_interactive_data_trigger_change_ui->updateManualCmdData(data);
 }
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {
+}
+void RefereeBase::sentryDataCallBack(const rm_msgs::SentryDataConstPtr& data)
+{
+  if (sentry_interactive_data_trigger_change_ui)
+    sentry_interactive_data_trigger_change_ui->sendSentryData(data);
 }
 
 }  // namespace rm_referee
