@@ -243,7 +243,7 @@ void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr
 
 void SentryInteractiveDataTriggerChangeUi::display()
 {
-  updateConfig(state_.sentry_state, 0);
+  updateConfig(sentry_data_.state, 0);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->displayTwice(true);
   graph_->sendUi(ros::Time::now());
@@ -267,18 +267,18 @@ std::string SentryInteractiveDataTriggerChangeUi::getSentryState(uint8_t mode)
 
 void SentryInteractiveDataTriggerChangeUi::sendSentryData(const rm_msgs::SentryData::ConstPtr data)
 {
-  state_.sentry_state = data->sentry_state;
+  sentry_data_.state = data->state;
   if (base_.robot_id_ < 100)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA,
-                                                    rm_msgs::GameRobotStatus::RED_SENTRY, data->sentry_state);
+                                                    rm_msgs::GameRobotStatus::RED_SENTRY, data->state);
   }
   else if (base_.robot_id_ > 100)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA,
-                                                    rm_msgs::GameRobotStatus::BLUE_SENTRY, data->sentry_state);
+                                                    rm_msgs::GameRobotStatus::BLUE_SENTRY, data->state);
   }
 }
 void SentryInteractiveDataTriggerChangeUi::updateInteractiveData(const rm_referee::InteractiveData& interactive_data,
@@ -287,7 +287,7 @@ void SentryInteractiveDataTriggerChangeUi::updateInteractiveData(const rm_refere
   if (interactive_data.header_data_.data_cmd_id_ !=
       rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + rm_msgs::SentryData ::SENTRY_INTERACTIVE_DATA)
     return;
-  state_.sentry_state = interactive_data.data_;
-  sentry_state_pub_.publish(state_);
+  sentry_data_.state = interactive_data.data_;
+  sentry_state_pub_.publish(sentry_data_);
 }
 }  // namespace rm_referee

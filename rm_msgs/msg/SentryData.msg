@@ -3,4 +3,4 @@ uint8 SENTRY_INTERACTIVE_DATA = 1
 uint8 CRUISE = 0
 uint8 CRUISE_GYRO = 1
 
-uint8 sentry_state
+uint8 state

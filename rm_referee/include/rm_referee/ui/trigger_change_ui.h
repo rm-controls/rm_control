@@ -125,7 +125,7 @@ private:
   Graph* sentry_interactive_sender_;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
   std::string getSentryState(uint8_t mode);
-  rm_msgs::SentryData state_;
+  rm_msgs::SentryData sentry_data_;
   ros::NodeHandle state_nh_;
   ros::Publisher sentry_state_pub_ = state_nh_.advertise<rm_msgs::SentryData>("/state", 10);
 };
