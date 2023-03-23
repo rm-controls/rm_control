@@ -26,6 +26,7 @@ add_message_files(
         TofRadarData.msg
         TagMsg.msg
         TagMsgArray.msg
+        SentryData.msg
 )
 
 add_service_files(
