@@ -83,9 +83,9 @@ void CoverFlashUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr 
 
 void SpinFlashUi::display(const ros::Time& time)
 {
-  if (chassis_mode_ != rm_msgs::ChassisCmd::GYRO)
+  if (chassis_mode_ != rm_msgs::ChassisCmd::RAW)
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  graph_->display(time, chassis_mode_ == rm_msgs::ChassisCmd::GYRO);
+  graph_->display(time, chassis_mode_ == rm_msgs::ChassisCmd::RAW);
   graph_->sendUi(time);
 }
 

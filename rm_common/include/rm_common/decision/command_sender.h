@@ -52,6 +52,7 @@
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/String.h>
 
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
@@ -234,10 +235,9 @@ public:
   {
     power_limit_->setRefereeStatus(status);
   }
-
-  void sendCommand(const ros::Time& time) override
+  void sendChassisCommand(const ros::Time& time, bool is_gyro)
   {
-    power_limit_->setLimitPower(msg_);
+    power_limit_->setLimitPower(msg_, is_gyro);
     msg_.accel.linear.x = accel_x_.output(msg_.power_limit);
     msg_.accel.linear.y = accel_y_.output(msg_.power_limit);
     msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
@@ -582,5 +582,27 @@ private:
   std::string joint_{};
   int index_{};
   const sensor_msgs::JointState& joint_state_;
+};
+
+class CameraSwitchCommandSender : public CommandSenderBase<std_msgs::String>
+{
+public:
+  explicit CameraSwitchCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::String>(nh)
+  {
+    ROS_ASSERT(nh.getParam("camera1_name", camera1_name_) && nh.getParam("camera2_name", camera2_name_));
+    msg_.data = camera1_name_;
+  }
+  void switchCamera()
+  {
+    msg_.data = msg_.data == camera1_name_ ? camera2_name_ : camera1_name_;
+  }
+  void sendCommand(const ros::Time& time) override
+  {
+    CommandSenderBase<std_msgs::String>::sendCommand(time);
+  }
+  void setZero() override{};
+
+private:
+  std::string camera1_name_{}, camera2_name_{};
 };
 }  // namespace rm_common
