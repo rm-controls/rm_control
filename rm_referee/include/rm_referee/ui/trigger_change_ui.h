@@ -104,7 +104,6 @@ private:
   uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
 };
 
-
 class PolygonTriggerChangeGroupUi : public GroupUiBase
 {
 public:
