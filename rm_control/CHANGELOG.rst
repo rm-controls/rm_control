@@ -2,8 +2,8 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.18 (2023-03-25)
+-------------------
 * Merge branch 'master' into acceleration
   # Conflicts:
   #	rm_common/include/rm_common/decision/command_sender.h

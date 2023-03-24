@@ -2,8 +2,8 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.18 (2023-03-25)
+-------------------
 * Merge branch 'master' into dev/polygon_ui
 * Merge pull request `#107 <https://github.com/ye-luo-xi-tui/rm_control/issues/107>`_ from chenhuiYu00/gazebo_imu_reserve
   Fix imu problem in gazebo simulation.

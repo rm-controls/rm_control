@@ -2,8 +2,8 @@
 Changelog for package rm_referee
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.18 (2023-03-25)
+-------------------
 * Merge pull request `#113 <https://github.com/ye-luo-xi-tui/rm_control/issues/113>`_ from chenhuiYu00/dev/polygon_ui
   Add polygon UI.
 * Merge pull request `#109 <https://github.com/ye-luo-xi-tui/rm_control/issues/109>`_ from ljq-lv/Delete

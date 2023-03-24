@@ -2,8 +2,8 @@
 Changelog for package rm_dbus
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.18 (2023-03-25)
+-------------------
 * Merge branch 'master' into dev/polygon_ui
 * Merge branch 'master' into gazebo_imu_reserve
 * Merge pull request `#106 <https://github.com/ye-luo-xi-tui/rm_control/issues/106>`_ from YoujianWu/work

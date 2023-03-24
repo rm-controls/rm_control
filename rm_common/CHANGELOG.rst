@@ -2,8 +2,8 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.18 (2023-03-25)
+-------------------
 * Merge pull request `#119 <https://github.com/ye-luo-xi-tui/rm_control/issues/119>`_ from 1moule/fix_power_limit
   Modify the power limit when the capacitor is offline.
 * Modify the power limit when the capacitor is offline.
