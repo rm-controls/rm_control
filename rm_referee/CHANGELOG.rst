@@ -2,6 +2,34 @@
 Changelog for package rm_referee
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.18 (2023-03-25)
+-------------------
+* Merge pull request `#113 <https://github.com/ye-luo-xi-tui/rm_control/issues/113>`_ from chenhuiYu00/dev/polygon_ui
+  Add polygon UI.
+* Merge pull request `#109 <https://github.com/ye-luo-xi-tui/rm_control/issues/109>`_ from ljq-lv/Delete
+  Delete the chassis mode "GYRO"
+* Merge pull request `#116 <https://github.com/ye-luo-xi-tui/rm_control/issues/116>`_ from ye-luo-xi-tui/master
+  Display shooter block state
+* Delete ShootCmd subscriber.
+* Display shooter block state.
+* Delete test polygon ui.
+* Merge branch 'master' into dev/polygon_ui
+* Delete the chassis mode "GYRO"
+* Merge branch 'master' into gazebo_imu_reserve
+* Merge pull request `#106 <https://github.com/ye-luo-xi-tui/rm_control/issues/106>`_ from YoujianWu/work
+  Delete dependence roslint.
+* Run pre-commit.
+* Delete dependence roslint.
+* Test GroupUi in real robot.
+* Rebase FixedUi.
+* Add GroupUiBase class and Polygon ui.
+* Merge branch 'master' into acceleration
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+* Merge pull request `#104 <https://github.com/ye-luo-xi-tui/rm_control/issues/104>`_ from ye-luo-xi-tui/master
+  0.1.17
+* Contributors: Kook, ljq-lv, ye-luo-xi-tui, yezi, yuchen
+
 0.1.17 (2023-02-21)
 -------------------
 * Merge pull request `#100 <https://github.com/ye-luo-xi-tui/rm_control/issues/100>`_ from ljq-lv/modified_msgs_name
