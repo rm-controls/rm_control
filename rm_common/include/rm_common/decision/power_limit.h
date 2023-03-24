@@ -144,7 +144,7 @@ public:
           }
         }
         else
-          chassis_cmd.power_limit = chassis_power_limit_;
+          normal(chassis_cmd);
       }
       else
         chassis_cmd.power_limit = safety_power_;
