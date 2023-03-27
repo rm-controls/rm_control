@@ -70,14 +70,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "spin")
       spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "armor0")
-      armor0_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor0");
-    if (rpc_value[i]["name"] == "armor1")
-      armor1_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor1");
-    if (rpc_value[i]["name"] == "armor2")
-      armor2_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor2");
-    if (rpc_value[i]["name"] == "armor3")
-      armor3_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor3");
   }
 }
 void RefereeBase::addUi()
@@ -124,14 +116,6 @@ void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, cons
 }
 void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ros::Time& last_get_data_time)
 {
-  if (armor0_flash_ui_)
-    armor0_flash_ui_->updateRobotHurtData(data, last_get_data_time);
-  if (armor1_flash_ui_)
-    armor1_flash_ui_->updateRobotHurtData(data, last_get_data_time);
-  if (armor2_flash_ui_)
-    armor2_flash_ui_->updateRobotHurtData(data, last_get_data_time);
-  if (armor3_flash_ui_)
-    armor3_flash_ui_->updateRobotHurtData(data, last_get_data_time);
 }
 void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
 {
