@@ -221,11 +221,7 @@ This message contains various state parameter settings for basic chassis control
 
   the mode FOLLOW
 
-- uint8 GYRO = 2
-
-  the mode GYRO
-
-- uint8 TWIST = 3
+- uint8 TWIST = 2
 
   the mod TWIST:
 

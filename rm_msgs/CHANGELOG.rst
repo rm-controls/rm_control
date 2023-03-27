@@ -2,6 +2,29 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.18 (2023-03-25)
+-------------------
+* Merge pull request `#109 <https://github.com/ye-luo-xi-tui/rm_control/issues/109>`_ from ljq-lv/Delete
+  Delete the chassis mode "GYRO"
+* Merge pull request `#116 <https://github.com/ye-luo-xi-tui/rm_control/issues/116>`_ from ye-luo-xi-tui/master
+  Display shooter block state
+* Display shooter block state.
+* Merge branch 'master' into dev/polygon_ui
+* Merge pull request `#111 <https://github.com/ye-luo-xi-tui/rm_control/issues/111>`_ from Aung-xiao/master
+  add tag_detection msg
+* run pre-commit
+* add tag_detection msg
+* Delete the chassis mode "GYRO"
+* Merge pull request `#108 <https://github.com/ye-luo-xi-tui/rm_control/issues/108>`_ from ye-luo-xi-tui/acceleration
+  Remove acceleration computing
+* Merge branch 'master' into acceleration
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+* Add accel to TrackData.msg and Add a filter.
+* Merge pull request `#104 <https://github.com/ye-luo-xi-tui/rm_control/issues/104>`_ from ye-luo-xi-tui/master
+  0.1.17
+* Contributors: Aung-xiao, ljq-lv, ye-luo-xi-tui, yezi, yuchen
+
 0.1.17 (2023-02-21)
 -------------------
 * Merge pull request `#100 <https://github.com/ye-luo-xi-tui/rm_control/issues/100>`_ from ljq-lv/modified_msgs_name
