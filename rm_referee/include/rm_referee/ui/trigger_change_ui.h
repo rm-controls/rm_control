@@ -151,7 +151,6 @@ public:
   virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
 };
 
-
 class CameraTriggerChangeUi : public TriggerChangeUi
 {
 public:
@@ -159,16 +158,21 @@ public:
     : TriggerChangeUi(rpc_value, base, "hero_camera")
   {
     ros::NodeHandle nh("camera");
-    nh.getParam("camera_name", ui_content_);
-    graph_->setContent(camera_name_);
+    XmlRpc::XmlRpcValue camera_name;
+    nh.getParam("camera_name", camera_name);
+    ROS_ASSERT(camera_name.hasMember("camera_name"));
+    ROS_ASSERT(camera_name.getType() == XmlRpc::XmlRpcValue::TypeString);
+    for (int i = 0; i < camera_name.size(); i++)
+      camera_name_.push_back(camera_name[i]);
+    graph_->setContent("0");
   }
   void updateCameraName(const std_msgs::StringConstPtr& data);
 
 private:
   void display() override;
   void updateConfig(uint8_t main_mode = 0, bool main_flag = false, uint8_t sub_mode = 0, bool sub_flag = false) override;
-  std::string camera_name_{};
-  XmlRpc::XmlRpcValue ui_content_{};
+  std::vector<std::string> camera_name_{};
+  std::string current_camera_{};
 };
 
 }  // namespace rm_referee

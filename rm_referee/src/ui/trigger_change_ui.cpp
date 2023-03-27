@@ -251,19 +251,18 @@ void PolygonTriggerChangeGroupUi::display()
   }
 }
 
-
 void CameraTriggerChangeUi::updateCameraName(const std_msgs::StringConstPtr& data)
 {
-  camera_name_ = data->data;
+  current_camera_ = data->data;
   display();
 }
 
 void CameraTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
-  graph_->setContent(camera_name_);
-  if (ui_content_[0]["camera1_name"] == camera_name_)
+  graph_->setContent(current_camera_);
+  if (current_camera_ == camera_name_[0])
     graph_->setColor(rm_referee::GraphColor::CYAN);
-  else if (ui_content_[1]["camera2_name"] == camera_name_)
+  else if (current_camera_ == camera_name_[1])
     graph_->setColor(rm_referee::GraphColor::ORANGE);
   else
     graph_->setColor(rm_referee::GraphColor::WHITE);
