@@ -66,8 +66,6 @@ std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
     return "raw";
   else if (mode == rm_msgs::ChassisCmd::FOLLOW)
     return "follow";
-  else if (mode == rm_msgs::ChassisCmd::GYRO)
-    return "gyro";
   else if (mode == rm_msgs::ChassisCmd::TWIST)
     return "twist";
   else
@@ -116,21 +114,23 @@ void ShooterTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uin
     graph_->setColor(rm_referee::GraphColor::ORANGE);
 }
 
-std::string ShooterTriggerChangeUi::getShooterState(uint8_t mode)
+std::string ShooterTriggerChangeUi::getShooterState(uint8_t state)
 {
-  if (mode == rm_msgs::ShootCmd::READY)
-    return "ready";
-  else if (mode == rm_msgs::ShootCmd::PUSH)
-    return "push";
-  else if (mode == rm_msgs::ShootCmd::STOP)
+  if (state == rm_msgs::ShootState::STOP)
     return "stop";
+  else if (state == rm_msgs::ShootState::READY)
+    return "ready";
+  else if (state == rm_msgs::ShootState::PUSH)
+    return "push";
+  else if (state == rm_msgs::ShootState::BLOCK)
+    return "block";
   else
     return "error";
 }
 
-void ShooterTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data)
+void ShooterTriggerChangeUi::updateShootStateData(const rm_msgs::ShootState::ConstPtr& data)
 {
-  shooter_mode_ = data->mode;
+  shooter_mode_ = data->state;
   display();
 }
 
@@ -236,8 +236,19 @@ void TargetTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::
   gimbal_eject_ = data->gimbal_eject;
 }
 
-void TargetTriggerChangeUi::updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data)
+void TargetTriggerChangeUi::updateShootStateData(const rm_msgs::ShootState::ConstPtr& data)
 {
   display();
 }
+
+void PolygonTriggerChangeGroupUi::display()
+{
+  for (auto graph : graph_vector_)
+  {
+    graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
+    graph.second->display();
+    graph.second->sendUi(ros::Time::now());
+  }
+}
+
 }  // namespace rm_referee

@@ -54,7 +54,7 @@ public:
   {
     graph_->setContent("0");
   }
-  void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data);
+  void updateShootStateData(const rm_msgs::ShootState::ConstPtr& data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
 
 private:
@@ -94,7 +94,7 @@ public:
     else
       graph_->setColor(rm_referee::GraphColor::PINK);
   }
-  void updateShootCmdData(const rm_msgs::ShootCmd::ConstPtr data);
+  void updateShootStateData(const rm_msgs::ShootState::ConstPtr& data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
 
 private:
@@ -103,4 +103,51 @@ private:
   std::string getTargetState(uint8_t target, uint8_t armor_target);
   uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
 };
+
+class PolygonTriggerChangeGroupUi : public GroupUiBase
+{
+public:
+  explicit PolygonTriggerChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : GroupUiBase(base)
+  {
+    ROS_ASSERT(rpc_value.hasMember("points"));
+    XmlRpc::XmlRpcValue config;
+
+    config["type"] = "line";
+
+    if (rpc_value["graph_config"].hasMember("color"))
+      config["color"] = rpc_value["graph_config"]["color"];
+    else
+      config["color"] = "cyan";
+    if (rpc_value["graph_config"].hasMember("width"))
+      config["width"] = rpc_value["graph_config"]["width"];
+    else
+      config["width"] = 2;
+    XmlRpc::XmlRpcValue points = rpc_value["points"];
+    config["start_position"].setSize(2);
+    config["end_position"].setSize(2);
+    for (int i = 1; i <= points.size(); i++)
+    {
+      if (i != points.size())
+      {
+        config["start_position"][0] = points[i - 1][0];
+        config["start_position"][1] = points[i - 1][1];
+        config["end_position"][0] = points[i][0];
+        config["end_position"][1] = points[i][1];
+      }
+      else
+      {
+        // Connect first and last point
+        config["start_position"][0] = points[i - 1][0];
+        config["start_position"][1] = points[i - 1][1];
+        config["end_position"][0] = points[0][0];
+        config["end_position"][1] = points[0][1];
+      }
+      graph_vector_.insert(
+          std::make_pair<std::string, Graph*>("graph_" + std::to_string(i), new Graph(config, base_, id_++)));
+    }
+  }
+  virtual void display();
+  virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
+};
+
 }  // namespace rm_referee
