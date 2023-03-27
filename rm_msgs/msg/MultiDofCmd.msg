@@ -6,4 +6,3 @@ uint8 mode
 
 # VELOCITY/POSITION
 geometry_msgs/Twist values
-
