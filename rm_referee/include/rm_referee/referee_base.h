@@ -5,6 +5,7 @@
 #pragma once
 
 #include <rm_common/ros_utilities.h>
+#include <ros/timer.h>
 #include <rm_common/decision/command_sender.h>
 
 #include "rm_referee/ui/ui_base.h"
@@ -76,8 +77,9 @@ public:
   ArmorFlashUi *armor0_flash_ui_{}, *armor1_flash_ui_{}, *armor2_flash_ui_{}, *armor3_flash_ui_{};
 
   Base& base_;
+  ros::Timer add_ui_timer_;
+  int add_ui_times_ = 0;
   bool add_ui_flag_ = false;
-  bool send_ui_flag_ = false;
   Graph* interactive_data_sender_;
   ros::NodeHandle nh_;
 };

@@ -88,32 +88,6 @@ public:
     base_.initSerial();
   };
   void read();
-  void checkUiAdd()
-  {
-    if (referee_ui_.send_ui_flag_)
-    {
-      if (!referee_ui_.add_ui_flag_)
-      {
-        referee_ui_.add_ui_flag_ = true;
-        first_add_ui_time_ = ros::Time::now();
-        last_get_data_time_ = ros::Time::now();
-      }
-      else if ((ros::Time::now() - first_add_ui_time_).toSec() > add_ui_threshold_)
-      {
-        ROS_INFO_THROTTLE(add_ui_threshold_, "Stop add ui");
-        referee_ui_.send_ui_flag_ = false;
-        referee_ui_.add_ui_flag_ = false;
-      }
-      else if (referee_ui_.add_ui_flag_ && (ros::Time::now() - last_add_ui_time_).toSec() > 0.25)
-      {
-        ROS_INFO_THROTTLE(add_ui_threshold_, "Start add ui");
-        referee_ui_.addUi();
-        last_get_data_time_ = ros::Time::now();
-      }
-    }
-    else
-      referee_ui_.add_ui_flag_ = false;
-  }
   void clearRxBuffer()
   {
     rx_buffer_.clear();
@@ -149,7 +123,7 @@ private:
 
   SuperCapacitor super_capacitor_;
   double add_ui_threshold_ = 3.0;
-  ros::Time last_get_data_time_, first_add_ui_time_, last_add_ui_time_;
+  ros::Time last_get_data_time_;
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
   const int k_unpack_buffer_length_ = 256;
   uint8_t unpack_buffer_[256]{};
