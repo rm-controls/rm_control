@@ -74,7 +74,6 @@ public:
 
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
-  ArmorFlashUi *armor0_flash_ui_{}, *armor1_flash_ui_{}, *armor2_flash_ui_{}, *armor3_flash_ui_{};
 
   Base& base_;
   ros::Timer add_ui_timer_;
