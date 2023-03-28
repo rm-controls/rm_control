@@ -15,7 +15,6 @@ add_definitions(-Wall -Werror -Wno-inconsistent-missing-override)
 find_package(catkin REQUIRED
         COMPONENTS
         roscpp
-        roslint
 
         rm_common
         rm_msgs
@@ -47,7 +46,6 @@ catkin_package(
         ${PROJECT_NAME}_loader_plugins
         CATKIN_DEPENDS
         roscpp
-        roslint
 
         rm_common
         rm_msgs
@@ -130,9 +128,3 @@ install(
 #      test/AlgorithmTest.cpp)
 #  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_core)
 #endif ()
-
-##########################
-## Static code analysis ##
-##########################
-
-roslint_cpp()

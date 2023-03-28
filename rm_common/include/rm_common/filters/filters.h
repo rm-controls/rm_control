@@ -33,6 +33,9 @@
 
 #pragma once
 
+#include <vector>
+#include <memory>
+
 template <typename T>
 class Filter
 {
@@ -95,6 +98,42 @@ private:
   int num_data_;
   int idx_;
   T sum_;
+};
+
+template <typename T>
+class Vector3WithFilter
+{
+public:
+  Vector3WithFilter(int num_data)
+  {
+    for (int i = 0; i < 3; i++)
+      filter_vector_.push_back(std::make_shared<MovingAverageFilter<T>>(num_data));
+  }
+  void input(T vector[3])
+  {
+    for (int i = 0; i < 3; i++)
+      filter_vector_[i]->input(vector[i]);
+  }
+  void clear()
+  {
+    for (int i = 0; i < 3; i++)
+      filter_vector_[i]->clear();
+  }
+  T x()
+  {
+    return filter_vector_[0]->output();
+  }
+  T y()
+  {
+    return filter_vector_[1]->output();
+  }
+  T z()
+  {
+    return filter_vector_[2]->output();
+  }
+
+private:
+  std::vector<std::shared_ptr<MovingAverageFilter<T>>> filter_vector_;
 };
 
 template <typename T>

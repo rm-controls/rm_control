@@ -2,6 +2,43 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.18 (2023-03-25)
+-------------------
+* Merge pull request `#109 <https://github.com/ye-luo-xi-tui/rm_control/issues/109>`_ from ljq-lv/Delete
+  Delete the chassis mode "GYRO"
+* Merge pull request `#116 <https://github.com/ye-luo-xi-tui/rm_control/issues/116>`_ from ye-luo-xi-tui/master
+  Display shooter block state
+* Display shooter block state.
+* Merge branch 'master' into dev/polygon_ui
+* Merge pull request `#111 <https://github.com/ye-luo-xi-tui/rm_control/issues/111>`_ from Aung-xiao/master
+  add tag_detection msg
+* run pre-commit
+* add tag_detection msg
+* Delete the chassis mode "GYRO"
+* Merge pull request `#108 <https://github.com/ye-luo-xi-tui/rm_control/issues/108>`_ from ye-luo-xi-tui/acceleration
+  Remove acceleration computing
+* Merge branch 'master' into acceleration
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+* Add accel to TrackData.msg and Add a filter.
+* Merge pull request `#104 <https://github.com/ye-luo-xi-tui/rm_control/issues/104>`_ from ye-luo-xi-tui/master
+  0.1.17
+* Contributors: Aung-xiao, ljq-lv, ye-luo-xi-tui, yezi, yuchen
+
+0.1.17 (2023-02-21)
+-------------------
+* Merge pull request `#100 <https://github.com/ye-luo-xi-tui/rm_control/issues/100>`_ from ljq-lv/modified_msgs_name
+  Modified msgs name
+* Modified the msg "EngineerCmd" name
+* Merge pull request `#94 <https://github.com/ye-luo-xi-tui/rm_control/issues/94>`_ from ye-luo-xi-tui/balance_state
+  Update balance_state
+* Add BalanceState.msg for new balance standard.
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#84 <https://github.com/ye-luo-xi-tui/rm_control/issues/84>`_ from ye-luo-xi-tui/master
+  0.1.16
+* Merge branch 'rm-controls:master' into master
+* Contributors: ljq-lv, ye-luo-xi-tui, yezi, 吕骏骐
+
 0.1.16 (2022-11-24)
 -------------------
 * Merge pull request `#81 <https://github.com/ye-luo-xi-tui/rm_control/issues/81>`_ from LJT666666/master
