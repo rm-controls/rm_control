@@ -122,7 +122,6 @@ private:
   void publishCapacityData();
 
   SuperCapacitor super_capacitor_;
-  double add_ui_threshold_ = 3.0;
   ros::Time last_get_data_time_;
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
   const int k_unpack_buffer_length_ = 256;
