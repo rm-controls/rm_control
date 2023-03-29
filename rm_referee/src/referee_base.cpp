@@ -72,18 +72,18 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_);
   }
 
-  add_ui_timer_ = nh.createTimer(ros::Duration(0.3), std::bind(&RefereeBase::addUi, this), false, false);
+  add_ui_timer_ = nh.createTimer(ros::Duration(0.02), std::bind(&RefereeBase::addUi, this), false, false);
 }
 void RefereeBase::addUi()
 {
-  if (add_ui_times_ > 13)
+  if (add_ui_times_ > 100)
   {
     ROS_INFO("End add");
     add_ui_timer_.stop();
     return;
   }
 
-  ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / 13.) * 100);
+  ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / 100.) * 100);
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->add();
   if (gimbal_trigger_change_ui_)
