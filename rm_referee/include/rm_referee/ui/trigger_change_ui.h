@@ -157,10 +157,6 @@ public:
     : TriggerChangeUi(rpc_value, base, "sentry")
   {
     graph_->setContent("cruise");
-    if (base_.robot_color_ == "red")
-      graph_->setColor(rm_referee::GraphColor::CYAN);
-    else
-      graph_->setColor(rm_referee::GraphColor::PINK);
     sentry_interactive_sender_ = new Graph(base_);
   }
   void sendSentryData(const rm_msgs::SentryData::ConstPtr data);
@@ -173,6 +169,6 @@ private:
   std::string getSentryState(uint8_t mode);
   rm_msgs::SentryData sentry_data_;
   ros::NodeHandle state_nh_;
-  ros::Publisher sentry_state_pub_ = state_nh_.advertise<rm_msgs::SentryData>("/state", 10);
+  ros::Publisher sentry_state_pub_ = state_nh_.advertise<rm_msgs::SentryData>("/sentry/interaction", 10);
 };
 }  // namespace rm_referee
