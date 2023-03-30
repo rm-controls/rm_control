@@ -278,6 +278,7 @@ std::string SentryInteractiveDataTriggerChangeUi::getSentryState(uint8_t mode)
 void SentryInteractiveDataTriggerChangeUi::sendSentryData(const rm_msgs::SentryData::ConstPtr data)
 {
   sentry_data_.state = data->state;
+  display();
   if (base_.robot_id_ < 100)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +

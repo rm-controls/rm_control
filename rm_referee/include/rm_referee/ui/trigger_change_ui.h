@@ -156,7 +156,7 @@ public:
   explicit SentryInteractiveDataTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
     : TriggerChangeUi(rpc_value, base, "sentry")
   {
-    graph_->setContent("manual");
+    graph_->setContent("cruise");
     if (base_.robot_color_ == "red")
       graph_->setColor(rm_referee::GraphColor::CYAN);
     else
