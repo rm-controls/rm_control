@@ -160,7 +160,9 @@ public:
     sentry_interactive_sender_ = new Graph(base_);
   }
   void sendSentryData(const rm_msgs::SentryData::ConstPtr data);
+  void sendInteractiveResult(const rm_msgs::SentryData::ConstPtr data);
   void updateInteractiveData(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
+  void updateInteractiveResult(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
 
 private:
   void display() override;
