@@ -177,6 +177,16 @@ public:
     return -1;  // TODO unsafe!
   }
 
+  int getCoolingLimit()
+  {
+    return shooter_cooling_limit_;
+  }
+
+  int getCoolingHeat()
+  {
+    return shooter_cooling_heat_;
+  }
+
   void setShootFrequency(uint8_t mode)
   {
     state_ = mode;

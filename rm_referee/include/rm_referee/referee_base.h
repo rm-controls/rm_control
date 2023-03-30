@@ -40,7 +40,7 @@ public:
   virtual void shootStateCallback(const rm_msgs::ShootState::ConstPtr& data);
   virtual void gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data);
   virtual void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data);
-  virtual void stepQueueStateDataCallback(const rm_msgs::StepQueueState ::ConstPtr& data);
+  virtual void engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data);
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
   virtual void sentryDataCallBack(const rm_msgs::SentryDataConstPtr& data);
@@ -76,7 +76,6 @@ public:
 
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
-  ArmorFlashUi *armor0_flash_ui_{}, *armor1_flash_ui_{}, *armor2_flash_ui_{}, *armor3_flash_ui_{};
 
   Base& base_;
   bool add_ui_flag_ = false;

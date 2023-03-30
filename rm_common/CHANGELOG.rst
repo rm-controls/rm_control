@@ -2,6 +2,45 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.18 (2023-03-25)
+-------------------
+* Merge pull request `#119 <https://github.com/ye-luo-xi-tui/rm_control/issues/119>`_ from 1moule/fix_power_limit
+  Modify the power limit when the capacitor is offline.
+* Modify the power limit when the capacitor is offline.
+* Merge pull request `#109 <https://github.com/ye-luo-xi-tui/rm_control/issues/109>`_ from ljq-lv/Delete
+  Delete the chassis mode "GYRO"
+* Merge pull request `#115 <https://github.com/ye-luo-xi-tui/rm_control/issues/115>`_ from 1moule/camera_command_sender
+  Add a command serder class for switching camera.
+* Delete redundant functions, use the ternary operator to change the data of msg.
+* Modify variable name.
+* Modify variable name.
+* Add a command serder class for switching camera.
+* Merge branch 'master' into dev/polygon_ui
+* Delete the judge of chassis mode
+* Add the param "is_gyro"
+* Merge pull request `#110 <https://github.com/ye-luo-xi-tui/rm_control/issues/110>`_ from ye-luo-xi-tui/master
+  Add clear() method to Vector3WithFilter
+* Merge branch 'acceleration'
+* Add clear() method to Vector3WithFilter.
+* Delete the chassis mode "GYRO"
+* Merge pull request `#108 <https://github.com/ye-luo-xi-tui/rm_control/issues/108>`_ from ye-luo-xi-tui/acceleration
+  Remove acceleration computing
+* Remove acceleration computing.
+* Merge branch 'master' into gazebo_imu_reserve
+* Merge pull request `#106 <https://github.com/ye-luo-xi-tui/rm_control/issues/106>`_ from YoujianWu/work
+  Delete dependence roslint.
+* Run pre-commit.
+* Delete dependence roslint.
+* Merge branch 'master' into acceleration
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+* Add accel to TrackData.msg and Add a filter.
+* Merge pull request `#104 <https://github.com/ye-luo-xi-tui/rm_control/issues/104>`_ from ye-luo-xi-tui/master
+  0.1.17
+* Publish acceleration.
+* Corrected acceleration calculation.
+* Contributors: 1moule, Kook, ljq-lv, ye-luo-xi-tui, yezi, yuchen, 吕骏骐
+
 0.1.17 (2023-02-21)
 -------------------
 * Merge pull request `#95 <https://github.com/ye-luo-xi-tui/rm_control/issues/95>`_ from Edwinlinks/for-location

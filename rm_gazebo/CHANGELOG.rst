@@ -2,6 +2,25 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.18 (2023-03-25)
+-------------------
+* Merge branch 'master' into dev/polygon_ui
+* Merge pull request `#107 <https://github.com/ye-luo-xi-tui/rm_control/issues/107>`_ from chenhuiYu00/gazebo_imu_reserve
+  Fix imu problem in gazebo simulation.
+* Use list instead of vector.
+* Merge branch 'master' into gazebo_imu_reserve
+* Pre-allocate imu vector memory.
+* Merge pull request `#106 <https://github.com/ye-luo-xi-tui/rm_control/issues/106>`_ from YoujianWu/work
+  Delete dependence roslint.
+* Run pre-commit.
+* Delete dependence roslint.
+* Merge branch 'master' into acceleration
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+* Merge pull request `#104 <https://github.com/ye-luo-xi-tui/rm_control/issues/104>`_ from ye-luo-xi-tui/master
+  0.1.17
+* Contributors: Kook, ye-luo-xi-tui, yezi, yuchen
+
 0.1.17 (2023-02-21)
 -------------------
 * Merge pull request `#99 <https://github.com/ye-luo-xi-tui/rm_control/issues/99>`_ from ye-luo-xi-tui/master
