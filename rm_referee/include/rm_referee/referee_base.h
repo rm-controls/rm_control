@@ -64,7 +64,7 @@ public:
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
   GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
   TargetTriggerChangeUi* target_trigger_change_ui_{};
-  SentryInteractiveDataTriggerChangeUi* sentry_interactive_data_trigger_change_ui{};
+  SentryInteractiveDataTriggerChangeUi* sentry_interactive_data_trigger_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};

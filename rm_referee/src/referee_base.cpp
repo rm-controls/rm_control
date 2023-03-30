@@ -46,7 +46,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     if (rpc_value[i]["name"] == "target")
       target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "sentry")
-      sentry_interactive_data_trigger_change_ui = new SentryInteractiveDataTriggerChangeUi(rpc_value[i], base_);
+      sentry_interactive_data_trigger_change_ui_ = new SentryInteractiveDataTriggerChangeUi(rpc_value[i], base_);
   }
 
   ui_nh.getParam("time_change", rpc_value);
@@ -106,8 +106,8 @@ void RefereeBase::addUi()
     capacitor_time_change_ui_->add();
   if (lane_line_time_change_ui_)
     lane_line_time_change_ui_->add();
-  if (sentry_interactive_data_trigger_change_ui)
-    sentry_interactive_data_trigger_change_ui->add();
+  if (sentry_interactive_data_trigger_change_ui_)
+    sentry_interactive_data_trigger_change_ui_->add();
 }
 
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
@@ -141,9 +141,9 @@ void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ro
 }
 void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
 {
-  if (sentry_interactive_data_trigger_change_ui)
+  if (sentry_interactive_data_trigger_change_ui_)
   {
-    sentry_interactive_data_trigger_change_ui->updateInteractiveData(data, last_get_data_time);
+    sentry_interactive_data_trigger_change_ui_->updateInteractiveData(data, last_get_data_time);
   }
 }
 void RefereeBase::eventDataCallBack(const rm_msgs::EventData& data, const ros::Time& last_get_data_time)
@@ -216,8 +216,8 @@ void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data
 }
 void RefereeBase::sentryDataCallBack(const rm_msgs::SentryDataConstPtr& data)
 {
-  if (sentry_interactive_data_trigger_change_ui)
-    sentry_interactive_data_trigger_change_ui->sendSentryData(data);
+  if (sentry_interactive_data_trigger_change_ui_)
+    sentry_interactive_data_trigger_change_ui_->sendSentryData(data);
 }
 
 }  // namespace rm_referee
