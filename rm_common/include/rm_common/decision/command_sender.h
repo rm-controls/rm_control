@@ -53,6 +53,7 @@
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Bool.h>
 
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
@@ -343,10 +344,15 @@ public:
   {
     track_data_ = data;
   }
+  void updateSuggestFireData(const std_msgs::Bool& data)
+  {
+    suggest_fire_ = data;
+  }
   void checkError(const ros::Time& time)
   {
-    if ((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
-        (track_data_.accel > target_acceleration_tolerance_))
+    if (((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
+         (track_data_.accel > target_acceleration_tolerance_)) ||
+        !suggest_fire_.data)
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
         setMode(rm_msgs::ShootCmd::READY);
   }
@@ -390,6 +396,7 @@ private:
   double target_acceleration_tolerance_{};
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
+  std_msgs::Bool suggest_fire_;
 };
 
 class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::TwistStamped>
