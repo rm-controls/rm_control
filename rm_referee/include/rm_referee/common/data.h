@@ -66,14 +66,19 @@
 #include <rm_msgs/CapacityData.h>
 #include <rm_msgs/DartClientCmd.h>
 #include <rm_msgs/ActuatorState.h>
+#include <rm_msgs/MapSentryData.h>
+#include <rm_msgs/RadarMarkData.h>
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/SuperCapacitor.h>
 #include <rm_msgs/GimbalDesError.h>
-#include <rm_msgs/BulletRemaining.h>
+#include <rm_msgs/BulletAllowance.h>
 #include <rm_msgs/GameRobotStatus.h>
 #include <rm_msgs/ManualToReferee.h>
+#include <rm_msgs/ClientMapSendData.h>
+#include <rm_msgs/RobotsPositionData.h>
 #include <rm_msgs/DartRemainingTime.h>
 #include <rm_msgs/StatusChangeRequest.h>
+#include <rm_msgs/ClientMapReceiveData.h>
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
 

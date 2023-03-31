@@ -63,7 +63,15 @@ typedef enum
   BULLET_REMAINING_CMD = 0x0208,
   ROBOT_RFID_STATUS_CMD = 0x0209,
   DART_CLIENT_CMD = 0x020A,
+  ROBOTS_POS_CMD = 0X020B,
+  RADAR_MARK_CMD = 0X020C,
   INTERACTIVE_DATA_CMD = 0x0301,
+  CUSTOM_CONTROLLER_CMD = 0x0302,  // controller
+  TARGET_POS_CMD = 0x0303,         // send aerial->server
+  ROBOT_COMMAND_CMD = 0x0304,      // controller
+  CLIENT_MAP_CMD = 0x0305,
+  CUSTOM_CLIENT_CMD = 0x0306,  // controller
+  MAP_SENTRY_CMD = 0x0307      // send sentry->aerial
 } RefereeCmdId;
 
 typedef enum
@@ -88,6 +96,8 @@ typedef enum
   RED_AERIAL = 6,
   RED_SENTRY = 7,
   RED_RADAR = 9,
+  RED_OUTPOST = 10,
+  RED_BASE = 11,
   BLUE_HERO = 101,
   BLUE_ENGINEER = 102,
   BLUE_STANDARD_3 = 103,
@@ -96,6 +106,8 @@ typedef enum
   BLUE_AERIAL = 106,
   BLUE_SENTRY = 107,
   BLUE_RADAR = 109,
+  BLUE_OUTPOST = 110,
+  BLUE_BASE = 111
 } RobotId;
 
 typedef enum
@@ -143,6 +155,13 @@ typedef enum
   ARC = 4,
   STRING = 7
 } GraphType;
+
+typedef enum
+{
+  ATTACK_IN = 1,
+  DEFEND_IN = 2,
+  MOVE_TO = 3
+} SentryIntention;
 
 typedef struct
 {
@@ -301,10 +320,10 @@ typedef struct
 
 typedef struct
 {
-  uint16_t bullet_remaining_num_17_mm_;
-  uint16_t bullet_remaining_num_42_mm_;
+  uint16_t bullet_allowance_num_17_mm_;
+  uint16_t bullet_allowance_num_42_mm_;
   uint16_t coin_remaining_num_;
-} __packed BulletRemaining;
+} __packed BulletAllowance;
 
 typedef struct
 {
@@ -381,6 +400,30 @@ struct GraphConfig
 
 typedef struct
 {
+  float hero_x_;
+  float hero_y_;
+  float engineer_x_;
+  float engineer_y_;
+  float standard_3_x_;
+  float standard_3_y_;
+  float standard_4_x_;
+  float standard_4_y_;
+  float standard_5_x_;
+  float standard_5_y_;
+} __packed RobotsPositionData;
+
+typedef struct
+{
+  uint8_t mark_hero_progress_;
+  uint8_t mark_engineer_progress_;
+  uint8_t mark_standard_3_progress_;
+  uint8_t mark_standard_4_progress_;
+  uint8_t mark_standard_5_progress_;
+  uint8_t mark_sentry_progress_;
+} __packed RadarMarkData;
+
+typedef struct
+{
   InteractiveDataHeader header_;
   GraphConfig config_;
   uint8_t content_[30];
@@ -391,6 +434,47 @@ typedef struct
   InteractiveDataHeader header_data_;
   uint8_t data_;
 } __packed InteractiveData;
+
+typedef struct
+{
+  uint8_t data_[30];
+} __packed CustomControllerData;
+
+typedef struct
+{
+  float target_position_x_;
+  float target_position_y_;
+  float target_position_z_;
+  uint8_t command_keyboard_;
+  uint16_t target_robot_ID_;
+} __packed ClientMapSendData;
+
+typedef struct
+{
+  uint16_t target_robot_ID_;
+  float target_position_x_;
+  float target_position_y_;
+} __packed ClientMapReceiveData;
+
+typedef struct
+{
+  int16_t mouse_x_;
+  int16_t mouse_y_;
+  int16_t mouse_z_;
+  int8_t left_button_down_;
+  int8_t right_button_down_;
+  uint16_t keyboard_value_;
+  uint16_t reserved_;
+} __packed RobotCommandData;
+
+typedef struct
+{
+  uint8_t intention_;
+  uint16_t start_position_x_;
+  uint16_t start_position_y_;
+  int8_t delta_x_[49];
+  int8_t delta_y_[49];
+} __packed MapSentryData;
 
 /***********************Frame tail(CRC8_CRC16)********************************************/
 const uint8_t kCrc8Init = 0xff;

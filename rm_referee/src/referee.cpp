@@ -337,16 +337,16 @@ int Referee::unpack(uint8_t* rx_data)
         }
         case rm_referee::RefereeCmdId::BULLET_REMAINING_CMD:
         {
-          rm_referee::BulletRemaining bullet_remaining_ref;
-          rm_msgs::BulletRemaining bullet_remaining_data;
-          memcpy(&bullet_remaining_ref, rx_data + 7, sizeof(rm_referee::BulletRemaining));
+          rm_referee::BulletAllowance bullet_allowance_ref;
+          rm_msgs::BulletAllowance bullet_allowance_data;
+          memcpy(&bullet_allowance_ref, rx_data + 7, sizeof(rm_referee::BulletAllowance));
 
-          bullet_remaining_data.bullet_remaining_num_17_mm = bullet_remaining_ref.bullet_remaining_num_17_mm_;
-          bullet_remaining_data.bullet_remaining_num_42_mm = bullet_remaining_ref.bullet_remaining_num_42_mm_;
-          bullet_remaining_data.coin_remaining_num = bullet_remaining_ref.coin_remaining_num_;
-          bullet_remaining_data.stamp = last_get_data_time_;
+          bullet_allowance_data.bullet_allowance_num_17_mm = bullet_allowance_ref.bullet_allowance_num_17_mm_;
+          bullet_allowance_data.bullet_allowance_num_42_mm = bullet_allowance_ref.bullet_allowance_num_42_mm_;
+          bullet_allowance_data.coin_remaining_num = bullet_allowance_ref.coin_remaining_num_;
+          bullet_allowance_data.stamp = last_get_data_time_;
 
-          bullet_remaining_pub_.publish(bullet_remaining_data);
+          bullet_allowance_pub_.publish(bullet_allowance_data);
           break;
         }
         case rm_referee::RefereeCmdId::ROBOT_RFID_STATUS_CMD:
@@ -381,10 +381,64 @@ int Referee::unpack(uint8_t* rx_data)
           dart_client_cmd_pub_.publish(dart_client_cmd_data);
           break;
         }
+        case rm_referee::ROBOTS_POS_CMD:
+        {
+          rm_referee::RobotsPositionData robots_position_ref;
+          rm_msgs::RobotsPositionData robots_position_data;
+          memcpy(&robots_position_ref, rx_data + 7, sizeof(rm_referee::RobotsPositionData));
+
+          robots_position_data.engineer_x = robots_position_ref.engineer_x_;
+          robots_position_data.engineer_y = robots_position_ref.engineer_y_;
+          robots_position_data.hero_x = robots_position_ref.hero_x_;
+          robots_position_data.hero_y = robots_position_ref.hero_y_;
+          robots_position_data.standard_3_x = robots_position_ref.standard_3_x_;
+          robots_position_data.standard_3_y = robots_position_ref.standard_3_y_;
+          robots_position_data.standard_4_x = robots_position_ref.standard_4_x_;
+          robots_position_data.standard_4_y = robots_position_ref.standard_4_y_;
+          robots_position_data.standard_5_x = robots_position_ref.standard_5_x_;
+          robots_position_data.standard_5_y = robots_position_ref.standard_5_y_;
+          robots_position_data.stamp = last_get_data_time_;
+
+          robots_position_pub_.publish(robots_position_data);
+          break;
+        }
+        case rm_referee::RADAR_MARK_CMD:
+        {
+          rm_referee::RadarMarkData radar_mark_ref;
+          rm_msgs::RadarMarkData radar_mark_data;
+          memcpy(&radar_mark_ref, rx_data + 7, sizeof(rm_referee::RadarMarkData));
+
+          radar_mark_data.mark_engineer_progress = radar_mark_ref.mark_engineer_progress_;
+          radar_mark_data.mark_hero_progress = radar_mark_ref.mark_hero_progress_;
+          radar_mark_data.mark_sentry_progress = radar_mark_ref.mark_sentry_progress_;
+          radar_mark_data.mark_standard_3_progress = radar_mark_ref.mark_standard_3_progress_;
+          radar_mark_data.mark_standard_4_progress = radar_mark_ref.mark_standard_4_progress_;
+          radar_mark_data.mark_standard_5_progress = radar_mark_ref.mark_standard_5_progress_;
+          radar_mark_data.stamp = last_get_data_time_;
+
+          radar_mark_pub_.publish(radar_mark_data);
+        }
         case rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD:
         {
           rm_referee::InteractiveData interactive_data_ref;  // local variable temporarily before moving referee data
           memcpy(&interactive_data_ref, rx_data + 7, sizeof(rm_referee::InteractiveData));
+          break;
+        }
+        case rm_referee::CLIENT_MAP_CMD:
+        {
+          rm_referee::ClientMapReceiveData client_map_receive_ref;
+          rm_msgs::ClientMapReceiveData client_map_receive_data;
+          memcpy(&client_map_receive_ref, rx_data + 7, sizeof(rm_referee::ClientMapReceiveData));
+
+          if (client_map_receive_ref.target_robot_ID_ == base_.robot_id_)
+          {
+            client_map_receive_data.target_robot_ID = client_map_receive_ref.target_robot_ID_;
+            client_map_receive_data.target_position_x = client_map_receive_ref.target_position_x_;
+            client_map_receive_data.target_position_y = client_map_receive_ref.target_position_y_;
+            client_map_receive_data.stamp = last_get_data_time_;
+
+            client_map_receive_pub_.publish(client_map_receive_data);
+          }
           break;
         }
         default:

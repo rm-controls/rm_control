@@ -57,6 +57,7 @@ public:
   ros::Subscriber engineer_cmd_sub_;
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
+  ros::Subscriber map_sentry_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
