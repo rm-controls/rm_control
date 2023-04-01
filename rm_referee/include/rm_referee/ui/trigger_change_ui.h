@@ -5,6 +5,7 @@
 
 #include "rm_referee/ui/ui_base.h"
 #include <rm_common/decision/power_limit.h>
+#include "std_msgs/String.h"
 
 namespace rm_referee
 {
@@ -148,6 +149,30 @@ public:
   }
   virtual void display();
   virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
+};
+
+class CameraTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit CameraTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "camera")
+  {
+    if (rpc_value.hasMember("camera_name"))
+    {
+      XmlRpc::XmlRpcValue& data = rpc_value["camera_name"];
+      camera1_name_ = static_cast<std::string>(data["camera1_name"]);
+      camera2_name_ = static_cast<std::string>(data["camera2_name"]);
+    }
+    else
+      ROS_WARN("Camera config 's member 'camera_name' not defined.");
+    graph_->setContent("0");
+  }
+  void updateCameraName(const std_msgs::StringConstPtr& data);
+
+private:
+  void display() override;
+  void updateConfig(uint8_t main_mode = 0, bool main_flag = false, uint8_t sub_mode = 0, bool sub_flag = false) override;
+  std::string current_camera_{}, camera1_name_{}, camera2_name_{};
 };
 
 }  // namespace rm_referee

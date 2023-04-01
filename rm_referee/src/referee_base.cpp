@@ -27,6 +27,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 10, &RefereeBase::engineerUiDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
+  RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
@@ -43,6 +44,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "target")
       target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
+    if (rpc_value[i]["name"] == "camera")
+      camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
   }
 
   ui_nh.getParam("time_change", rpc_value);
@@ -82,6 +85,8 @@ void RefereeBase::addUi()
     shooter_trigger_change_ui_->add();
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->add();
+  if (camera_trigger_change_ui_)
+    camera_trigger_change_ui_->add();
   if (fixed_ui_)
     fixed_ui_->add();
   if (effort_time_change_ui_)
@@ -188,5 +193,9 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {
 }
-
+void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
+{
+  if (camera_trigger_change_ui_)
+    camera_trigger_change_ui_->updateCameraName(data);
+}
 }  // namespace rm_referee
