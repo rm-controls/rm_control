@@ -155,15 +155,16 @@ class CameraTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit CameraTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
-    : TriggerChangeUi(rpc_value, base, "hero_camera")
+    : TriggerChangeUi(rpc_value, base, "camera")
   {
-    ros::NodeHandle nh("camera");
-    XmlRpc::XmlRpcValue camera_name;
-    nh.getParam("camera_name", camera_name);
-    ROS_ASSERT(camera_name.hasMember("camera_name"));
-    ROS_ASSERT(camera_name.getType() == XmlRpc::XmlRpcValue::TypeString);
-    for (int i = 0; i < camera_name.size(); i++)
-      camera_name_.push_back(camera_name[i]);
+    if (rpc_value.hasMember("camera_name"))
+    {
+      XmlRpc::XmlRpcValue& data = rpc_value["camera_name"];
+      camera1_name_ = static_cast<std::string>(data["camera1_name"]);
+      camera2_name_ = static_cast<std::string>(data["camera2_name"]);
+    }
+    else
+      ROS_WARN("Camera config 's member 'camera_name' not defined.");
     graph_->setContent("0");
   }
   void updateCameraName(const std_msgs::StringConstPtr& data);
@@ -171,8 +172,7 @@ public:
 private:
   void display() override;
   void updateConfig(uint8_t main_mode = 0, bool main_flag = false, uint8_t sub_mode = 0, bool sub_flag = false) override;
-  std::vector<std::string> camera_name_{};
-  std::string current_camera_{};
+  std::string current_camera_{}, camera1_name_{}, camera2_name_{};
 };
 
 }  // namespace rm_referee
