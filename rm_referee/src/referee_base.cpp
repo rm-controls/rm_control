@@ -17,16 +17,17 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
                                                                     &RefereeBase::chassisCmdDataCallback, this);
   RefereeBase::vel2D_cmd_sub_ =
       nh.subscribe<geometry_msgs::Twist>("/cmd_vel", 10, &RefereeBase::vel2DCmdDataCallback, this);
-  RefereeBase::shoot_cmd_sub_ = nh.subscribe<rm_msgs::ShootCmd>("/controllers/shooter_controller/command", 10,
-                                                                &RefereeBase::shootCmdDataCallback, this);
+  RefereeBase::shoot_state_sub_ = nh.subscribe<rm_msgs::ShootState>("/controllers/shooter_controller/state", 10,
+                                                                    &RefereeBase::shootStateCallback, this);
   RefereeBase::gimbal_cmd_sub_ = nh.subscribe<rm_msgs::GimbalCmd>("/controllers/gimbal_controller/command", 10,
                                                                   &RefereeBase::gimbalCmdDataCallback, this);
   RefereeBase::card_cmd_sub_ = nh.subscribe<rm_msgs::StateCmd>("/controllers/card_controller/command", 10,
                                                                &RefereeBase::cardCmdDataCallback, this);
   RefereeBase::engineer_cmd_sub_ =
-      nh.subscribe<rm_msgs::StepQueueState>("/step_queue_state", 10, &RefereeBase::stepQueueStateDataCallback, this);
+      nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 10, &RefereeBase::engineerUiDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
+  RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
@@ -43,6 +44,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "target")
       target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
+    if (rpc_value[i]["name"] == "camera")
+      camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
   }
 
   ui_nh.getParam("time_change", rpc_value);
@@ -70,14 +73,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "spin")
       spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "armor0")
-      armor0_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor0");
-    if (rpc_value[i]["name"] == "armor1")
-      armor1_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor1");
-    if (rpc_value[i]["name"] == "armor2")
-      armor2_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor2");
-    if (rpc_value[i]["name"] == "armor3")
-      armor3_flash_ui_ = new ArmorFlashUi(rpc_value[i], base_, "armor3");
   }
 }
 void RefereeBase::addUi()
@@ -90,6 +85,8 @@ void RefereeBase::addUi()
     shooter_trigger_change_ui_->add();
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->add();
+  if (camera_trigger_change_ui_)
+    camera_trigger_change_ui_->add();
   if (fixed_ui_)
     fixed_ui_->add();
   if (effort_time_change_ui_)
@@ -124,14 +121,6 @@ void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, cons
 }
 void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ros::Time& last_get_data_time)
 {
-  if (armor0_flash_ui_)
-    armor0_flash_ui_->updateRobotHurtData(data, last_get_data_time);
-  if (armor1_flash_ui_)
-    armor1_flash_ui_->updateRobotHurtData(data, last_get_data_time);
-  if (armor2_flash_ui_)
-    armor2_flash_ui_->updateRobotHurtData(data, last_get_data_time);
-  if (armor3_flash_ui_)
-    armor3_flash_ui_->updateRobotHurtData(data, last_get_data_time);
 }
 void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
 {
@@ -168,12 +157,12 @@ void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& da
 void RefereeBase::vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data)
 {
 }
-void RefereeBase::shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data)
+void RefereeBase::shootStateCallback(const rm_msgs::ShootState::ConstPtr& data)
 {
-  if (shooter_trigger_change_ui_)
-    shooter_trigger_change_ui_->updateShootCmdData(data);
   if (target_trigger_change_ui_)
-    target_trigger_change_ui_->updateShootCmdData(data);
+    target_trigger_change_ui_->updateShootStateData(data);
+  if (shooter_trigger_change_ui_)
+    shooter_trigger_change_ui_->updateShootStateData(data);
 }
 void RefereeBase::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data)
 {
@@ -183,10 +172,10 @@ void RefereeBase::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data
 void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 {
 }
-void RefereeBase::stepQueueStateDataCallback(const rm_msgs::StepQueueState ::ConstPtr& data)
+void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data)
 {
   if (progress_time_change_ui_)
-    progress_time_change_ui_->updateStepQueueStateData(data, ros::Time::now());
+    progress_time_change_ui_->updateEngineerUiData(data, ros::Time::now());
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
@@ -204,5 +193,9 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {
 }
-
+void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
+{
+  if (camera_trigger_change_ui_)
+    camera_trigger_change_ui_->updateCameraName(data);
+}
 }  // namespace rm_referee

@@ -16,6 +16,7 @@ add_message_files(
         DbusData.msg
         ChassisCmd.msg
         ShootCmd.msg
+        ShootState.msg
         GimbalCmd.msg
         GimbalDesError.msg
         LpData.msg
@@ -51,7 +52,7 @@ add_message_files(
         GameRobotStatus.msg
         GameStatus.msg
         StateCmd.msg
-        StepQueueState.msg
+        EngineerUi.msg
         GameRobotHp.msg
         PowerHeatData.msg
         EventData.msg

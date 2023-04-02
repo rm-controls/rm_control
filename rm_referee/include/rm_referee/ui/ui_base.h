@@ -19,6 +19,7 @@ public:
   explicit UiBase(Base& base) : base_(base), tf_listener_(tf_buffer_){};
   ~UiBase() = default;
   virtual void add();
+  virtual void erasure();
   virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data){};
   virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time){};
 
@@ -30,18 +31,28 @@ protected:
   tf2_ros::TransformListener tf_listener_;
 };
 
-class FixedUi : public UiBase
+class GroupUiBase : public UiBase
 {
 public:
-  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : UiBase(base)
+  explicit GroupUiBase(Base& base) : UiBase(base){};
+  ~GroupUiBase() = default;
+  virtual void add() override;
+  virtual void erasure() override;
+  virtual void display(){};
+
+protected:
+  std::map<std::string, Graph*> graph_vector_;
+};
+
+class FixedUi : public GroupUiBase
+{
+public:
+  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : GroupUiBase(base)
   {
     for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
       graph_vector_.insert(
           std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
   };
-  void add() override;
-  void display();
-
-  std::map<std::string, Graph*> graph_vector_;
 };
+
 }  // namespace rm_referee

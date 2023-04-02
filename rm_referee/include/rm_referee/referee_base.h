@@ -37,19 +37,20 @@ public:
   virtual void dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data);
   virtual void chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data);
   virtual void vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data);
-  virtual void shootCmdDataCallback(const rm_msgs::ShootCmd::ConstPtr& data);
+  virtual void shootStateCallback(const rm_msgs::ShootState::ConstPtr& data);
   virtual void gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data);
   virtual void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data);
-  virtual void stepQueueStateDataCallback(const rm_msgs::StepQueueState ::ConstPtr& data);
+  virtual void engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data);
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
+  virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
 
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
   ros::Subscriber dbus_sub_;
   ros::Subscriber chassis_cmd_sub_;
   ros::Subscriber vel2D_cmd_sub_;
-  ros::Subscriber shoot_cmd_sub_;
+  ros::Subscriber shoot_state_sub_;
   ros::Subscriber gimbal_cmd_sub_;
   ros::Subscriber detection_status_sub_;
   ros::Subscriber card_cmd_sub_;
@@ -57,11 +58,13 @@ public:
   ros::Subscriber engineer_cmd_sub_;
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
+  ros::Subscriber camera_name_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
   GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
   TargetTriggerChangeUi* target_trigger_change_ui_{};
+  CameraTriggerChangeUi* camera_trigger_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};
@@ -73,7 +76,6 @@ public:
 
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
-  ArmorFlashUi *armor0_flash_ui_{}, *armor1_flash_ui_{}, *armor2_flash_ui_{}, *armor3_flash_ui_{};
 
   Base& base_;
   bool add_ui_flag_ = false;
