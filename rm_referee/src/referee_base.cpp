@@ -74,9 +74,19 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     if (rpc_value[i]["name"] == "spin")
       spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_);
   }
+
+  add_ui_timer_ = nh.createTimer(ros::Duration(0.02), std::bind(&RefereeBase::addUi, this), false, false);
 }
 void RefereeBase::addUi()
 {
+  if (add_ui_times_ > 100)
+  {
+    ROS_INFO("End add");
+    add_ui_timer_.stop();
+    return;
+  }
+
+  ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / 100.) * 100);
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->add();
   if (gimbal_trigger_change_ui_)
@@ -99,6 +109,7 @@ void RefereeBase::addUi()
     capacitor_time_change_ui_->add();
   if (lane_line_time_change_ui_)
     lane_line_time_change_ui_->add();
+  add_ui_times_++;
 }
 
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
@@ -140,10 +151,17 @@ void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& 
 }
 void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
 {
-  if (data->s_r == rm_msgs::DbusData::UP)
-    send_ui_flag_ = true;
+  if (add_ui_flag_ && data->s_r == rm_msgs::DbusData::UP)
+  {
+    add_ui_flag_ = false;
+    add_ui_timer_.start();
+    add_ui_times_ = 0;
+  }
   if (data->s_r != rm_msgs::DbusData::UP)
-    send_ui_flag_ = false;
+  {
+    add_ui_flag_ = true;
+    add_ui_timer_.stop();
+  }
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateDbusData(data);
 }

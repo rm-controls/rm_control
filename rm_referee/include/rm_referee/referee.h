@@ -88,20 +88,6 @@ public:
     base_.initSerial();
   };
   void read();
-  void checkUiAdd()
-  {
-    if (referee_ui_.send_ui_flag_)
-    {
-      if (referee_ui_.add_ui_flag_)
-      {
-        referee_ui_.addUi();
-        ROS_INFO("Add ui");
-        referee_ui_.add_ui_flag_ = false;
-      }
-    }
-    else
-      referee_ui_.add_ui_flag_ = true;
-  }
   void clearRxBuffer()
   {
     rx_buffer_.clear();
