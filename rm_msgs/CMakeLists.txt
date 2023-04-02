@@ -27,7 +27,6 @@ add_message_files(
         TofRadarData.msg
         TagMsg.msg
         TagMsgArray.msg
-        SentryData.msg
 )
 
 add_service_files(
@@ -68,6 +67,7 @@ add_message_files(
         DartClientCmd.msg
         ManualToReferee.msg
         RadarData.msg
+        RobotCmd.msg
 )
 
 add_action_files(
