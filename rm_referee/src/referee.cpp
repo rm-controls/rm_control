@@ -131,12 +131,16 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_hp_data.blue_4_robot_hp = game_robot_hp_ref.blue_4_robot_hp_;
           game_robot_hp_data.blue_5_robot_hp = game_robot_hp_ref.blue_5_robot_hp_;
           game_robot_hp_data.blue_7_robot_hp = game_robot_hp_ref.blue_7_robot_hp_;
+          game_robot_hp_data.blue_outpost_hp = game_robot_hp_ref.blue_outpost_hp_;
+          game_robot_hp_data.blue_base_hp = game_robot_hp_ref.blue_base_hp_;
           game_robot_hp_data.red_1_robot_hp = game_robot_hp_ref.red_1_robot_hp_;
           game_robot_hp_data.red_2_robot_hp = game_robot_hp_ref.red_2_robot_hp_;
           game_robot_hp_data.red_3_robot_hp = game_robot_hp_ref.red_3_robot_hp_;
           game_robot_hp_data.red_4_robot_hp = game_robot_hp_ref.red_4_robot_hp_;
           game_robot_hp_data.red_5_robot_hp = game_robot_hp_ref.red_5_robot_hp_;
           game_robot_hp_data.red_7_robot_hp = game_robot_hp_ref.red_7_robot_hp_;
+          game_robot_hp_data.red_outpost_hp = game_robot_hp_ref.red_outpost_hp_;
+          game_robot_hp_data.red_base_hp = game_robot_hp_ref.red_base_hp_;
           game_robot_hp_data.stamp = last_get_data_time_;
 
           game_robot_hp_pub_.publish(game_robot_hp_data);
