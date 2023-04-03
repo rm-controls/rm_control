@@ -27,6 +27,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 10, &RefereeBase::engineerUiDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
+  RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
   RefereeBase::sentry_cmd_sub_ =
       nh.subscribe<rm_msgs::ClientMapReceiveData>("/sentry/command", 10, &RefereeBase::sentryCmdCallBack, this);
   RefereeBase::sentry_result_sub_ =
@@ -47,6 +48,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "target")
       target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
+    if (rpc_value[i]["name"] == "camera")
+      camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "sentry")
       sentry_interactive_data_trigger_change_ui_ = new SentryInteractiveDataTriggerChangeUi(rpc_value[i], base_);
   }
@@ -77,9 +80,19 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     if (rpc_value[i]["name"] == "spin")
       spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_);
   }
+
+  add_ui_timer_ = nh.createTimer(ros::Duration(0.02), std::bind(&RefereeBase::addUi, this), false, false);
 }
 void RefereeBase::addUi()
 {
+  if (add_ui_times_ > 100)
+  {
+    ROS_INFO("End add");
+    add_ui_timer_.stop();
+    return;
+  }
+
+  ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / 100.) * 100);
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->add();
   if (gimbal_trigger_change_ui_)
@@ -88,6 +101,8 @@ void RefereeBase::addUi()
     shooter_trigger_change_ui_->add();
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->add();
+  if (camera_trigger_change_ui_)
+    camera_trigger_change_ui_->add();
   if (sentry_interactive_data_trigger_change_ui_)
     sentry_interactive_data_trigger_change_ui_->add();
   if (fixed_ui_)
@@ -102,6 +117,7 @@ void RefereeBase::addUi()
     capacitor_time_change_ui_->add();
   if (lane_line_time_change_ui_)
     lane_line_time_change_ui_->add();
+  add_ui_times_++;
 }
 
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
@@ -148,10 +164,17 @@ void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& 
 }
 void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
 {
-  if (data->s_r == rm_msgs::DbusData::UP)
-    send_ui_flag_ = true;
+  if (add_ui_flag_ && data->s_r == rm_msgs::DbusData::UP)
+  {
+    add_ui_flag_ = false;
+    add_ui_timer_.start();
+    add_ui_times_ = 0;
+  }
   if (data->s_r != rm_msgs::DbusData::UP)
-    send_ui_flag_ = false;
+  {
+    add_ui_flag_ = true;
+    add_ui_timer_.stop();
+  }
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateDbusData(data);
 }
@@ -201,6 +224,11 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {
 }
+void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
+{
+  if (camera_trigger_change_ui_)
+    camera_trigger_change_ui_->updateCameraName(data);
+}
 void RefereeBase::sentryCmdCallBack(const rm_msgs::ClientMapReceiveDataConstPtr& data)
 {
   if (sentry_interactive_data_trigger_change_ui_)
@@ -211,5 +239,4 @@ void RefereeBase::sentryResultCallBack(const std_msgs::UInt8ConstPtr& data)
   if (sentry_interactive_data_trigger_change_ui_)
     sentry_interactive_data_trigger_change_ui_->sendInteractiveResult(data);
 }
-
 }  // namespace rm_referee

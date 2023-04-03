@@ -251,6 +251,29 @@ void PolygonTriggerChangeGroupUi::display()
   }
 }
 
+void CameraTriggerChangeUi::updateCameraName(const std_msgs::StringConstPtr& data)
+{
+  current_camera_ = data->data;
+  display();
+}
+
+void CameraTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
+{
+  graph_->setContent(current_camera_);
+  if (current_camera_ == camera1_name_)
+    graph_->setColor(rm_referee::GraphColor::CYAN);
+  else if (current_camera_ == camera2_name_)
+    graph_->setColor(rm_referee::GraphColor::ORANGE);
+  else
+    graph_->setColor(rm_referee::GraphColor::WHITE);
+}
+void CameraTriggerChangeUi::display()
+{
+  updateConfig();
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  TriggerChangeUi::display();
+  graph_->sendUi(ros::Time::now());
+}
 void SentryInteractiveDataTriggerChangeUi::display()
 {
   updateConfig(sentry_state_.data, 0);
