@@ -63,7 +63,15 @@ typedef enum
   BULLET_REMAINING_CMD = 0x0208,
   ROBOT_RFID_STATUS_CMD = 0x0209,
   DART_CLIENT_CMD = 0x020A,
+  ROBOTS_POS_CMD = 0X020B,
+  RADAR_MARK_CMD = 0X020C,
   INTERACTIVE_DATA_CMD = 0x0301,
+  CUSTOM_CONTROLLER_CMD = 0x0302,  // controller
+  TARGET_POS_CMD = 0x0303,         // send aerial->server
+  ROBOT_COMMAND_CMD = 0x0304,      // controller
+  CLIENT_MAP_CMD = 0x0305,
+  CUSTOM_CLIENT_CMD = 0x0306,  // controller
+  MAP_SENTRY_CMD = 0x0307      // send sentry->aerial
 } RefereeCmdId;
 
 typedef enum
@@ -88,6 +96,8 @@ typedef enum
   RED_AERIAL = 6,
   RED_SENTRY = 7,
   RED_RADAR = 9,
+  RED_OUTPOST = 10,
+  RED_BASE = 11,
   BLUE_HERO = 101,
   BLUE_ENGINEER = 102,
   BLUE_STANDARD_3 = 103,
@@ -96,6 +106,8 @@ typedef enum
   BLUE_AERIAL = 106,
   BLUE_SENTRY = 107,
   BLUE_RADAR = 109,
+  BLUE_OUTPOST = 110,
+  BLUE_BASE = 111
 } RobotId;
 
 typedef enum
@@ -144,253 +156,324 @@ typedef enum
   STRING = 7
 } GraphType;
 
+typedef enum
+{
+  ATTACK_IN = 1,
+  DEFEND_IN = 2,
+  MOVE_TO = 3
+} SentryIntention;
+
 typedef struct
 {
-  uint8_t sof_;
-  uint16_t data_length_;
-  uint8_t seq_;
-  uint8_t crc_8_;
+  uint8_t sof;
+  uint16_t data_length;
+  uint8_t seq;
+  uint8_t crc_8;
 } __packed FrameHeader;
 
 typedef struct
 {
-  uint8_t game_type_ : 4;
-  uint8_t game_progress_ : 4;
-  uint16_t stage_remain_time_;
-  uint64_t sync_time_stamp_;
+  uint8_t game_type : 4;
+  uint8_t game_progress : 4;
+  uint16_t stage_remain_time;
+  uint64_t sync_time_stamp;
 } __packed GameStatus;
 
 typedef struct
 {
-  uint8_t winner_;
+  uint8_t winner;
 } __packed GameResult;
 
 typedef struct
 {
-  uint16_t red_1_robot_hp_;
-  uint16_t red_2_robot_hp_;
-  uint16_t red_3_robot_hp_;
-  uint16_t red_4_robot_hp_;
-  uint16_t red_5_robot_hp_;
-  uint16_t red_7_robot_hp_;
-  uint16_t red_outpost_hp_;
-  uint16_t red_base_hp_;
-  uint16_t blue_1_robot_hp_;
-  uint16_t blue_2_robot_hp_;
-  uint16_t blue_3_robot_hp_;
-  uint16_t blue_4_robot_hp_;
-  uint16_t blue_5_robot_hp_;
-  uint16_t blue_7_robot_hp_;
-  uint16_t blue_outpost_hp_;
-  uint16_t blue_base_hp_;
+  uint16_t red_1_robot_hp;
+  uint16_t red_2_robot_hp;
+  uint16_t red_3_robot_hp;
+  uint16_t red_4_robot_hp;
+  uint16_t red_5_robot_hp;
+  uint16_t red_7_robot_hp;
+  uint16_t red_outpost_hp;
+  uint16_t red_base_hp;
+  uint16_t blue_1_robot_hp;
+  uint16_t blue_2_robot_hp;
+  uint16_t blue_3_robot_hp;
+  uint16_t blue_4_robot_hp;
+  uint16_t blue_5_robot_hp;
+  uint16_t blue_7_robot_hp;
+  uint16_t blue_outpost_hp;
+  uint16_t blue_base_hp;
 } __packed GameRobotHp;
 
 typedef struct
 {
-  uint8_t dart_belong_;
-  uint16_t stage_remaining_time_;
+  uint8_t dart_belong;
+  uint16_t stage_remaining_time;
 } __packed DartStatus;
 
 typedef struct
 {
-  uint8_t f_1_zone_status_ : 1;
-  uint8_t f_1_zone_buff_debuff_status_ : 3;
-  uint8_t f_2_zone_status_ : 1;
-  uint8_t f_2_zone_buff_debuff_status_ : 3;
-  uint8_t f_3_zone_status_ : 1;
-  uint8_t f_3_zone_buff_debuff_status_ : 3;
-  uint8_t f_4_zone_status_ : 1;
-  uint8_t f_4_zone_buff_debuff_status_ : 3;
-  uint8_t f_5_zone_status_ : 1;
-  uint8_t f_5_zone_buff_debuff_status_ : 3;
-  uint8_t f_6_zone_status_ : 1;
-  uint8_t f_6_zone_buff_debuff_status_ : 3;
-  uint16_t red_1_bullet_left_;
-  uint16_t red_2_bullet_left_;
-  uint16_t blue_1_bullet_left_;
-  uint16_t blue_2_bullet_left_;
+  uint8_t f_1_zone_status : 1;
+  uint8_t f_1_zone_buff_debuff_status : 3;
+  uint8_t f_2_zone_status : 1;
+  uint8_t f_2_zone_buff_debuff_status : 3;
+  uint8_t f_3_zone_status : 1;
+  uint8_t f_3_zone_buff_debuff_status : 3;
+  uint8_t f_4_zone_status : 1;
+  uint8_t f_4_zone_buff_debuff_status : 3;
+  uint8_t f_5_zone_status : 1;
+  uint8_t f_5_zone_buff_debuff_status : 3;
+  uint8_t f_6_zone_status : 1;
+  uint8_t f_6_zone_buff_debuff_status : 3;
+  uint16_t red_1_bullet_left;
+  uint16_t red_2_bullet_left;
+  uint16_t blue_1_bullet_left;
+  uint16_t blue_2_bullet_left;
 } __packed IcraBuffDebuffZoneStatus;
 
 typedef struct
 {
-  uint32_t event_type_;
+  uint32_t event_type;
 } __packed EventData;
 
 typedef struct
 {
-  uint8_t supply_projectile_id_;
-  uint8_t supply_robot_id_;
-  uint8_t supply_projectile_step_;
-  uint8_t supply_projectile_num_;
+  uint8_t supply_projectile_id;
+  uint8_t supply_robot_id;
+  uint8_t supply_projectile_step;
+  uint8_t supply_projectile_num;
 } __packed SupplyProjectileAction;
 
 typedef struct
 {
-  uint8_t level_;
-  uint8_t foul_robot_id_;
+  uint8_t level;
+  uint8_t foul_robot_id;
 } __packed RefereeWarning;
 
 typedef struct
 {
-  uint8_t dart_remaining_time_;
+  uint8_t dart_remaining_time;
 } __packed DartRemainingTime;
 
 typedef struct
 {
-  uint8_t robot_id_;
-  uint8_t robot_level_;
-  uint16_t remain_hp_;
-  uint16_t max_hp_;
-  uint16_t shooter_id_1_17_mm_cooling_rate_;
-  uint16_t shooter_id_1_17_mm_cooling_limit_;
-  uint16_t shooter_id_1_17_mm_speed_limit_;
-  uint16_t shooter_id_2_17_mm_cooling_rate_;
-  uint16_t shooter_id_2_17_mm_cooling_limit_;
-  uint16_t shooter_id_2_17_mm_speed_limit_;
-  uint16_t shooter_id_1_42_mm_cooling_rate_;
-  uint16_t shooter_id_1_42_mm_cooling_limit_;
-  uint16_t shooter_id_1_42_mm_speed_limit_;
-  uint16_t chassis_power_limit_;
-  uint8_t mains_power_gimbal_output_ : 1;
-  uint8_t mains_power_chassis_output_ : 1;
-  uint8_t mains_power_shooter_output_ : 1;
+  uint8_t robot_id;
+  uint8_t robot_level;
+  uint16_t remain_hp;
+  uint16_t max_hp;
+  uint16_t shooter_id_1_17_mm_cooling_rate;
+  uint16_t shooter_id_1_17_mm_cooling_limit;
+  uint16_t shooter_id_1_17_mm_speed_limit;
+  uint16_t shooter_id_2_17_mm_cooling_rate;
+  uint16_t shooter_id_2_17_mm_cooling_limit;
+  uint16_t shooter_id_2_17_mm_speed_limit;
+  uint16_t shooter_id_1_42_mm_cooling_rate;
+  uint16_t shooter_id_1_42_mm_cooling_limit;
+  uint16_t shooter_id_1_42_mm_speed_limit;
+  uint16_t chassis_power_limit;
+  uint8_t mains_power_gimbal_output : 1;
+  uint8_t mains_power_chassis_output : 1;
+  uint8_t mains_power_shooter_output : 1;
 } __packed GameRobotStatus;
 
 typedef struct
 {
-  uint16_t chassis_volt_;
-  uint16_t chassis_current_;
-  float chassis_power_;
-  uint16_t chassis_power_buffer_;
-  uint16_t shooter_id_1_17_mm_cooling_heat_;
-  uint16_t shooter_id_2_17_mm_cooling_heat_;
-  uint16_t shooter_id_1_42_mm_cooling_heat_;
+  uint16_t chassis_volt;
+  uint16_t chassis_current;
+  float chassis_power;
+  uint16_t chassis_power_buffer;
+  uint16_t shooter_id_1_17_mm_cooling_heat;
+  uint16_t shooter_id_2_17_mm_cooling_heat;
+  uint16_t shooter_id_1_42_mm_cooling_heat;
 } __packed PowerHeatData;
 
 typedef struct
 {
-  float x_;
-  float y_;
-  float z_;
-  float yaw_;
+  float x;
+  float y;
+  float z;
+  float yaw;
 } __packed GameRobotPos;
 
 typedef struct
 {
-  uint8_t power_rune_buff_;
+  uint8_t power_rune_buff;
 } __packed Buff;
 
 typedef struct
 {
-  uint8_t attack_time_;
+  uint8_t attack_time;
 } __packed AerialRobotEnergy;
 
 typedef struct
 {
-  uint8_t armor_id_ : 4;
-  uint8_t hurt_type_ : 4;
+  uint8_t armor_id : 4;
+  uint8_t hurt_type : 4;
 } __packed RobotHurt;
 
 typedef struct
 {
-  uint8_t bullet_type_;
-  uint8_t shooter_id_;
-  uint8_t bullet_freq_;
-  float bullet_speed_;
+  uint8_t bullet_type;
+  uint8_t shooter_id;
+  uint8_t bullet_freq;
+  float bullet_speed;
 } __packed ShootData;
 
 typedef struct
 {
-  uint16_t bullet_remaining_num_17_mm_;
-  uint16_t bullet_remaining_num_42_mm_;
-  uint16_t coin_remaining_num_;
-} __packed BulletRemaining;
+  uint16_t bullet_allowance_num_17_mm;
+  uint16_t bullet_allowance_num_42_mm;
+  uint16_t coin_remaining_num;
+} __packed BulletAllowance;
 
 typedef struct
 {
-  uint32_t rfid_status_;
+  uint32_t rfid_status;
 } __packed RfidStatus;
 
 typedef struct
 {
-  uint8_t dart_launch_opening_status_;
-  uint8_t dart_attack_target_;
-  uint16_t target_change_time_;
-  uint8_t first_dart_speed_;
-  uint8_t second_dart_speed_;
-  uint8_t third_dart_speed_;
-  uint8_t fourth_dart_speed_;
-  uint16_t last_dart_launch_time_;
-  uint16_t operate_launch_cmd_time_;
+  uint8_t dart_launch_opening_status;
+  uint8_t dart_attack_target;
+  uint16_t target_change_time;
+  uint8_t first_dart_speed;
+  uint8_t second_dart_speed;
+  uint8_t third_dart_speed;
+  uint8_t fourth_dart_speed;
+  uint16_t last_dart_launch_time;
+  uint16_t operate_launch_cmd_time;
 } __packed DartClientCmd;
 
 /*********************** Interactive data between robots----0x0301 ********************/
 typedef struct
 {
-  uint16_t data_cmd_id_;
-  uint16_t sender_id_;
-  uint16_t receiver_id_;
+  uint16_t data_cmd_id;
+  uint16_t sender_id;
+  uint16_t receiver_id;
 } __packed InteractiveDataHeader;
 
 struct GraphConfig
 {
-  uint8_t graphic_id_[3];
-  uint32_t operate_type_ : 3;
-  uint32_t graphic_type_ : 3;
-  uint32_t layer_ : 4;
-  uint32_t color_ : 4;
-  uint32_t start_angle_ : 9;
-  uint32_t end_angle_ : 9;
-  uint32_t width_ : 10;
-  uint32_t start_x_ : 11;
-  uint32_t start_y_ : 11;
-  uint32_t radius_ : 10;
-  uint32_t end_x_ : 11;
-  uint32_t end_y_ : 11;
+  uint8_t graphic_id[3];
+  uint32_t operate_type : 3;
+  uint32_t graphic_type : 3;
+  uint32_t layer : 4;
+  uint32_t color : 4;
+  uint32_t start_angle : 9;
+  uint32_t end_angle : 9;
+  uint32_t width : 10;
+  uint32_t start_x : 11;
+  uint32_t start_y : 11;
+  uint32_t radius : 10;
+  uint32_t end_x : 11;
+  uint32_t end_y : 11;
   bool operator==(const GraphConfig& config)
   {
-    return (graphic_id_[0] == (uint32_t)config.graphic_id_[0] && graphic_id_[1] == (uint32_t)config.graphic_id_[1] &&
-            graphic_id_[2] == (uint32_t)config.graphic_id_[2] && operate_type_ == (uint32_t)config.operate_type_ &&
-            graphic_type_ == (uint32_t)config.graphic_type_ && layer_ == (uint32_t)config.layer_ &&
-            color_ == (uint32_t)config.color_ && start_angle_ == (uint32_t)config.start_angle_ &&
-            end_angle_ == (uint32_t)config.end_angle_ && width_ == (uint32_t)config.width_ &&
-            start_x_ == (uint32_t)config.start_x_ && start_y_ == (uint32_t)config.start_y_ &&
-            radius_ == (uint32_t)config.radius_ && end_x_ == (uint32_t)config.end_x_ &&
-            end_y_ == (uint32_t)config.end_y_);
+    return (graphic_id[0] == (uint32_t)config.graphic_id[0] && graphic_id[1] == (uint32_t)config.graphic_id[1] &&
+            graphic_id[2] == (uint32_t)config.graphic_id[2] && operate_type == (uint32_t)config.operate_type &&
+            graphic_type == (uint32_t)config.graphic_type && layer == (uint32_t)config.layer &&
+            color == (uint32_t)config.color && start_angle == (uint32_t)config.start_angle &&
+            end_angle == (uint32_t)config.end_angle && width == (uint32_t)config.width &&
+            start_x == (uint32_t)config.start_x && start_y == (uint32_t)config.start_y &&
+            radius == (uint32_t)config.radius && end_x == (uint32_t)config.end_x && end_y == (uint32_t)config.end_y);
   }
   GraphConfig& operator=(const GraphConfig& config)
   {
-    graphic_id_[0] = (uint32_t)config.graphic_id_[0];
-    graphic_id_[1] = (uint32_t)config.graphic_id_[1];
-    graphic_id_[2] = (uint32_t)config.graphic_id_[2];
-    operate_type_ = (uint32_t)config.operate_type_;
-    graphic_type_ = (uint32_t)config.graphic_type_;
-    layer_ = (uint32_t)config.layer_;
-    color_ = (uint32_t)config.color_;
-    start_angle_ = (uint32_t)config.start_angle_;
-    end_angle_ = (uint32_t)config.end_angle_;
-    width_ = (uint32_t)config.width_;
-    start_x_ = (uint32_t)config.start_x_;
-    start_y_ = (uint32_t)config.start_y_;
-    radius_ = (uint32_t)config.radius_;
-    end_x_ = (uint32_t)config.end_x_;
-    end_y_ = (uint32_t)config.end_y_;
+    graphic_id[0] = (uint32_t)config.graphic_id[0];
+    graphic_id[1] = (uint32_t)config.graphic_id[1];
+    graphic_id[2] = (uint32_t)config.graphic_id[2];
+    operate_type = (uint32_t)config.operate_type;
+    graphic_type = (uint32_t)config.graphic_type;
+    layer = (uint32_t)config.layer;
+    color = (uint32_t)config.color;
+    start_angle = (uint32_t)config.start_angle;
+    end_angle = (uint32_t)config.end_angle;
+    width = (uint32_t)config.width;
+    start_x = (uint32_t)config.start_x;
+    start_y = (uint32_t)config.start_y;
+    radius = (uint32_t)config.radius;
+    end_x = (uint32_t)config.end_x;
+    end_y = (uint32_t)config.end_y;
     return *this;
   }
 } __packed;
 
 typedef struct
 {
-  InteractiveDataHeader header_;
-  GraphConfig config_;
-  uint8_t content_[30];
+  float hero_x;
+  float hero_y;
+  float engineer_x;
+  float engineer_y;
+  float standard_3_x;
+  float standard_3_y;
+  float standard_4_x;
+  float standard_4_y;
+  float standard_5_x;
+  float standard_5_y;
+} __packed RobotsPositionData;
+
+typedef struct
+{
+  uint8_t mark_hero_progress;
+  uint8_t mark_engineer_progress;
+  uint8_t mark_standard_3_progress;
+  uint8_t mark_standard_4_progress;
+  uint8_t mark_standard_5_progress;
+  uint8_t mark_sentry_progress;
+} __packed RadarMarkData;
+
+typedef struct
+{
+  InteractiveDataHeader header;
+  GraphConfig config;
+  uint8_t content[30];
 } __packed GraphData;
 
 typedef struct
 {
-  InteractiveDataHeader header_data_;
-  uint8_t data_;
+  InteractiveDataHeader header_data;
+  uint8_t data;
 } __packed InteractiveData;
+
+typedef struct
+{
+  uint8_t data[30];
+} __packed CustomControllerData;
+
+typedef struct
+{
+  float target_position_x;
+  float target_position_y;
+  float target_position_z;
+  uint8_t command_keyboard;
+  uint16_t target_robot_ID;
+} __packed ClientMapSendData;
+
+typedef struct
+{
+  uint16_t target_robot_ID;
+  float target_position_x;
+  float target_position_y;
+} __packed ClientMapReceiveData;
+
+typedef struct
+{
+  int16_t mouse_x;
+  int16_t mouse_y;
+  int16_t mouse_z;
+  int8_t left_button_down;
+  int8_t right_button_down;
+  uint16_t keyboard_value;
+  uint16_t reserved;
+} __packed RobotCommandData;
+
+typedef struct
+{
+  uint8_t intention;
+  uint16_t start_position_x;
+  uint16_t start_position_y;
+  int8_t delta_x_[49];
+  int8_t delta_y_[49];
+} __packed MapSentryData;
 
 /***********************Frame tail(CRC8_CRC16)********************************************/
 const uint8_t kCrc8Init = 0xff;

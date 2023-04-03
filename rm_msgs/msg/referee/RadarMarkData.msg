@@ -1,0 +1,8 @@
+uint8 mark_hero_progress
+uint8 mark_engineer_progress
+uint8 mark_standard_3_progress
+uint8 mark_standard_4_progress
+uint8 mark_standard_5_progress
+uint8 mark_sentry_progress
+
+time stamp

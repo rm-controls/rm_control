@@ -62,11 +62,16 @@ add_message_files(
         DartRemainingTime.msg
         RobotHurt.msg
         ShootData.msg
-        BulletRemaining.msg
+        BulletAllowance.msg
         RfidStatus.msg
         DartClientCmd.msg
         ManualToReferee.msg
         RadarData.msg
+        RadarMarkData.msg
+        RobotsPositionData.msg
+        ClientMapSendData.msg
+        ClientMapReceiveData.msg
+        MapSentryData.msg
 )
 
 add_action_files(
