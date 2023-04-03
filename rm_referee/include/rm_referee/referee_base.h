@@ -43,8 +43,8 @@ public:
   virtual void engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data);
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
-  virtual void sentryDataCallBack(const rm_msgs::SentryDataConstPtr& data);
-  virtual void sentryResultCallBack(const rm_msgs::SentryDataConstPtr& data);
+  virtual void sentryCmdCallBack(const rm_msgs::RobotCmdConstPtr& data);
+  virtual void sentryResultCallBack(const std_msgs::UInt8ConstPtr& data);
 
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
@@ -59,7 +59,7 @@ public:
   ros::Subscriber engineer_cmd_sub_;
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
-  ros::Subscriber sentry_data_sub_;
+  ros::Subscriber sentry_cmd_sub_;
   ros::Subscriber sentry_result_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};

@@ -27,10 +27,10 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 10, &RefereeBase::engineerUiDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
-  RefereeBase::sentry_data_sub_ =
-      nh.subscribe<rm_msgs::SentryData>("/sentry/command", 10, &RefereeBase::sentryDataCallBack, this);
+  RefereeBase::sentry_cmd_sub_ =
+      nh.subscribe<rm_msgs::RobotCmd>("/sentry/command", 10, &RefereeBase::sentryCmdCallBack, this);
   RefereeBase::sentry_result_sub_ =
-      nh.subscribe<rm_msgs::SentryData>("/sentry/interactive/result", 10, &RefereeBase::sentryResultCallBack, this);
+      nh.subscribe<std_msgs::UInt8>("/sentry/interactive/result", 10, &RefereeBase::sentryResultCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
@@ -201,12 +201,12 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {
 }
-void RefereeBase::sentryDataCallBack(const rm_msgs::SentryDataConstPtr& data)
+void RefereeBase::sentryCmdCallBack(const rm_msgs::RobotCmdConstPtr& data)
 {
   if (sentry_interactive_data_trigger_change_ui_)
     sentry_interactive_data_trigger_change_ui_->sendSentryData(data);
 }
-void RefereeBase::sentryResultCallBack(const rm_msgs::SentryDataConstPtr& data)
+void RefereeBase::sentryResultCallBack(const std_msgs::UInt8ConstPtr& data)
 {
   if (sentry_interactive_data_trigger_change_ui_)
     sentry_interactive_data_trigger_change_ui_->sendInteractiveResult(data);

@@ -44,6 +44,7 @@
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/Int8MultiArray.h>
+#include <std_msgs/UInt8.h>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
@@ -76,7 +77,7 @@
 #include <rm_msgs/StatusChangeRequest.h>
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
-#include <rm_msgs/SentryData.h>
+#include <rm_msgs/RobotCmd.h>
 
 namespace rm_referee
 {

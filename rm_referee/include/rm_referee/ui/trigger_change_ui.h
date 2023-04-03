@@ -159,8 +159,8 @@ public:
     graph_->setContent("cruise");
     sentry_interactive_sender_ = new Graph(base_);
   }
-  void sendSentryData(const rm_msgs::SentryData::ConstPtr data);
-  void sendInteractiveResult(const rm_msgs::SentryData::ConstPtr data);
+  void sendSentryData(const rm_msgs::RobotCmd::ConstPtr data);
+  void sendInteractiveResult(const std_msgs::UInt8ConstPtr data);
   void updateInteractiveData(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
   void updateInteractiveResult(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
 
@@ -169,8 +169,9 @@ private:
   Graph* sentry_interactive_sender_;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
   std::string getSentryState(uint8_t mode);
-  rm_msgs::SentryData sentry_data_;
+  std_msgs::UInt8 sentry_state_;
+  rm_msgs::RobotCmd robot_cmd_;
   ros::NodeHandle state_nh_;
-  ros::Publisher sentry_state_pub_ = state_nh_.advertise<rm_msgs::SentryData>("/sentry/interaction", 10);
+  ros::Publisher robot_cmd_pub_ = state_nh_.advertise<rm_msgs::RobotCmd>("/sentry/interaction", 10);
 };
 }  // namespace rm_referee
