@@ -301,8 +301,6 @@ std::string SentryInteractiveDataTriggerChangeUi::getSentryState(uint8_t mode)
 void SentryInteractiveDataTriggerChangeUi::sendSentryData(const rm_msgs::ClientMapReceiveData::ConstPtr data)
 {
   client_map_receive_data_.command_keyboard = data->command_keyboard;
-  if (client_map_receive_data_.command_keyboard != 0x04)
-    return;
   if (base_.robot_id_ < 100)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
