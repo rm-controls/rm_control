@@ -43,7 +43,7 @@ public:
   virtual void engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data);
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
-  virtual void sentryCmdCallBack(const rm_msgs::RobotCmdConstPtr& data);
+  virtual void sentryCmdCallBack(const rm_msgs::ClientMapReceiveDataConstPtr& data);
   virtual void sentryResultCallBack(const std_msgs::UInt8ConstPtr& data);
 
   ros::Subscriber joint_state_sub_;

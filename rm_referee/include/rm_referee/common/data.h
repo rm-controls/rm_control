@@ -77,7 +77,7 @@
 #include <rm_msgs/StatusChangeRequest.h>
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
-#include <rm_msgs/RobotCmd.h>
+#include <rm_msgs/ClientMapReceiveData.h>
 
 namespace rm_referee
 {

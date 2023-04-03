@@ -67,7 +67,7 @@ add_message_files(
         DartClientCmd.msg
         ManualToReferee.msg
         RadarData.msg
-        RobotCmd.msg
+        ClientMapReceiveData.msg
 )
 
 add_action_files(
