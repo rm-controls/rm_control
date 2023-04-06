@@ -196,6 +196,11 @@ private:
   std::string getSentryState(uint8_t mode);
   std_msgs::UInt8 sentry_state_;
   rm_msgs::ClientMapReceiveData client_map_receive_data_;
+  enum
+  {
+    SENTRY_INTERACTIVE_DATA = 1,
+    SENTRY_INTERACTIVE_RESULT = 2,
+  };
   ros::NodeHandle state_nh_;
   ros::Publisher client_map_receive_data_pub_ =
       state_nh_.advertise<rm_msgs::ClientMapReceiveData>("/sentry/interaction", 10);

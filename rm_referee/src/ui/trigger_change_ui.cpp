@@ -304,13 +304,13 @@ void SentryInteractiveDataTriggerChangeUi::sendSentryData(const rm_msgs::ClientM
   if (base_.robot_id_ < 100)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ClientMapReceiveData ::SENTRY_INTERACTIVE_DATA,
+                                                        SENTRY_INTERACTIVE_DATA,
                                                     rm_msgs::GameRobotStatus::RED_SENTRY, data->command_keyboard);
   }
   else if (base_.robot_id_ > 100)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ClientMapReceiveData ::SENTRY_INTERACTIVE_DATA,
+                                                        SENTRY_INTERACTIVE_DATA,
                                                     rm_msgs::GameRobotStatus::BLUE_SENTRY, data->command_keyboard);
   }
 }
@@ -320,31 +320,31 @@ void SentryInteractiveDataTriggerChangeUi::sendInteractiveResult(const std_msgs:
   if (base_.robot_id_ < 100)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ClientMapReceiveData::SENTRY_INTERACTIVE_RESULT,
+                                                        SENTRY_INTERACTIVE_RESULT,
                                                     rm_msgs::GameRobotStatus::RED_HERO, data->data);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ClientMapReceiveData::SENTRY_INTERACTIVE_RESULT,
+                                                        SENTRY_INTERACTIVE_RESULT,
                                                     rm_msgs::GameRobotStatus::RED_STANDARD_3, data->data);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ClientMapReceiveData::SENTRY_INTERACTIVE_RESULT,
+                                                        SENTRY_INTERACTIVE_RESULT,
                                                     rm_msgs::GameRobotStatus::RED_STANDARD_4, data->data);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ClientMapReceiveData::SENTRY_INTERACTIVE_RESULT,
+                                                        SENTRY_INTERACTIVE_RESULT,
                                                     rm_msgs::GameRobotStatus::RED_STANDARD_5, data->data);
   }
   else if (base_.robot_id_ > 100)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ClientMapReceiveData::SENTRY_INTERACTIVE_RESULT,
+                                                        SENTRY_INTERACTIVE_RESULT,
                                                     rm_msgs::GameRobotStatus::BLUE_HERO, data->data);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ClientMapReceiveData::SENTRY_INTERACTIVE_RESULT,
+                                                        SENTRY_INTERACTIVE_RESULT,
                                                     rm_msgs::GameRobotStatus::BLUE_STANDARD_3, data->data);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ClientMapReceiveData::SENTRY_INTERACTIVE_RESULT,
+                                                        SENTRY_INTERACTIVE_RESULT,
                                                     rm_msgs::GameRobotStatus::BLUE_STANDARD_4, data->data);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
-                                                        rm_msgs::ClientMapReceiveData::SENTRY_INTERACTIVE_RESULT,
+                                                        SENTRY_INTERACTIVE_RESULT,
                                                     rm_msgs::GameRobotStatus::BLUE_STANDARD_5, data->data);
   }
 }
@@ -352,7 +352,7 @@ void SentryInteractiveDataTriggerChangeUi::updateInteractiveData(const rm_refere
                                                                  const ros::Time& time)
 {
   if (interactive_data.header_data_.data_cmd_id_ !=
-      rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + rm_msgs::ClientMapReceiveData::SENTRY_INTERACTIVE_DATA)
+      rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + SENTRY_INTERACTIVE_DATA)
     return;
   if (base_.robot_id_ < 100)
   {
@@ -368,7 +368,7 @@ void SentryInteractiveDataTriggerChangeUi::updateInteractiveResult(const rm_refe
                                                                    const ros::Time& time)
 {
   if (interactive_data.header_data_.data_cmd_id_ !=
-      rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + rm_msgs::ClientMapReceiveData::SENTRY_INTERACTIVE_RESULT)
+      rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + SENTRY_INTERACTIVE_RESULT)
     return;
   if (base_.robot_id_ < 100)
   {
