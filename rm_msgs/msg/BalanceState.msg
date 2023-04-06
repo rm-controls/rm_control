@@ -1,5 +1,9 @@
+uint8  NORMAL = 0
+uint8  FALLEN = 1
+
 std_msgs/Header header
 
+uint8 mode
 float64 x
 float64 phi
 float64 theta

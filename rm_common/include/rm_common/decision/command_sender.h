@@ -51,6 +51,7 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
+#include <std_msgs/UInt8.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
 
@@ -390,6 +391,24 @@ private:
   double target_acceleration_tolerance_{};
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
+};
+
+class BalanceCommandSender : public CommandSenderBase<std_msgs::UInt8>
+{
+public:
+  explicit BalanceCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::UInt8>(nh)
+  {
+  }
+
+  void setBalanceMode(const int mode)
+  {
+    msg_.data = mode;
+  }
+  int getBalanceMode()
+  {
+    return msg_.data;
+  }
+  void setZero() override{};
 };
 
 class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::TwistStamped>
