@@ -380,7 +380,7 @@ public:
     }
     return 0.;
   }
-  uint8_t setArmorType(uint8_t armor_type)
+  void setArmorType(uint8_t armor_type)
   {
     armor_type_ = armor_type;
   }
