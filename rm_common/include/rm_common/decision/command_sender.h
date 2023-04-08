@@ -154,23 +154,35 @@ public:
       ROS_ERROR("Max Z angular velocity no defined (namespace: %s)", nh.getNamespace().c_str());
     else
       max_angular_z_.init(xml_rpc_value);
-    std::string topic;
+    std::string topic, chassis_topic;
     nh.getParam("power_limit_topic", topic);
+    nh.getParam("chassis_power_limit_topic", chassis_topic);
+    chassis_power_limit_subscriber_ =
+        nh.subscribe<rm_msgs::ChassisCmd>(chassis_topic, 1, &Vel2DCommandSender::chassisCmdCallback, this);
     power_limit_subscriber_ =
-        nh.subscribe<rm_msgs::ChassisCmd>(topic, 1, &Vel2DCommandSender::powerLimitCallback, this);
+        nh.subscribe<rm_msgs::GameRobotStatus>(topic, 1, &Vel2DCommandSender::powerLimitCallback, this);
   }
 
   void setLinearXVel(double scale)
   {
-    msg_.linear.x = scale * max_linear_x_.output(power_limit_);
+    if ((ros::Time::now() - last_get_time_) < ros::Duration(0.3))
+      msg_.linear.x = scale * max_linear_x_.output(power_limit_);
+    else
+      msg_.linear.x = scale * max_linear_x_.output(chassis_power_limit_);
   };
   void setLinearYVel(double scale)
   {
-    msg_.linear.y = scale * max_linear_y_.output(power_limit_);
+    if ((ros::Time::now() - last_get_time_) < ros::Duration(0.3))
+      msg_.linear.y = scale * max_linear_y_.output(power_limit_);
+    else
+      msg_.linear.y = scale * max_linear_y_.output(chassis_power_limit_);
   };
   void setAngularZVel(double scale)
   {
-    msg_.angular.z = scale * max_angular_z_.output(power_limit_);
+    if ((ros::Time::now() - last_get_time_) < ros::Duration(0.3))
+      msg_.angular.z = scale * max_angular_z_.output(power_limit_);
+    else
+      msg_.angular.z = scale * max_angular_z_.output(chassis_power_limit_);
   };
   void set2DVel(double scale_x, double scale_y, double scale_z)
   {
@@ -186,13 +198,20 @@ public:
   }
 
 protected:
-  void powerLimitCallback(const rm_msgs::ChassisCmd::ConstPtr& msg)
+  void powerLimitCallback(const rm_msgs::GameRobotStatus::ConstPtr& msg)
   {
-    power_limit_ = msg->power_limit;
+    power_limit_ = msg->chassis_power_limit;
+    last_get_time_ = msg->stamp;
   }
+  void chassisCmdCallback(const rm_msgs::ChassisCmd::ConstPtr& msg)
+  {
+    chassis_power_limit_ = msg->power_limit;
+  }
+
   LinearInterp max_linear_x_, max_linear_y_, max_angular_z_;
-  double power_limit_ = 0;
-  ros::Subscriber power_limit_subscriber_;
+  ros::Time last_get_time_;
+  double power_limit_ = 0, chassis_power_limit_ = 0;
+  ros::Subscriber power_limit_subscriber_, chassis_power_limit_subscriber_;
 };
 
 class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisCmd>
