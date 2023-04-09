@@ -29,7 +29,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
   RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
   RefereeBase::sentry_cmd_sub_ =
-      nh.subscribe<rm_msgs::ClientMapReceiveData>("/sentry/command", 10, &RefereeBase::sentryCmdCallBack, this);
+      nh.subscribe<rm_msgs::ClientMapSendData>("/sentry/command", 10, &RefereeBase::sentryCmdCallBack, this);
   RefereeBase::sentry_result_sub_ =
       nh.subscribe<std_msgs::UInt8>("/sentry/interactive/result", 10, &RefereeBase::sentryResultCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
@@ -229,7 +229,7 @@ void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
   if (camera_trigger_change_ui_)
     camera_trigger_change_ui_->updateCameraName(data);
 }
-void RefereeBase::sentryCmdCallBack(const rm_msgs::ClientMapReceiveDataConstPtr& data)
+void RefereeBase::sentryCmdCallBack(const rm_msgs::ClientMapSendDataConstPtr& data)
 {
   if (sentry_interactive_data_trigger_change_ui_)
     sentry_interactive_data_trigger_change_ui_->sendSentryData(data);

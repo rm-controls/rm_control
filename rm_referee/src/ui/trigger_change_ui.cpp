@@ -298,9 +298,9 @@ std::string SentryInteractiveDataTriggerChangeUi::getSentryState(uint8_t mode)
     return "error";
 }
 
-void SentryInteractiveDataTriggerChangeUi::sendSentryData(const rm_msgs::ClientMapReceiveData::ConstPtr data)
+void SentryInteractiveDataTriggerChangeUi::sendSentryData(const rm_msgs::ClientMapSendData ::ConstPtr data)
 {
-  client_map_receive_data_.command_keyboard = data->command_keyboard;
+  client_map_send_data_.command_keyboard = data->command_keyboard;
   if (base_.robot_id_ < 100)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
@@ -361,8 +361,8 @@ void SentryInteractiveDataTriggerChangeUi::updateInteractiveData(const rm_refere
   }
   else if (base_.robot_id_ != rm_msgs::GameRobotStatus::BLUE_SENTRY)
     return;
-  client_map_receive_data_.command_keyboard = interactive_data.data_;
-  client_map_receive_data_pub_.publish(client_map_receive_data_);
+  client_map_send_data_.command_keyboard = interactive_data.data_;
+  client_map_send_data_pub_.publish(client_map_send_data_);
 }
 void SentryInteractiveDataTriggerChangeUi::updateInteractiveResult(const rm_referee::InteractiveData& interactive_data,
                                                                    const ros::Time& time)

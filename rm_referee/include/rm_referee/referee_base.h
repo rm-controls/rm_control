@@ -45,7 +45,7 @@ public:
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
   virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
-  virtual void sentryCmdCallBack(const rm_msgs::ClientMapReceiveDataConstPtr& data);
+  virtual void sentryCmdCallBack(const rm_msgs::ClientMapSendDataConstPtr& data);
   virtual void sentryResultCallBack(const std_msgs::UInt8ConstPtr& data);
 
   ros::Subscriber joint_state_sub_;
