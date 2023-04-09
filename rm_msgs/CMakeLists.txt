@@ -52,7 +52,7 @@ add_message_files(
         GameRobotStatus.msg
         GameStatus.msg
         StateCmd.msg
-        StepQueueState.msg
+        EngineerUi.msg
         GameRobotHp.msg
         PowerHeatData.msg
         EventData.msg

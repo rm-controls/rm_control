@@ -19,25 +19,6 @@ public:
   virtual void updateConfig(){};
 };
 
-class ArmorFlashUi : public FlashUi
-{
-public:
-  explicit ArmorFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::string graph_name)
-    : FlashUi(rpc_value, base, graph_name)
-  {
-    graph_name_ = graph_name;
-  };
-  void updateRobotHurtData(const rm_msgs::RobotHurt data, const ros::Time& last_get_data_time);
-
-private:
-  void display(const ros::Time& time) override;
-  void updateArmorPosition();
-  uint8_t getArmorId();
-
-  std::string graph_name_;
-  uint8_t hurt_type_, armor_id_;
-};
-
 class CoverFlashUi : public FlashUi
 {
 public:

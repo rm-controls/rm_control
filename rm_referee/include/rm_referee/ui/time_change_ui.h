@@ -51,7 +51,7 @@ class ProgressTimeChangeUi : public TimeChangeUi
 public:
   explicit ProgressTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
     : TimeChangeUi(rpc_value, base, "progress"){};
-  void updateStepQueueStateData(const rm_msgs::StepQueueState ::ConstPtr data, const ros::Time& last_get_data_time);
+  void updateEngineerUiData(const rm_msgs::EngineerUi::ConstPtr data, const ros::Time& last_get_data_time);
 
 private:
   void display(const ros::Time& time) override;
