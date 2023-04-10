@@ -5,6 +5,7 @@
 #pragma once
 
 #include <rm_common/ros_utilities.h>
+#include <ros/timer.h>
 #include <rm_common/decision/command_sender.h>
 
 #include "rm_referee/ui/ui_base.h"
@@ -43,6 +44,7 @@ public:
   virtual void engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data);
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
+  virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
 
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
@@ -57,11 +59,13 @@ public:
   ros::Subscriber engineer_cmd_sub_;
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
+  ros::Subscriber camera_name_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
   GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
   TargetTriggerChangeUi* target_trigger_change_ui_{};
+  CameraTriggerChangeUi* camera_trigger_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};
@@ -75,8 +79,9 @@ public:
   SpinFlashUi* spin_flash_ui_{};
 
   Base& base_;
+  ros::Timer add_ui_timer_;
+  int add_ui_times_ = 0;
   bool add_ui_flag_ = false;
-  bool send_ui_flag_ = false;
   Graph* interactive_data_sender_;
   ros::NodeHandle nh_;
 };

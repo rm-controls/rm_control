@@ -48,7 +48,6 @@ void Referee::read()
   }
   else
     return;
-  checkUiAdd();
   uint8_t temp_buffer[256] = { 0 };
   int frame_len;
   if (ros::Time::now() - last_get_data_time_ > ros::Duration(0.1))
