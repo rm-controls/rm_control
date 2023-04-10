@@ -174,7 +174,7 @@ private:
         chassis_cmd.power_limit = burst_power_;
     }
     else
-      chassis_cmd.power_limit = chassis_power_limit_;
+      normal(chassis_cmd);
   }
 
   int game_progress_;
