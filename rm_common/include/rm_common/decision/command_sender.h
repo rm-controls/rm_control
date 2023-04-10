@@ -159,28 +159,28 @@ public:
     nh.getParam("chassis_power_limit_topic", chassis_topic);
     chassis_power_limit_subscriber_ =
         nh.subscribe<rm_msgs::ChassisCmd>(chassis_topic, 1, &Vel2DCommandSender::chassisCmdCallback, this);
-    power_limit_subscriber_ =
+    referee_power_limit_subscriber_ =
         nh.subscribe<rm_msgs::GameRobotStatus>(topic, 1, &Vel2DCommandSender::powerLimitCallback, this);
   }
 
   void setLinearXVel(double scale)
   {
     if ((ros::Time::now() - last_get_time_) < ros::Duration(0.3))
-      msg_.linear.x = scale * max_linear_x_.output(power_limit_);
+      msg_.linear.x = scale * max_linear_x_.output(referee_power_limit_);
     else
       msg_.linear.x = scale * max_linear_x_.output(chassis_power_limit_);
   };
   void setLinearYVel(double scale)
   {
     if ((ros::Time::now() - last_get_time_) < ros::Duration(0.3))
-      msg_.linear.y = scale * max_linear_y_.output(power_limit_);
+      msg_.linear.y = scale * max_linear_y_.output(referee_power_limit_);
     else
       msg_.linear.y = scale * max_linear_y_.output(chassis_power_limit_);
   };
   void setAngularZVel(double scale)
   {
     if ((ros::Time::now() - last_get_time_) < ros::Duration(0.3))
-      msg_.angular.z = scale * max_angular_z_.output(power_limit_);
+      msg_.angular.z = scale * max_angular_z_.output(referee_power_limit_);
     else
       msg_.angular.z = scale * max_angular_z_.output(chassis_power_limit_);
   };
@@ -200,7 +200,7 @@ public:
 protected:
   void powerLimitCallback(const rm_msgs::GameRobotStatus::ConstPtr& msg)
   {
-    power_limit_ = msg->chassis_power_limit;
+    referee_power_limit_ = msg->chassis_power_limit;
     last_get_time_ = msg->stamp;
   }
   void chassisCmdCallback(const rm_msgs::ChassisCmd::ConstPtr& msg)
@@ -210,8 +210,8 @@ protected:
 
   LinearInterp max_linear_x_, max_linear_y_, max_angular_z_;
   ros::Time last_get_time_;
-  double power_limit_ = 0, chassis_power_limit_ = 0;
-  ros::Subscriber power_limit_subscriber_, chassis_power_limit_subscriber_;
+  double referee_power_limit_ = 0, chassis_power_limit_ = 0;
+  ros::Subscriber referee_power_limit_subscriber_, chassis_power_limit_subscriber_;
 };
 
 class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisCmd>
@@ -233,6 +233,11 @@ public:
       ROS_ERROR("Accel Z no defined (namespace: %s)", nh.getNamespace().c_str());
     else
       accel_z_.init(xml_rpc_value);
+
+    std::string topic;
+    nh.getParam("power_limit_topic", topic);
+    power_limit_subscriber_ =
+        nh.subscribe<rm_msgs::GameRobotStatus>(topic, 1, &ChassisCommandSender::powerLimitCallback, this);
   }
 
   void updateGameStatus(const rm_msgs::GameStatus data) override
@@ -258,16 +263,35 @@ public:
   void sendChassisCommand(const ros::Time& time, bool is_gyro)
   {
     power_limit_->setLimitPower(msg_, is_gyro);
-    msg_.accel.linear.x = accel_x_.output(msg_.power_limit);
-    msg_.accel.linear.y = accel_y_.output(msg_.power_limit);
-    msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
+
+    if ((ros::Time::now() - last_get_time_) < ros::Duration(0.3))
+    {
+      msg_.accel.linear.x = accel_x_.output(referee_power_limit_);
+      msg_.accel.linear.y = accel_y_.output(referee_power_limit_);
+      msg_.accel.angular.z = accel_z_.output(referee_power_limit_);
+    }
+    else
+    {
+      msg_.accel.linear.x = accel_x_.output(msg_.power_limit);
+      msg_.accel.linear.y = accel_y_.output(msg_.power_limit);
+      msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
+    }
     TimeStampCommandSenderBase<rm_msgs::ChassisCmd>::sendCommand(time);
   }
   void setZero() override{};
   PowerLimit* power_limit_;
 
 private:
+  void powerLimitCallback(const rm_msgs::GameRobotStatus::ConstPtr& msg)
+  {
+    referee_power_limit_ = msg->chassis_power_limit;
+    last_get_time_ = msg->stamp;
+  }
+
+  double referee_power_limit_ = 0;
+  ros::Time last_get_time_;
   LinearInterp accel_x_, accel_y_, accel_z_;
+  ros::Subscriber power_limit_subscriber_;
 };
 
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd>
