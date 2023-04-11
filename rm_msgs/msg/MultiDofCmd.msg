@@ -5,4 +5,6 @@ time stamp
 uint8 mode
 
 # VELOCITY/POSITION
-geometry_msgs/Twist values
+geometry_msgs/Vector3 linear
+geometry_msgs/Vector3 angular
+
