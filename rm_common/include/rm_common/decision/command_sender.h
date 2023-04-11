@@ -614,30 +614,6 @@ public:
   {
   }
   ~MultiDofCommandSender() = default;
-  void moveX(double distance)
-  {
-    msg_.values.linear.x = distance;
-  }
-  void moveY(double distance)
-  {
-    msg_.values.linear.y = distance;
-  }
-  void moveZ(double distance)
-  {
-    msg_.values.linear.z = distance;
-  }
-  void moveRoll(double angular)
-  {
-    msg_.values.angular.x = angular;
-  }
-  void movePitch(double angular)
-  {
-    msg_.values.angular.y = angular;
-  }
-  void moveYaw(double angular)
-  {
-    msg_.values.angular.z = angular;
-  }
   void setMode(int mode)
   {
     msg_.mode = mode;
@@ -646,23 +622,23 @@ public:
   {
     return msg_.mode;
   }
-  void setGroupVel(double x, double y, double z, double roll, double pitch, double yaw)
+  void setGroupValue(double linear_x, double linear_y, double linear_z, double angular_x, double angular_y, double angular_z)
   {
-    msg_.values.linear.x = x;
-    msg_.values.linear.y = y;
-    msg_.values.linear.z = z;
-    msg_.values.angular.x = roll;
-    msg_.values.angular.y = pitch;
-    msg_.values.angular.z = yaw;
+    msg_.linear.x = linear_x;
+    msg_.linear.y = linear_y;
+    msg_.linear.z = linear_z;
+    msg_.angular.x = angular_x;
+    msg_.angular.y = angular_y;
+    msg_.angular.z = angular_z;
   }
   void setZero() override
   {
-    msg_.values.linear.x = 0;
-    msg_.values.linear.y = 0;
-    msg_.values.linear.z = 0;
-    msg_.values.angular.x = 0;
-    msg_.values.angular.y = 0;
-    msg_.values.angular.z = 0;
+    msg_.linear.x = 0;
+    msg_.linear.y = 0;
+    msg_.linear.z = 0;
+    msg_.angular.x = 0;
+    msg_.angular.y = 0;
+    msg_.angular.z = 0;
   }
 
 private:
