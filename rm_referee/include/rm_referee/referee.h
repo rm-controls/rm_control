@@ -87,7 +87,7 @@ public:
     client_map_receive_pub_ = nh.advertise<rm_msgs::ClientMapReceiveData>("client_map_receive", 1);
     robots_position_pub_ = nh.advertise<rm_msgs::RobotsPositionData>("robot_position", 1);
     radar_mark_pub_ = nh.advertise<rm_msgs::RadarMarkData>("radar_mark", 1);
-    target_position_pub_ = nh.advertise<rm_msgs::ClientMapSendData>("target_position", 1);
+    client_map_send_data_pub_ = nh.advertise<rm_msgs::ClientMapSendData>("client_map_send_data", 1);
     // initSerial
     base_.initSerial();
   };
@@ -117,7 +117,7 @@ public:
   ros::Publisher client_map_receive_pub_;
   ros::Publisher robots_position_pub_;
   ros::Publisher radar_mark_pub_;
-  ros::Publisher target_position_pub_;
+  ros::Publisher client_map_send_data_pub_;
 
   Base base_;
   std::vector<uint8_t> rx_buffer_;

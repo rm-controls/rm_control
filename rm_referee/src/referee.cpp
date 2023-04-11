@@ -457,7 +457,7 @@ int Referee::unpack(uint8_t* rx_data)
           client_map_send_data.target_robot_ID = client_map_send_data_ref.target_robot_ID;
           client_map_send_data.stamp = last_get_data_time_;
 
-          target_position_pub_.publish(client_map_send_data);
+          client_map_send_data_pub_.publish(client_map_send_data);
           break;
         }
         default:
