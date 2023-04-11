@@ -622,7 +622,8 @@ public:
   {
     return msg_.mode;
   }
-  void setGroupValue(double linear_x, double linear_y, double linear_z, double angular_x, double angular_y, double angular_z)
+  void setGroupValue(double linear_x, double linear_y, double linear_z, double angular_x, double angular_y,
+                     double angular_z)
   {
     msg_.linear.x = linear_x;
     msg_.linear.y = linear_y;
