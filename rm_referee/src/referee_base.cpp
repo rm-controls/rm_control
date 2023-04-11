@@ -51,7 +51,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     if (rpc_value[i]["name"] == "camera")
       camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "sentry")
-      sentry_interactive_data_trigger_change_ui_ = new SentryInteractiveDataTriggerChangeUi(rpc_value[i], base_);
+      sentry_interactive_trigger_change_ui_ = new SentryInteractiveTriggerChangeUi(rpc_value[i], base_);
   }
 
   ui_nh.getParam("time_change", rpc_value);
@@ -103,8 +103,8 @@ void RefereeBase::addUi()
     target_trigger_change_ui_->add();
   if (camera_trigger_change_ui_)
     camera_trigger_change_ui_->add();
-  if (sentry_interactive_data_trigger_change_ui_)
-    sentry_interactive_data_trigger_change_ui_->add();
+  if (sentry_interactive_trigger_change_ui_)
+    sentry_interactive_trigger_change_ui_->add();
   if (fixed_ui_)
     fixed_ui_->add();
   if (effort_time_change_ui_)
@@ -143,10 +143,10 @@ void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ro
 }
 void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
 {
-  if (sentry_interactive_data_trigger_change_ui_)
+  if (sentry_interactive_trigger_change_ui_)
   {
-    sentry_interactive_data_trigger_change_ui_->updateInteractiveData(data, last_get_data_time);
-    sentry_interactive_data_trigger_change_ui_->updateInteractiveResult(data, last_get_data_time);
+    sentry_interactive_trigger_change_ui_->updateInteractiveCmd(data, last_get_data_time);
+    sentry_interactive_trigger_change_ui_->updateInteractiveResult(data, last_get_data_time);
   }
 }
 void RefereeBase::eventDataCallBack(const rm_msgs::EventData& data, const ros::Time& last_get_data_time)
@@ -231,12 +231,12 @@ void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
 }
 void RefereeBase::sentryCmdCallBack(const rm_msgs::ClientMapSendDataConstPtr& data)
 {
-  if (sentry_interactive_data_trigger_change_ui_)
-    sentry_interactive_data_trigger_change_ui_->sendSentryData(data);
+  if (sentry_interactive_trigger_change_ui_)
+    sentry_interactive_trigger_change_ui_->sendSentryCmd(data);
 }
 void RefereeBase::sentryResultCallBack(const std_msgs::UInt8ConstPtr& data)
 {
-  if (sentry_interactive_data_trigger_change_ui_)
-    sentry_interactive_data_trigger_change_ui_->sendInteractiveResult(data);
+  if (sentry_interactive_trigger_change_ui_)
+    sentry_interactive_trigger_change_ui_->sendInteractiveResult(data);
 }
 }  // namespace rm_referee

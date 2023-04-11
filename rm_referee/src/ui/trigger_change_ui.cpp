@@ -274,7 +274,7 @@ void CameraTriggerChangeUi::display()
   TriggerChangeUi::display();
   graph_->sendUi(ros::Time::now());
 }
-void SentryInteractiveDataTriggerChangeUi::display()
+void SentryInteractiveTriggerChangeUi::display()
 {
   updateConfig(sentry_state_.data, 0);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
@@ -282,13 +282,12 @@ void SentryInteractiveDataTriggerChangeUi::display()
   graph_->sendUi(ros::Time::now());
 }
 
-void SentryInteractiveDataTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode,
-                                                        bool sub_flag)
+void SentryInteractiveTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
   graph_->setContent(getSentryState(main_mode));
 }
 
-std::string SentryInteractiveDataTriggerChangeUi::getSentryState(uint8_t mode)
+std::string SentryInteractiveTriggerChangeUi::getSentryState(uint8_t mode)
 {
   if (mode == 0)
     return "CRUISE";
@@ -298,7 +297,7 @@ std::string SentryInteractiveDataTriggerChangeUi::getSentryState(uint8_t mode)
     return "error";
 }
 
-void SentryInteractiveDataTriggerChangeUi::sendSentryData(const rm_msgs::ClientMapSendData ::ConstPtr data)
+void SentryInteractiveTriggerChangeUi::sendSentryCmd(const rm_msgs::ClientMapSendData ::ConstPtr data)
 {
   client_map_send_data_.command_keyboard = data->command_keyboard;
   if (base_.robot_id_ < 100)
@@ -314,7 +313,7 @@ void SentryInteractiveDataTriggerChangeUi::sendSentryData(const rm_msgs::ClientM
                                                     rm_msgs::GameRobotStatus::BLUE_SENTRY, data->command_keyboard);
   }
 }
-void SentryInteractiveDataTriggerChangeUi::sendInteractiveResult(const std_msgs::UInt8ConstPtr data)
+void SentryInteractiveTriggerChangeUi::sendInteractiveResult(const std_msgs::UInt8ConstPtr data)
 {
   sentry_state_.data = data->data;
   if (base_.robot_id_ < 100)
@@ -348,8 +347,8 @@ void SentryInteractiveDataTriggerChangeUi::sendInteractiveResult(const std_msgs:
                                                     rm_msgs::GameRobotStatus::BLUE_STANDARD_5, data->data);
   }
 }
-void SentryInteractiveDataTriggerChangeUi::updateInteractiveData(const rm_referee::InteractiveData& interactive_data,
-                                                                 const ros::Time& time)
+void SentryInteractiveTriggerChangeUi::updateInteractiveCmd(const rm_referee::InteractiveData& interactive_data,
+                                                            const ros::Time& time)
 {
   if (interactive_data.header_data_.data_cmd_id_ !=
       rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + SENTRY_INTERACTIVE_DATA)
@@ -364,8 +363,8 @@ void SentryInteractiveDataTriggerChangeUi::updateInteractiveData(const rm_refere
   client_map_send_data_.command_keyboard = interactive_data.data_;
   client_map_send_data_pub_.publish(client_map_send_data_);
 }
-void SentryInteractiveDataTriggerChangeUi::updateInteractiveResult(const rm_referee::InteractiveData& interactive_data,
-                                                                   const ros::Time& time)
+void SentryInteractiveTriggerChangeUi::updateInteractiveResult(const rm_referee::InteractiveData& interactive_data,
+                                                               const ros::Time& time)
 {
   if (interactive_data.header_data_.data_cmd_id_ !=
       rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + SENTRY_INTERACTIVE_RESULT)

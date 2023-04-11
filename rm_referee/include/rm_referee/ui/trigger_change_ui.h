@@ -175,18 +175,18 @@ private:
   std::string current_camera_{}, camera1_name_{}, camera2_name_{};
 };
 
-class SentryInteractiveDataTriggerChangeUi : public TriggerChangeUi
+class SentryInteractiveTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit SentryInteractiveDataTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+  explicit SentryInteractiveTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
     : TriggerChangeUi(rpc_value, base, "sentry")
   {
     graph_->setContent("cruise");
     sentry_interactive_sender_ = new Graph(base_);
   }
-  void sendSentryData(const rm_msgs::ClientMapSendData::ConstPtr data);
+  void sendSentryCmd(const rm_msgs::ClientMapSendData::ConstPtr data);
   void sendInteractiveResult(const std_msgs::UInt8ConstPtr data);
-  void updateInteractiveData(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
+  void updateInteractiveCmd(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
   void updateInteractiveResult(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
 
 private:
