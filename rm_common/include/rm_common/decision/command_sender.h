@@ -48,6 +48,7 @@
 #include <rm_msgs/StateCmd.h>
 #include <rm_msgs/TrackData.h>
 #include <rm_msgs/GameRobotHp.h>
+#include <rm_msgs/MultiDofCmd.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
@@ -605,4 +606,43 @@ public:
 private:
   std::string camera1_name_{}, camera2_name_{};
 };
+
+class MultiDofCommandSender : public TimeStampCommandSenderBase<rm_msgs::MultiDofCmd>
+{
+public:
+  explicit MultiDofCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::MultiDofCmd>(nh)
+  {
+  }
+  ~MultiDofCommandSender() = default;
+  void setMode(int mode)
+  {
+    msg_.mode = mode;
+  }
+  int getMode()
+  {
+    return msg_.mode;
+  }
+  void setGroupVel(double x, double y, double z, double roll, double pitch, double yaw)
+  {
+    msg_.values.linear.x = x;
+    msg_.values.linear.y = y;
+    msg_.values.linear.z = z;
+    msg_.values.angular.x = roll;
+    msg_.values.angular.y = pitch;
+    msg_.values.angular.z = yaw;
+  }
+  void setZero() override
+  {
+    msg_.values.linear.x = 0;
+    msg_.values.linear.y = 0;
+    msg_.values.linear.z = 0;
+    msg_.values.angular.x = 0;
+    msg_.values.angular.y = 0;
+    msg_.values.angular.z = 0;
+  }
+
+private:
+  ros::Time time_;
+};
+
 }  // namespace rm_common
