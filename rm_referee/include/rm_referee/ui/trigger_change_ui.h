@@ -175,4 +175,134 @@ private:
   std::string current_camera_{}, camera1_name_{}, camera2_name_{};
 };
 
+class DragTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit DragTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TriggerChangeUi(rpc_value, base, "drag"){};
+  void updateDragUiData(const rm_msgs::EngineerUi ::ConstPtr& data);
+
+private:
+  void display() override;
+  void dragUpdateConfig(const std::string& drag_state);
+  std::string drag_state_;
+};
+
+class GripperTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit GripperTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "gripper"){};
+  void updateGripperUiData(const rm_msgs::EngineerUi ::ConstPtr& data);
+
+private:
+  void display() override;
+  void gripperUpdateConfig(const std::string& drag_state);
+  std::string gripper_state_;
+};
+
+class ExchangeTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit ExchangeTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "exchange"){};
+  void updateExchangeData(const rm_msgs::ExchangerMsg ::ConstPtr& data);
+
+private:
+  void display() override;
+  void exchangeUpdateConfig(const rm_msgs::ExchangerMsg& exchange_state);
+  rm_msgs::ExchangerMsg exchange_state_;
+};
+
+class PlanningResultTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit PlanningResultTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "planning"){};
+  void updatePlanningResultData(const std_msgs::Int32 ::ConstPtr& data);
+
+private:
+  void display() override;
+  void planningResultUpdateConfig(const std_msgs::Int32& data);
+  std_msgs::Int32 planning_result_;
+};
+
+class StepTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit StepTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TriggerChangeUi(rpc_value, base, "step")
+  {
+    graph_->setContent("step_name");
+    if (base_.robot_color_ == "red")
+      graph_->setColor(rm_referee::GraphColor::CYAN);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
+  void updateStepUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+
+private:
+  void display() override;
+  void stepUpdateConfig(std::string step_name);
+  std::string step_name_;
+};
+
+class ReversalTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit ReversalTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "reversal")
+  {
+    graph_->setContent("reversal:");
+    if (base_.robot_color_ == "red")
+      graph_->setColor(rm_referee::GraphColor::CYAN);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
+  void updateReversalUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+
+private:
+  void display() override;
+  void reversalUpdateConfig(std::string reversal_state);
+  std::string reversal_state_;
+};
+
+class StoneTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit StoneTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TriggerChangeUi(rpc_value, base, "stone")
+  {
+    graph_->setContent("stone:");
+    if (base_.robot_color_ == "red")
+      graph_->setColor(rm_referee::GraphColor::CYAN);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
+  void updateStoneUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+
+private:
+  void display() override;
+  void stoneUpdateConfig(uint8_t stone_num);
+  std::string getStoneNum(uint8_t stone_num);
+  uint8_t stone_num_;
+};
+
+class JointTemperatureTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit JointTemperatureTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "joint_temperature")
+  {
+    graph_->setContent("temperature");
+    if (base_.robot_color_ == "red")
+      graph_->setColor(rm_referee::GraphColor::CYAN);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
+  void updateJointTemperatureUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+
+private:
+  void display() override;
+  void jointTemperatureUpdateConfig(std::string joint_temperature);
+  std::string joint_temperature_;
+};
+
 }  // namespace rm_referee
