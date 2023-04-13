@@ -175,41 +175,42 @@ private:
   std::string current_camera_{}, camera1_name_{}, camera2_name_{};
 };
 
-class DragTriggerChangeUi : public TriggerChangeUi
+class DragStateTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit DragTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TriggerChangeUi(rpc_value, base, "drag"){};
-  void updateDragUiData(const rm_msgs::EngineerUi ::ConstPtr& data);
+  explicit DragStateTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "drag"){};
+  void updateDragStateUiData(const rm_msgs::EngineerUi ::ConstPtr& data);
 
 private:
   void display() override;
-  void dragUpdateConfig(const std::string& drag_state);
+  void dragStateUpdateConfig(const std::string& drag_state);
   std::string drag_state_;
 };
 
-class GripperTriggerChangeUi : public TriggerChangeUi
+class GripperStateTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit GripperTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+  explicit GripperStateTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
     : TriggerChangeUi(rpc_value, base, "gripper"){};
-  void updateGripperUiData(const rm_msgs::EngineerUi ::ConstPtr& data);
+  void updateGripperStateUiData(const rm_msgs::EngineerUi ::ConstPtr& data);
 
 private:
   void display() override;
-  void gripperUpdateConfig(const std::string& drag_state);
+  void gripperStateUpdateConfig(const std::string& drag_state);
   std::string gripper_state_;
 };
 
-class ExchangeTriggerChangeUi : public TriggerChangeUi
+class ExchangeStateTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit ExchangeTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+  explicit ExchangeStateTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
     : TriggerChangeUi(rpc_value, base, "exchange"){};
-  void updateExchangeData(const rm_msgs::ExchangerMsg ::ConstPtr& data);
+  void updateExchangeStateData(const rm_msgs::ExchangerMsg ::ConstPtr& data);
 
 private:
   void display() override;
-  void exchangeUpdateConfig(const rm_msgs::ExchangerMsg& exchange_state);
+  void exchangeStateUpdateConfig(const rm_msgs::ExchangerMsg& exchange_state);
   rm_msgs::ExchangerMsg exchange_state_;
 };
 
@@ -226,45 +227,49 @@ private:
   std_msgs::Int32 planning_result_;
 };
 
-class StepTriggerChangeUi : public TriggerChangeUi
+class StepNameTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit StepTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TriggerChangeUi(rpc_value, base, "step")
+  explicit StepNameTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "step")
   {
     graph_->setContent("step_name");
   }
+  void updateStepNameUiData(const rm_msgs::EngineerUi ::ConstPtr data);
 
 private:
   void display() override;
   std::string step_name_;
 };
 
-class ReversalTriggerChangeUi : public TriggerChangeUi
+class ReversalStateTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit ReversalTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+  explicit ReversalStateTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
     : TriggerChangeUi(rpc_value, base, "reversal")
   {
     graph_->setContent("reversal:");
   }
+  void updateReversalStateUiData(const rm_msgs::EngineerUi ::ConstPtr data);
 
 private:
   void display() override;
   std::string reversal_state_;
 };
 
-class StoneTriggerChangeUi : public TriggerChangeUi
+class StoneNumTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit StoneTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TriggerChangeUi(rpc_value, base, "stone")
+  explicit StoneNumTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "stone")
   {
     graph_->setContent("stone:");
   }
-  void updateStoneUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+  void updateStoneNumUiData(const rm_msgs::EngineerUi ::ConstPtr data);
 
 private:
   void display() override;
-  void stoneUpdateConfig(uint8_t stone_num);
+  void stoneNumUpdateConfig(uint8_t stone_num);
   std::string getStoneNum(uint8_t stone_num);
   uint8_t stone_num_;
 };

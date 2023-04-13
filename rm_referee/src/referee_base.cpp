@@ -25,8 +25,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 10, &RefereeBase::engineerUiDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
-  RefereeBase::exchange_data_sub_ =
-      nh.subscribe<rm_msgs::ExchangerMsg>("/pnp_publisher", 10, &RefereeBase::exchangeDataCallBack, this);
+  RefereeBase::exchange_state_sub_ =
+      nh.subscribe<rm_msgs::ExchangerMsg>("/pnp_publisher", 10, &RefereeBase::exchangeStateDataCallBack, this);
   RefereeBase::planning_result_sub_ =
       nh.subscribe<std_msgs::Int32>("/planning_result", 10, &RefereeBase::planningResultDataCallBack, this);
   RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
@@ -49,19 +49,19 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     if (rpc_value[i]["name"] == "camera")
       camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "drag")
-      drag_trigger_change_ui_ = new DragTriggerChangeUi(rpc_value[i], base_);
+      drag_state_trigger_change_ui_ = new DragStateTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "gripper")
-      gripper_trigger_change_ui_ = new GripperTriggerChangeUi(rpc_value[i], base_);
+      gripper_state_trigger_change_ui_ = new GripperStateTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "exchange")
-      exchange_trigger_change_ui_ = new ExchangeTriggerChangeUi(rpc_value[i], base_);
+      exchange_state_trigger_change_ui_ = new ExchangeStateTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "planning")
       planning_result_trigger_change_ui_ = new PlanningResultTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "step")
-      step_trigger_change_ui_ = new StepTriggerChangeUi(rpc_value[i], base_);
+      step_name_trigger_change_ui_ = new StepNameTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "reversal")
-      reversal_trigger_change_ui_ = new ReversalTriggerChangeUi(rpc_value[i], base_);
+      reversal_state_trigger_change_ui_ = new ReversalStateTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "stone")
-      stone_trigger_change_ui_ = new StoneTriggerChangeUi(rpc_value[i], base_);
+      stone_num_trigger_change_ui_ = new StoneNumTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "temperature")
       joint_temperature_trigger_change_ui_ = new JointTemperatureTriggerChangeUi(rpc_value[i], base_);
   }
@@ -113,20 +113,20 @@ void RefereeBase::addUi()
     target_trigger_change_ui_->add();
   if (camera_trigger_change_ui_)
     camera_trigger_change_ui_->add();
-  if (drag_trigger_change_ui_)
-    drag_trigger_change_ui_->add();
-  if (gripper_trigger_change_ui_)
-    gripper_trigger_change_ui_->add();
-  if (exchange_trigger_change_ui_)
-    exchange_trigger_change_ui_->add();
+  if (drag_state_trigger_change_ui_)
+    drag_state_trigger_change_ui_->add();
+  if (gripper_state_trigger_change_ui_)
+    gripper_state_trigger_change_ui_->add();
+  if (exchange_state_trigger_change_ui_)
+    exchange_state_trigger_change_ui_->add();
   if (planning_result_trigger_change_ui_)
     planning_result_trigger_change_ui_->add();
-  if (step_trigger_change_ui_)
-    step_trigger_change_ui_->add();
-  if (reversal_trigger_change_ui_)
-    reversal_trigger_change_ui_->add();
-  if (stone_trigger_change_ui_)
-    stone_trigger_change_ui_->add();
+  if (step_name_trigger_change_ui_)
+    step_name_trigger_change_ui_->add();
+  if (reversal_state_trigger_change_ui_)
+    reversal_state_trigger_change_ui_->add();
+  if (stone_num_trigger_change_ui_)
+    stone_num_trigger_change_ui_->add();
   if (joint_temperature_trigger_change_ui_)
     joint_temperature_trigger_change_ui_->add();
   if (fixed_ui_)
@@ -222,16 +222,16 @@ void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 }
 void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data)
 {
-  if (drag_trigger_change_ui_)
-    drag_trigger_change_ui_->updateDragUiData(data);
-  if (gripper_trigger_change_ui_)
-    gripper_trigger_change_ui_->updateGripperUiData(data);
-  if (stone_trigger_change_ui_)
-    stone_trigger_change_ui_->updateStoneUiData(data);
-  if (step_trigger_change_ui_)
-    step_trigger_change_ui_->updateStepUiData(data);
-  if (reversal_trigger_change_ui_)
-    reversal_trigger_change_ui_->updateReversalUiData(data);
+  if (drag_state_trigger_change_ui_)
+    drag_state_trigger_change_ui_->updateDragStateUiData(data);
+  if (gripper_state_trigger_change_ui_)
+    gripper_state_trigger_change_ui_->updateGripperStateUiData(data);
+  if (stone_num_trigger_change_ui_)
+    stone_num_trigger_change_ui_->updateStoneNumUiData(data);
+  if (step_name_trigger_change_ui_)
+    step_name_trigger_change_ui_->updateStepNameUiData(data);
+  if (reversal_state_trigger_change_ui_)
+    reversal_state_trigger_change_ui_->updateReversalStateUiData(data);
   if (joint_temperature_trigger_change_ui_)
     joint_temperature_trigger_change_ui_->updateJointTemperatureUiData(data);
 }
@@ -256,10 +256,10 @@ void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
   if (camera_trigger_change_ui_)
     camera_trigger_change_ui_->updateCameraName(data);
 }
-void RefereeBase::exchangeDataCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data)
+void RefereeBase::exchangeStateDataCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data)
 {
-  if (exchange_trigger_change_ui_)
-    exchange_trigger_change_ui_->updateExchangeData(data);
+  if (exchange_state_trigger_change_ui_)
+    exchange_state_trigger_change_ui_->updateExchangeStateData(data);
 }
 void RefereeBase::planningResultDataCallBack(const std_msgs::Int32::ConstPtr& data)
 {

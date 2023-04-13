@@ -274,62 +274,62 @@ void CameraTriggerChangeUi::display()
   TriggerChangeUi::display();
   graph_->sendUi(ros::Time::now());
 }
-void DragTriggerChangeUi::updateDragUiData(const rm_msgs::EngineerUi ::ConstPtr& data)
+void DragStateTriggerChangeUi::updateDragStateUiData(const rm_msgs::EngineerUi ::ConstPtr& data)
 {
   drag_state_ = data->drag_state;
   display();
 }
 
-void DragTriggerChangeUi::display()
+void DragStateTriggerChangeUi::display()
 {
-  dragUpdateConfig(drag_state_);
+  dragStateUpdateConfig(drag_state_);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->display(true);
   graph_->sendUi(ros::Time::now());
 }
 
-void DragTriggerChangeUi::dragUpdateConfig(const std::string& drag_state)
+void DragStateTriggerChangeUi::dragStateUpdateConfig(const std::string& drag_state)
 {
   graph_->setContent(drag_state);
   graph_->setColor(rm_referee::GraphColor::GREEN);
 }
 
-void GripperTriggerChangeUi::updateGripperUiData(const rm_msgs::EngineerUi ::ConstPtr& data)
+void GripperStateTriggerChangeUi::updateGripperStateUiData(const rm_msgs::EngineerUi ::ConstPtr& data)
 {
   gripper_state_ = data->gripper_state;
   display();
 }
 
-void GripperTriggerChangeUi::display()
+void GripperStateTriggerChangeUi::display()
 {
-  gripperUpdateConfig(gripper_state_);
+  gripperStateUpdateConfig(gripper_state_);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->display(true);
   graph_->sendUi(ros::Time::now());
 }
 
-void GripperTriggerChangeUi::gripperUpdateConfig(const std::string& gripper_state)
+void GripperStateTriggerChangeUi::gripperStateUpdateConfig(const std::string& gripper_state)
 {
   graph_->setContent(gripper_state);
   graph_->setColor(rm_referee::GraphColor::GREEN);
 }
 
-void ExchangeTriggerChangeUi::updateExchangeData(const rm_msgs::ExchangerMsg::ConstPtr& data)
+void ExchangeStateTriggerChangeUi::updateExchangeStateData(const rm_msgs::ExchangerMsg::ConstPtr& data)
 {
   exchange_state_.shape = data->shape;
   exchange_state_.flag = data->shape;
   display();
 }
 
-void ExchangeTriggerChangeUi::display()
+void ExchangeStateTriggerChangeUi::display()
 {
-  exchangeUpdateConfig(exchange_state_);
+  exchangeStateUpdateConfig(exchange_state_);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->display(true);
   graph_->sendUi(ros::Time::now());
 }
 
-void ExchangeTriggerChangeUi::exchangeUpdateConfig(const rm_msgs::ExchangerMsg& exchange_state)
+void ExchangeStateTriggerChangeUi::exchangeStateUpdateConfig(const rm_msgs::ExchangerMsg& exchange_state)
 {
   if (exchange_state.flag)
     graph_->setContent("CAN!");
@@ -411,13 +411,13 @@ void PlanningResultTriggerChangeUi::planningResultUpdateConfig(const std_msgs::I
     graph_->setContent("NO_IK_SOLUTION");
 }
 
-void StepTriggerChangeUi::updateStepUiData(const rm_msgs::EngineerUi::ConstPtr data)
+void StepNameTriggerChangeUi::updateStepNameUiData(const rm_msgs::EngineerUi::ConstPtr data)
 {
   step_name_ = data->current_step_name;
   display();
 }
 
-void StepTriggerChangeUi::display()
+void StepNameTriggerChangeUi::display()
 {
   graph_->setContent(step_name_);
   graph_->setColor(rm_referee::GraphColor::GREEN);
@@ -426,13 +426,13 @@ void StepTriggerChangeUi::display()
   graph_->sendUi(ros::Time::now());
 }
 
-void ReversalTriggerChangeUi::updateReversalUiData(const rm_msgs::EngineerUi::ConstPtr data)
+void ReversalStateTriggerChangeUi::updateReversalStateUiData(const rm_msgs::EngineerUi::ConstPtr data)
 {
   reversal_state_ = data->reversal_state;
   display();
 }
 
-void ReversalTriggerChangeUi::display()
+void ReversalStateTriggerChangeUi::display()
 {
   graph_->setContent(reversal_state_);
   graph_->setColor(rm_referee::GraphColor::GREEN);
@@ -441,27 +441,27 @@ void ReversalTriggerChangeUi::display()
   graph_->sendUi(ros::Time::now());
 }
 
-void StoneTriggerChangeUi::updateStoneUiData(const rm_msgs::EngineerUi::ConstPtr data)
+void StoneNumTriggerChangeUi::updateStoneNumUiData(const rm_msgs::EngineerUi::ConstPtr data)
 {
   stone_num_ = data->stone_num;
   display();
 }
 
-void StoneTriggerChangeUi::display()
+void StoneNumTriggerChangeUi::display()
 {
-  stoneUpdateConfig(stone_num_);
+  stoneNumUpdateConfig(stone_num_);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->display(true);
   graph_->sendUi(ros::Time::now());
 }
 
-void StoneTriggerChangeUi::stoneUpdateConfig(uint8_t stone_num)
+void StoneNumTriggerChangeUi::stoneNumUpdateConfig(uint8_t stone_num)
 {
   graph_->setContent(getStoneNum(stone_num));
   graph_->setColor(rm_referee::GraphColor::GREEN);
 }
 
-std::string StoneTriggerChangeUi::getStoneNum(uint8_t stone_num)
+std::string StoneNumTriggerChangeUi::getStoneNum(uint8_t stone_num)
 {
   if (!stone_num)
     return "0";

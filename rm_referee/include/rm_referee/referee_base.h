@@ -40,12 +40,11 @@ public:
   virtual void vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data);
   virtual void shootStateCallback(const rm_msgs::ShootState::ConstPtr& data);
   virtual void gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data);
-  virtual void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data);
   virtual void engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data);
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
   virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
-  virtual void exchangeDataCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data);
+  virtual void exchangeStateDataCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data);
   virtual void planningResultDataCallBack(const std_msgs::Int32::ConstPtr& data);
 
   ros::Subscriber joint_state_sub_;
@@ -62,7 +61,7 @@ public:
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
   ros::Subscriber camera_name_sub_;
-  ros::Subscriber exchange_data_sub_;
+  ros::Subscriber exchange_state_sub_;
   ros::Subscriber planning_result_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
@@ -75,13 +74,13 @@ public:
   EffortTimeChangeUi* effort_time_change_ui_{};
   DartStatusTimeChangeUi* dart_status_time_change_ui_{};
   LaneLineTimeChangeUi* lane_line_time_change_ui_{};
-  StepTriggerChangeUi* step_trigger_change_ui_{};
-  ReversalTriggerChangeUi* reversal_trigger_change_ui_{};
-  StoneTriggerChangeUi* stone_trigger_change_ui_{};
+  StepNameTriggerChangeUi* step_name_trigger_change_ui_{};
+  ReversalStateTriggerChangeUi* reversal_state_trigger_change_ui_{};
+  StoneNumTriggerChangeUi* stone_num_trigger_change_ui_{};
   JointTemperatureTriggerChangeUi* joint_temperature_trigger_change_ui_{};
-  DragTriggerChangeUi* drag_trigger_change_ui_{};
-  GripperTriggerChangeUi* gripper_trigger_change_ui_{};
-  ExchangeTriggerChangeUi* exchange_trigger_change_ui_{};
+  DragStateTriggerChangeUi* drag_state_trigger_change_ui_{};
+  GripperStateTriggerChangeUi* gripper_state_trigger_change_ui_{};
+  ExchangeStateTriggerChangeUi* exchange_state_trigger_change_ui_{};
   PlanningResultTriggerChangeUi* planning_result_trigger_change_ui_{};
 
   FixedUi* fixed_ui_{};
