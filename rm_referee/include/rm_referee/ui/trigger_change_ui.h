@@ -232,16 +232,10 @@ public:
   explicit StepTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TriggerChangeUi(rpc_value, base, "step")
   {
     graph_->setContent("step_name");
-    if (base_.robot_color_ == "red")
-      graph_->setColor(rm_referee::GraphColor::CYAN);
-    else
-      graph_->setColor(rm_referee::GraphColor::PINK);
   }
-  void updateStepUiData(const rm_msgs::EngineerUi ::ConstPtr data);
 
 private:
   void display() override;
-  void stepUpdateConfig(std::string step_name);
   std::string step_name_;
 };
 
@@ -252,16 +246,10 @@ public:
     : TriggerChangeUi(rpc_value, base, "reversal")
   {
     graph_->setContent("reversal:");
-    if (base_.robot_color_ == "red")
-      graph_->setColor(rm_referee::GraphColor::CYAN);
-    else
-      graph_->setColor(rm_referee::GraphColor::PINK);
   }
-  void updateReversalUiData(const rm_msgs::EngineerUi ::ConstPtr data);
 
 private:
   void display() override;
-  void reversalUpdateConfig(std::string reversal_state);
   std::string reversal_state_;
 };
 
@@ -271,10 +259,6 @@ public:
   explicit StoneTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TriggerChangeUi(rpc_value, base, "stone")
   {
     graph_->setContent("stone:");
-    if (base_.robot_color_ == "red")
-      graph_->setColor(rm_referee::GraphColor::CYAN);
-    else
-      graph_->setColor(rm_referee::GraphColor::PINK);
   }
   void updateStoneUiData(const rm_msgs::EngineerUi ::ConstPtr data);
 
@@ -292,16 +276,11 @@ public:
     : TriggerChangeUi(rpc_value, base, "joint_temperature")
   {
     graph_->setContent("temperature");
-    if (base_.robot_color_ == "red")
-      graph_->setColor(rm_referee::GraphColor::CYAN);
-    else
-      graph_->setColor(rm_referee::GraphColor::PINK);
   }
   void updateJointTemperatureUiData(const rm_msgs::EngineerUi ::ConstPtr data);
 
 private:
   void display() override;
-  void jointTemperatureUpdateConfig(std::string joint_temperature);
   std::string joint_temperature_;
 };
 
