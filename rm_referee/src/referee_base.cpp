@@ -21,9 +21,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
                                                                     &RefereeBase::shootStateCallback, this);
   RefereeBase::gimbal_cmd_sub_ = nh.subscribe<rm_msgs::GimbalCmd>("/controllers/gimbal_controller/command", 10,
                                                                   &RefereeBase::gimbalCmdDataCallback, this);
-  RefereeBase::card_cmd_sub_ = nh.subscribe<rm_msgs::StateCmd>("/controllers/card_controller/command", 10,
-                                                               &RefereeBase::cardCmdDataCallback, this);
-  RefereeBase::engineer_cmd_sub_ =
+  RefereeBase::engineer_ui_sub_ =
       nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 10, &RefereeBase::engineerUiDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
@@ -62,8 +60,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       step_trigger_change_ui_ = new StepTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "reversal")
       reversal_trigger_change_ui_ = new ReversalTriggerChangeUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "stone")
-      stone_trigger_change_ui_ = new StoneTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "stone")
       stone_trigger_change_ui_ = new StoneTriggerChangeUi(rpc_value[i], base_);
     if (rpc_value[i]["name"] == "temperature")

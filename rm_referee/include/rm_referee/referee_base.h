@@ -45,6 +45,8 @@ public:
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
   virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
+  virtual void exchangeDataCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data);
+  virtual void planningResultDataCallBack(const std_msgs::Int32::ConstPtr& data);
 
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
@@ -56,10 +58,12 @@ public:
   ros::Subscriber detection_status_sub_;
   ros::Subscriber card_cmd_sub_;
   ros::Subscriber calibration_status_sub_;
-  ros::Subscriber engineer_cmd_sub_;
+  ros::Subscriber engineer_ui_sub_;
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
   ros::Subscriber camera_name_sub_;
+  ros::Subscriber exchange_data_sub_;
+  ros::Subscriber planning_result_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
@@ -69,9 +73,16 @@ public:
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};
-  ProgressTimeChangeUi* progress_time_change_ui_{};
   DartStatusTimeChangeUi* dart_status_time_change_ui_{};
   LaneLineTimeChangeUi* lane_line_time_change_ui_{};
+  StepTriggerChangeUi* step_trigger_change_ui_{};
+  ReversalTriggerChangeUi* reversal_trigger_change_ui_{};
+  StoneTriggerChangeUi* stone_trigger_change_ui_{};
+  JointTemperatureTriggerChangeUi* joint_temperature_trigger_change_ui_{};
+  DragTriggerChangeUi* drag_trigger_change_ui_{};
+  GripperTriggerChangeUi* gripper_trigger_change_ui_{};
+  ExchangeTriggerChangeUi* exchange_trigger_change_ui_{};
+  PlanningResultTriggerChangeUi* planning_result_trigger_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
