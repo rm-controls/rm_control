@@ -27,7 +27,6 @@ add_message_files(
         TofRadarData.msg
         TagMsg.msg
         TagMsgArray.msg
-        MultiDofCmd.msg
 )
 
 add_service_files(
