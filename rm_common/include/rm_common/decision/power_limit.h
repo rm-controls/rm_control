@@ -108,9 +108,7 @@ public:
   }
   void setLimitPower(rm_msgs::ChassisCmd& chassis_cmd, bool is_gyro)
   {
-    if (robot_id_ == rm_msgs::GameRobotStatus::BLUE_SENTRY || robot_id_ == rm_msgs::GameRobotStatus::RED_SENTRY)
-      chassis_cmd.power_limit = 30;
-    else if (robot_id_ == rm_msgs::GameRobotStatus::BLUE_ENGINEER || robot_id_ == rm_msgs::GameRobotStatus::RED_ENGINEER)
+    if (robot_id_ == rm_msgs::GameRobotStatus::BLUE_ENGINEER || robot_id_ == rm_msgs::GameRobotStatus::RED_ENGINEER)
       chassis_cmd.power_limit = 400;
     else
     {  // standard and hero
@@ -176,7 +174,7 @@ private:
         chassis_cmd.power_limit = burst_power_;
     }
     else
-      chassis_cmd.power_limit = chassis_power_limit_;
+      normal(chassis_cmd);
   }
 
   int game_progress_;
