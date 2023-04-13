@@ -217,9 +217,7 @@ void RefereeBase::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data
   if (gimbal_trigger_change_ui_)
     gimbal_trigger_change_ui_->updateGimbalCmdData(data);
 }
-void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
-{
-}
+
 void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data)
 {
   if (drag_state_trigger_change_ui_)
