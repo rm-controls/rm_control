@@ -4,4 +4,3 @@ string reversal_state
 string gripper_state
 string drag_state
 uint8 stone_num
-uint32 stone_drop_time
