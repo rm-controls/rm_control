@@ -300,13 +300,13 @@ std::string SentryInteractiveTriggerChangeUi::getSentryState(uint8_t mode)
 void SentryInteractiveTriggerChangeUi::sendSentryCmd(const rm_msgs::ClientMapSendData ::ConstPtr data)
 {
   client_map_send_data_.command_keyboard = data->command_keyboard;
-  if (base_.robot_id_ < 100)
+  if (base_.robot_color_ == "red")
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_DATA,
                                                     rm_msgs::GameRobotStatus::RED_SENTRY, data->command_keyboard);
   }
-  else if (base_.robot_id_ > 100)
+  else if (base_.robot_color_ == "blue")
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_DATA,
@@ -316,7 +316,7 @@ void SentryInteractiveTriggerChangeUi::sendSentryCmd(const rm_msgs::ClientMapSen
 void SentryInteractiveTriggerChangeUi::sendInteractiveResult(const std_msgs::UInt8ConstPtr data)
 {
   sentry_state_.data = data->data;
-  if (base_.robot_id_ < 100)
+  if (base_.robot_color_ == "red")
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_RESULT,
@@ -331,7 +331,7 @@ void SentryInteractiveTriggerChangeUi::sendInteractiveResult(const std_msgs::UIn
                                                         SENTRY_INTERACTIVE_RESULT,
                                                     rm_msgs::GameRobotStatus::RED_STANDARD_5, data->data);
   }
-  else if (base_.robot_id_ > 100)
+  else if (base_.robot_color_ == "blue")
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_RESULT,
@@ -353,7 +353,7 @@ void SentryInteractiveTriggerChangeUi::updateInteractiveCmd(const rm_referee::In
   if (interactive_data.header_data_.data_cmd_id_ !=
       rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + SENTRY_INTERACTIVE_DATA)
     return;
-  if (base_.robot_id_ < 100)
+  if (base_.robot_color_ == "red")
   {
     if (base_.robot_id_ != rm_msgs::GameRobotStatus::RED_SENTRY)
       return;
@@ -369,7 +369,7 @@ void SentryInteractiveTriggerChangeUi::updateInteractiveResult(const rm_referee:
   if (interactive_data.header_data_.data_cmd_id_ !=
       rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + SENTRY_INTERACTIVE_RESULT)
     return;
-  if (base_.robot_id_ < 100)
+  if (base_.robot_color_ == "red")
   {
     if (base_.robot_id_ == rm_msgs::GameRobotStatus::RED_SENTRY)
       return;
