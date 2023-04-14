@@ -231,11 +231,7 @@ class StepNameTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit StepNameTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
-    : TriggerChangeUi(rpc_value, base, "step")
-  {
-    graph_->setContent("step_name");
-  }
-  void updateStepNameUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+    : TriggerChangeUi(rpc_value, base, "step") void updateStepNameUiData(const rm_msgs::EngineerUi ::ConstPtr data);
 
 private:
   void display() override;
@@ -246,11 +242,8 @@ class ReversalStateTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit ReversalStateTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
-    : TriggerChangeUi(rpc_value, base, "reversal")
-  {
-    graph_->setContent("reversal:");
-  }
-  void updateReversalStateUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+    : TriggerChangeUi(rpc_value, base,
+                      "reversal") void updateReversalStateUiData(const rm_msgs::EngineerUi ::ConstPtr data);
 
 private:
   void display() override;
@@ -261,11 +254,7 @@ class StoneNumTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit StoneNumTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
-    : TriggerChangeUi(rpc_value, base, "stone")
-  {
-    graph_->setContent("stone:");
-  }
-  void updateStoneNumUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+    : TriggerChangeUi(rpc_value, base, "stone") void updateStoneNumUiData(const rm_msgs::EngineerUi ::ConstPtr data);
 
 private:
   void display() override;
@@ -278,11 +267,8 @@ class JointTemperatureTriggerChangeUi : public TriggerChangeUi
 {
 public:
   explicit JointTemperatureTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
-    : TriggerChangeUi(rpc_value, base, "joint_temperature")
-  {
-    graph_->setContent("temperature");
-  }
-  void updateJointTemperatureUiData(const rm_msgs::EngineerUi ::ConstPtr data);
+    : TriggerChangeUi(rpc_value, base,
+                      "joint_temperature") void updateJointTemperatureUiData(const rm_msgs::EngineerUi ::ConstPtr data);
 
 private:
   void display() override;
