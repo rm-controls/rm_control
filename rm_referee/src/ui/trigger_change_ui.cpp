@@ -457,20 +457,8 @@ void StoneNumTriggerChangeUi::display()
 
 void StoneNumTriggerChangeUi::stoneNumUpdateConfig(uint8_t stone_num)
 {
-  graph_->setContent(getStoneNum(stone_num));
+  graph_->setContent(std::to_string(stone_num));
   graph_->setColor(rm_referee::GraphColor::GREEN);
-}
-
-std::string StoneNumTriggerChangeUi::getStoneNum(uint8_t stone_num)
-{
-  if (!stone_num)
-    return "0";
-  else if (stone_num == 1)
-    return "1";
-  else if (stone_num == 2)
-    return "2";
-  else
-    return "3";
 }
 
 void JointTemperatureTriggerChangeUi::updateJointTemperatureUiData(const rm_msgs::EngineerUi::ConstPtr data)

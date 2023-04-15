@@ -261,7 +261,6 @@ public:
 private:
   void display() override;
   void stoneNumUpdateConfig(uint8_t stone_num);
-  std::string getStoneNum(uint8_t stone_num);
   uint8_t stone_num_;
 };
 
