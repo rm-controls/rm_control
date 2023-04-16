@@ -21,6 +21,14 @@ void UiBase::erasure()
   graph_->sendUi(ros::Time::now());
 }
 
+int UiBase::getRobotColor(int robot_id)
+{
+  if (robot_id < 100)
+    return rm_msgs::GameRobotStatus::RED;
+  else
+    return rm_msgs::GameRobotStatus::BLUE;
+}
+
 void GroupUiBase::add()
 {
   for (auto graph : graph_vector_)

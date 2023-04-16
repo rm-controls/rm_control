@@ -15,6 +15,9 @@ uint8 BLUE_AERIAL = 106
 uint8 BLUE_SENTRY = 107
 uint8 BLUE_RADAR = 109
 
+uint8 RED = 0
+uint8 BLUE = 1
+
 uint8 robot_id
 uint8 robot_level
 uint16 remain_hp
