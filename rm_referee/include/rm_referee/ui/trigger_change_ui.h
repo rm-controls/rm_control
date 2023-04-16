@@ -183,6 +183,18 @@ public:
   {
     graph_->setContent("cruise");
     sentry_interactive_sender_ = new Graph(base_);
+    for (int i = static_cast<RobotId>(RED_HERO); i < static_cast<RobotId>(RED_SENTRY); ++i)
+    {
+      red_robot_id_.push_back(static_cast<RobotId>(i));
+      if (i == RED_ENGINEER || i == RED_AERIAL)
+        continue;
+    }
+    for (int i = static_cast<RobotId>(BLUE_HERO); i < static_cast<RobotId>(BLUE_SENTRY); ++i)
+    {
+      blue_robot_id_.push_back(static_cast<RobotId>(i));
+      if (i == BLUE_ENGINEER || i == BLUE_AERIAL)
+        continue;
+    }
   }
   void sendSentryCmd(const rm_msgs::ClientMapSendData::ConstPtr data);
   void sendInteractiveResult(const rm_msgs::SentryState::ConstPtr data);
@@ -196,6 +208,7 @@ private:
   std::string getSentryState(uint8_t mode);
   rm_msgs::SentryState sentry_state_;
   rm_msgs::ClientMapSendData client_map_send_data_;
+  std::vector<RobotId> red_robot_id_, blue_robot_id_;
   enum
   {
     SENTRY_INTERACTIVE_DATA,
