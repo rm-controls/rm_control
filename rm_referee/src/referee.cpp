@@ -259,7 +259,6 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_status_data.shooter_id_1_42_mm_speed_limit = game_robot_status_ref.shooter_id_1_42_mm_speed_limit_;
           game_robot_status_data.robot_id = game_robot_status_ref.robot_id_;
           base_.robot_id_ = game_robot_status_ref.robot_id_;
-          base_.robot_color_ = base_.robot_id_ >= 100 ? "blue" : "red";
           game_robot_status_data.robot_level = game_robot_status_ref.robot_level_;
           game_robot_status_data.stamp = last_get_data_time_;
 
