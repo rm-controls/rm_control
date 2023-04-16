@@ -198,9 +198,14 @@ private:
   rm_msgs::ClientMapSendData client_map_send_data_;
   enum
   {
-    SENTRY_INTERACTIVE_DATA = 1,
-    SENTRY_INTERACTIVE_RESULT = 2,
-  };
+    SENTRY_INTERACTIVE_DATA = 0,
+    SENTRY_INTERACTIVE_RESULT = 1,
+  } InteractiveId;
+  enum
+  {
+    CRUISE = 0,
+    CRUISE_GYRO = 1,
+  } SentryState;
   ros::NodeHandle state_nh_;
   ros::Publisher client_map_send_data_pub_ = state_nh_.advertise<rm_msgs::ClientMapSendData>("/sentry/interaction", 10);
 };
