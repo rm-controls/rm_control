@@ -25,8 +25,7 @@ add_message_files(
         SuperCapacitor.msg
         GpioData.msg
         TofRadarData.msg
-        TagMsg.msg
-        TagMsgArray.msg
+        MultiDofCmd.msg
         SentryState.msg
 )
 

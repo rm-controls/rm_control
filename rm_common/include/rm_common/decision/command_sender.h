@@ -52,6 +52,7 @@
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Float64.h>
+#include <rm_msgs/MultiDofCmd.h>
 #include <std_msgs/String.h>
 
 #include "rm_common/ros_utilities.h"
@@ -291,6 +292,10 @@ public:
   bool getEject() const
   {
     return eject_flag_;
+  }
+  void setPoint(geometry_msgs::PointStamped point)
+  {
+    msg_.target_pos = point;
   }
 
 private:
@@ -605,4 +610,44 @@ public:
 private:
   std::string camera1_name_{}, camera2_name_{};
 };
+
+class MultiDofCommandSender : public TimeStampCommandSenderBase<rm_msgs::MultiDofCmd>
+{
+public:
+  explicit MultiDofCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::MultiDofCmd>(nh)
+  {
+  }
+  ~MultiDofCommandSender() = default;
+  void setMode(int mode)
+  {
+    msg_.mode = mode;
+  }
+  int getMode()
+  {
+    return msg_.mode;
+  }
+  void setGroupValue(double linear_x, double linear_y, double linear_z, double angular_x, double angular_y,
+                     double angular_z)
+  {
+    msg_.linear.x = linear_x;
+    msg_.linear.y = linear_y;
+    msg_.linear.z = linear_z;
+    msg_.angular.x = angular_x;
+    msg_.angular.y = angular_y;
+    msg_.angular.z = angular_z;
+  }
+  void setZero() override
+  {
+    msg_.linear.x = 0;
+    msg_.linear.y = 0;
+    msg_.linear.z = 0;
+    msg_.angular.x = 0;
+    msg_.angular.y = 0;
+    msg_.angular.z = 0;
+  }
+
+private:
+  ros::Time time_;
+};
+
 }  // namespace rm_common
