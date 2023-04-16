@@ -185,7 +185,7 @@ public:
     sentry_interactive_sender_ = new Graph(base_);
   }
   void sendSentryCmd(const rm_msgs::ClientMapSendData::ConstPtr data);
-  void sendInteractiveResult(const std_msgs::UInt8ConstPtr data);
+  void sendInteractiveResult(const rm_msgs::SentryState::ConstPtr data);
   void updateInteractiveCmd(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
   void updateInteractiveResult(const rm_referee::InteractiveData& interactive_data, const ros::Time& time);
 
@@ -194,18 +194,13 @@ private:
   Graph* sentry_interactive_sender_;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
   std::string getSentryState(uint8_t mode);
-  std_msgs::UInt8 sentry_state_;
+  rm_msgs::SentryState sentry_state_;
   rm_msgs::ClientMapSendData client_map_send_data_;
   enum
   {
-    SENTRY_INTERACTIVE_DATA = 0,
-    SENTRY_INTERACTIVE_RESULT = 1,
-  } InteractiveId;
-  enum
-  {
-    CRUISE = 0,
-    CRUISE_GYRO = 1,
-  } SentryState;
+    SENTRY_INTERACTIVE_DATA,
+    SENTRY_INTERACTIVE_RESULT,
+  };
   ros::NodeHandle state_nh_;
   ros::Publisher client_map_send_data_pub_ = state_nh_.advertise<rm_msgs::ClientMapSendData>("/sentry/interaction", 10);
 };

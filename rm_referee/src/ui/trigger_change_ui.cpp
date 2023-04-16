@@ -276,7 +276,7 @@ void CameraTriggerChangeUi::display()
 }
 void SentryInteractiveTriggerChangeUi::display()
 {
-  updateConfig(sentry_state_.data, 0);
+  updateConfig(sentry_state_.state, 0);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   graph_->displayTwice(true);
   graph_->sendUi(ros::Time::now());
@@ -289,9 +289,9 @@ void SentryInteractiveTriggerChangeUi::updateConfig(uint8_t main_mode, bool main
 
 std::string SentryInteractiveTriggerChangeUi::getSentryState(uint8_t mode)
 {
-  if (mode == CRUISE)
+  if (mode == rm_msgs::SentryState::CRUISE)
     return "CRUISE";
-  else if (mode == CRUISE_GYRO)
+  else if (mode == rm_msgs::SentryState::CRUISE_GYRO)
     return "CRUISE_GYRO";
   else
     return "error";
@@ -313,38 +313,38 @@ void SentryInteractiveTriggerChangeUi::sendSentryCmd(const rm_msgs::ClientMapSen
                                                     rm_msgs::GameRobotStatus::BLUE_SENTRY, data->command_keyboard);
   }
 }
-void SentryInteractiveTriggerChangeUi::sendInteractiveResult(const std_msgs::UInt8ConstPtr data)
+void SentryInteractiveTriggerChangeUi::sendInteractiveResult(const rm_msgs::SentryState::ConstPtr data)
 {
-  sentry_state_.data = data->data;
+  sentry_state_.state = data->state;
   if (getRobotColor(base_.robot_id_) == rm_msgs::GameRobotStatus::RED)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_RESULT,
-                                                    rm_msgs::GameRobotStatus::RED_HERO, data->data);
+                                                    rm_msgs::GameRobotStatus::RED_HERO, data->state);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_RESULT,
-                                                    rm_msgs::GameRobotStatus::RED_STANDARD_3, data->data);
+                                                    rm_msgs::GameRobotStatus::RED_STANDARD_3, data->state);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_RESULT,
-                                                    rm_msgs::GameRobotStatus::RED_STANDARD_4, data->data);
+                                                    rm_msgs::GameRobotStatus::RED_STANDARD_4, data->state);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_RESULT,
-                                                    rm_msgs::GameRobotStatus::RED_STANDARD_5, data->data);
+                                                    rm_msgs::GameRobotStatus::RED_STANDARD_5, data->state);
   }
   else if (getRobotColor(base_.robot_id_) == rm_msgs::GameRobotStatus::BLUE)
   {
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_RESULT,
-                                                    rm_msgs::GameRobotStatus::BLUE_HERO, data->data);
+                                                    rm_msgs::GameRobotStatus::BLUE_HERO, data->state);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_RESULT,
-                                                    rm_msgs::GameRobotStatus::BLUE_STANDARD_3, data->data);
+                                                    rm_msgs::GameRobotStatus::BLUE_STANDARD_3, data->state);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_RESULT,
-                                                    rm_msgs::GameRobotStatus::BLUE_STANDARD_4, data->data);
+                                                    rm_msgs::GameRobotStatus::BLUE_STANDARD_4, data->state);
     sentry_interactive_sender_->sendInteractiveData(rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN +
                                                         SENTRY_INTERACTIVE_RESULT,
-                                                    rm_msgs::GameRobotStatus::BLUE_STANDARD_5, data->data);
+                                                    rm_msgs::GameRobotStatus::BLUE_STANDARD_5, data->state);
   }
 }
 void SentryInteractiveTriggerChangeUi::updateInteractiveCmd(const rm_referee::InteractiveData& interactive_data,
@@ -368,7 +368,7 @@ void SentryInteractiveTriggerChangeUi::updateInteractiveResult(const rm_referee:
   if (base_.robot_id_ == rm_msgs::GameRobotStatus::RED_SENTRY ||
       base_.robot_id_ == rm_msgs::GameRobotStatus::BLUE_SENTRY)
     return;
-  sentry_state_.data = interactive_data.data_;
+  sentry_state_.state = interactive_data.data_;
   display();
 }
 }  // namespace rm_referee

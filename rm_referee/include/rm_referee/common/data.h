@@ -78,6 +78,7 @@
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
 #include <rm_msgs/ClientMapSendData.h>
+#include <rm_msgs/SentryState.h>
 
 namespace rm_referee
 {

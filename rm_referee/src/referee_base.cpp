@@ -31,7 +31,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::sentry_cmd_sub_ =
       nh.subscribe<rm_msgs::ClientMapSendData>("/sentry/command", 10, &RefereeBase::sentryCmdCallBack, this);
   RefereeBase::sentry_result_sub_ =
-      nh.subscribe<std_msgs::UInt8>("/sentry/interactive/result", 10, &RefereeBase::sentryResultCallBack, this);
+      nh.subscribe<rm_msgs::SentryState>("/sentry/interactive/result", 10, &RefereeBase::sentryResultCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
@@ -234,7 +234,7 @@ void RefereeBase::sentryCmdCallBack(const rm_msgs::ClientMapSendDataConstPtr& da
   if (sentry_interactive_trigger_change_ui_)
     sentry_interactive_trigger_change_ui_->sendSentryCmd(data);
 }
-void RefereeBase::sentryResultCallBack(const std_msgs::UInt8ConstPtr& data)
+void RefereeBase::sentryResultCallBack(const rm_msgs::SentryStateConstPtr& data)
 {
   if (sentry_interactive_trigger_change_ui_)
     sentry_interactive_trigger_change_ui_->sendInteractiveResult(data);
