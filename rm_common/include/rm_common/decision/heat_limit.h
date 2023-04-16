@@ -62,6 +62,7 @@ public:
       ROS_ERROR("Safe shoot heat coeff frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("type", type_))
       ROS_ERROR("Shooter type no defined (namespace: %s)", nh.getNamespace().c_str());
+    nh.param("safe_speed_limit",shooter_speed_limit_,15);
     if (type_ == "ID1_42MM")
       bullet_heat_ = 100.;
     else
