@@ -291,7 +291,7 @@ std::string SentryInteractiveTriggerChangeUi::getSentryState(uint8_t mode)
 {
   if (mode == rm_msgs::SentryState::CRUISE)
     return "CRUISE";
-  else if (mode == rm_msgs::SentryState::CRUISE_GYRO)
+  else if (mode == rm_msgs::SentryState::SENTRY_GYRO)
     return "CRUISE_GYRO";
   else
     return "error";
