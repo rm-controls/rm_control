@@ -185,15 +185,13 @@ public:
     sentry_interactive_sender_ = new Graph(base_);
     for (int i = static_cast<RobotId>(RED_HERO); i < static_cast<RobotId>(RED_SENTRY); ++i)
     {
-      red_robot_id_.push_back(static_cast<RobotId>(i));
-      if (i == RED_ENGINEER || i == RED_AERIAL)
-        continue;
+      if (i != RED_ENGINEER && i != RED_AERIAL)
+        red_robot_id_.push_back(static_cast<RobotId>(i));
     }
     for (int i = static_cast<RobotId>(BLUE_HERO); i < static_cast<RobotId>(BLUE_SENTRY); ++i)
     {
-      blue_robot_id_.push_back(static_cast<RobotId>(i));
-      if (i == BLUE_ENGINEER || i == BLUE_AERIAL)
-        continue;
+      if (i != BLUE_ENGINEER && i != BLUE_AERIAL)
+        blue_robot_id_.push_back(static_cast<RobotId>(i));
     }
   }
   void sendSentryCmd(const rm_msgs::ClientMapSendData::ConstPtr data);
