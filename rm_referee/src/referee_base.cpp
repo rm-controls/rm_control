@@ -175,6 +175,8 @@ void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& da
     effort_time_change_ui_->updateJointStateData(data, ros::Time::now());
   if (lane_line_time_change_ui_)
     lane_line_time_change_ui_->updateJointStateData(data, ros::Time::now());
+  if (fixed_ui_)
+    fixed_ui_->display();
 }
 void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
 {
@@ -232,6 +234,11 @@ void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& da
     reversal_state_trigger_change_ui_->updateReversalStateUiData(data);
   if (joint_temperature_trigger_change_ui_)
     joint_temperature_trigger_change_ui_->updateJointTemperatureUiData(data);
+  if (fixed_ui_)
+  {
+    fixed_ui_->add();
+    fixed_ui_->display();
+  }
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
