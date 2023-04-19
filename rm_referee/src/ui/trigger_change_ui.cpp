@@ -339,7 +339,7 @@ void SentryInteractiveTriggerChangeUi::updateInteractiveCmd(const rm_referee::In
   if (interactive_data.header_data_.data_cmd_id_ !=
       rm_referee::DataCmdId::ROBOT_INTERACTIVE_CMD_MIN + SENTRY_INTERACTIVE_DATA)
     return;
-  if (base_.robot_id_ != rm_msgs::GameRobotStatus::RED_SENTRY ||
+  if (base_.robot_id_ != rm_msgs::GameRobotStatus::RED_SENTRY &&
       base_.robot_id_ != rm_msgs::GameRobotStatus::BLUE_SENTRY)
     return;
   client_map_send_data_.command_keyboard = interactive_data.data_;
