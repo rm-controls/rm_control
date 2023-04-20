@@ -202,7 +202,7 @@ private:
   {
     if (state_ == HeatLimit::BURST)
     {
-      shoot_frequency_ = high_shoot_frequency_;
+      shoot_frequency_ = burst_shoot_frequency_;
       burst_flag_ = true;
     }
     else if (state_ == HeatLimit::LOW)
