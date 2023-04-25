@@ -166,24 +166,27 @@ public:
 
   void setLinearXVel(double scale)
   {
-    if ((ros::Time::now() - last_get_time_) < ros::Duration(0.3))
-      msg_.linear.x = scale * max_linear_x_.output(referee_power_limit_);
-    else
+    if ((ros::Time::now() - last_get_time_) < ros::Duration(1.0))
       msg_.linear.x = scale * max_linear_x_.output(chassis_power_limit_);
+    else
+      msg_.linear.x = scale * max_linear_x_.output(chassis_power_limit_ - 20);
+    // msg_.linear.x = scale * 0.6;
   };
   void setLinearYVel(double scale)
   {
-    if ((ros::Time::now() - last_get_time_) < ros::Duration(0.3))
-      msg_.linear.y = scale * max_linear_y_.output(referee_power_limit_);
-    else
+    if ((ros::Time::now() - last_get_time_) < ros::Duration(1.0))
       msg_.linear.y = scale * max_linear_y_.output(chassis_power_limit_);
+    else
+      msg_.linear.y = scale * max_linear_y_.output(chassis_power_limit_ - 20);
+    // msg_.linear.y = scale * 0.6;
   };
   void setAngularZVel(double scale)
   {
-    if ((ros::Time::now() - last_get_time_) < ros::Duration(0.3))
-      msg_.angular.z = scale * max_angular_z_.output(referee_power_limit_);
-    else
+    if ((ros::Time::now() - last_get_time_) < ros::Duration(1.0))
       msg_.angular.z = scale * max_angular_z_.output(chassis_power_limit_);
+    else
+      msg_.angular.z = scale * max_angular_z_.output(chassis_power_limit_ - 20);
+    //  msg_.angular.z = scale * 9.0;
   };
   void set2DVel(double scale_x, double scale_y, double scale_z)
   {
@@ -241,6 +244,10 @@ public:
         nh.subscribe<rm_msgs::GameRobotStatus>(topic, 1, &ChassisCommandSender::powerLimitCallback, this);
   }
 
+  void updateSafetyPower(int safety_power)
+  {
+    power_limit_->updateSafetyPower(safety_power);
+  }
   void updateGameStatus(const rm_msgs::GameStatus data) override
   {
     power_limit_->setGameProgress(data);
@@ -265,17 +272,20 @@ public:
   {
     power_limit_->setLimitPower(msg_, is_gyro);
 
-    if ((ros::Time::now() - last_get_time_) < ros::Duration(0.3))
-    {
-      msg_.accel.linear.x = accel_x_.output(referee_power_limit_);
-      msg_.accel.linear.y = accel_y_.output(referee_power_limit_);
-      msg_.accel.angular.z = accel_z_.output(referee_power_limit_);
-    }
-    else
+    if ((ros::Time::now() - last_get_time_) < ros::Duration(1.0))
     {
       msg_.accel.linear.x = accel_x_.output(msg_.power_limit);
       msg_.accel.linear.y = accel_y_.output(msg_.power_limit);
       msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
+    }
+    else
+    {
+      msg_.accel.linear.x = accel_x_.output(msg_.power_limit - 20);
+      msg_.accel.linear.y = accel_y_.output(msg_.power_limit - 20);
+      msg_.accel.angular.z = accel_z_.output(msg_.power_limit - 20);
+      //      msg_.accel.linear.x = 0.5;
+      //      msg_.accel.linear.y = 0.5;
+      //      msg_.accel.angular.z = 3.0;
     }
     TimeStampCommandSenderBase<rm_msgs::ChassisCmd>::sendCommand(time);
   }
