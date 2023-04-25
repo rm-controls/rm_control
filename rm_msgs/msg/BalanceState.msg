@@ -14,6 +14,9 @@ float64 phi_dot
 float64 theta_dot
 float64 x_b_l_dot
 float64 x_b_r_dot
+float64 acc_x
+float64 acc_y
+float64 acc_z
 
 float64 T_l
 float64 T_r
