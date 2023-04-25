@@ -26,7 +26,7 @@ void GroupUiBase::add()
   for (auto graph : graph_vector_)
   {
     graph.second->setOperation(rm_referee::GraphOperation::ADD);
-    graph.second->display();
+    graph.second->display(true);
     graph.second->sendUi(ros::Time::now());
   }
 }
@@ -38,6 +38,16 @@ void GroupUiBase::erasure()
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
     graph_->display(true);
     graph_->sendUi(ros::Time::now());
+  }
+}
+
+void FixedUi::display()
+{
+  for (auto graph : graph_vector_)
+  {
+    graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
+    graph.second->display();
+    graph.second->sendUi(ros::Time::now());
   }
 }
 

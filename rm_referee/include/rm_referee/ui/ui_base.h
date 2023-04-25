@@ -38,7 +38,6 @@ public:
   ~GroupUiBase() = default;
   virtual void add() override;
   virtual void erasure() override;
-  virtual void display(){};
 
 protected:
   std::map<std::string, Graph*> graph_vector_;
@@ -53,6 +52,7 @@ public:
       graph_vector_.insert(
           std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
   };
+  void display();
 };
 
 }  // namespace rm_referee

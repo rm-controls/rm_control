@@ -45,6 +45,7 @@ public:
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
   virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
+  virtual void balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data);
 
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
@@ -60,6 +61,7 @@ public:
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
   ros::Subscriber camera_name_sub_;
+  ros::Subscriber balance_state_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
@@ -72,6 +74,7 @@ public:
   ProgressTimeChangeUi* progress_time_change_ui_{};
   DartStatusTimeChangeUi* dart_status_time_change_ui_{};
   LaneLineTimeChangeUi* lane_line_time_change_ui_{};
+  BalancePitchTimeChangeGroupUi* balance_pitch_time_change_group_ui_{};
 
   FixedUi* fixed_ui_{};
 

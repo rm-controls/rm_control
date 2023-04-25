@@ -28,6 +28,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
   RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
+  RefereeBase::balance_state_sub_ = nh.subscribe("/state", 10, &RefereeBase::balanceStateCallback, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
@@ -63,6 +64,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "lane_line")
         lane_line_time_change_ui_ = new LaneLineTimeChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "balance_pitch")
+        balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -112,6 +115,8 @@ void RefereeBase::addUi()
     capacitor_time_change_ui_->add();
   if (lane_line_time_change_ui_)
     lane_line_time_change_ui_->add();
+  if (balance_pitch_time_change_group_ui_)
+    balance_pitch_time_change_group_ui_->add();
   add_ui_times_++;
 }
 
@@ -218,5 +223,10 @@ void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
 {
   if (camera_trigger_change_ui_)
     camera_trigger_change_ui_->updateCameraName(data);
+}
+void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data)
+{
+  if (balance_pitch_time_change_group_ui_)
+    balance_pitch_time_change_group_ui_->calculatePointPosition(data, ros::Time::now());
 }
 }  // namespace rm_referee

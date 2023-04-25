@@ -19,6 +19,17 @@ public:
   virtual void updateConfig(){};
 };
 
+class TimeChangeGroupUi : public GroupUiBase
+{
+public:
+  explicit TimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name)
+    : GroupUiBase(base)
+  {
+  }
+  virtual void display(const ros::Time& time);
+  virtual void updateConfig(){};
+};
+
 class CapacitorTimeChangeUi : public TimeChangeUi
 {
 public:
@@ -111,6 +122,68 @@ protected:
 private:
   void display(const ros::Time& time) override;
   void updateConfig() override;
+};
+
+class BalancePitchTimeChangeGroupUi : public TimeChangeGroupUi
+{
+public:
+  explicit BalancePitchTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TimeChangeGroupUi(rpc_value, base, "balance_pitch")
+  {
+    XmlRpc::XmlRpcValue config;
+
+    config["type"] = "line";
+    if (rpc_value["graph_config"].hasMember("color"))
+      config["color"] = rpc_value["graph_config"]["color"];
+    else
+      config["color"] = "cyan";
+    if (rpc_value["graph_config"].hasMember("width"))
+      config["width"] = rpc_value["graph_config"]["width"];
+    else
+      config["width"] = 2;
+    if (rpc_value["graph_config"].hasMember("delay"))
+      config["delay"] = rpc_value["graph_config"]["delay"];
+    else
+      config["delay"] = 0.2;
+
+    ROS_ASSERT(rpc_value["graph_config"].hasMember("centre_point") &&
+               rpc_value["graph_config"].hasMember("bottom_angle") && rpc_value["graph_config"].hasMember("length"));
+    centre_point_[0] = static_cast<int>(rpc_value["graph_config"]["centre_point"][0]);
+    centre_point_[1] = static_cast<int>(rpc_value["graph_config"]["centre_point"][1]);
+    bottom_angle_ = rpc_value["graph_config"]["bottom_angle"];
+    length_ = rpc_value["graph_config"]["length"];
+    triangle_left_point_[0] = centre_point_[0] - length_ * sin(bottom_angle_ / 2);
+    triangle_left_point_[1] = centre_point_[1] + length_ * cos(bottom_angle_ / 2);
+    triangle_right_point_[0] = centre_point_[0] + length_ * sin(bottom_angle_ / 2);
+    triangle_right_point_[1] = centre_point_[1] + length_ * cos(bottom_angle_ / 2);
+
+    XmlRpc::XmlRpcValue config_factor;
+    config["start_position"][0] = centre_point_[0] - length_;
+    config["start_position"][1] = centre_point_[1];
+    config["end_position"][0] = centre_point_[0] + length_;
+    config["end_position"][1] = centre_point_[1];
+    graph_vector_.insert(std::make_pair<std::string, Graph*>("bottom", new Graph(config, base_, id_++)));
+
+    config["start_position"][0] = centre_point_[0];
+    config["start_position"][1] = centre_point_[1];
+    config["end_position"][0] = triangle_left_point_[0];
+    config["end_position"][1] = triangle_left_point_[1];
+    graph_vector_.insert(std::make_pair<std::string, Graph*>("triangle_left_side", new Graph(config, base_, id_++)));
+
+    config["start_position"][0] = centre_point_[0];
+    config["start_position"][1] = centre_point_[1];
+    config["end_position"][0] = triangle_right_point_[0];
+    config["end_position"][1] = triangle_right_point_[1];
+    graph_vector_.insert(std::make_pair<std::string, Graph*>("triangle_right_side", new Graph(config, base_, id_++)));
+  }
+
+  void updateConfig() override;
+  void display(const ros::Time& time) override;
+  void calculatePointPosition(const rm_msgs::BalanceStateConstPtr& data, const ros::Time& time);
+
+private:
+  int centre_point_[2], triangle_left_point_[2], triangle_right_point_[2], length_;
+  double bottom_angle_;
 };
 
 }  // namespace rm_referee
