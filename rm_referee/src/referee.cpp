@@ -242,12 +242,12 @@ int Referee::unpack(uint8_t* rx_data)
           rm_msgs::GameRobotStatus game_robot_status_data;
           memcpy(&game_robot_status_ref, rx_data + 7, sizeof(rm_referee::GameRobotStatus));
 
-          game_robot_status_data.remain_hp = game_robot_status_ref.remain_hp_;
-          game_robot_status_data.max_hp = game_robot_status_ref.max_hp_;
-          game_robot_status_data.mains_power_chassis_output = game_robot_status_ref.mains_power_chassis_output_;
-          game_robot_status_data.mains_power_gimbal_output = game_robot_status_ref.mains_power_gimbal_output_;
-          game_robot_status_data.mains_power_shooter_output = game_robot_status_ref.mains_power_shooter_output_;
-          game_robot_status_data.chassis_power_limit = game_robot_status_ref.chassis_power_limit_;
+          game_robot_status_data.remain_hp = game_robot_status_ref.remain_hp;
+          game_robot_status_data.max_hp = game_robot_status_ref.max_hp;
+          game_robot_status_data.mains_power_chassis_output = game_robot_status_ref.mains_power_chassis_output;
+          game_robot_status_data.mains_power_gimbal_output = game_robot_status_ref.mains_power_gimbal_output;
+          game_robot_status_data.mains_power_shooter_output = game_robot_status_ref.mains_power_shooter_output;
+          game_robot_status_data.chassis_power_limit = game_robot_status_ref.chassis_power_limit;
           game_robot_status_data.shooter_id_1_17_mm_cooling_limit =
               game_robot_status_ref.shooter_id_1_17_mm_cooling_limit;
           game_robot_status_data.shooter_id_1_17_mm_cooling_rate =
