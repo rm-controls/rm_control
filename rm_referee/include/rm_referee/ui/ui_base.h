@@ -53,6 +53,7 @@ public:
       graph_vector_.insert(
           std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
   };
+  virtual void display() override;
 };
 
 }  // namespace rm_referee

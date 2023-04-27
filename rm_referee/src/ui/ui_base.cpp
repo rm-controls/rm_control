@@ -41,4 +41,13 @@ void GroupUiBase::erasure()
   }
 }
 
+void FixedUi::display()
+{
+  for (auto graph : graph_vector_)
+  {
+    graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
+    graph.second->display();
+    graph.second->sendUi(ros::Time::now());
+  }
+}
 }  // namespace rm_referee
