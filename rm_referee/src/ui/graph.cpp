@@ -63,10 +63,6 @@ Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base
   last_content_ = content_;
 }
 
-Graph::Graph(Base& base) : base_(base)
-{
-}
-
 void Graph::updatePosition(int index)
 {
   if (start_positions_.size() > 1)

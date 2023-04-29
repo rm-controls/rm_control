@@ -61,6 +61,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "dart_status")
         dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "rotation")
+        rotation_time_change_ui_ = new RotationTimeChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "lane_line")
         lane_line_time_change_ui_ = new LaneLineTimeChangeGroupUi(rpc_value[i], base_);
     }
@@ -111,6 +113,8 @@ void RefereeBase::addUi()
     dart_status_time_change_ui_->add();
   if (capacitor_time_change_ui_)
     capacitor_time_change_ui_->add();
+  if (rotation_time_change_ui_)
+    rotation_time_change_ui_->add();
   if (lane_line_time_change_ui_)
     lane_line_time_change_ui_->add();
   add_ui_times_++;
@@ -147,6 +151,8 @@ void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& da
 {
   if (effort_time_change_ui_ && !is_adding_)
     effort_time_change_ui_->updateJointStateData(data, ros::Time::now());
+  if (rotation_time_change_ui_ && !is_adding_)
+    rotation_time_change_ui_->update();
   if (lane_line_time_change_ui_ && !is_adding_)
     lane_line_time_change_ui_->updateJointStateData(data, ros::Time::now());
 }

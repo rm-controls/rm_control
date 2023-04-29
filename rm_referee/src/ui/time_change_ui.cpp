@@ -150,6 +150,30 @@ void LaneLineTimeChangeGroupUi::sendUi(const ros::Time& time)
   sendDoubleGraph(time, lane_line_double_graph_.at(0), lane_line_double_graph_.at(1));
 }
 
+void RotationTimeChangeUi::updateConfig()
+{
+  if (!tf_buffer_.canTransform(gimbal_reference_frame_, chassis_reference_frame_, ros::Time(0)))
+    return;
+  try
+  {
+    int angle;
+    double roll, pitch, yaw;
+    quatToRPY(
+        tf_buffer_.lookupTransform(chassis_reference_frame_, gimbal_reference_frame_, ros::Time(0)).transform.rotation,
+        roll, pitch, yaw);
+    angle = static_cast<int>(yaw * 180 / M_PI);
+
+    graph_->setStartAngle((angle - arc_scale_ / 2) % 360 < 0 ? (angle - arc_scale_ / 2) % 360 + 360 :
+                                                               (angle - arc_scale_ / 2) % 360);
+    graph_->setEndAngle((angle + arc_scale_ / 2) % 360 < 0 ? (angle + arc_scale_ / 2) % 360 + 360 :
+                                                             (angle + arc_scale_ / 2) % 360);
+  }
+  catch (tf2::TransformException& ex)
+  {
+    ROS_WARN("%s", ex.what());
+  }
+}
+
 void LaneLineTimeChangeGroupUi::updateConfig()
 {
   double spacing_x_a = robot_radius_ * screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) /

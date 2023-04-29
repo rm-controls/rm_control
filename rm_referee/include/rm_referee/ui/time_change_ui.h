@@ -85,6 +85,37 @@ private:
   uint8_t dart_launch_opening_status_;
 };
 
+class RotationTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit RotationTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : TimeChangeUi(rpc_value, base, "rotation")
+  {
+    if (rpc_value.hasMember("data"))
+    {
+      XmlRpc::XmlRpcValue data = rpc_value["data"];
+      try
+      {
+        arc_scale_ = static_cast<int>(data["scale"]);
+        gimbal_reference_frame_ = static_cast<std::string>(data["gimbal_reference_frame"]);
+        chassis_reference_frame_ = static_cast<std::string>(data["chassis_reference_frame"]);
+      }
+      catch (XmlRpc::XmlRpcException& e)
+      {
+        ROS_FATAL_STREAM("Exception raised by XmlRpc while reading the "
+                         << "configuration: " << e.getMessage() << ".\n"
+                         << "Please check configuration is exit");
+      }
+    }
+    else
+      ROS_WARN("RotationTimeChangeUi config 's member 'data' not defined.");
+  };
+
+private:
+  void updateConfig() override;
+  int arc_scale_;
+  std::string gimbal_reference_frame_, chassis_reference_frame_;
+};
+
 class LaneLineTimeChangeGroupUi : public TimeChangeGroupUi
 {
 public:
@@ -100,14 +131,14 @@ public:
       surface_coefficient_ = data["surface_coefficient"];
     }
     else
-      ROS_WARN("LaneLineUi config 's member 'data' not defined.");
+      ROS_WARN("LaneLineTimeChangeGroupUi config 's member 'data' not defined.");
 
     if (rpc_value.hasMember("reference_joint"))
     {
       reference_joint_ = static_cast<std::string>(rpc_value["reference_joint"]);
     }
     else
-      ROS_WARN("LaneLineUi config 's member 'reference_joint' not defined.");
+      ROS_WARN("LaneLineTimeChangeGroupUi config 's member 'reference_joint' not defined.");
 
     graph_vector_.insert(
         std::pair<std::string, Graph*>(graph_name_ + "_left", new Graph(rpc_value["config"], base_, id_++)));

@@ -13,7 +13,6 @@ class Graph
 {
 public:
   explicit Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id);
-  explicit Graph(Base& base);
   void updatePosition(int index);
   void setOperation(const rm_referee::GraphOperation& operation)
   {
@@ -55,6 +54,16 @@ public:
   void setStartY(int start_y)
   {
     config_.start_y_ = start_y;
+  }
+  void setStartAngle(int start_angle)
+  {
+    if (0 <= start_angle && start_angle <= 360)
+      config_.start_angle_ = start_angle;
+  }
+  void setEndAngle(int end_angle)
+  {
+    if (0 <= end_angle && end_angle <= 360)
+      config_.end_angle_ = end_angle;
   }
   bool isRepeated()
   {
