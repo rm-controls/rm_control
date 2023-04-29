@@ -71,7 +71,7 @@ public:
   EffortTimeChangeUi* effort_time_change_ui_{};
   ProgressTimeChangeUi* progress_time_change_ui_{};
   DartStatusTimeChangeUi* dart_status_time_change_ui_{};
-  LaneLineTimeChangeUi* lane_line_time_change_ui_{};
+  LaneLineTimeChangeGroupUi* lane_line_time_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
@@ -82,7 +82,6 @@ public:
   ros::Timer add_ui_timer_;
   int add_ui_times_ = 0;
   bool add_ui_flag_ = false;
-  Graph* interactive_data_sender_;
   ros::NodeHandle nh_;
 };
 }  // namespace rm_referee

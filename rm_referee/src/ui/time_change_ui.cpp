@@ -6,27 +6,35 @@
 
 namespace rm_referee
 {
-void TimeChangeUi::display(const ros::Time& time)
+void TimeChangeUi::update()
 {
+  updateConfig();
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  graph_->display(time);
-  graph_->sendUi(ros::Time::now());
+  UiBase::display(ros::Time::now());
+}
+
+void TimeChangeGroupUi::update()
+{
+  updateConfig();
+  for (auto graph : graph_vector_)
+    graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
+  for (auto character : character_vector_)
+    character.second->setOperation(rm_referee::GraphOperation::UPDATE);
+  display(ros::Time::now());
 }
 
 void CapacitorTimeChangeUi::add()
 {
   if (cap_power_ != 0.)
-  {
     graph_->setOperation(rm_referee::GraphOperation::ADD);
-    graph_->display(true);
-    graph_->sendUi(ros::Time::now());
-  }
+  UiBase::display(false);
 }
 
-void CapacitorTimeChangeUi::display(const ros::Time& time)
+void CapacitorTimeChangeUi::update()
 {
   updateConfig();
-  TimeChangeUi::display(time);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  UiBase::display();
 }
 
 void CapacitorTimeChangeUi::updateConfig()
@@ -51,13 +59,7 @@ void CapacitorTimeChangeUi::updateConfig()
 void CapacitorTimeChangeUi::updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time)
 {
   cap_power_ = data.cap_power;
-  display(time);
-}
-
-void EffortTimeChangeUi::display(const ros::Time& time)
-{
-  updateConfig();
-  TimeChangeUi::display(time);
+  update();
 }
 
 void EffortTimeChangeUi::updateConfig()
@@ -71,7 +73,6 @@ void EffortTimeChangeUi::updateConfig()
     graph_->setColor(rm_referee::GraphColor::GREEN);
   else
     graph_->setColor(rm_referee::GraphColor::YELLOW);
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
 void EffortTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
@@ -88,15 +89,9 @@ void EffortTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::Con
     {
       joint_effort_ = data->effort[max_index];
       joint_name_ = data->name[max_index];
-      display(time);
+      TimeChangeUi::update();
     }
   }
-}
-
-void ProgressTimeChangeUi::display(const ros::Time& time)
-{
-  updateConfig();
-  TimeChangeUi::display(time);
 }
 
 void ProgressTimeChangeUi::updateConfig()
@@ -107,7 +102,6 @@ void ProgressTimeChangeUi::updateConfig()
   else
     sprintf(data_str, " %.1f%%", finished_data_ / total_steps_ * 100.);
   graph_->setContent(data_str);
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
 void ProgressTimeChangeUi::updateEngineerUiData(const rm_msgs::EngineerUi::ConstPtr data,
@@ -115,13 +109,7 @@ void ProgressTimeChangeUi::updateEngineerUiData(const rm_msgs::EngineerUi::Const
 {
   total_steps_ = data->total_steps;
   finished_data_ = data->finished_step;
-  display(last_get_data_time);
-}
-
-void DartStatusTimeChangeUi::display(const ros::Time& time)
-{
-  updateConfig();
-  TimeChangeUi::display(time);
+  TimeChangeUi::update();
 }
 
 void DartStatusTimeChangeUi::updateConfig()
@@ -143,38 +131,26 @@ void DartStatusTimeChangeUi::updateConfig()
     graph_->setColor(rm_referee::GraphColor::GREEN);
   }
   graph_->setContent(data_str);
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 }
 
 void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data,
                                                  const ros::Time& last_get_data_time)
 {
   dart_launch_opening_status_ = data->dart_launch_opening_status;
-  display(last_get_data_time);
+  TimeChangeUi::update();
 }
 
-void LaneLineTimeChangeUi::add()
+void LaneLineTimeChangeGroupUi::sendUi(const ros::Time& time)
 {
-  graph_left_->setOperation(rm_referee::GraphOperation::ADD);
-  graph_left_->display(true);
-  graph_left_->sendUi(ros::Time::now());
-  graph_right_->setOperation(rm_referee::GraphOperation::ADD);
-  graph_right_->display(true);
-  graph_right_->sendUi(ros::Time::now());
-}
-void LaneLineTimeChangeUi::display(const ros::Time& time)
-{
-  updateConfig();
+  if (time - last_send_ < ros::Duration(0.05))
+    return;
+  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+    return;
 
-  graph_left_->setOperation(rm_referee::GraphOperation::UPDATE);
-  graph_left_->display(ros::Time::now());
-  graph_left_->sendUi(ros::Time::now());
-  graph_right_->setOperation(rm_referee::GraphOperation::UPDATE);
-  graph_right_->display(ros::Time::now());
-  graph_right_->sendUi(ros::Time::now());
+  sendDoubleGraph(time, lane_line_double_graph_.at(0), lane_line_double_graph_.at(1));
 }
 
-void LaneLineTimeChangeUi::updateConfig()
+void LaneLineTimeChangeGroupUi::updateConfig()
 {
   double spacing_x_a = robot_radius_ * screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) /
                        (cos(end_point_a_angle_ - pitch_angle_) * robot_height_ / sin(end_point_a_angle_)),
@@ -183,18 +159,29 @@ void LaneLineTimeChangeUi::updateConfig()
          spacing_y_a = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_a_angle_ - pitch_angle_),
          spacing_y_b = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_b_angle_ - pitch_angle_);
 
-  graph_left_->setStartX(screen_x_ / 2 - spacing_x_a);
-  graph_left_->setStartY(screen_y_ / 2 - spacing_y_a);
-  graph_left_->setEndX(screen_x_ / 2 - spacing_x_b * surface_coefficient_);
-  graph_left_->setEndY(screen_y_ / 2 - spacing_y_b);
+  if (spacing_x_b < 0)
+    return;
 
-  graph_right_->setStartX(screen_x_ / 2 + spacing_x_a);
-  graph_right_->setStartY(screen_y_ / 2 - spacing_y_a);
-  graph_right_->setEndX(screen_x_ / 2 + spacing_x_b * surface_coefficient_);
-  graph_right_->setEndY(screen_y_ / 2 - spacing_y_b);
+  for (auto it : graph_vector_)
+  {
+    if (it.first == "lane_line_left")
+    {
+      it.second->setStartX(screen_x_ / 2 - spacing_x_a);
+      it.second->setStartY(screen_y_ / 2 - spacing_y_a);
+      it.second->setEndX(screen_x_ / 2 - spacing_x_b * surface_coefficient_);
+      it.second->setEndY(screen_y_ / 2 - spacing_y_b);
+    }
+    else if (it.first == "lane_line_right")
+    {
+      it.second->setStartX(screen_x_ / 2 + spacing_x_a);
+      it.second->setStartY(screen_y_ / 2 - spacing_y_a);
+      it.second->setEndX(screen_x_ / 2 + spacing_x_b * surface_coefficient_);
+      it.second->setEndY(screen_y_ / 2 - spacing_y_b);
+    }
+  }
 }
 
-void LaneLineTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
+void LaneLineTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
   for (unsigned int i = 0; i < data->name.size(); i++)
     if (data->name[i] == reference_joint_)
@@ -202,6 +189,6 @@ void LaneLineTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::C
 
   end_point_a_angle_ = camera_range_ / 2 + pitch_angle_;
   end_point_b_angle_ = 0.6 * (0.25 + pitch_angle_);
-  display(time);
+  TimeChangeGroupUi::update();
 }
 }  // namespace rm_referee

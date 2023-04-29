@@ -10,8 +10,7 @@ void CoverFlashUi::display(const ros::Time& time)
 {
   if (!cover_state_)
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  graph_->display(time, cover_state_, true);
-  graph_->sendUi(time);
+  UiBase::display(time, cover_state_, true);
 }
 
 void CoverFlashUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data,
@@ -25,8 +24,7 @@ void SpinFlashUi::display(const ros::Time& time)
 {
   if (chassis_mode_ != rm_msgs::ChassisCmd::RAW)
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  graph_->display(time, chassis_mode_ == rm_msgs::ChassisCmd::RAW);
-  graph_->sendUi(time);
+  UiBase::display(time, chassis_mode_ == rm_msgs::ChassisCmd::RAW);
 }
 
 void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_data_time)

@@ -62,7 +62,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "dart_status")
         dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "lane_line")
-        lane_line_time_change_ui_ = new LaneLineTimeChangeUi(rpc_value[i], base_);
+        lane_line_time_change_ui_ = new LaneLineTimeChangeGroupUi(rpc_value[i], base_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -118,7 +118,7 @@ void RefereeBase::addUi()
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
 {
   if (fixed_ui_)
-    fixed_ui_->display();
+    fixed_ui_->update();
 }
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {

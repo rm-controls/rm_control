@@ -11,7 +11,7 @@ namespace rm_referee
 class FlashUi : public UiBase
 {
 public:
-  explicit FlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name) : UiBase(base)
+  explicit FlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name) : UiBase(rpc_value, base)
   {
     graph_ = new Graph(rpc_value["config"], base_, id_++);
   }
