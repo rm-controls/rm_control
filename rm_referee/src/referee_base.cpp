@@ -28,6 +28,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
   RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
+  RefereeBase::track_sub_ = nh.subscribe<rm_msgs::TrackData>("/track", 10, &RefereeBase::trackCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
@@ -46,6 +47,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "target")
         target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "target_scale")
+        target_scale_trigger_change_ui_ = new TargetScaleTriggerChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "camera")
         camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
     }
@@ -101,6 +104,8 @@ void RefereeBase::addUi()
     shooter_trigger_change_ui_->add();
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->add();
+  if (target_scale_trigger_change_ui_)
+    target_scale_trigger_change_ui_->add();
   if (camera_trigger_change_ui_)
     camera_trigger_change_ui_->add();
   if (fixed_ui_)
@@ -226,5 +231,10 @@ void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
 {
   if (camera_trigger_change_ui_ && !is_adding_)
     camera_trigger_change_ui_->updateCameraName(data);
+}
+void RefereeBase::trackCallBack(const rm_msgs::TrackDataConstPtr& data)
+{
+  if (target_scale_trigger_change_ui_)
+    target_scale_trigger_change_ui_->updateTrackID(data->id);
 }
 }  // namespace rm_referee

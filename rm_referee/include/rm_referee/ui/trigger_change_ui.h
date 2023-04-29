@@ -105,6 +105,21 @@ private:
   uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
 };
 
+class TargetScaleTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit TargetScaleTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "target_scale")
+  {
+  }
+  void updateTrackID(int id);
+
+private:
+  void update() override;
+  void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
+  int track_id_;
+};
+
 class PolygonTriggerChangeGroupUi : public GroupUiBase
 {
 public:
