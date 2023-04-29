@@ -24,7 +24,7 @@ void SpinFlashUi::display(const ros::Time& time)
 {
   if (chassis_mode_ != rm_msgs::ChassisCmd::RAW)
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  UiBase::display(time, chassis_mode_ == rm_msgs::ChassisCmd::RAW);
+  UiBase::display(time, chassis_mode_ != rm_msgs::ChassisCmd::RAW, true);
 }
 
 void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_data_time)

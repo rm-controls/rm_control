@@ -21,8 +21,7 @@ void ChassisTriggerChangeUi::update()
                  power_limit_state_ == rm_common::PowerLimit::CHARGE);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 
-  if (!graph_->isRepeated())
-    displayTwice();
+  displayTwice();
 }
 
 void ChassisTriggerChangeUi::displayInCapacity()
@@ -32,8 +31,7 @@ void ChassisTriggerChangeUi::displayInCapacity()
     updateConfig(254, 0);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 
-  if (!graph_->isRepeated())
-    displayTwice();
+  displayTwice();
 }
 
 void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)

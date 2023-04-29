@@ -110,9 +110,9 @@ public:
       ROS_WARN("LaneLineUi config 's member 'reference_joint' not defined.");
 
     graph_vector_.insert(
-        std::pair<std::string, Graph*>(graph_name_ + "left", new Graph(rpc_value["config"], base_, id_++)));
+        std::pair<std::string, Graph*>(graph_name_ + "_left", new Graph(rpc_value["config"], base_, id_++)));
     graph_vector_.insert(
-        std::pair<std::string, Graph*>(graph_name_ + "right", new Graph(rpc_value["config"], base_, id_++)));
+        std::pair<std::string, Graph*>(graph_name_ + "_right", new Graph(rpc_value["config"], base_, id_++)));
 
     for (auto it : graph_vector_)
       lane_line_double_graph_.push_back(it.second);

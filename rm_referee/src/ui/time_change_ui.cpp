@@ -34,7 +34,7 @@ void CapacitorTimeChangeUi::update()
 {
   updateConfig();
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  UiBase::display();
+  display(ros::Time::now());
 }
 
 void CapacitorTimeChangeUi::updateConfig()

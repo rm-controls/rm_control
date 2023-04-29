@@ -81,7 +81,7 @@ public:
   Base& base_;
   ros::Timer add_ui_timer_;
   int add_ui_times_ = 0;
-  bool add_ui_flag_ = false;
+  bool add_ui_flag_ = false, is_adding_ = false;
   ros::NodeHandle nh_;
 };
 }  // namespace rm_referee

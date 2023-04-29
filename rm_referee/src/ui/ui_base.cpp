@@ -10,7 +10,7 @@ int UiBase::id_(2);
 void UiBase::add()
 {
   graph_->setOperation(rm_referee::GraphOperation::ADD);
-  display(false);
+  displayTwice(false);
 }
 
 void UiBase::update()
@@ -22,7 +22,7 @@ void UiBase::update()
 void UiBase::erasure()
 {
   graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  display(false);
+  displayTwice(false);
 }
 
 void GroupUiBase::add()
@@ -31,7 +31,7 @@ void GroupUiBase::add()
     graph.second->setOperation(rm_referee::GraphOperation::ADD);
   for (auto character : character_vector_)
     character.second->setOperation(rm_referee::GraphOperation::ADD);
-  display(false);
+  displayTwice(false);
 }
 
 void GroupUiBase::update()
@@ -49,7 +49,7 @@ void GroupUiBase::erasure()
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
   for (auto character : character_vector_)
     character.second->setOperation(rm_referee::GraphOperation::DELETE);
-  display(false);
+  displayTwice(false);
 }
 
 void UiBase::display(bool check_repeat)
@@ -59,15 +59,16 @@ void UiBase::display(bool check_repeat)
       return;
   graph_->updateLastConfig();
   sendUi(ros::Time::now());
-  last_send_ = ros::Time::now();
 }
 
-void UiBase::displayTwice()
+void UiBase::displayTwice(bool check_repeat)
 {
+  if (check_repeat)
+    if (graph_->isRepeated())
+      return;
   graph_->updateLastConfig();
   for (int i = 0; i < 2; ++i)
     sendUi(ros::Time::now());
-  last_send_ = ros::Time::now();
 }
 
 void UiBase::display(const ros::Time& time)
@@ -79,25 +80,22 @@ void UiBase::display(const ros::Time& time)
 
 void UiBase::display(const ros::Time& time, bool state, bool once)
 {
-  static ros::Time once_flag_time;
   if (once)
   {
     if (state)
-    {
-      once_flag_time = time;
       graph_->setOperation(rm_referee::GraphOperation::ADD);
-    }
-    if (time - once_flag_time > delay_)
+    else
       graph_->setOperation(rm_referee::GraphOperation::DELETE);
   }
   else if (state && time - last_send_ > delay_)
   {
+    // todo: has problem in this case
+    ROS_INFO("%f  %.3f", last_send_.toSec(), delay_.toSec());
     graph_->setOperation(graph_->getOperation() == rm_referee::GraphOperation::ADD ?
                              rm_referee::GraphOperation::DELETE :
                              rm_referee::GraphOperation::ADD);
-    last_send_ = time;
   }
-  display();
+  displayTwice();
 }
 
 void UiBase::sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data)
@@ -142,7 +140,6 @@ void UiBase::sendCharacter(const ros::Time& time, rm_referee::Graph* graph)
   tx_data.header_.receiver_id_ = base_.client_id_;
   tx_data.config_ = graph->getConfig();
 
-  tx_data.header_.data_cmd_id_ = rm_referee::DataCmdId::CLIENT_CHARACTER_CMD;
   for (int i = 0; i < 30; i++)
   {
     if (i < static_cast<int>(characters.size()))
@@ -150,6 +147,7 @@ void UiBase::sendCharacter(const ros::Time& time, rm_referee::Graph* graph)
     else
       tx_data.content_[i] = ' ';
   }
+  tx_data.header_.data_cmd_id_ = rm_referee::DataCmdId::CLIENT_CHARACTER_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(time, data_len);
 }
@@ -162,7 +160,7 @@ void UiBase::sendSingleGraph(const ros::Time& time, Graph* graph)
 
   tx_data.header_.sender_id_ = base_.robot_id_;
   tx_data.header_.receiver_id_ = base_.client_id_;
-  tx_data.config_ = graph_->getConfig();
+  tx_data.config_ = graph->getConfig();
 
   tx_data.header_.data_cmd_id_ = rm_referee::DataCmdId::CLIENT_GRAPH_SINGLE_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
@@ -189,18 +187,29 @@ void GroupUiBase::display(bool check_repeat)
   for (auto it : character_vector_)
     it.second->updateLastConfig();
   sendUi(ros::Time::now());
-  last_send_ = ros::Time::now();
 }
 
-void GroupUiBase::displayTwice()
+void GroupUiBase::displayTwice(bool check_repeat)
 {
+  if (check_repeat)
+  {
+    bool is_repeat = true;
+    for (auto it : graph_vector_)
+      if (!it.second->isRepeated())
+        is_repeat = false;
+    for (auto it : character_vector_)
+      if (!it.second->isRepeated())
+        is_repeat = false;
+    if (is_repeat)
+      return;
+  }
+
   for (auto it : graph_vector_)
     it.second->updateLastConfig();
   for (auto it : character_vector_)
     it.second->updateLastConfig();
   for (int i = 0; i < 2; i++)
     sendUi(ros::Time::now());
-  last_send_ = ros::Time::now();
 }
 
 void GroupUiBase::display(const ros::Time& time)

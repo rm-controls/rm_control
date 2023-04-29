@@ -18,8 +18,9 @@ class UiBase
 public:
   explicit UiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base) : base_(base), tf_listener_(tf_buffer_)
   {
-    if (rpc_value["config"].hasMember("delay"))
-      delay_ = ros::Duration(static_cast<double>(rpc_value["config"]["delay"]));
+    if (rpc_value.hasMember("config"))
+      if (rpc_value["config"].hasMember("delay"))
+        delay_ = ros::Duration(static_cast<double>(rpc_value["config"]["delay"]));
   };
   ~UiBase() = default;
   virtual void add();
@@ -37,7 +38,7 @@ public:
   void clearTxBuffer();
 
   virtual void display(bool check_repeat = true);
-  virtual void displayTwice();
+  virtual void displayTwice(bool check_repeat = true);
   virtual void display(const ros::Time& time);
   void display(const ros::Time& time, bool state, bool once = false);
   void pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const;
@@ -72,7 +73,7 @@ public:
                       Graph* graph5, Graph* graph6);
   void display(bool check_repeat = true) override;
   void display(const ros::Time& time) override;
-  void displayTwice() override;
+  void displayTwice(bool check_repeat = true) override;
 
 protected:
   std::map<std::string, Graph*> graph_vector_;
