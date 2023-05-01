@@ -12,15 +12,15 @@ namespace rm_referee
 class TriggerChangeUi : public UiBase
 {
 public:
-  explicit TriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name) : UiBase(base)
+  explicit TriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name)
+    : UiBase(rpc_value, base)
   {
     if (graph_name == "chassis")
       graph_ = new Graph(rpc_value["config"], base_, 1);
     else
       graph_ = new Graph(rpc_value["config"], base_, id_++);
-  }
+  };
   virtual void setContent(const std::string& content);
-  virtual void display();
   virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
 };
 class ChassisTriggerChangeUi : public TriggerChangeUi
@@ -40,7 +40,7 @@ public:
   void updateCapacityData(const rm_msgs::CapacityData data);
 
 private:
-  void display() override;
+  void update() override;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
   void displayInCapacity();
   std::string getChassisState(uint8_t mode);
@@ -59,7 +59,7 @@ public:
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
 
 private:
-  void display() override;
+  void update() override;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
   std::string getShooterState(uint8_t mode);
   uint8_t shooter_mode_, shoot_frequency_;
@@ -77,7 +77,7 @@ public:
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
 
 private:
-  void display() override;
+  void update() override;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
   std::string getGimbalState(uint8_t mode);
   uint8_t gimbal_mode_, gimbal_eject_;
@@ -99,16 +99,31 @@ public:
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
 
 private:
-  void display() override;
+  void update() override;
   void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
   std::string getTargetState(uint8_t target, uint8_t armor_target);
   uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
 };
 
+class TargetScaleTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit TargetScaleTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "target_scale")
+  {
+  }
+  void updateTrackID(int id);
+
+private:
+  void update() override;
+  void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
+  int track_id_;
+};
+
 class PolygonTriggerChangeGroupUi : public GroupUiBase
 {
 public:
-  explicit PolygonTriggerChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : GroupUiBase(base)
+  explicit PolygonTriggerChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : GroupUiBase(rpc_value, base)
   {
     ROS_ASSERT(rpc_value.hasMember("points"));
     XmlRpc::XmlRpcValue config;
@@ -147,7 +162,7 @@ public:
           std::make_pair<std::string, Graph*>("graph_" + std::to_string(i), new Graph(config, base_, id_++)));
     }
   }
-  virtual void display();
+  void update() override;
   virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
 };
 
@@ -170,7 +185,7 @@ public:
   void updateCameraName(const std_msgs::StringConstPtr& data);
 
 private:
-  void display() override;
+  void update() override;
   void updateConfig(uint8_t main_mode = 0, bool main_flag = false, uint8_t sub_mode = 0, bool sub_flag = false) override;
   std::string current_camera_{}, camera1_name_{}, camera2_name_{};
 };

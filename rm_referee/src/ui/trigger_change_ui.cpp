@@ -12,14 +12,7 @@ void TriggerChangeUi::setContent(const std::string& content)
   display();
 }
 
-void TriggerChangeUi::display()
-{
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  graph_->display();
-  graph_->sendUi(ros::Time::now());
-}
-
-void ChassisTriggerChangeUi::display()
+void ChassisTriggerChangeUi::update()
 {
   if (s_l_ == rm_msgs::DbusData::MID && s_r_ == rm_msgs::DbusData::UP)
     updateConfig(chassis_mode_, false, 1, false);
@@ -27,8 +20,8 @@ void ChassisTriggerChangeUi::display()
     updateConfig(chassis_mode_, power_limit_state_ == rm_common::PowerLimit::BURST, 0,
                  power_limit_state_ == rm_common::PowerLimit::CHARGE);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  graph_->displayTwice(true);
-  graph_->sendUi(ros::Time::now());
+
+  displayTwice();
 }
 
 void ChassisTriggerChangeUi::displayInCapacity()
@@ -37,8 +30,8 @@ void ChassisTriggerChangeUi::displayInCapacity()
       base_.robot_id_ != rm_referee::RobotId::BLUE_ENGINEER)
     updateConfig(254, 0);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  graph_->displayTwice(true);
-  graph_->sendUi(ros::Time::now());
+
+  displayTwice();
 }
 
 void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -75,7 +68,7 @@ std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
 void ChassisTriggerChangeUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data)
 {
   chassis_mode_ = data->mode;
-  display();
+  update();
 }
 
 void ChassisTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
@@ -97,9 +90,10 @@ void ChassisTriggerChangeUi::updateCapacityData(const rm_msgs::CapacityData data
   displayInCapacity();
 }
 
-void ShooterTriggerChangeUi::display()
+void ShooterTriggerChangeUi::update()
 {
   updateConfig(shooter_mode_, 0, shoot_frequency_, false);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   TriggerChangeUi::display();
 }
 
@@ -131,7 +125,7 @@ std::string ShooterTriggerChangeUi::getShooterState(uint8_t state)
 void ShooterTriggerChangeUi::updateShootStateData(const rm_msgs::ShootState::ConstPtr& data)
 {
   shooter_mode_ = data->state;
-  display();
+  update();
 }
 
 void ShooterTriggerChangeUi::updateManualCmdData(rm_msgs::ManualToReferee::ConstPtr data)
@@ -139,12 +133,12 @@ void ShooterTriggerChangeUi::updateManualCmdData(rm_msgs::ManualToReferee::Const
   shoot_frequency_ = data->shoot_frequency;
 }
 
-void GimbalTriggerChangeUi::display()
+void GimbalTriggerChangeUi::update()
 {
   updateConfig(gimbal_mode_, gimbal_eject_);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  graph_->displayTwice(true);
-  graph_->sendUi(ros::Time::now());
+
+  displayTwice();
 }
 
 void GimbalTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -171,7 +165,7 @@ std::string GimbalTriggerChangeUi::getGimbalState(uint8_t mode)
 void GimbalTriggerChangeUi::updateGimbalCmdData(const rm_msgs::GimbalCmd::ConstPtr data)
 {
   gimbal_mode_ = data->mode;
-  display();
+  update();
 }
 
 void GimbalTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
@@ -179,13 +173,14 @@ void GimbalTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::
   gimbal_eject_ = data->gimbal_eject;
 }
 
-void TargetTriggerChangeUi::display()
+void TargetTriggerChangeUi::update()
 {
   if (base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && base_.robot_id_ != rm_referee::RobotId::RED_HERO)
     updateConfig(det_target_, shoot_frequency_ == rm_common::HeatLimit::BURST, det_armor_target_,
                  det_color_ == rm_msgs::StatusChangeRequest::RED);
   else
     updateConfig(gimbal_eject_, shoot_frequency_, det_armor_target_, det_color_ == rm_msgs::StatusChangeRequest::RED);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   TriggerChangeUi::display();
 }
 
@@ -238,23 +233,41 @@ void TargetTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::
 
 void TargetTriggerChangeUi::updateShootStateData(const rm_msgs::ShootState::ConstPtr& data)
 {
-  display();
+  update();
 }
 
-void PolygonTriggerChangeGroupUi::display()
+void TargetScaleTriggerChangeUi::update()
+{
+  updateConfig(track_id_ == 0, false);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  displayTwice();
+}
+
+void TargetScaleTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
+{
+  if (main_mode)
+    graph_->setColor(rm_referee::GraphColor::WHITE);
+  else
+    graph_->setColor(rm_referee::GraphColor::GREEN);
+}
+
+void TargetScaleTriggerChangeUi::updateTrackID(int id)
+{
+  track_id_ = id;
+  update();
+}
+
+void PolygonTriggerChangeGroupUi::update()
 {
   for (auto graph : graph_vector_)
-  {
     graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
-    graph.second->display();
-    graph.second->sendUi(ros::Time::now());
-  }
+  display();
 }
 
 void CameraTriggerChangeUi::updateCameraName(const std_msgs::StringConstPtr& data)
 {
   current_camera_ = data->data;
-  display();
+  update();
 }
 
 void CameraTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -267,11 +280,11 @@ void CameraTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint
   else
     graph_->setColor(rm_referee::GraphColor::WHITE);
 }
-void CameraTriggerChangeUi::display()
+
+void CameraTriggerChangeUi::update()
 {
   updateConfig();
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  TriggerChangeUi::display();
-  graph_->sendUi(ros::Time::now());
+  display();
 }
 }  // namespace rm_referee

@@ -384,7 +384,31 @@ typedef struct
   InteractiveDataHeader header_;
   GraphConfig config_;
   uint8_t content_[30];
-} __packed GraphData;
+} __packed CharacterData;
+
+typedef struct
+{
+  InteractiveDataHeader header_;
+  GraphConfig config_;
+} __packed SingleGraphData;
+
+typedef struct
+{
+  InteractiveDataHeader header_;
+  GraphConfig config_[2];
+} __packed DoubleGraphData;
+
+typedef struct
+{
+  InteractiveDataHeader header_;
+  GraphConfig config_[5];
+} __packed FiveGraphData;
+
+typedef struct
+{
+  InteractiveDataHeader header_;
+  GraphConfig config_[7];
+} __packed SevenGraphData;
 
 typedef struct
 {
