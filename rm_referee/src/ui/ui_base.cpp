@@ -221,8 +221,6 @@ void GroupUiBase::display(const ros::Time& time)
 
 void GroupUiBase::sendUi(const ros::Time& time)
 {
-  if (time - last_send_ < ros::Duration(0.05))
-    return;
   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
 

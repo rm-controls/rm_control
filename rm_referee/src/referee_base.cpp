@@ -83,7 +83,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     }
   }
 
-  add_ui_timer_ = nh.createTimer(ros::Duration(0.025), std::bind(&RefereeBase::addUi, this), false, false);
+  add_ui_timer_ = nh.createTimer(ros::Duration(0.05), std::bind(&RefereeBase::addUi, this), false, false);
 }
 void RefereeBase::addUi()
 {
