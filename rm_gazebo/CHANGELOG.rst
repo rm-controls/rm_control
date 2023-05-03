@@ -2,8 +2,8 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.19 (2023-05-03)
+-------------------
 * Merge branch 'master' into multi_dof_controller
   # Conflicts:
   #	rm_common/include/rm_common/decision/command_sender.h

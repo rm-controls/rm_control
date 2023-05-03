@@ -2,8 +2,8 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.19 (2023-05-03)
+-------------------
 * Merge pull request `#142 <https://github.com/ye-luo-xi-tui/rm_control/issues/142>`_ from 1moule/master
   Modify the radio frequency in the burst mode
 * Merge branch 'master' into new_protocol

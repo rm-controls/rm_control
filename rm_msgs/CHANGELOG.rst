@@ -2,8 +2,8 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.19 (2023-05-03)
+-------------------
 * Merge pull request `#143 <https://github.com/ye-luo-xi-tui/rm_control/issues/143>`_ from rm-controls/new_protocol
   Merge branch 'new protocol' into 'master'
 * Merge branch 'master' into new_protocol
