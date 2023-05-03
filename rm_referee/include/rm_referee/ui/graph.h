@@ -20,7 +20,7 @@ public:
   }
   int getOperation()
   {
-    return config_.operate_type_;
+    return config_.operate_type;
   }
   rm_referee::GraphConfig getConfig()
   {
@@ -58,12 +58,12 @@ public:
   void setStartAngle(int start_angle)
   {
     if (0 <= start_angle && start_angle <= 360)
-      config_.start_angle_ = start_angle;
+      config_.start_angle = start_angle;
   }
   void setEndAngle(int end_angle)
   {
     if (0 <= end_angle && end_angle <= 360)
-      config_.end_angle_ = end_angle;
+      config_.end_angle = end_angle;
   }
   bool isRepeated()
   {
@@ -72,7 +72,7 @@ public:
   void updateLastConfig()
   {
     if (!title_.empty() && !content_.empty())
-      config_.end_angle_ = static_cast<int>((title_ + content_).size());
+      config_.end_angle = static_cast<int>((title_ + content_).size());
     last_content_ = content_;
     last_title_ = title_;
     last_config_ = config_;
