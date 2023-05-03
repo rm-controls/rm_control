@@ -6,6 +6,8 @@ uint8 RED_STANDARD_5 = 5
 uint8 RED_AERIAL = 6
 uint8 RED_SENTRY = 7
 uint8 RED_RADAR = 9
+uint8 RED_OUTPUT = 10
+uint8 RED_BASE = 11
 uint8 BLUE_HERO = 101
 uint8 BLUE_ENGINEER = 102
 uint8 BLUE_STANDARD_3 = 103
@@ -14,6 +16,8 @@ uint8 BLUE_STANDARD_5 = 105
 uint8 BLUE_AERIAL = 106
 uint8 BLUE_SENTRY = 107
 uint8 BLUE_RADAR = 109
+uint8 BLUE_OUTPUT = 110
+uint8 BLUE_BASE = 111
 
 uint8 robot_id
 uint8 robot_level

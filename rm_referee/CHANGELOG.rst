@@ -2,6 +2,67 @@
 Changelog for package rm_referee
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.19 (2023-05-03)
+-------------------
+* Fix problem generate by merge conflict.
+* Merge pull request `#143 <https://github.com/ye-luo-xi-tui/rm_control/issues/143>`_ from rm-controls/new_protocol
+  Merge branch 'new protocol' into 'master'
+* Merge branch 'master' into new_protocol
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#141 <https://github.com/ye-luo-xi-tui/rm_control/issues/141>`_ from Aung-xiao/master
+  Publish hp msgs in game_robot_state topic
+* Merge pull request `#138 <https://github.com/ye-luo-xi-tui/rm_control/issues/138>`_ from chenhuiYu00/fix_ui_param
+  Fixed the issue that referee must set ui param.
+* add hp msgs
+* Fixed ui param get.
+* Merge pull request `#134 <https://github.com/ye-luo-xi-tui/rm_control/issues/134>`_ from NaHCO3bc/new_protocol
+  Modify the publisher name.
+* Modify the publisher name.
+* Merge pull request `#131 <https://github.com/ye-luo-xi-tui/rm_control/issues/131>`_ from NaHCO3bc/new_protocol
+  Add a publisher to send target position from serial.
+* Merge branch 'master' into one_click_turn_cmd_sender
+* Add a publisher to send target position from serial.
+* Merge pull request `#130 <https://github.com/ye-luo-xi-tui/rm_control/issues/130>`_ from chenhuiYu00/dev/serial_update
+  Update server protocl
+* Update code style in protocol struct.
+* Merge pull request `#125 <https://github.com/ye-luo-xi-tui/rm_control/issues/125>`_ from chenhuiYu00/dev/circle_add
+  Add circle in ui add.
+* Update serial protocol.
+* Merge pull request `#114 <https://github.com/ye-luo-xi-tui/rm_control/issues/114>`_ from 1moule/switch_camera_command_sender
+  Add ui for switching cameras
+* Modify the logic of getting the camera name parameter.
+* Merge branch 'master' into switch_camera_command_sender
+* Update official serial protocol.
+* Delete unused value.
+* Merge branch 'master' into dev/circle_add
+* Raise add frequence.
+* Merge pull request `#123 <https://github.com/ye-luo-xi-tui/rm_control/issues/123>`_ from ljq-lv/modify
+  Modified the msg of engineer  to 'EngineerUi'
+* Merge branch 'master' into dev/circle_add
+* Use timer in ui add.
+* Merge branch 'master' into multi_dof_controller
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+  #	rm_msgs/CMakeLists.txt
+* Merge pull request `#124 <https://github.com/ye-luo-xi-tui/rm_control/issues/124>`_ from chenhuiYu00/delete_armor
+  Delete armor flash ui.
+* Delete armor flash ui.
+* Add circle in ui add.
+* Merge branch 'master' into one_click_turn_cmd_sender
+* Modify the logic of getting the camera name from the configuration file.
+* Modified the msg of engineer  to 'EngineerUi'
+* Merge branch 'master' into switch_camera_command_sender
+  # Conflicts:
+  #	rm_referee/include/rm_referee/ui/trigger_change_ui.h
+  #	rm_referee/src/ui/trigger_change_ui.cpp
+* Merge pull request `#120 <https://github.com/ye-luo-xi-tui/rm_control/issues/120>`_ from ye-luo-xi-tui/master
+  0.1.18
+* Modified to get the camera name from the configuration file.
+* Calling display function in updateCameraName function and modefy function parameters of setColor function.
+* Modefy ui name and add updateConfig function.
+* Add ui for switch camera and modefy command sender.
+* Contributors: 1moule, Aung-xiao, LSY, NaHCO3bc, ljq-lv, ye-luo-xi-tui, yezi, yuchen
+
 0.1.18 (2023-03-25)
 -------------------
 * Merge pull request `#113 <https://github.com/ye-luo-xi-tui/rm_control/issues/113>`_ from chenhuiYu00/dev/polygon_ui

@@ -16,7 +16,7 @@ public:
   void updatePosition(int index);
   void setOperation(const rm_referee::GraphOperation& operation)
   {
-    config_.operate_type_ = operation;
+    config_.operate_type = operation;
   }
   int getOperation()
   {
@@ -33,7 +33,7 @@ public:
 
   void setColor(const rm_referee::GraphColor& color)
   {
-    config_.color_ = color;
+    config_.color = color;
   }
   void setContent(const std::string& content)
   {
@@ -41,19 +41,19 @@ public:
   }
   void setEndX(int end_x)
   {
-    config_.end_x_ = end_x;
+    config_.end_x = end_x;
   }
   void setEndY(int end_y)
   {
-    config_.end_y_ = end_y;
+    config_.end_y = end_y;
   }
   void setStartX(int start_x)
   {
-    config_.start_x_ = start_x;
+    config_.start_x = start_x;
   }
   void setStartY(int start_y)
   {
-    config_.start_y_ = start_y;
+    config_.start_y = start_y;
   }
   void setStartAngle(int start_angle)
   {
