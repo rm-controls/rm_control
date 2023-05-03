@@ -2,6 +2,57 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#142 <https://github.com/ye-luo-xi-tui/rm_control/issues/142>`_ from 1moule/master
+  Modify the radio frequency in the burst mode
+* Merge branch 'master' into new_protocol
+* Merge branch 'rm-controls:master' into master
+* Modify the radio frequency in the burst mode.
+* Merge pull request `#139 <https://github.com/ye-luo-xi-tui/rm_control/issues/139>`_ from ye-luo-xi-tui/master
+  Add safe_speed_limit
+* Merge remote-tracking branch 'origin/master'
+* Fix format.
+* Merge branch 'rm-controls:master' into master
+* Add safe_speed_limit.
+* Merge pull request `#122 <https://github.com/ye-luo-xi-tui/rm_control/issues/122>`_ from L-SY/multi_dof_controller
+  Add MultiDofCommandSender for multi_dof_controller.
+* Change function name.
+* Change function name.
+* Merge pull request `#128 <https://github.com/ye-luo-xi-tui/rm_control/issues/128>`_ from chenhuiYu00/dev/fix_power_limit
+  Fixed bug in burst model
+* Merge pull request `#132 <https://github.com/ye-luo-xi-tui/rm_control/issues/132>`_ from 1moule/one_click_turn_cmd_sender
+  Add a function in gimbal command sender for U-turn
+* Merge branch 'master' into one_click_turn_cmd_sender
+* Merge branch 'master' into one_click_turn_cmd_sender
+* Merge pull request `#127 <https://github.com/ye-luo-xi-tui/rm_control/issues/127>`_ from Aung-xiao/power_limit_pr
+  Modify sentry's power limit
+* delete old sentry power limit
+* Fixed bug in burst model.
+* Merge branch 'master' into switch_camera_command_sender
+* modify sentry power limit
+* Merge pull request `#126 <https://github.com/ye-luo-xi-tui/rm_control/issues/126>`_ from NaHCO3bc/add_fun_in_heat_limit
+  Add two function to get data about cooling.
+* Merge branch 'master' into multi_dof_controller
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+  #	rm_msgs/CMakeLists.txt
+* Merge branch 'master' into one_click_turn_cmd_sender
+* Add two function to get data about cooling.
+* Merge branch 'master' into switch_camera_command_sender
+  # Conflicts:
+  #	rm_referee/include/rm_referee/ui/trigger_change_ui.h
+  #	rm_referee/src/ui/trigger_change_ui.cpp
+* Add multi_dof_commandsender.
+* Merge pull request `#120 <https://github.com/ye-luo-xi-tui/rm_control/issues/120>`_ from ye-luo-xi-tui/master
+  0.1.18
+* Added a function in gimbal command sender to set the point of direct mode.
+* Add multi_dof_command_sender.
+* Remove the modification about command sender on this branch.
+* Add ui for switch camera and modefy command sender.
+* Add a command sender for switching cameras.
+* Contributors: 1moule, Aung-xiao, LSY, NaHCO3bc, ye-luo-xi-tui, yezi, yuchen
+
 0.1.18 (2023-03-25)
 -------------------
 * Merge pull request `#119 <https://github.com/ye-luo-xi-tui/rm_control/issues/119>`_ from 1moule/fix_power_limit
