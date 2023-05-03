@@ -23,17 +23,6 @@ void TimeChangeGroupUi::update()
   display(ros::Time::now());
 }
 
-void TimeChangeGroupUi::display(const ros::Time& time)
-{
-  static auto it = graph_vector_.begin();
-  it->second->setOperation(rm_referee::GraphOperation::UPDATE);
-  it->second->display(time);
-  it->second->sendUi(ros::Time::now());
-  it++;
-  if (it == graph_vector_.end())
-    it = graph_vector_.begin();
-}
-
 void CapacitorTimeChangeUi::add()
 {
   if (cap_power_ != 0.)
@@ -153,8 +142,6 @@ void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::C
 
 void LaneLineTimeChangeGroupUi::sendUi(const ros::Time& time)
 {
-  if (time - last_send_ < ros::Duration(0.05))
-    return;
   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
 
@@ -229,10 +216,13 @@ void LaneLineTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointSta
   TimeChangeGroupUi::update();
 }
 
-void BalancePitchTimeChangeGroupUi::display(const ros::Time& time)
+void BalancePitchTimeChangeGroupUi::sendUi(const ros::Time& time)
 {
-  updateConfig();
-  TimeChangeGroupUi::display(time);
+  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+    return;
+
+  sendSingleGraph(time, balance_pitch_single_graph_.at(0));
+  sendDoubleGraph(time, balance_pitch_double_graph_.at(0), balance_pitch_double_graph_.at(1));
 }
 
 void BalancePitchTimeChangeGroupUi::updateConfig()
@@ -264,6 +254,6 @@ void BalancePitchTimeChangeGroupUi::calculatePointPosition(const rm_msgs::Balanc
   triangle_right_point_[0] = centre_point_[0] + length_ * sin(bottom_angle_ / 2 - data->theta);
   triangle_right_point_[1] = centre_point_[1] + length_ * cos(bottom_angle_ / 2 - data->theta);
 
-  display(time);
+  TimeChangeGroupUi::update();
 }
 }  // namespace rm_referee
