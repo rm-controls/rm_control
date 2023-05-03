@@ -2,6 +2,21 @@
 Changelog for package rm_dbus
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.19 (2023-05-03)
+-------------------
+* Merge branch 'master' into multi_dof_controller
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+  #	rm_msgs/CMakeLists.txt
+* Merge branch 'master' into one_click_turn_cmd_sender
+* Merge branch 'master' into switch_camera_command_sender
+  # Conflicts:
+  #	rm_referee/include/rm_referee/ui/trigger_change_ui.h
+  #	rm_referee/src/ui/trigger_change_ui.cpp
+* Merge pull request `#120 <https://github.com/ye-luo-xi-tui/rm_control/issues/120>`_ from ye-luo-xi-tui/master
+  0.1.18
+* Contributors: 1moule, LSY, ye-luo-xi-tui
+
 0.1.18 (2023-03-25)
 -------------------
 * Merge branch 'master' into dev/polygon_ui
