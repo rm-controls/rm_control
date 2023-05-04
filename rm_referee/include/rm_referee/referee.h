@@ -66,6 +66,7 @@ class Referee
 public:
   Referee(ros::NodeHandle& nh) : referee_ui_(nh, base_), last_get_data_time_(ros::Time::now())
   {
+    ROS_INFO("New serial protocol loading.");
     // pub
     super_capacitor_pub_ = nh.advertise<rm_msgs::SuperCapacitor>("super_capacitor", 1);
     game_robot_status_pub_ = nh.advertise<rm_msgs::GameRobotStatus>("game_robot_status", 1);
@@ -92,6 +93,10 @@ public:
         nh.advertise<rm_msgs::PowerManagementStatusData>("power_management_status_data", 1);
     power_management_error_data_pub_ =
         nh.advertise<rm_msgs::PowerManagementErrorData>("power_management_error_data", 1);
+    ROS_INFO("power_management_status_data_pub_topic: /rm_referee/power_management_status_data \n "
+             "power_management_error_data_pub_topic: /rm_referee/power_management_error_data");
+    ROS_INFO("Three INFO will be send if serial port is normal: Official serial data received && "
+             "PowerManagementStatusData received && PowerManagementErrorData received");
     // initSerial
     base_.initSerial();
   };

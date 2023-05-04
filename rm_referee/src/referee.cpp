@@ -286,6 +286,8 @@ int Referee::unpack(uint8_t* rx_data)
           power_heat_data.chassis_volt = static_cast<uint16_t>(power_heat_ref.chassis_volt * 0.001);        // mV->V
           power_heat_data.chassis_current = static_cast<uint16_t>(power_heat_ref.chassis_current * 0.001);  // mA->A
 
+          ROS_INFO_ONCE("Official serial data received.");
+
           power_heat_data.stamp = last_get_data_time_;
 
           power_heat_data_pub_.publish(power_heat_data);
@@ -492,6 +494,8 @@ int Referee::unpack(uint8_t* rx_data)
           power_management_status_pub_data.stamp = last_get_data_time_;
 
           power_management_status_data_pub_.publish(power_management_status_pub_data);
+
+          ROS_INFO_ONCE("PowerManagementStatusData received.");
           break;
         }
         case rm_referee::POWER_MANAGEMENT_ERROR_INFORMATION_CMD:
@@ -505,6 +509,8 @@ int Referee::unpack(uint8_t* rx_data)
             power_management_error_pub_data.string[0] = power_management_error_data_ref.string[0];
 
           power_management_error_data_pub_.publish(power_management_error_pub_data);
+
+          ROS_INFO_ONCE("PowerManagementErrorData received.");
           break;
         }
         default:
