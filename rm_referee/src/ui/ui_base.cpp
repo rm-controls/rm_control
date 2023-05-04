@@ -105,10 +105,10 @@ void UiBase::sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char
 
   for (int i = 0; i < 128; i++)
     tx_buffer_[i] = 0;
-  student_interactive_data->header_data_.data_cmd_id_ = data_cmd_id;
-  student_interactive_data->header_data_.sender_id_ = base_.robot_id_;
-  student_interactive_data->header_data_.receiver_id_ = receiver_id;
-  student_interactive_data->data_ = data;
+  student_interactive_data->header_data.data_cmd_id = data_cmd_id;
+  student_interactive_data->header_data.sender_id = base_.robot_id_;
+  student_interactive_data->header_data.receiver_id = receiver_id;
+  student_interactive_data->data = data;
   pack(tx_buffer_, tx_data, RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(InteractiveData));
   tx_len_ = k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(InteractiveData) + k_tail_length_);
 
@@ -136,18 +136,18 @@ void UiBase::sendCharacter(const ros::Time& time, rm_referee::Graph* graph)
   rm_referee::CharacterData tx_data;
   data_len = static_cast<int>(sizeof(rm_referee::CharacterData));
 
-  tx_data.header_.sender_id_ = base_.robot_id_;
-  tx_data.header_.receiver_id_ = base_.client_id_;
-  tx_data.config_ = graph->getConfig();
+  tx_data.header.sender_id = base_.robot_id_;
+  tx_data.header.receiver_id = base_.client_id_;
+  tx_data.config = graph->getConfig();
 
   for (int i = 0; i < 30; i++)
   {
     if (i < static_cast<int>(characters.size()))
-      tx_data.content_[i] = characters[i];
+      tx_data.content[i] = characters[i];
     else
-      tx_data.content_[i] = ' ';
+      tx_data.content[i] = ' ';
   }
-  tx_data.header_.data_cmd_id_ = rm_referee::DataCmdId::CLIENT_CHARACTER_CMD;
+  tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_CHARACTER_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(time, data_len);
 }
@@ -158,11 +158,11 @@ void UiBase::sendSingleGraph(const ros::Time& time, Graph* graph)
   rm_referee::SingleGraphData tx_data;
   data_len = static_cast<int>(sizeof(rm_referee::SingleGraphData));
 
-  tx_data.header_.sender_id_ = base_.robot_id_;
-  tx_data.header_.receiver_id_ = base_.client_id_;
-  tx_data.config_ = graph->getConfig();
+  tx_data.header.sender_id = base_.robot_id_;
+  tx_data.header.receiver_id = base_.client_id_;
+  tx_data.config = graph->getConfig();
 
-  tx_data.header_.data_cmd_id_ = rm_referee::DataCmdId::CLIENT_GRAPH_SINGLE_CMD;
+  tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_SINGLE_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(time, data_len);
 }
@@ -236,12 +236,12 @@ void GroupUiBase::sendDoubleGraph(const ros::Time& time, Graph* graph0, Graph* g
   rm_referee::DoubleGraphData tx_data;
   data_len = static_cast<int>(sizeof(rm_referee::DoubleGraphData));
 
-  tx_data.header_.sender_id_ = base_.robot_id_;
-  tx_data.header_.receiver_id_ = base_.client_id_;
-  tx_data.config_[0] = graph0->getConfig();
-  tx_data.config_[1] = graph1->getConfig();
+  tx_data.header.sender_id = base_.robot_id_;
+  tx_data.header.receiver_id = base_.client_id_;
+  tx_data.config[0] = graph0->getConfig();
+  tx_data.config[1] = graph1->getConfig();
 
-  tx_data.header_.data_cmd_id_ = rm_referee::DataCmdId::CLIENT_GRAPH_DOUBLE_CMD;
+  tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_DOUBLE_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(time, data_len);
 }
@@ -253,15 +253,15 @@ void GroupUiBase::sendFiveGraph(const ros::Time& time, Graph* graph0, Graph* gra
   rm_referee::FiveGraphData tx_data;
   data_len = static_cast<int>(sizeof(rm_referee::FiveGraphData));
 
-  tx_data.header_.sender_id_ = base_.robot_id_;
-  tx_data.header_.receiver_id_ = base_.client_id_;
-  tx_data.config_[0] = graph0->getConfig();
-  tx_data.config_[1] = graph1->getConfig();
-  tx_data.config_[2] = graph2->getConfig();
-  tx_data.config_[3] = graph3->getConfig();
-  tx_data.config_[4] = graph4->getConfig();
+  tx_data.header.sender_id = base_.robot_id_;
+  tx_data.header.receiver_id = base_.client_id_;
+  tx_data.config[0] = graph0->getConfig();
+  tx_data.config[1] = graph1->getConfig();
+  tx_data.config[2] = graph2->getConfig();
+  tx_data.config[3] = graph3->getConfig();
+  tx_data.config[4] = graph4->getConfig();
 
-  tx_data.header_.data_cmd_id_ = rm_referee::DataCmdId::CLIENT_GRAPH_FIVE_CMD;
+  tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_FIVE_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(time, data_len);
 }
@@ -273,16 +273,16 @@ void GroupUiBase::sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* gr
   rm_referee::SevenGraphData tx_data;
   data_len = static_cast<int>(sizeof(rm_referee::SevenGraphData));
 
-  tx_data.header_.sender_id_ = base_.robot_id_;
-  tx_data.header_.receiver_id_ = base_.client_id_;
-  tx_data.config_[0] = graph0->getConfig();
-  tx_data.config_[1] = graph1->getConfig();
-  tx_data.config_[3] = graph2->getConfig();
-  tx_data.config_[4] = graph3->getConfig();
-  tx_data.config_[5] = graph4->getConfig();
-  tx_data.config_[6] = graph5->getConfig();
+  tx_data.header.sender_id = base_.robot_id_;
+  tx_data.header.receiver_id = base_.client_id_;
+  tx_data.config[0] = graph0->getConfig();
+  tx_data.config[1] = graph1->getConfig();
+  tx_data.config[3] = graph2->getConfig();
+  tx_data.config[4] = graph3->getConfig();
+  tx_data.config[5] = graph4->getConfig();
+  tx_data.config[6] = graph5->getConfig();
 
-  tx_data.header_.data_cmd_id_ = rm_referee::DataCmdId::CLIENT_GRAPH_SEVEN_CMD;
+  tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_SEVEN_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(time, data_len);
 }
@@ -292,8 +292,8 @@ void UiBase::pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const
   memset(tx_buffer, 0, k_frame_length_);
   auto* frame_header = reinterpret_cast<FrameHeader*>(tx_buffer);
 
-  frame_header->sof_ = 0xA5;
-  frame_header->data_length_ = len;
+  frame_header->sof = 0xA5;
+  frame_header->data_length = len;
   memcpy(&tx_buffer[k_header_length_], reinterpret_cast<uint8_t*>(&cmd_id), k_cmd_id_length_);
   base_.appendCRC8CheckSum(tx_buffer, k_header_length_);
   memcpy(&tx_buffer[k_header_length_ + k_cmd_id_length_], data, len);

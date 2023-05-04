@@ -6,30 +6,30 @@ namespace rm_referee
 {
 Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base)
 {
-  config_.graphic_id_[0] = static_cast<uint8_t>((id >> 0 & 0xFF));
-  config_.graphic_id_[1] = static_cast<uint8_t>((id >> 8 & 0xFF));
-  config_.graphic_id_[2] = static_cast<uint8_t>((id >> 16 & 0xFF));
+  config_.graphic_id[0] = static_cast<uint8_t>((id >> 0 & 0xFF));
+  config_.graphic_id[1] = static_cast<uint8_t>((id >> 8 & 0xFF));
+  config_.graphic_id[2] = static_cast<uint8_t>((id >> 16 & 0xFF));
   if (config.hasMember("type"))
-    config_.graphic_type_ = getType(config["type"]);
+    config_.graphic_type = getType(config["type"]);
   else
-    config_.graphic_type_ = rm_referee::GraphType::STRING;
-  if (config_.graphic_type_ == getType("string"))
+    config_.graphic_type = rm_referee::GraphType::STRING;
+  if (config_.graphic_type == getType("string"))
   {
     if (config.hasMember("size"))
-      config_.start_angle_ = static_cast<int>(config["size"]);
+      config_.start_angle = static_cast<int>(config["size"]);
   }
   else
   {
     if (config.hasMember("start_angle"))
-      config_.start_angle_ = static_cast<int>(config["start_angle"]);
+      config_.start_angle = static_cast<int>(config["start_angle"]);
   }
   if (config.hasMember("start_position"))
   {
     initPosition(config["start_position"], start_positions_);
     if (!start_positions_.empty())
     {
-      config_.start_x_ = start_positions_[0].first;
-      config_.start_y_ = start_positions_[0].second;
+      config_.start_x = start_positions_[0].first;
+      config_.start_y = start_positions_[0].second;
     }
   }
   if (config.hasMember("end_position"))
@@ -37,27 +37,27 @@ Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base
     initPosition(config["end_position"], end_positions_);
     if (!end_positions_.empty())
     {
-      config_.end_x_ = end_positions_[0].first;
-      config_.end_y_ = end_positions_[0].second;
+      config_.end_x = end_positions_[0].first;
+      config_.end_y = end_positions_[0].second;
     }
   }
   if (config.hasMember("color"))
-    config_.color_ = getColor(config["color"]);
+    config_.color = getColor(config["color"]);
   else
   {
-    config_.color_ = rm_referee::GraphColor::WHITE;
+    config_.color = rm_referee::GraphColor::WHITE;
   }
   if (config.hasMember("end_angle"))
-    config_.end_angle_ = static_cast<int>(config["end_angle"]);
+    config_.end_angle = static_cast<int>(config["end_angle"]);
   if (config.hasMember("radius"))
-    config_.radius_ = static_cast<int>(config["radius"]);
+    config_.radius = static_cast<int>(config["radius"]);
   if (config.hasMember("width"))
-    config_.width_ = static_cast<int>(config["width"]);
+    config_.width = static_cast<int>(config["width"]);
   if (config.hasMember("title"))
     title_ = static_cast<std::string>(config["title"]);
   if (config.hasMember("content"))
     content_ = static_cast<std::string>(config["content"]);
-  config_.operate_type_ = rm_referee::GraphOperation::DELETE;
+  config_.operate_type = rm_referee::GraphOperation::DELETE;
   last_config_ = config_;
   last_title_ = title_;
   last_content_ = content_;
@@ -67,13 +67,13 @@ void Graph::updatePosition(int index)
 {
   if (start_positions_.size() > 1)
   {
-    config_.start_x_ = start_positions_[index].first;
-    config_.start_y_ = start_positions_[index].second;
+    config_.start_x = start_positions_[index].first;
+    config_.start_y = start_positions_[index].second;
   }
   if (end_positions_.size() > 1)
   {
-    config_.end_x_ = end_positions_[index].first;
-    config_.end_y_ = end_positions_[index].second;
+    config_.end_x = end_positions_[index].first;
+    config_.end_y = end_positions_[index].second;
   }
 }
 
