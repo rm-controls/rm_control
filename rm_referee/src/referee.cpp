@@ -462,6 +462,51 @@ int Referee::unpack(uint8_t* rx_data)
           client_map_send_data_pub_.publish(client_map_send_data);
           break;
         }
+        case rm_referee::POWER_MANAGEMENT_DATA_STATUS_CMD:
+        {
+          rm_referee::PowerManagementStatusData power_management_status_data_ref;
+          rm_msgs::PowerManagementStatusData power_management_status_pub_data;
+          int8_t data[sizeof(rm_referee::PowerManagementStatusData)];
+          memcpy(&data, rx_data + 7, sizeof(rm_referee::PowerManagementStatusData));
+
+          power_management_status_data_ref.chassis_power =
+              static_cast<double>(super_capacitor_.int16ToFloat((data[0] << 8) | data[1]) / 100.);
+          power_management_status_data_ref.chassis_expect_power =
+              static_cast<double>(super_capacitor_.int16ToFloat((data[2] << 8) | data[3]) / 100.);
+          power_management_status_data_ref.capacity_charge_power =
+              static_cast<double>(super_capacitor_.int16ToFloat((data[4] << 8) | data[5]) / 100.);
+          power_management_status_data_ref.capacity_remain_charge =
+              static_cast<double>(super_capacitor_.int16ToFloat((data[6] << 8) | data[7]) / 10000.);
+          power_management_status_data_ref.state_machine_running_state = data[8];
+          power_management_status_data_ref.flag_byte = data[9];
+
+          power_management_status_pub_data.chassis_power = power_management_status_data_ref.chassis_power;
+          power_management_status_pub_data.chassis_expect_power = power_management_status_data_ref.chassis_expect_power;
+          power_management_status_pub_data.capacity_charge_power =
+              power_management_status_data_ref.capacity_charge_power;
+          power_management_status_pub_data.capacity_remain_charge =
+              power_management_status_data_ref.capacity_remain_charge;
+          power_management_status_pub_data.state_machine_running_state =
+              power_management_status_data_ref.state_machine_running_state;
+          power_management_status_pub_data.flag_byte = power_management_status_data_ref.flag_byte;
+          power_management_status_pub_data.stamp = last_get_data_time_;
+
+          power_management_status_data_pub_.publish(power_management_status_pub_data);
+          break;
+        }
+        case rm_referee::POWER_MANAGEMENT_ERROR_INFORMATION_CMD:
+        {
+          rm_referee::PowerManagementErrorData power_management_error_data_ref;
+          rm_msgs::PowerManagementErrorData power_management_error_pub_data;
+          memcpy(&power_management_error_data_ref, rx_data + 7, sizeof(rm_referee::PowerManagementErrorData));
+
+          power_management_error_pub_data.error_code = power_management_error_data_ref.error_code;
+          for (int i = 0; i < 31; i++)
+            power_management_error_pub_data.string[0] = power_management_error_data_ref.string[0];
+
+          power_management_error_data_pub_.publish(power_management_error_pub_data);
+          break;
+        }
         default:
           ROS_WARN("Referee command ID not found.");
           break;

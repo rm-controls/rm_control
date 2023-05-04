@@ -71,7 +71,9 @@ typedef enum
   ROBOT_COMMAND_CMD = 0x0304,      // controller
   CLIENT_MAP_CMD = 0x0305,
   CUSTOM_CLIENT_CMD = 0x0306,  // controller
-  MAP_SENTRY_CMD = 0x0307      // send sentry->aerial
+  MAP_SENTRY_CMD = 0x0307,     // send sentry->aerial
+  POWER_MANAGEMENT_DATA_STATUS_CMD = 0X8301,
+  POWER_MANAGEMENT_ERROR_INFORMATION_CMD = 0X8302
 } RefereeCmdId;
 
 typedef enum
@@ -498,6 +500,22 @@ typedef struct
   int8_t delta_x_[49];
   int8_t delta_y_[49];
 } __packed MapSentryData;
+
+typedef struct
+{
+  float chassis_power;
+  float chassis_expect_power;
+  float capacity_charge_power;
+  float capacity_remain_charge;
+  int8_t state_machine_running_state;
+  int8_t flag_byte;
+} __packed PowerManagementStatusData;
+
+typedef struct
+{
+  int8_t error_code;
+  char string[31];
+} __packed PowerManagementErrorData;
 
 /***********************Frame tail(CRC8_CRC16)********************************************/
 const uint8_t kCrc8Init = 0xff;

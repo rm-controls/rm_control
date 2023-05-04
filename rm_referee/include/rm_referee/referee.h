@@ -49,13 +49,13 @@ class SuperCapacitor
 public:
   explicit SuperCapacitor() : last_get_data_time_(ros::Time::now()){};
   void read(const std::vector<uint8_t>& rx_buffer);
+  static float int16ToFloat(unsigned short data0);
   ros::Time last_get_data_time_;
   rm_referee::CapacityData capacity_data_;
 
 private:
   void dtpReceivedCallBack(unsigned char receive_byte);
   void receiveCallBack(unsigned char package_id, const unsigned char* data);
-  static float int16ToFloat(unsigned short data0);
   unsigned char receive_buffer_[1024] = { 0 };
   unsigned char ping_pong_buffer_[1024] = { 0 };
   unsigned int receive_buf_counter_ = 0;
@@ -88,6 +88,10 @@ public:
     robots_position_pub_ = nh.advertise<rm_msgs::RobotsPositionData>("robot_position", 1);
     radar_mark_pub_ = nh.advertise<rm_msgs::RadarMarkData>("radar_mark", 1);
     client_map_send_data_pub_ = nh.advertise<rm_msgs::ClientMapSendData>("client_map_send_data", 1);
+    power_management_status_data_pub_ =
+        nh.advertise<rm_msgs::PowerManagementStatusData>("power_management_status_data", 1);
+    power_management_error_data_pub_ =
+        nh.advertise<rm_msgs::PowerManagementErrorData>("power_management_error_data", 1);
     // initSerial
     base_.initSerial();
   };
@@ -118,6 +122,8 @@ public:
   ros::Publisher robots_position_pub_;
   ros::Publisher radar_mark_pub_;
   ros::Publisher client_map_send_data_pub_;
+  ros::Publisher power_management_status_data_pub_;
+  ros::Publisher power_management_error_data_pub_;
 
   Base base_;
   std::vector<uint8_t> rx_buffer_;

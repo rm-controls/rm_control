@@ -1,0 +1,8 @@
+float32 chassis_power
+float32 chassis_expect_power
+float32 capacity_charge_power
+float32 capacity_remain_charge
+uint8 state_machine_running_state
+uint8 flag_byte
+
+time stamp

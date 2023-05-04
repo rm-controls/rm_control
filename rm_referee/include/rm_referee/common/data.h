@@ -81,6 +81,8 @@
 #include <rm_msgs/ClientMapReceiveData.h>
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
+#include <rm_msgs/PowerManagementErrorData.h>
+#include <rm_msgs/PowerManagementStatusData.h>
 
 namespace rm_referee
 {
