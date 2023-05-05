@@ -471,14 +471,11 @@ int Referee::unpack(uint8_t* rx_data)
           int8_t data[sizeof(rm_referee::PowerManagementStatusData)];
           memcpy(&data, rx_data + 7, sizeof(rm_referee::PowerManagementStatusData));
 
-          power_management_status_data_ref.chassis_power =
-              static_cast<double>(super_capacitor_.int16ToFloat((data[0] << 8) | data[1]) / 100.);
-          power_management_status_data_ref.chassis_expect_power =
-              static_cast<double>(super_capacitor_.int16ToFloat((data[2] << 8) | data[3]) / 100.);
-          power_management_status_data_ref.capacity_charge_power =
-              static_cast<double>(super_capacitor_.int16ToFloat((data[4] << 8) | data[5]) / 100.);
+          power_management_status_data_ref.chassis_power = ((static_cast<int>(data[0] << 8) | data[1]) / 100.);
+          power_management_status_data_ref.chassis_expect_power = (static_cast<int>((data[2] << 8) | data[3]) / 100.);
+          power_management_status_data_ref.capacity_charge_power = (static_cast<int>((data[4] << 8) | data[5]) / 100.);
           power_management_status_data_ref.capacity_remain_charge =
-              static_cast<double>(super_capacitor_.int16ToFloat((data[6] << 8) | data[7]) / 10000.);
+              (static_cast<int>((data[6] << 8) | data[7]) / 10000.);
           power_management_status_data_ref.state_machine_running_state = data[8];
           power_management_status_data_ref.flag_byte = data[9];
 
@@ -506,7 +503,7 @@ int Referee::unpack(uint8_t* rx_data)
 
           power_management_error_pub_data.error_code = power_management_error_data_ref.error_code;
           for (int i = 0; i < 31; i++)
-            power_management_error_pub_data.string[0] = power_management_error_data_ref.string[0];
+            power_management_error_pub_data.string[i] = power_management_error_data_ref.string[i];
 
           power_management_error_data_pub_.publish(power_management_error_pub_data);
 
