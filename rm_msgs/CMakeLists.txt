@@ -71,6 +71,7 @@ add_message_files(
         ClientMapSendData.msg
         ClientMapReceiveData.msg
         MapSentryData.msg
+        StepQueueState.msg
 )
 
 add_action_files(

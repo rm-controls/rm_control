@@ -74,6 +74,7 @@
 #include <rm_msgs/GimbalDesError.h>
 #include <rm_msgs/BulletAllowance.h>
 #include <rm_msgs/GameRobotStatus.h>
+#include <rm_msgs/StepQueueState.h>
 #include <rm_msgs/ManualToReferee.h>
 #include <rm_msgs/ClientMapSendData.h>
 #include <rm_msgs/RobotsPositionData.h>
