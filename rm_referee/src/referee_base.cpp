@@ -26,9 +26,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
   RefereeBase::exchange_state_sub_ =
-      nh.subscribe<rm_msgs::ExchangerMsg>("/pnp_publisher", 10, &RefereeBase::exchangeStateDataCallBack, this);
+      nh.subscribe<rm_msgs::ExchangerMsg>("/pnp_publisher", 10, &RefereeBase::exchangeStateCallBack, this);
   RefereeBase::planning_result_sub_ =
-      nh.subscribe<std_msgs::Int32>("/planning_result", 10, &RefereeBase::planningResultDataCallBack, this);
+      nh.subscribe<std_msgs::Int32>("/planning_result", 10, &RefereeBase::planningResultCallBack, this);
   RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
@@ -261,12 +261,12 @@ void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
   if (camera_trigger_change_ui_)
     camera_trigger_change_ui_->updateCameraName(data);
 }
-void RefereeBase::exchangeStateDataCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data)
+void RefereeBase::exchangeStateCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data)
 {
   if (exchange_state_trigger_change_ui_)
     exchange_state_trigger_change_ui_->updateExchangeStateData(data);
 }
-void RefereeBase::planningResultDataCallBack(const std_msgs::Int32::ConstPtr& data)
+void RefereeBase::planningResultCallBack(const std_msgs::Int32::ConstPtr& data)
 {
   if (planning_result_trigger_change_ui_)
     planning_result_trigger_change_ui_->updatePlanningResultData(data);

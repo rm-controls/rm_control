@@ -44,8 +44,8 @@ public:
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
   virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
-  virtual void exchangeStateDataCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data);
-  virtual void planningResultDataCallBack(const std_msgs::Int32::ConstPtr& data);
+  virtual void exchangeStateCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data);
+  virtual void planningResultCallBack(const std_msgs::Int32::ConstPtr& data);
 
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
