@@ -75,6 +75,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         capacitor_time_change_ui_ = new CapacitorTimeChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "effort")
         effort_time_change_ui_ = new EffortTimeChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "progress")
+        progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "dart_status")
         dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "lane_line")
