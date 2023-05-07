@@ -213,6 +213,10 @@ public:
   {
     service_.request.target = service_.request.target == rm_msgs::StatusChangeRequest::ARMOR;
   }
+  void setTargetType(uint8_t target)
+  {
+    service_.request.target = target;
+  }
   void switchArmorTargetType()
   {
     service_.request.armor_target = service_.request.armor_target == rm_msgs::StatusChangeRequest::ARMOR_ALL;
