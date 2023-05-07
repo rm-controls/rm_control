@@ -95,182 +95,183 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
 
     add_ui_timer_ = nh.createTimer(ros::Duration(0.02), std::bind(&RefereeBase::addUi, this), false, false);
   }
-  void RefereeBase::addUi()
+}
+void RefereeBase::addUi()
+{
+  if (add_ui_times_ > 100)
   {
-    if (add_ui_times_ > 100)
-    {
-      ROS_INFO("End add");
-      add_ui_timer_.stop();
-      return;
-    }
-
-    ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / 100.) * 100);
-    if (chassis_trigger_change_ui_)
-      chassis_trigger_change_ui_->add();
-    if (gimbal_trigger_change_ui_)
-      gimbal_trigger_change_ui_->add();
-    if (shooter_trigger_change_ui_)
-      shooter_trigger_change_ui_->add();
-    if (target_trigger_change_ui_)
-      target_trigger_change_ui_->add();
-    if (camera_trigger_change_ui_)
-      camera_trigger_change_ui_->add();
-    if (drag_state_trigger_change_ui_)
-      drag_state_trigger_change_ui_->add();
-    if (gripper_state_trigger_change_ui_)
-      gripper_state_trigger_change_ui_->add();
-    if (exchange_state_trigger_change_ui_)
-      exchange_state_trigger_change_ui_->add();
-    if (planning_result_trigger_change_ui_)
-      planning_result_trigger_change_ui_->add();
-    if (step_name_trigger_change_ui_)
-      step_name_trigger_change_ui_->add();
-    if (reversal_state_trigger_change_ui_)
-      reversal_state_trigger_change_ui_->add();
-    if (stone_num_trigger_change_ui_)
-      stone_num_trigger_change_ui_->add();
-    if (joint_temperature_trigger_change_ui_)
-      joint_temperature_trigger_change_ui_->add();
-    if (fixed_ui_)
-      fixed_ui_->add();
-    if (effort_time_change_ui_)
-      effort_time_change_ui_->add();
-    if (dart_status_time_change_ui_)
-      dart_status_time_change_ui_->add();
-    if (capacitor_time_change_ui_)
-      capacitor_time_change_ui_->add();
-    if (lane_line_time_change_ui_)
-      lane_line_time_change_ui_->add();
-    add_ui_times_++;
+    ROS_INFO("End add");
+    add_ui_timer_.stop();
+    return;
   }
 
-  void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
-  {
-    if (fixed_ui_)
-      fixed_ui_->display();
-  }
-  void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
-  {
-  }
-  void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::Time& last_get_data_time)
-  {
-    if (capacitor_time_change_ui_)
-      capacitor_time_change_ui_->updateCapacityData(data, last_get_data_time);
-    if (chassis_trigger_change_ui_)
-      chassis_trigger_change_ui_->updateCapacityData(data);
-  }
-  void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_data_time)
-  {
-  }
-  void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ros::Time& last_get_data_time)
-  {
-  }
-  void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
-  {
-  }
-  void RefereeBase::eventDataCallBack(const rm_msgs::EventData& data, const ros::Time& last_get_data_time)
-  {
-  }
-  void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& data)
-  {
-    if (effort_time_change_ui_)
-      effort_time_change_ui_->updateJointStateData(data, ros::Time::now());
-    if (lane_line_time_change_ui_)
-      lane_line_time_change_ui_->updateJointStateData(data, ros::Time::now());
-    if (fixed_ui_)
-      fixed_ui_->display();
-  }
-  void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
-  {
-  }
-  void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
-  {
-    if (add_ui_flag_ && data->s_r == rm_msgs::DbusData::UP)
-    {
-      add_ui_flag_ = false;
-      add_ui_timer_.start();
-      add_ui_times_ = 0;
-    }
-    if (data->s_r != rm_msgs::DbusData::UP)
-    {
-      add_ui_flag_ = true;
-      add_ui_timer_.stop();
-    }
-    if (chassis_trigger_change_ui_)
-      chassis_trigger_change_ui_->updateDbusData(data);
-  }
-  void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
-  {
-    if (chassis_trigger_change_ui_)
-      chassis_trigger_change_ui_->updateChassisCmdData(data);
-    if (spin_flash_ui_)
-      spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
-  }
-  void RefereeBase::vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data)
-  {
-  }
-  void RefereeBase::shootStateCallback(const rm_msgs::ShootState::ConstPtr& data)
-  {
-    if (target_trigger_change_ui_)
-      target_trigger_change_ui_->updateShootStateData(data);
-    if (shooter_trigger_change_ui_)
-      shooter_trigger_change_ui_->updateShootStateData(data);
-  }
-  void RefereeBase::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data)
-  {
-    if (gimbal_trigger_change_ui_)
-      gimbal_trigger_change_ui_->updateGimbalCmdData(data);
-  }
+  ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / 100.) * 100);
+  if (chassis_trigger_change_ui_)
+    chassis_trigger_change_ui_->add();
+  if (gimbal_trigger_change_ui_)
+    gimbal_trigger_change_ui_->add();
+  if (shooter_trigger_change_ui_)
+    shooter_trigger_change_ui_->add();
+  if (target_trigger_change_ui_)
+    target_trigger_change_ui_->add();
+  if (camera_trigger_change_ui_)
+    camera_trigger_change_ui_->add();
+  if (drag_state_trigger_change_ui_)
+    drag_state_trigger_change_ui_->add();
+  if (gripper_state_trigger_change_ui_)
+    gripper_state_trigger_change_ui_->add();
+  if (exchange_state_trigger_change_ui_)
+    exchange_state_trigger_change_ui_->add();
+  if (planning_result_trigger_change_ui_)
+    planning_result_trigger_change_ui_->add();
+  if (step_name_trigger_change_ui_)
+    step_name_trigger_change_ui_->add();
+  if (reversal_state_trigger_change_ui_)
+    reversal_state_trigger_change_ui_->add();
+  if (stone_num_trigger_change_ui_)
+    stone_num_trigger_change_ui_->add();
+  if (joint_temperature_trigger_change_ui_)
+    joint_temperature_trigger_change_ui_->add();
+  if (fixed_ui_)
+    fixed_ui_->add();
+  if (effort_time_change_ui_)
+    effort_time_change_ui_->add();
+  if (dart_status_time_change_ui_)
+    dart_status_time_change_ui_->add();
+  if (capacitor_time_change_ui_)
+    capacitor_time_change_ui_->add();
+  if (lane_line_time_change_ui_)
+    lane_line_time_change_ui_->add();
+  add_ui_times_++;
+}
 
-  void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data)
+void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
+{
+  if (fixed_ui_)
+    fixed_ui_->display();
+}
+void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
+{
+}
+void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::Time& last_get_data_time)
+{
+  if (capacitor_time_change_ui_)
+    capacitor_time_change_ui_->updateCapacityData(data, last_get_data_time);
+  if (chassis_trigger_change_ui_)
+    chassis_trigger_change_ui_->updateCapacityData(data);
+}
+void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_data_time)
+{
+}
+void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ros::Time& last_get_data_time)
+{
+}
+void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
+{
+}
+void RefereeBase::eventDataCallBack(const rm_msgs::EventData& data, const ros::Time& last_get_data_time)
+{
+}
+void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& data)
+{
+  if (effort_time_change_ui_)
+    effort_time_change_ui_->updateJointStateData(data, ros::Time::now());
+  if (lane_line_time_change_ui_)
+    lane_line_time_change_ui_->updateJointStateData(data, ros::Time::now());
+  if (fixed_ui_)
+    fixed_ui_->display();
+}
+void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
+{
+}
+void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
+{
+  if (add_ui_flag_ && data->s_r == rm_msgs::DbusData::UP)
   {
-    if (drag_state_trigger_change_ui_)
-      drag_state_trigger_change_ui_->updateDragStateUiData(data);
-    if (gripper_state_trigger_change_ui_)
-      gripper_state_trigger_change_ui_->updateGripperStateUiData(data);
-    if (stone_num_trigger_change_ui_)
-      stone_num_trigger_change_ui_->updateStoneNumUiData(data);
-    if (step_name_trigger_change_ui_)
-      step_name_trigger_change_ui_->updateStepNameUiData(data);
-    if (reversal_state_trigger_change_ui_)
-      reversal_state_trigger_change_ui_->updateReversalStateUiData(data);
-    if (joint_temperature_trigger_change_ui_)
-      joint_temperature_trigger_change_ui_->updateJointTemperatureUiData(data);
-    if (fixed_ui_)
-    {
-      fixed_ui_->add();
-      fixed_ui_->display();
-    }
+    add_ui_flag_ = false;
+    add_ui_timer_.start();
+    add_ui_times_ = 0;
   }
-  void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
+  if (data->s_r != rm_msgs::DbusData::UP)
   {
-    if (chassis_trigger_change_ui_)
-      chassis_trigger_change_ui_->updateManualCmdData(data);
-    if (shooter_trigger_change_ui_)
-      shooter_trigger_change_ui_->updateManualCmdData(data);
-    if (gimbal_trigger_change_ui_)
-      gimbal_trigger_change_ui_->updateManualCmdData(data);
-    if (target_trigger_change_ui_)
-      target_trigger_change_ui_->updateManualCmdData(data);
-    if (cover_flash_ui_)
-      cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
+    add_ui_flag_ = true;
+    add_ui_timer_.stop();
   }
-  void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
+  if (chassis_trigger_change_ui_)
+    chassis_trigger_change_ui_->updateDbusData(data);
+}
+void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
+{
+  if (chassis_trigger_change_ui_)
+    chassis_trigger_change_ui_->updateChassisCmdData(data);
+  if (spin_flash_ui_)
+    spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
+}
+void RefereeBase::vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data)
+{
+}
+void RefereeBase::shootStateCallback(const rm_msgs::ShootState::ConstPtr& data)
+{
+  if (target_trigger_change_ui_)
+    target_trigger_change_ui_->updateShootStateData(data);
+  if (shooter_trigger_change_ui_)
+    shooter_trigger_change_ui_->updateShootStateData(data);
+}
+void RefereeBase::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data)
+{
+  if (gimbal_trigger_change_ui_)
+    gimbal_trigger_change_ui_->updateGimbalCmdData(data);
+}
+
+void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data)
+{
+  if (drag_state_trigger_change_ui_)
+    drag_state_trigger_change_ui_->updateDragStateUiData(data);
+  if (gripper_state_trigger_change_ui_)
+    gripper_state_trigger_change_ui_->updateGripperStateUiData(data);
+  if (stone_num_trigger_change_ui_)
+    stone_num_trigger_change_ui_->updateStoneNumUiData(data);
+  if (step_name_trigger_change_ui_)
+    step_name_trigger_change_ui_->updateStepNameUiData(data);
+  if (reversal_state_trigger_change_ui_)
+    reversal_state_trigger_change_ui_->updateReversalStateUiData(data);
+  if (joint_temperature_trigger_change_ui_)
+    joint_temperature_trigger_change_ui_->updateJointTemperatureUiData(data);
+  if (fixed_ui_)
   {
+    fixed_ui_->add();
+    fixed_ui_->display();
   }
-  void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
-  {
-    if (camera_trigger_change_ui_)
-      camera_trigger_change_ui_->updateCameraName(data);
-  }
-  void RefereeBase::exchangeStateCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data)
-  {
-    if (exchange_state_trigger_change_ui_)
-      exchange_state_trigger_change_ui_->updateExchangeStateData(data);
-  }
-  void RefereeBase::planningResultCallBack(const std_msgs::Int32::ConstPtr& data)
-  {
-    if (planning_result_trigger_change_ui_)
-      planning_result_trigger_change_ui_->updatePlanningResultData(data);
-  }
+}
+void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
+{
+  if (chassis_trigger_change_ui_)
+    chassis_trigger_change_ui_->updateManualCmdData(data);
+  if (shooter_trigger_change_ui_)
+    shooter_trigger_change_ui_->updateManualCmdData(data);
+  if (gimbal_trigger_change_ui_)
+    gimbal_trigger_change_ui_->updateManualCmdData(data);
+  if (target_trigger_change_ui_)
+    target_trigger_change_ui_->updateManualCmdData(data);
+  if (cover_flash_ui_)
+    cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
+}
+void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
+{
+}
+void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
+{
+  if (camera_trigger_change_ui_)
+    camera_trigger_change_ui_->updateCameraName(data);
+}
+void RefereeBase::exchangeStateCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data)
+{
+  if (exchange_state_trigger_change_ui_)
+    exchange_state_trigger_change_ui_->updateExchangeStateData(data);
+}
+void RefereeBase::planningResultCallBack(const std_msgs::Int32::ConstPtr& data)
+{
+  if (planning_result_trigger_change_ui_)
+    planning_result_trigger_change_ui_->updatePlanningResultData(data);
+}
 }  // namespace rm_referee
