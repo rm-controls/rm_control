@@ -47,6 +47,9 @@ public:
   virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
   virtual void trackCallBack(const rm_msgs::TrackDataConstPtr& data);
 
+  // send graph_type ui
+  void sendGraphQueueCallback();
+
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
   ros::Subscriber dbus_sub_;
@@ -82,8 +85,11 @@ public:
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
 
+  GroupUiBase* graph_queue_sender_{};
+  std::vector<Graph> graph_queue_;
+
   Base& base_;
-  ros::Timer add_ui_timer_;
+  ros::Timer add_ui_timer_, send_graph_ui_timer_;
   int add_ui_times_ = 0;
   bool add_ui_flag_ = false, is_adding_ = false;
   ros::NodeHandle nh_;
