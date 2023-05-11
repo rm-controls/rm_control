@@ -1,0 +1,7 @@
+float32 target_position_x
+float32 target_position_y
+float32 target_position_z
+uint8 command_keyboard
+uint16 target_robot_ID
+
+time stamp

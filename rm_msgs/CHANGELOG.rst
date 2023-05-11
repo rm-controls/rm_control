@@ -2,6 +2,47 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.19 (2023-05-03)
+-------------------
+* Merge pull request `#143 <https://github.com/ye-luo-xi-tui/rm_control/issues/143>`_ from rm-controls/new_protocol
+  Merge branch 'new protocol' into 'master'
+* Merge branch 'master' into new_protocol
+* Merge remote-tracking branch 'origin/master'
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#122 <https://github.com/ye-luo-xi-tui/rm_control/issues/122>`_ from L-SY/multi_dof_controller
+  Add MultiDofCommandSender for multi_dof_controller.
+* Change function name.
+* Merge pull request `#133 <https://github.com/ye-luo-xi-tui/rm_control/issues/133>`_ from LJT666666/master
+  Added parameters describing the type of armor plate.
+* Change Twist to Vector3.
+* Added parameters describing the type of armor plate.
+* Merge branch 'master' into one_click_turn_cmd_sender
+* Merge pull request `#130 <https://github.com/ye-luo-xi-tui/rm_control/issues/130>`_ from chenhuiYu00/dev/serial_update
+  Update server protocl
+* Update serial protocol.
+* Merge branch 'master' into switch_camera_command_sender
+* Update official serial protocol.
+* Merge branch 'master' into dev/circle_add
+* Merge pull request `#123 <https://github.com/ye-luo-xi-tui/rm_control/issues/123>`_ from ljq-lv/modify
+  Modified the msg of engineer  to 'EngineerUi'
+* Merge branch 'master' into multi_dof_controller
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+  #	rm_msgs/CMakeLists.txt
+* Merge branch 'master' into one_click_turn_cmd_sender
+* Modified the msg of engineer  to 'EngineerUi'
+* Merge branch 'master' into switch_camera_command_sender
+  # Conflicts:
+  #	rm_referee/include/rm_referee/ui/trigger_change_ui.h
+  #	rm_referee/src/ui/trigger_change_ui.cpp
+* Add multi_dof_commandsender.
+* Merge pull request `#120 <https://github.com/ye-luo-xi-tui/rm_control/issues/120>`_ from ye-luo-xi-tui/master
+  0.1.18
+* Add function which could fix diff motion.
+* Delete some useless value.
+* Add MultiDofCmd.msg.
+* Contributors: 1moule, LJT666666, LSY, ljq-lv, ye-luo-xi-tui, yezi, yuchen
+
 0.1.18 (2023-03-25)
 -------------------
 * Merge pull request `#109 <https://github.com/ye-luo-xi-tui/rm_control/issues/109>`_ from ljq-lv/Delete
