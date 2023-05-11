@@ -43,6 +43,7 @@
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/Int32.h>
 #include <std_msgs/Int8MultiArray.h>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
@@ -62,6 +63,7 @@
 #include <rm_msgs/GameStatus.h>
 #include <rm_msgs/RfidStatus.h>
 #include <rm_msgs/EngineerUi.h>
+#include <rm_msgs/ExchangerMsg.h>
 #include <rm_msgs/GameRobotHp.h>
 #include <rm_msgs/CapacityData.h>
 #include <rm_msgs/DartClientCmd.h>

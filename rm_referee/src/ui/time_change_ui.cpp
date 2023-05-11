@@ -93,31 +93,6 @@ void EffortTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::Con
   }
 }
 
-void ProgressTimeChangeUi::display(const ros::Time& time)
-{
-  updateConfig();
-  TimeChangeUi::display(time);
-}
-
-void ProgressTimeChangeUi::updateConfig()
-{
-  char data_str[30] = { ' ' };
-  if (total_steps_ != 0)
-    sprintf(data_str, " %.1f%%", finished_data_ / total_steps_ * 100.);
-  else
-    sprintf(data_str, " %.1f%%", finished_data_ / total_steps_ * 100.);
-  graph_->setContent(data_str);
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-}
-
-void ProgressTimeChangeUi::updateEngineerUiData(const rm_msgs::EngineerUi::ConstPtr data,
-                                                const ros::Time& last_get_data_time)
-{
-  total_steps_ = data->total_steps;
-  finished_data_ = data->finished_step;
-  display(last_get_data_time);
-}
-
 void DartStatusTimeChangeUi::display(const ros::Time& time)
 {
   updateConfig();

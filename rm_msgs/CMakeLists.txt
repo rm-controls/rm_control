@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
         FILES
+        MultiDofCmd.msg
         ActuatorState.msg
         BalanceState.msg
         DbusData.msg
@@ -25,7 +26,8 @@ add_message_files(
         SuperCapacitor.msg
         GpioData.msg
         TofRadarData.msg
-        MultiDofCmd.msg
+        TagMsg.msg
+        TagMsgArray.msg
 )
 
 add_service_files(
@@ -42,6 +44,7 @@ add_message_files(
         TargetDetection.msg
         TargetDetectionArray.msg
         TrackData.msg
+        ExchangerMsg.msg
 )
 
 add_message_files(

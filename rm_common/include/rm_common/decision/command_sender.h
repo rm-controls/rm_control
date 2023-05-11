@@ -236,6 +236,10 @@ public:
   {
     power_limit_->setRefereeStatus(status);
   }
+  void changeCommandSourceFrame(std::string from)
+  {
+    msg_.command_source_frame = from;
+  }
   void sendChassisCommand(const ros::Time& time, bool is_gyro)
   {
     power_limit_->setLimitPower(msg_, is_gyro);
