@@ -125,8 +125,8 @@ void RefereeBase::addUi()
     planning_result_trigger_change_ui_->add();
   if (step_name_trigger_change_ui_)
     step_name_trigger_change_ui_->add();
-  if (servo_mode_name_trigger_change_ui_)
-    servo_mode_name_trigger_change_ui_->add();
+  if (servo_mode_trigger_change_ui_)
+    servo_mode_trigger_change_ui_->add();
   if (reversal_state_trigger_change_ui_)
     reversal_state_trigger_change_ui_->add();
   if (stone_num_trigger_change_ui_)
@@ -232,8 +232,8 @@ void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& da
     stone_num_trigger_change_ui_->updateStringUiData(data->stone_num);
   if (step_name_trigger_change_ui_)
     step_name_trigger_change_ui_->updateStringUiData(data->current_step_name);
-  if (servo_mode_name_trigger_change_ui_)
-    servo_mode_name_trigger_change_ui_->updateStringUiData(data->servo_mode);
+  if (servo_mode_trigger_change_ui_)
+    servo_mode_trigger_change_ui_->updateStringUiData(data->servo_mode);
   if (reversal_state_trigger_change_ui_)
     reversal_state_trigger_change_ui_->updateStringUiData(data->reversal_state);
   if (joint_temperature_trigger_change_ui_)
