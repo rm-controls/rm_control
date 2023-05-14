@@ -669,29 +669,10 @@ public:
     barrel_nh.getParam("id2_point", id2_point_);
     barrel_nh.getParam("restart_push_threshold", restart_push_threshold_);
 
-    dbus_sub_ = nh.subscribe<rm_msgs::DbusData>("/dbus_data", 10, &DoubleBarrelCommandSender::dbusCallback, this);
     joint_state_sub_ = nh.subscribe<sensor_msgs::JointState>("/joint_states", 10,
                                                              &DoubleBarrelCommandSender::jointStateCallback, this);
     trigger_state_sub_ = nh.subscribe<control_msgs::JointControllerState>(
         "/controllers/shooter_controller/trigger/state", 10, &DoubleBarrelCommandSender::triggerStateCallback, this);
-  }
-
-  int getBarrelId()
-  {
-    if (barrel_command_sender_->getMsg()->data == id1_point_)
-      barrel_id_ = 0;
-    else
-      barrel_id_ = 1;
-    return barrel_id_;
-  }
-
-  int initBarrelId()
-  {
-    ros::Time time = ros::Time::now();
-    barrel_id_ = 0;
-    barrel_command_sender_->setPoint(id1_point_);
-    barrel_command_sender_->sendCommand(time);
-    return barrel_id_;
   }
 
   void updateGameRobotStatus(const rm_msgs::GameRobotStatus data)
@@ -716,47 +697,24 @@ public:
   }
   void updateTrackData(const rm_msgs::TrackData& data)
   {
-    track_data_ = data;
     shooter_ID1_cmd_sender_->updateTrackData(data);
     shooter_ID2_cmd_sender_->updateTrackData(data);
   }
 
-  void sendShooterCommand()
+  void setMode(int mode)
   {
-    ros::Time time = ros::Time::now();
-    if (dbus_.s_l == rm_msgs::DbusData::DOWN)
-    {
-      switch_barrel_ = false;
-      switch_done_ = true;
-    }
-
-    if ((dbus_.s_l == rm_msgs::DbusData::UP || track_data_.id != 0) && !switch_barrel_)
-    {
-      shooter_ID1_cmd_sender_->setMode(rm_msgs::ShootCmd::PUSH);
-      shooter_ID2_cmd_sender_->setMode(rm_msgs::ShootCmd::PUSH);
-      if (track_data_.id != 0)
-      {
-        shooter_ID1_cmd_sender_->checkError(ros::Time::now());
-        shooter_ID2_cmd_sender_->checkError(ros::Time::now());
-      }
-    }
-    else if (dbus_.s_l == rm_msgs::DbusData::MID || dbus_.s_r == rm_msgs::DbusData::UP || switch_barrel_)
-    {
-      shooter_ID1_cmd_sender_->setMode(rm_msgs::ShootCmd::READY);
-      shooter_ID2_cmd_sender_->setMode(rm_msgs::ShootCmd::READY);
-    }
-    else
-    {
-      shooter_ID1_cmd_sender_->setMode(rm_msgs::ShootCmd::STOP);
-      shooter_ID2_cmd_sender_->setMode(rm_msgs::ShootCmd::STOP);
-    }
-
+    shooter_ID1_cmd_sender_->setMode(mode);
+    shooter_ID2_cmd_sender_->setMode(mode);
+  }
+  void checkError(const ros::Time& time)
+  {
+    shooter_ID1_cmd_sender_->checkError(time);
+    shooter_ID2_cmd_sender_->checkError(time);
+  }
+  void sendCommand(const ros::Time& time)
+  {
     shooter_ID1_cmd_sender_->sendCommand(time);
     shooter_ID2_cmd_sender_->sendCommand(time);
-    if (!switch_done_)
-      switchBarrel();
-    else if (switch_barrel_)
-      doRestartPush();
   }
   bool doSwitch()
   {
@@ -784,13 +742,6 @@ public:
     else
       return false;
   }
-
-  ShooterCommandSender* shooter_ID1_cmd_sender_;
-  ShooterCommandSender* shooter_ID2_cmd_sender_;
-  JointPointCommandSender* barrel_command_sender_{};
-  bool switch_barrel_{ false }, switch_done_{ true }, is_double_barrel_{ false };
-
-private:
   void switchBarrel()
   {
     ros::Time time = ros::Time::now();
@@ -809,6 +760,29 @@ private:
         restart_push_threshold_)
       switch_barrel_ = false;
   }
+  int initBarrelId()
+  {
+    ros::Time time = ros::Time::now();
+    barrel_id_ = 0;
+    barrel_command_sender_->setPoint(id1_point_);
+    barrel_command_sender_->sendCommand(time);
+    return barrel_id_;
+  }
+
+  ShooterCommandSender* shooter_ID1_cmd_sender_;
+  ShooterCommandSender* shooter_ID2_cmd_sender_;
+  JointPointCommandSender* barrel_command_sender_{};
+  bool switch_barrel_{ false }, switch_done_{ true }, is_double_barrel_{ false };
+
+private:
+  int getBarrelId()
+  {
+    if (barrel_command_sender_->getMsg()->data == id1_point_)
+      barrel_id_ = 0;
+    else
+      barrel_id_ = 1;
+    return barrel_id_;
+  }
   void triggerStateCallback(const control_msgs::JointControllerState::ConstPtr& data)
   {
     trigger_error_ = data->error;
@@ -817,16 +791,9 @@ private:
   {
     joint_state_ = *data;
   }
-  void dbusCallback(const rm_msgs::DbusData::ConstPtr& data)
-  {
-    dbus_ = *data;
-  }
   ros::Subscriber trigger_state_sub_;
   ros::Subscriber joint_state_sub_;
-  ros::Subscriber dbus_sub_;
   sensor_msgs::JointState joint_state_;
-  rm_msgs::DbusData dbus_;
-  rm_msgs::TrackData track_data_;
   double trigger_error_;
   int barrel_id_;
   double id1_point_, id2_point_;
