@@ -730,6 +730,11 @@ public:
   }
   void sendCommand(const ros::Time& time)
   {
+    if (doSwitch())
+    {
+      switch_barrel_ = true;
+      switch_done_ = false;
+    }
     if ((shooter_ID1_cmd_sender_->getMsg()->mode == rm_msgs::ShootCmd::PUSH ||
          shooter_ID2_cmd_sender_->getMsg()->mode == rm_msgs::ShootCmd::PUSH) &&
         switch_barrel_)
@@ -743,32 +748,6 @@ public:
     shooter_ID1_cmd_sender_->sendCommand(time);
     shooter_ID2_cmd_sender_->sendCommand(time);
   }
-  bool doSwitch()
-  {
-    if (!is_double_barrel_)
-      return false;
-    int shooter_ID1_cooling_limit = shooter_ID1_cmd_sender_->heat_limit_->getCoolingLimit();
-    int shooter_ID2_cooling_limit = shooter_ID2_cmd_sender_->heat_limit_->getCoolingLimit();
-    int shooter_ID1_cooling_heat = shooter_ID1_cmd_sender_->heat_limit_->getCoolingHeat();
-    int shooter_ID2_cooling_heat = shooter_ID2_cmd_sender_->heat_limit_->getCoolingHeat();
-
-    if (shooter_ID1_cooling_limit == 0 || shooter_ID2_cooling_limit == 0)
-    {
-      ROS_WARN("Can not get cooling limit");
-      return false;
-    }
-
-    if (shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < 30 ||
-        shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < 30)
-    {
-      if (getBarrelId())
-        return shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < 30;
-      else
-        return shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < 30;
-    }
-    else
-      return false;
-  }
   int initBarrelId()
   {
     ros::Time time = ros::Time::now();
@@ -777,7 +756,6 @@ public:
     barrel_command_sender_->sendCommand(time);
     return barrel_id_;
   }
-  bool switch_barrel_{ false }, switch_done_{ true };
 
 private:
   int getBarrelId()
@@ -809,6 +787,33 @@ private:
       setMode(rm_msgs::ShootCmd::PUSH);
     }
   }
+
+  bool doSwitch()
+  {
+    if (!is_double_barrel_)
+      return false;
+    int shooter_ID1_cooling_limit = shooter_ID1_cmd_sender_->heat_limit_->getCoolingLimit();
+    int shooter_ID2_cooling_limit = shooter_ID2_cmd_sender_->heat_limit_->getCoolingLimit();
+    int shooter_ID1_cooling_heat = shooter_ID1_cmd_sender_->heat_limit_->getCoolingHeat();
+    int shooter_ID2_cooling_heat = shooter_ID2_cmd_sender_->heat_limit_->getCoolingHeat();
+
+    if (shooter_ID1_cooling_limit == 0 || shooter_ID2_cooling_limit == 0)
+    {
+      ROS_WARN("Can not get cooling limit");
+      return false;
+    }
+
+    if (shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < 30 ||
+        shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < 30)
+    {
+      if (getBarrelId())
+        return shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < 30;
+      else
+        return shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < 30;
+    }
+    else
+      return false;
+  }
   void triggerStateCallback(const control_msgs::JointControllerState::ConstPtr& data)
   {
     trigger_error_ = data->error;
@@ -823,7 +828,7 @@ private:
   ros::Subscriber trigger_state_sub_;
   ros::Subscriber joint_state_sub_;
   sensor_msgs::JointState joint_state_;
-  bool is_double_barrel_{ false };
+  bool is_double_barrel_{ false }, switch_barrel_{ false }, switch_done_{ true };
   double trigger_error_;
   int barrel_id_;
   double id1_point_, id2_point_;
