@@ -496,6 +496,9 @@ void Referee::getRobotInfo()
       case rm_referee::RobotId::BLUE_STANDARD_5:
         base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_5_CLIENT;
         break;
+      case rm_referee::RobotId::BLUE_AERIAL:
+        base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
+        break;
       case rm_referee::RobotId::RED_HERO:
         base_.client_id_ = rm_referee::ClientId::RED_HERO_CLIENT;
         break;
@@ -510,6 +513,9 @@ void Referee::getRobotInfo()
         break;
       case rm_referee::RobotId::RED_STANDARD_5:
         base_.client_id_ = rm_referee::ClientId::RED_STANDARD_5_CLIENT;
+        break;
+      case rm_referee::RobotId::RED_AERIAL:
+        base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
         break;
     }
   }
