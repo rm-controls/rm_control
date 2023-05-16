@@ -48,7 +48,6 @@
 #include <rm_msgs/StateCmd.h>
 #include <rm_msgs/TrackData.h>
 #include <rm_msgs/GameRobotHp.h>
-#include <rm_msgs/DbusData.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
@@ -713,6 +712,16 @@ public:
   }
   void sendCommand(const ros::Time& time)
   {
+    if ((shooter_ID1_cmd_sender_->getMsg()->mode == rm_msgs::ShootCmd::PUSH ||
+         shooter_ID2_cmd_sender_->getMsg()->mode == rm_msgs::ShootCmd::PUSH) &&
+        switch_barrel_)
+    {
+      setMode(rm_msgs::ShootCmd::READY);
+      if (!switch_done_)
+        switchBarrel();
+      else
+        doRestartPush();
+    }
     shooter_ID1_cmd_sender_->sendCommand(time);
     shooter_ID2_cmd_sender_->sendCommand(time);
   }
@@ -742,6 +751,25 @@ public:
     else
       return false;
   }
+  int initBarrelId()
+  {
+    ros::Time time = ros::Time::now();
+    barrel_id_ = 0;
+    barrel_command_sender_->setPoint(id1_point_);
+    barrel_command_sender_->sendCommand(time);
+    return barrel_id_;
+  }
+  bool switch_barrel_{ false }, switch_done_{ true };
+
+private:
+  int getBarrelId()
+  {
+    if (barrel_command_sender_->getMsg()->data == id1_point_)
+      barrel_id_ = 0;
+    else
+      barrel_id_ = 1;
+    return barrel_id_;
+  }
   void switchBarrel()
   {
     ros::Time time = ros::Time::now();
@@ -758,30 +786,10 @@ public:
   {
     if (std::abs(joint_state_.position[barrel_command_sender_->getIndex()] - barrel_command_sender_->getMsg()->data) <
         restart_push_threshold_)
+    {
       switch_barrel_ = false;
-  }
-  int initBarrelId()
-  {
-    ros::Time time = ros::Time::now();
-    barrel_id_ = 0;
-    barrel_command_sender_->setPoint(id1_point_);
-    barrel_command_sender_->sendCommand(time);
-    return barrel_id_;
-  }
-
-  ShooterCommandSender* shooter_ID1_cmd_sender_;
-  ShooterCommandSender* shooter_ID2_cmd_sender_;
-  JointPointCommandSender* barrel_command_sender_{};
-  bool switch_barrel_{ false }, switch_done_{ true }, is_double_barrel_{ false };
-
-private:
-  int getBarrelId()
-  {
-    if (barrel_command_sender_->getMsg()->data == id1_point_)
-      barrel_id_ = 0;
-    else
-      barrel_id_ = 1;
-    return barrel_id_;
+      setMode(rm_msgs::ShootCmd::PUSH);
+    }
   }
   void triggerStateCallback(const control_msgs::JointControllerState::ConstPtr& data)
   {
@@ -791,9 +799,13 @@ private:
   {
     joint_state_ = *data;
   }
+  ShooterCommandSender* shooter_ID1_cmd_sender_;
+  ShooterCommandSender* shooter_ID2_cmd_sender_;
+  JointPointCommandSender* barrel_command_sender_{};
   ros::Subscriber trigger_state_sub_;
   ros::Subscriber joint_state_sub_;
   sensor_msgs::JointState joint_state_;
+  bool is_double_barrel_{ false };
   double trigger_error_;
   int barrel_id_;
   double id1_point_, id2_point_;
