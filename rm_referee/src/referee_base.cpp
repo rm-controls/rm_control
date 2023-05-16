@@ -32,47 +32,50 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
   XmlRpc::XmlRpcValue rpc_value;
-  ros::NodeHandle ui_nh(nh, "ui");
-  ui_nh.getParam("trigger_change", rpc_value);
-  for (int i = 0; i < rpc_value.size(); i++)
+  if (nh.hasParam("ui"))
   {
-    if (rpc_value[i]["name"] == "chassis")
-      chassis_trigger_change_ui_ = new ChassisTriggerChangeUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "shooter")
-      shooter_trigger_change_ui_ = new ShooterTriggerChangeUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "gimbal")
-      gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "target")
-      target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "camera")
-      camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
-  }
+    ros::NodeHandle ui_nh(nh, "ui");
+    ui_nh.getParam("trigger_change", rpc_value);
+    for (int i = 0; i < rpc_value.size(); i++)
+    {
+      if (rpc_value[i]["name"] == "chassis")
+        chassis_trigger_change_ui_ = new ChassisTriggerChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "shooter")
+        shooter_trigger_change_ui_ = new ShooterTriggerChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "gimbal")
+        gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "target")
+        target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "camera")
+        camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
+    }
 
-  ui_nh.getParam("time_change", rpc_value);
-  for (int i = 0; i < rpc_value.size(); i++)
-  {
-    if (rpc_value[i]["name"] == "capacitor")
-      capacitor_time_change_ui_ = new CapacitorTimeChangeUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "effort")
-      effort_time_change_ui_ = new EffortTimeChangeUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "progress")
-      progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "dart_status")
-      dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "lane_line")
-      lane_line_time_change_ui_ = new LaneLineTimeChangeUi(rpc_value[i], base_);
-  }
+    ui_nh.getParam("time_change", rpc_value);
+    for (int i = 0; i < rpc_value.size(); i++)
+    {
+      if (rpc_value[i]["name"] == "capacitor")
+        capacitor_time_change_ui_ = new CapacitorTimeChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "effort")
+        effort_time_change_ui_ = new EffortTimeChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "progress")
+        progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "dart_status")
+        dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "lane_line")
+        lane_line_time_change_ui_ = new LaneLineTimeChangeUi(rpc_value[i], base_);
+    }
 
-  ui_nh.getParam("fixed", rpc_value);
-  fixed_ui_ = new FixedUi(rpc_value, base_);
+    ui_nh.getParam("fixed", rpc_value);
+    fixed_ui_ = new FixedUi(rpc_value, base_);
 
-  ui_nh.getParam("flash", rpc_value);
-  for (int i = 0; i < rpc_value.size(); i++)
-  {
-    if (rpc_value[i]["name"] == "cover")
-      cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_);
-    if (rpc_value[i]["name"] == "spin")
-      spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_);
+    ui_nh.getParam("flash", rpc_value);
+    for (int i = 0; i < rpc_value.size(); i++)
+    {
+      if (rpc_value[i]["name"] == "cover")
+        cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "spin")
+        spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_);
+    }
   }
 
   add_ui_timer_ = nh.createTimer(ros::Duration(0.02), std::bind(&RefereeBase::addUi, this), false, false);

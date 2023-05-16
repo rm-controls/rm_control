@@ -81,9 +81,13 @@ public:
     dart_remaining_time_pub_ = nh.advertise<rm_msgs::DartRemainingTime>("dart_remaining_time_data", 1);
     robot_hurt_pub_ = nh.advertise<rm_msgs::RobotHurt>("robot_hurt_data", 1);
     shoot_data_pub_ = nh.advertise<rm_msgs::ShootData>("shoot_data", 1);
-    bullet_remaining_pub_ = nh.advertise<rm_msgs::BulletRemaining>("bullet_remaining_data", 1);
+    bullet_allowance_pub_ = nh.advertise<rm_msgs::BulletAllowance>("bullet_allowance_data", 1);
     rfid_status_pub_ = nh.advertise<rm_msgs::RfidStatus>("rfid_status_data", 1);
     dart_client_cmd_pub_ = nh.advertise<rm_msgs::DartClientCmd>("dart_client_cmd_data", 1);
+    client_map_receive_pub_ = nh.advertise<rm_msgs::ClientMapReceiveData>("client_map_receive", 1);
+    robots_position_pub_ = nh.advertise<rm_msgs::RobotsPositionData>("robot_position", 1);
+    radar_mark_pub_ = nh.advertise<rm_msgs::RadarMarkData>("radar_mark", 1);
+    client_map_send_data_pub_ = nh.advertise<rm_msgs::ClientMapSendData>("client_map_send_data", 1);
     // initSerial
     base_.initSerial();
   };
@@ -107,9 +111,13 @@ public:
   ros::Publisher dart_remaining_time_pub_;
   ros::Publisher robot_hurt_pub_;
   ros::Publisher shoot_data_pub_;
-  ros::Publisher bullet_remaining_pub_;
+  ros::Publisher bullet_allowance_pub_;
   ros::Publisher rfid_status_pub_;
   ros::Publisher dart_client_cmd_pub_;
+  ros::Publisher client_map_receive_pub_;
+  ros::Publisher robots_position_pub_;
+  ros::Publisher radar_mark_pub_;
+  ros::Publisher client_map_send_data_pub_;
 
   Base base_;
   std::vector<uint8_t> rx_buffer_;
