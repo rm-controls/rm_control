@@ -680,6 +680,7 @@ public:
     barrel_nh.getParam("id1_point", id1_point_);
     barrel_nh.getParam("id2_point", id2_point_);
     barrel_nh.getParam("restart_push_threshold", restart_push_threshold_);
+    barrel_nh.getParam("cooling_threshold", cooling_threshold_);
 
     joint_state_sub_ = nh.subscribe<sensor_msgs::JointState>("/joint_states", 10,
                                                              &DoubleBarrelCommandSender::jointStateCallback, this);
@@ -826,13 +827,13 @@ private:
       return false;
     }
 
-    if (shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < 30 ||
-        shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < 30)
+    if (shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < cooling_threshold_ ||
+        shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < cooling_threshold_)
     {
       if (getBarrelId())
-        return shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < 30;
+        return shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < cooling_threshold_;
       else
-        return shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < 30;
+        return shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < cooling_threshold_;
     }
     else
       return false;
@@ -855,7 +856,7 @@ private:
   double trigger_error_;
   int barrel_id_;
   double id1_point_, id2_point_;
-  double restart_push_threshold_;
+  double restart_push_threshold_, cooling_threshold_;
 };
 
 }  // namespace rm_common
