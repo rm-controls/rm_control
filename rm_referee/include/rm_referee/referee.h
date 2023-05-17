@@ -89,14 +89,10 @@ public:
     robots_position_pub_ = nh.advertise<rm_msgs::RobotsPositionData>("robot_position", 1);
     radar_mark_pub_ = nh.advertise<rm_msgs::RadarMarkData>("radar_mark", 1);
     client_map_send_data_pub_ = nh.advertise<rm_msgs::ClientMapSendData>("client_map_send_data", 1);
-    power_management_status_data_pub_ =
-        nh.advertise<rm_msgs::PowerManagementStatusData>("power_management_status_data", 1);
-    power_management_error_data_pub_ =
-        nh.advertise<rm_msgs::PowerManagementErrorData>("power_management_error_data", 1);
-    ROS_INFO("power_management_status_data_pub_topic: /rm_referee/power_management_status_data \n "
-             "power_management_error_data_pub_topic: /rm_referee/power_management_error_data");
-    ROS_INFO("Three INFO will be send if serial port is normal: Official serial data received && "
-             "PowerManagementStatusData received && PowerManagementErrorData received");
+
+    ros::NodeHandle power_management_nh = ros::NodeHandle(nh, "power_management");
+    power_management_sample_and_status_data_pub_ =
+        power_management_nh.advertise<rm_msgs::PowerManagementSampleAndStatusData>("sample_and_status", 1);
     // initSerial
     base_.initSerial();
   };
@@ -127,8 +123,7 @@ public:
   ros::Publisher robots_position_pub_;
   ros::Publisher radar_mark_pub_;
   ros::Publisher client_map_send_data_pub_;
-  ros::Publisher power_management_status_data_pub_;
-  ros::Publisher power_management_error_data_pub_;
+  ros::Publisher power_management_sample_and_status_data_pub_;
 
   Base base_;
   std::vector<uint8_t> rx_buffer_;

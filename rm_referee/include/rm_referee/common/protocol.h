@@ -534,13 +534,16 @@ typedef struct
 
 typedef struct
 {
-  float chassis_power;
-  float chassis_expect_power;
-  float capacity_recent_charge_power;
-  float capacity_remain_charge;
+  int8_t chassis_power_high_8_bit;
+  int8_t chassis_power_low_8_bit;
+  int8_t chassis_expect_power_high_8_bit;
+  int8_t chassis_expect_power_low_8_bit;
+  int8_t capacity_recent_charge_power_high_8_bit;
+  int8_t capacity_recent_charge_power_low_8_bit;
+  int8_t capacity_remain_charge_high_8_bit;
+  int8_t capacity_remain_charge_low_8_bit;
   int8_t capacity_expect_charge_power;
-  int8_t state_machine_running_state;
-  int8_t power_management_topology;
+  int8_t state_machine_running_state_and_power_management_topology_byte;
 } __packed PowerManagementSampleAndStatusData;
 
 typedef struct
