@@ -723,6 +723,11 @@ public:
     shooter_ID1_cmd_sender_->setMode(mode);
     shooter_ID2_cmd_sender_->setMode(mode);
   }
+  void setZero()
+  {
+    shooter_ID1_cmd_sender_->setZero();
+    shooter_ID2_cmd_sender_->setZero();
+  }
   void checkError(const ros::Time& time)
   {
     shooter_ID1_cmd_sender_->checkError(time);
@@ -755,6 +760,24 @@ public:
     barrel_command_sender_->setPoint(id1_point_);
     barrel_command_sender_->sendCommand(time);
     return barrel_id_;
+  }
+  void setArmorType(uint8_t armor_type)
+  {
+    shooter_ID1_cmd_sender_->setArmorType(armor_type);
+    shooter_ID2_cmd_sender_->setArmorType(armor_type);
+  }
+  void setShootFrequency(uint8_t mode)
+  {
+    shooter_ID1_cmd_sender_->setShootFrequency(mode);
+    shooter_ID2_cmd_sender_->setShootFrequency(mode);
+  }
+  uint8_t getShootFrequency()
+  {
+    return shooter_ID1_cmd_sender_->getShootFrequency();
+  }
+  double getSpeed()
+  {
+    return shooter_ID1_cmd_sender_->getSpeed();
   }
 
 private:
