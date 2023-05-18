@@ -22,7 +22,6 @@ add_message_files(
         LpData.msg
         KalmanData.msg
         MovingAverageData.msg
-        SuperCapacitor.msg
         GpioData.msg
         TofRadarData.msg
         MultiDofCmd.msg
