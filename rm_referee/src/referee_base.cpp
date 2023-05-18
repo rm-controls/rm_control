@@ -48,8 +48,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "target")
         target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_);
-      if (rpc_value[i]["name"] == "target_scale")
-        target_scale_trigger_change_ui_ = new TargetScaleTriggerChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "target_view_angle")
+        target_view_angle_trigger_change_ui_ = new TargetViewAngleTriggerChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "camera")
         camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
     }
@@ -109,8 +109,8 @@ void RefereeBase::addUi()
     shooter_trigger_change_ui_->add();
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->add();
-  if (target_scale_trigger_change_ui_)
-    target_scale_trigger_change_ui_->add();
+  if (target_view_angle_trigger_change_ui_)
+    target_view_angle_trigger_change_ui_->add();
   if (camera_trigger_change_ui_)
     camera_trigger_change_ui_->add();
   if (fixed_ui_)
@@ -282,7 +282,7 @@ void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
 }
 void RefereeBase::trackCallBack(const rm_msgs::TrackDataConstPtr& data)
 {
-  if (target_scale_trigger_change_ui_)
-    target_scale_trigger_change_ui_->updateTrackID(data->id);
+  if (target_view_angle_trigger_change_ui_)
+    target_view_angle_trigger_change_ui_->updateTrackID(data->id);
 }
 }  // namespace rm_referee
