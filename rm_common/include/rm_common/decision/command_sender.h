@@ -827,13 +827,15 @@ private:
       return false;
     }
 
-    if (shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < cooling_threshold_ ||
-        shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < cooling_threshold_)
+    if (shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < cooling_threshold_[0] ||
+        shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < cooling_threshold_[0])
     {
       if (getBarrelId())
-        return shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < cooling_threshold_;
+        return shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < cooling_threshold_[0] &&
+               shooter_ID1_cooling_limit - shooter_ID1_cooling_heat > cooling_threshold_[1];
       else
-        return shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < cooling_threshold_;
+        return shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < cooling_threshold_[0] &&
+               shooter_ID2_cooling_limit - shooter_ID2_cooling_heat > cooling_threshold_[1];
     }
     else
       return false;
@@ -856,7 +858,8 @@ private:
   double trigger_error_;
   int barrel_id_;
   double id1_point_, id2_point_;
-  double restart_push_threshold_, cooling_threshold_;
+  double restart_push_threshold_;
+  std::vector<int> cooling_threshold_;
 };
 
 }  // namespace rm_common
