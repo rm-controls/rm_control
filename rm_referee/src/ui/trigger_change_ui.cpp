@@ -85,7 +85,7 @@ void ChassisTriggerChangeUi::updateDbusData(const rm_msgs::DbusData::ConstPtr da
   key_b_ = data->key_b;
 }
 
-void ChassisTriggerChangeUi::updateCapacityData(const rm_msgs::CapacityData data)
+void ChassisTriggerChangeUi::updateCapacityResetStatus()
 {
   displayInCapacity();
 }

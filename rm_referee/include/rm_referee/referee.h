@@ -44,23 +44,6 @@
 
 namespace rm_referee
 {
-class SuperCapacitor
-{
-public:
-  explicit SuperCapacitor() : last_get_data_time_(ros::Time::now()){};
-  void read(const std::vector<uint8_t>& rx_buffer);
-  static float int16ToFloat(unsigned short data0);
-  ros::Time last_get_data_time_;
-  rm_referee::CapacityData capacity_data_;
-
-private:
-  void dtpReceivedCallBack(unsigned char receive_byte);
-  void receiveCallBack(unsigned char package_id, const unsigned char* data);
-  unsigned char receive_buffer_[1024] = { 0 };
-  unsigned char ping_pong_buffer_[1024] = { 0 };
-  unsigned int receive_buf_counter_ = 0;
-};
-
 class Referee
 {
 public:
@@ -68,7 +51,6 @@ public:
   {
     ROS_INFO("New serial protocol loading.");
     // pub
-    super_capacitor_pub_ = nh.advertise<rm_msgs::SuperCapacitor>("super_capacitor", 1);
     game_robot_status_pub_ = nh.advertise<rm_msgs::GameRobotStatus>("game_robot_status", 1);
     game_status_pub_ = nh.advertise<rm_msgs::GameStatus>("game_status", 1);
     capacity_data_pub_ = nh.advertise<rm_msgs::CapacityData>("capacity_data", 1);
@@ -103,7 +85,6 @@ public:
     rx_len_ = 0;
   }
 
-  ros::Publisher super_capacitor_pub_;
   ros::Publisher game_robot_status_pub_;
   ros::Publisher game_status_pub_;
   ros::Publisher capacity_data_pub_;
@@ -135,7 +116,6 @@ private:
   void getRobotInfo();
   void publishCapacityData();
 
-  SuperCapacitor super_capacitor_;
   ros::Time last_get_data_time_;
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
   const int k_unpack_buffer_length_ = 256;

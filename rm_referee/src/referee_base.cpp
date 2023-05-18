@@ -133,12 +133,13 @@ void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, 
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {
 }
-void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::Time& last_get_data_time)
+void RefereeBase::capacityDataCallBack(const rm_msgs::PowerManagementSampleAndStatusData& data,
+                                       ros::Time& last_get_data_time)
 {
   if (capacitor_time_change_ui_ && !is_adding_)
-    capacitor_time_change_ui_->updateCapacityData(data, last_get_data_time);
+    capacitor_time_change_ui_->updateRemainCharge(data.capacity_remain_charge, last_get_data_time);
   if (chassis_trigger_change_ui_ && !is_adding_)
-    chassis_trigger_change_ui_->updateCapacityData(data);
+    chassis_trigger_change_ui_->updateCapacityResetStatus();
 }
 void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_data_time)
 {
