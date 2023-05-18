@@ -48,12 +48,14 @@
 #include <rm_msgs/StateCmd.h>
 #include <rm_msgs/TrackData.h>
 #include <rm_msgs/GameRobotHp.h>
+#include <rm_msgs/StatusChangeRequest.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Float64.h>
 #include <rm_msgs/MultiDofCmd.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Bool.h>
 
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
@@ -348,10 +350,15 @@ public:
   {
     track_data_ = data;
   }
+  void updateSuggestFireData(const std_msgs::Bool& data)
+  {
+    suggest_fire_ = data;
+  }
   void checkError(const ros::Time& time)
   {
-    if ((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
-        (track_data_.accel > target_acceleration_tolerance_))
+    if (((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
+         (track_data_.accel > target_acceleration_tolerance_)) ||
+        (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
         setMode(rm_msgs::ShootCmd::READY);
   }
@@ -378,6 +385,10 @@ public:
     }
     return 0.;
   }
+  void setArmorType(uint8_t armor_type)
+  {
+    armor_type_ = armor_type;
+  }
   void setShootFrequency(uint8_t mode)
   {
     heat_limit_->setShootFrequency(mode);
@@ -395,6 +406,8 @@ private:
   double target_acceleration_tolerance_{};
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
+  std_msgs::Bool suggest_fire_;
+  uint8_t armor_type_{};
 };
 
 class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::TwistStamped>

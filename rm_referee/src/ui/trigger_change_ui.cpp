@@ -199,8 +199,10 @@ std::string TargetTriggerChangeUi::getTargetState(uint8_t target, uint8_t armor_
 {
   if (base_.robot_id_ != rm_referee::RobotId::BLUE_HERO && base_.robot_id_ != rm_referee::RobotId::RED_HERO)
   {
-    if (target == rm_msgs::StatusChangeRequest::BUFF)
-      return "buff";
+    if (target == rm_msgs::StatusChangeRequest::SMALL_BUFF)
+      return "small_buff";
+    else if (target == rm_msgs::StatusChangeRequest::BIG_BUFF)
+      return "big_buff";
     else if (target == rm_msgs::StatusChangeRequest::ARMOR && armor_target == rm_msgs::StatusChangeRequest::ARMOR_ALL)
       return "armor_all";
     else if (target == rm_msgs::StatusChangeRequest::ARMOR &&
