@@ -94,7 +94,7 @@ public:
   }
   void setCapacityData(const rm_msgs::CapacityData data)
   {
-    capacity_is_online_ = data.is_online;
+    capacity_is_online_ = ros::Time::now() - data.stamp < ros::Duration(0.3);
     cap_power_ = data.cap_power;
   }
   void setRefereeStatus(bool status)
