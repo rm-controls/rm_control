@@ -134,7 +134,7 @@ void RefereeBase::sendGraphQueueCallback()
 {
   if (graph_queue_.size() > 20)
   {
-    ROS_WARN_THROTTLE(3.0, "Sending UI too frequently, please modify the configuration file or code to "
+    ROS_WARN_THROTTLE(2.0, "Sending UI too frequently, please modify the configuration file or code to "
                            "reduce the frequency");
     while (graph_queue_.size() > 20)
       graph_queue_.pop_back();
