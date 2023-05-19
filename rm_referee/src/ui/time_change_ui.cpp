@@ -23,18 +23,37 @@ void TimeChangeGroupUi::update()
   display(ros::Time::now());
 }
 
+void TimeChangeUi::updateForQueue()
+{
+  updateConfig();
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+
+  if (graph_queue_ && !graph_->isRepeated() && ros::Time::now() - last_send_ > delay_)
+  {
+    graph_queue_->push_back(*graph_);
+    last_send_ = ros::Time::now();
+  }
+}
+
+void TimeChangeGroupUi::updateForQueue()
+{
+  updateConfig();
+  for (auto graph : graph_vector_)
+  {
+    graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
+    if (graph_queue_ && !graph.second->isRepeated() && ros::Time::now() - last_send_ > delay_)
+    {
+      graph_queue_->push_back(*graph.second);
+      last_send_ = ros::Time::now();
+    }
+  }
+}
+
 void CapacitorTimeChangeUi::add()
 {
   if (remain_charge_ != 0.)
     graph_->setOperation(rm_referee::GraphOperation::ADD);
   UiBase::display(false);
-}
-
-void CapacitorTimeChangeUi::update()
-{
-  updateConfig();
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  display(ros::Time::now());
 }
 
 void CapacitorTimeChangeUi::updateConfig()
@@ -59,7 +78,7 @@ void CapacitorTimeChangeUi::updateConfig()
 void CapacitorTimeChangeUi::updateRemainCharge(const double remain_charge, const ros::Time& time)
 {
   remain_charge_ = remain_charge;
-  update();
+  updateForQueue();
 }
 
 void EffortTimeChangeUi::updateConfig()
@@ -140,16 +159,6 @@ void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::C
   TimeChangeUi::update();
 }
 
-void LaneLineTimeChangeGroupUi::sendUi(const ros::Time& time)
-{
-  if (time - last_send_ < ros::Duration(0.05))
-    return;
-  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
-    return;
-
-  sendDoubleGraph(time, lane_line_double_graph_.at(0), lane_line_double_graph_.at(1));
-}
-
 void RotationTimeChangeUi::updateConfig()
 {
   if (!tf_buffer_.canTransform(gimbal_reference_frame_, chassis_reference_frame_, ros::Time(0)))
@@ -213,6 +222,6 @@ void LaneLineTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointSta
 
   end_point_a_angle_ = camera_range_ / 2 + pitch_angle_;
   end_point_b_angle_ = 0.6 * (0.25 + pitch_angle_);
-  TimeChangeGroupUi::update();
+  updateForQueue();
 }
 }  // namespace rm_referee
