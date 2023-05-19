@@ -477,9 +477,10 @@ int Referee::unpack(uint8_t* rx_data)
               (static_cast<uint16_t>((data[4] << 8) | data[5]) / 100.);
           capacity_pub_data.cap_power = sample_and_status_pub_data.capacity_remain_charge =
               (static_cast<uint16_t>((data[6] << 8) | data[7]) / 10000.);
-          sample_and_status_pub_data.capacity_expect_charge_power = static_cast<uint16_t>(data[8]);
-          sample_and_status_pub_data.state_machine_running_state = static_cast<uint16_t>(data[9] >> 4);
-          sample_and_status_pub_data.power_management_topology = static_cast<uint16_t>(data[9] & 0x0F);
+          sample_and_status_pub_data.capacity_expect_charge_power = static_cast<uint8_t>(data[8]);
+          sample_and_status_pub_data.state_machine_running_state = base_.capacity_recent_mode_ =
+              static_cast<uint8_t>(data[9] >> 4);
+          sample_and_status_pub_data.power_management_topology = static_cast<uint8_t>(data[9] & 0x0F);
           capacity_pub_data.stamp = sample_and_status_pub_data.stamp = last_get_data_time_;
 
           referee_ui_.capacityDataCallBack(sample_and_status_pub_data, last_get_data_time_);
