@@ -45,7 +45,6 @@ public:
   explicit CapacitorTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
     : TimeChangeUi(rpc_value, base, "capacitor", graph_queue){};
   void add() override;
-  void update() override;
   void updateRemainCharge(const double remain_charge, const ros::Time& time);
 
 private:
