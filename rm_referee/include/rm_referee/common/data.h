@@ -101,6 +101,7 @@ public:
 
   int client_id_ = 0;  // recipient's id
   int robot_id_ = 0;   // recent  robot's id
+  int capacity_recent_mode_, capacity_expect_mode_;
   std::string robot_color_;
   bool referee_data_is_online_ = false;
 
