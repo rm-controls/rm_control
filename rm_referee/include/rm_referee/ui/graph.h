@@ -13,26 +13,24 @@ class Graph
 {
 public:
   explicit Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id);
-  explicit Graph(Base& base);
-  void addUi(const rm_referee::GraphConfig& config, const std::string& content, bool priority_flag = false);
-  void sendUi(const ros::Time& time);
-  void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);
-  void clearTxBuffer()
-  {
-    for (int i = 0; i < 128; i++)
-      tx_buffer_[i] = 0;
-    tx_len_ = 0;
-  }
-
-  void display(bool priority_flag = false);
-  void displayTwice(bool priority_flag = false);
-  void display(const ros::Time& time);
-  void display(const ros::Time& time, bool state, bool once = false);
   void updatePosition(int index);
   void setOperation(const rm_referee::GraphOperation& operation)
   {
     config_.operate_type = operation;
   }
+  int getOperation()
+  {
+    return config_.operate_type;
+  }
+  rm_referee::GraphConfig getConfig()
+  {
+    return config_;
+  }
+  std::string getCharacters()
+  {
+    return title_ + content_;
+  }
+
   void setColor(const rm_referee::GraphColor& color)
   {
     config_.color = color;
@@ -57,26 +55,38 @@ public:
   {
     config_.start_y = start_y;
   }
-
-  uint8_t tx_buffer_[128];
-  int tx_len_;
+  void setStartAngle(int start_angle)
+  {
+    if (0 <= start_angle && start_angle <= 360)
+      config_.start_angle = start_angle;
+  }
+  void setEndAngle(int end_angle)
+  {
+    if (0 <= end_angle && end_angle <= 360)
+      config_.end_angle = end_angle;
+  }
+  bool isRepeated()
+  {
+    return config_ == last_config_ && title_ == last_title_ && content_ == last_content_;
+  }
+  void updateLastConfig()
+  {
+    if (!title_.empty() && !content_.empty())
+      config_.end_angle = static_cast<int>((title_ + content_).size());
+    last_content_ = content_;
+    last_title_ = title_;
+    last_config_ = config_;
+  }
 
 private:
   void initPosition(XmlRpc::XmlRpcValue value, std::vector<std::pair<int, int>>& positions);
-  void pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const;
   rm_referee::GraphColor getColor(const std::string& color);
   rm_referee::GraphType getType(const std::string& type);
 
   Base& base_;
-  ros::Time last_time_ = ros::Time::now();
-  ros::Duration delay_ = ros::Duration(0.);
-  std::string title_{}, content_{}, last_title_{}, last_content_{};
   std::vector<std::pair<int, int>> start_positions_{}, end_positions_{};
   rm_referee::GraphConfig config_{}, last_config_{};
-
-  ros::Time last_send_;
-  std::vector<std::pair<rm_referee::GraphConfig, std::string>> ui_queue_;
-  const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
+  std::string title_{}, content_{}, last_title_{}, last_content_{};
 };
 
 }  // namespace rm_referee
