@@ -71,7 +71,12 @@ typedef enum
   ROBOT_COMMAND_CMD = 0x0304,      // controller
   CLIENT_MAP_CMD = 0x0305,
   CUSTOM_CLIENT_CMD = 0x0306,  // controller
-  MAP_SENTRY_CMD = 0x0307      // send sentry->aerial
+  MAP_SENTRY_CMD = 0x0307,     // send sentry->aerial
+  POWER_MANAGEMENT_SAMPLE_AND_STATUS_DATA_CMD = 0X8301,
+  POWER_MANAGEMENT_INITIALIZATION_EXCEPTION_CMD = 0X8302,
+  POWER_MANAGEMENT_SYSTEM_EXCEPTION_CMD = 0X8303,
+  POWER_MANAGEMENT_PROCESS_STACK_OVERFLOW_CMD = 0X8304,
+  POWER_MANAGEMENT_UNKNOWN_EXCEPTION_CMD = 0X8305
 } RefereeCmdId;
 
 typedef enum
@@ -162,6 +167,34 @@ typedef enum
   DEFEND_IN = 2,
   MOVE_TO = 3
 } SentryIntention;
+
+typedef enum
+{
+  CHARGE = 0,
+  BOOST = 1,
+  NORMAL = 2,
+  ALL_OFF = 3
+} PowerManagementStateMachine;
+
+typedef enum
+{
+  POWER_ON = 1,
+  EXTERNAL_BUTTON = 2,
+  SOFT = 3,
+  INDEPENDENT_WATCHDOG = 4,
+  WINDOW_WATCHDOG = 5,
+  LOW_VOLTAGE = 6,
+  UNKNOWN = 7
+} PowerManagementResetReason;
+
+typedef enum
+{
+  PASS_THROUGH = 0,
+  CHARGE_AND_BOOST = 1,
+  SWITCHES_ALL_OFF = 2
+} PowerManagementTopology;
+
+/*****************************/
 
 typedef struct
 {
@@ -498,6 +531,50 @@ typedef struct
   int8_t delta_x_[49];
   int8_t delta_y_[49];
 } __packed MapSentryData;
+
+typedef struct
+{
+  int8_t chassis_power_high_8_bit;
+  int8_t chassis_power_low_8_bit;
+  int8_t chassis_expect_power_high_8_bit;
+  int8_t chassis_expect_power_low_8_bit;
+  int8_t capacity_recent_charge_power_high_8_bit;
+  int8_t capacity_recent_charge_power_low_8_bit;
+  int8_t capacity_remain_charge_high_8_bit;
+  int8_t capacity_remain_charge_low_8_bit;
+  int8_t capacity_expect_charge_power;
+  int8_t state_machine_running_state_and_power_management_topology_byte;
+} __packed PowerManagementSampleAndStatusData;
+
+typedef struct
+{
+  int8_t error_code;
+  char string[31];
+} __packed PowerManagementInitializationExceptionData;
+
+typedef struct
+{
+  uint32_t r_0;
+  uint32_t r_1;
+  uint32_t r_2;
+  uint32_t r_3;
+  uint32_t r_12;
+  uint32_t LR;
+  uint32_t PC;
+  uint32_t PSR;
+} __packed PowerManagementSystemExceptionData;
+
+typedef struct
+{
+  char process_name[32];
+} __packed PowerManagementProcessStackOverflowData;
+
+typedef struct
+{
+  uint8_t abnormal_reset_reason;
+  uint8_t state_machine_before_reset_mode;
+  uint8_t power_management_before_reset_topology;
+} __packed PowerManagementUnknownExceptionData;
 
 /***********************Frame tail(CRC8_CRC16)********************************************/
 const uint8_t kCrc8Init = 0xff;

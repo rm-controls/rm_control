@@ -25,7 +25,8 @@ public:
   virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data,
                                        const ros::Time& last_get_data_time);
   virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data, const ros::Time& last_get_data_time);
-  virtual void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data, ros::Time& last_get_data_time);
+  virtual void capacityDataCallBack(const rm_msgs::PowerManagementSampleAndStatusData& data,
+                                    ros::Time& last_get_data_time);
   virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data, const ros::Time& last_get_data_time);
   virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data, const ros::Time& last_get_data_time);
   virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data,

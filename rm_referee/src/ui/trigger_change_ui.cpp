@@ -36,6 +36,8 @@ void ChassisTriggerChangeUi::displayInCapacity()
 
 void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
+  static ros::Time burst_trigger_time;
+  static bool burst_delay = false;
   if (main_mode == 254)
   {
     graph_->setContent("Cap reset");
@@ -45,12 +47,34 @@ void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uin
   graph_->setContent(getChassisState(main_mode));
   if (main_flag)
     graph_->setColor(rm_referee::GraphColor::ORANGE);
-  else if (sub_flag)
-    graph_->setColor(rm_referee::GraphColor::GREEN);
   else if (sub_mode == 1)
     graph_->setColor(rm_referee::GraphColor::PINK);
   else
-    graph_->setColor(rm_referee::GraphColor::WHITE);
+  {
+    if (base_.capacity_recent_mode_ == rm_common::PowerLimit::BURST && !burst_delay)
+    {
+      burst_trigger_time = ros::Time::now();
+      burst_delay = true;
+    }
+    else if (burst_delay)
+    {
+      if (ros::Time::now() - burst_trigger_time > ros::Duration(0.1))
+      {
+        if (sub_flag)
+          graph_->setColor(rm_referee::GraphColor::GREEN);
+        else
+          graph_->setColor(rm_referee::GraphColor::WHITE);
+        burst_delay = false;
+      }
+    }
+    else
+    {
+      if (sub_flag)
+        graph_->setColor(rm_referee::GraphColor::GREEN);
+      else
+        graph_->setColor(rm_referee::GraphColor::WHITE);
+    }
+  }
 }
 
 std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
@@ -85,7 +109,7 @@ void ChassisTriggerChangeUi::updateDbusData(const rm_msgs::DbusData::ConstPtr da
   key_b_ = data->key_b;
 }
 
-void ChassisTriggerChangeUi::updateCapacityData(const rm_msgs::CapacityData data)
+void ChassisTriggerChangeUi::updateCapacityResetStatus()
 {
   displayInCapacity();
 }

@@ -37,7 +37,7 @@ public:
   void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
   void updateDbusData(const rm_msgs::DbusData::ConstPtr data);
-  void updateCapacityData(const rm_msgs::CapacityData data);
+  void updateCapacityResetStatus();
 
 private:
   void update() override;
