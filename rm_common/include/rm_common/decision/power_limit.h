@@ -84,10 +84,6 @@ public:
     robot_id_ = data.robot_id;
     chassis_power_limit_ = data.chassis_power_limit;
   }
-  void setGameProgress(const rm_msgs::GameStatus data)
-  {
-    game_progress_ = data.game_progress;
-  }
   void setChassisPowerBuffer(const rm_msgs::PowerHeatData data)
   {
     chassis_power_buffer_ = data.chassis_power_buffer;
@@ -150,7 +146,7 @@ public:
 private:
   void charge(rm_msgs::ChassisCmd& chassis_cmd)
   {
-    chassis_cmd.power_limit = chassis_power_limit_ * 0.85;
+    chassis_cmd.power_limit = chassis_power_limit_ * 0.70;
   }
   void normal(rm_msgs::ChassisCmd& chassis_cmd)
   {
@@ -175,7 +171,6 @@ private:
       normal(chassis_cmd);
   }
 
-  int game_progress_;
   int chassis_power_buffer_;
   int robot_id_, chassis_power_limit_;
   float cap_power_;
