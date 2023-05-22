@@ -48,6 +48,9 @@ public:
   virtual void trackCallBack(const rm_msgs::TrackDataConstPtr& data);
   virtual void balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data);
 
+  // send graph_type ui
+  void sendGraphQueueCallback();
+
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
   ros::Subscriber dbus_sub_;
@@ -69,7 +72,7 @@ public:
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
   GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
   TargetTriggerChangeUi* target_trigger_change_ui_{};
-  TargetScaleTriggerChangeUi* target_scale_trigger_change_ui_{};
+  TargetViewAngleTriggerChangeUi* target_view_angle_trigger_change_ui_{};
   CameraTriggerChangeUi* camera_trigger_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
@@ -85,8 +88,11 @@ public:
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
 
+  GroupUiBase* graph_queue_sender_{};
+  std::vector<Graph> graph_queue_;
+
   Base& base_;
-  ros::Timer add_ui_timer_;
+  ros::Timer add_ui_timer_, send_graph_ui_timer_;
   int add_ui_times_ = 0;
   bool add_ui_flag_ = false, is_adding_ = false;
   ros::NodeHandle nh_;

@@ -16,11 +16,13 @@ namespace rm_referee
 class UiBase
 {
 public:
-  explicit UiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base) : base_(base), tf_listener_(tf_buffer_)
+  explicit UiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue = nullptr)
+    : base_(base), tf_listener_(tf_buffer_)
   {
     if (rpc_value.hasMember("config"))
       if (rpc_value["config"].hasMember("delay"))
         delay_ = ros::Duration(static_cast<double>(rpc_value["config"]["delay"]));
+    graph_queue_ = graph_queue;
   };
   ~UiBase() = default;
   virtual void add();
@@ -50,6 +52,7 @@ protected:
   Base& base_;
   Graph* graph_;
   static int id_;
+  std::vector<Graph>* graph_queue_;
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
 
@@ -61,7 +64,8 @@ protected:
 class GroupUiBase : public UiBase
 {
 public:
-  explicit GroupUiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base) : UiBase(rpc_value, base){};
+  explicit GroupUiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue = nullptr)
+    : UiBase(rpc_value, base, graph_queue){};
   ~GroupUiBase() = default;
   void add() override;
   void update() override;
@@ -83,7 +87,8 @@ protected:
 class FixedUi : public GroupUiBase
 {
 public:
-  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base) : GroupUiBase(rpc_value, base)
+  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue = nullptr)
+    : GroupUiBase(rpc_value, base, graph_queue)
   {
     for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
       graph_vector_.insert(

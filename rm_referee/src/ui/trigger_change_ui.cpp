@@ -238,14 +238,14 @@ void TargetTriggerChangeUi::updateShootStateData(const rm_msgs::ShootState::Cons
   update();
 }
 
-void TargetScaleTriggerChangeUi::update()
+void TargetViewAngleTriggerChangeUi::update()
 {
   updateConfig(track_id_ == 0, false);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   displayTwice();
 }
 
-void TargetScaleTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
+void TargetViewAngleTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
   if (main_mode)
     graph_->setColor(rm_referee::GraphColor::WHITE);
@@ -253,7 +253,7 @@ void TargetScaleTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag,
     graph_->setColor(rm_referee::GraphColor::GREEN);
 }
 
-void TargetScaleTriggerChangeUi::updateTrackID(int id)
+void TargetViewAngleTriggerChangeUi::updateTrackID(int id)
 {
   track_id_ = id;
   update();
