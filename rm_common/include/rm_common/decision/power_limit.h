@@ -116,8 +116,6 @@ public:
       {
         if (capacity_is_online_)
         {
-          if (game_progress_ == 1)
-            chassis_cmd.power_limit = 30;  // calibra
           if (chassis_power_limit_ > 120)
             chassis_cmd.power_limit = burst_power_;
           else
