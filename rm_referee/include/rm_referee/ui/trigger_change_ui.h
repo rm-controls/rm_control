@@ -105,10 +105,10 @@ private:
   uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
 };
 
-class TargetScaleTriggerChangeUi : public TriggerChangeUi
+class TargetViewAngleTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit TargetScaleTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+  explicit TargetViewAngleTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
     : TriggerChangeUi(rpc_value, base, "target_scale")
   {
   }
