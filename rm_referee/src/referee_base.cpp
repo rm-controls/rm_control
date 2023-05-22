@@ -71,7 +71,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "lane_line")
         lane_line_time_change_ui_ = new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
       if (rpc_value[i]["name"] == "balance_pitch")
-        balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_);
+        balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);

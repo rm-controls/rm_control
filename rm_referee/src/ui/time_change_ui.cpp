@@ -227,15 +227,6 @@ void LaneLineTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointSta
   updateForQueue();
 }
 
-void BalancePitchTimeChangeGroupUi::sendUi(const ros::Time& time)
-{
-  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
-    return;
-
-  sendSingleGraph(time, balance_pitch_single_graph_.at(0));
-  sendDoubleGraph(time, balance_pitch_double_graph_.at(0), balance_pitch_double_graph_.at(1));
-}
-
 void BalancePitchTimeChangeGroupUi::updateConfig()
 {
   for (auto it : graph_vector_)
@@ -264,7 +255,6 @@ void BalancePitchTimeChangeGroupUi::calculatePointPosition(const rm_msgs::Balanc
   triangle_left_point_[1] = centre_point_[1] + length_ * cos(bottom_angle_ / 2 + data->theta);
   triangle_right_point_[0] = centre_point_[0] + length_ * sin(bottom_angle_ / 2 - data->theta);
   triangle_right_point_[1] = centre_point_[1] + length_ * cos(bottom_angle_ / 2 - data->theta);
-
-  TimeChangeGroupUi::update();
+  updateForQueue();
 }
 }  // namespace rm_referee

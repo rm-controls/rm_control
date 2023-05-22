@@ -171,8 +171,8 @@ private:
 class BalancePitchTimeChangeGroupUi : public TimeChangeGroupUi
 {
 public:
-  explicit BalancePitchTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
-    : TimeChangeGroupUi(rpc_value, base, "balance_pitch")
+  explicit BalancePitchTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
+    : TimeChangeGroupUi(rpc_value, base, "balance_pitch", graph_queue)
   {
     XmlRpc::XmlRpcValue config;
 
@@ -218,15 +218,8 @@ public:
     config["end_position"][0] = triangle_right_point_[0];
     config["end_position"][1] = triangle_right_point_[1];
     graph_vector_.insert(std::make_pair<std::string, Graph*>("triangle_right_side", new Graph(config, base_, id_++)));
-
-    for (auto it : graph_vector_)
-      if (it.first == "triangle_left_side" || it.first == "triangle_right_side")
-        balance_pitch_double_graph_.push_back(it.second);
-      else if (it.first == "bottom")
-        balance_pitch_single_graph_.push_back(it.second);
   }
 
-  void sendUi(const ros::Time& time) override;
   void calculatePointPosition(const rm_msgs::BalanceStateConstPtr& data, const ros::Time& time);
 
 private:
@@ -234,9 +227,6 @@ private:
 
   int centre_point_[2], triangle_left_point_[2], triangle_right_point_[2], length_;
   double bottom_angle_;
-
-  std::vector<Graph*> balance_pitch_single_graph_;
-  std::vector<Graph*> balance_pitch_double_graph_;
 };
 
 }  // namespace rm_referee
