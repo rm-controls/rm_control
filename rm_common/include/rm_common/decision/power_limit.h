@@ -42,7 +42,7 @@
 #include <rm_msgs/GameStatus.h>
 #include <rm_msgs/GameRobotStatus.h>
 #include <rm_msgs/PowerHeatData.h>
-#include <rm_msgs/CapacityData.h>
+#include <rm_msgs/PowerManagementSampleAndStatusData.h>
 
 namespace rm_common
 {
@@ -69,15 +69,16 @@ public:
   }
   typedef enum
   {
-    TEST = 0,
+    CHARGE = 0,
     BURST = 1,
     NORMAL = 2,
-    CHARGE = 3,
+    ALLOFF = 3,
+    TEST = 4,
   } Mode;
 
   void updateState(uint8_t state)
   {
-    state_ = state;
+    expect_state_ = state;
   }
   void setGameRobotData(const rm_msgs::GameRobotStatus data)
   {
@@ -88,10 +89,11 @@ public:
   {
     chassis_power_buffer_ = data.chassis_power_buffer;
   }
-  void setCapacityData(const rm_msgs::CapacityData data)
+  void setCapacityData(const rm_msgs::PowerManagementSampleAndStatusData data)
   {
     capacity_is_online_ = ros::Time::now() - data.stamp < ros::Duration(0.3);
-    cap_power_ = data.cap_power;
+    cap_energy_ = data.capacity_remain_charge;
+    cap_state_ = data.state_machine_running_state;
   }
   void setRefereeStatus(bool status)
   {
@@ -100,7 +102,7 @@ public:
 
   uint8_t getState()
   {
-    return state_;
+    return expect_state_;
   }
   void setLimitPower(rm_msgs::ChassisCmd& chassis_cmd, bool is_gyro)
   {
@@ -116,11 +118,8 @@ public:
             chassis_cmd.power_limit = burst_power_;
           else
           {
-            switch (state_)
+            switch (cap_state_)
             {
-              case TEST:
-                test(chassis_cmd);
-                break;
               case NORMAL:
                 normal(chassis_cmd);
                 break;
@@ -130,9 +129,10 @@ public:
               case CHARGE:
                 charge(chassis_cmd);
                 break;
+              default:
+                zero(chassis_cmd);
+                break;
             }
-            if (state_ != Mode::BURST && (abs(chassis_cmd.power_limit - chassis_power_limit_) < 0.05))
-              normal(chassis_cmd);
           }
         }
         else
@@ -153,14 +153,15 @@ private:
     double buffer_energy_error = chassis_power_buffer_ - buffer_threshold_;
     double plus_power = buffer_energy_error * power_gain_;
     chassis_cmd.power_limit = chassis_power_limit_ + plus_power;
+    // TODO:Add protection when buffer<5
   }
-  void test(rm_msgs::ChassisCmd& chassis_cmd)
+  void zero(rm_msgs::ChassisCmd& chassis_cmd)
   {
     chassis_cmd.power_limit = 0.0;
   }
   void burst(rm_msgs::ChassisCmd& chassis_cmd, bool is_gyro)
   {
-    if (cap_power_ > capacitor_threshold_)
+    if (cap_energy_ > capacitor_threshold_)
     {
       if (is_gyro)
         chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
@@ -168,18 +169,18 @@ private:
         chassis_cmd.power_limit = burst_power_;
     }
     else
-      normal(chassis_cmd);
+      expect_state_ = NORMAL;
   }
 
   int chassis_power_buffer_;
   int robot_id_, chassis_power_limit_;
-  float cap_power_;
+  float cap_energy_;
   double safety_power_{};
   double capacitor_threshold_{};
   double charge_power_{}, extra_power_{}, burst_power_{};
   double buffer_threshold_{};
   double power_gain_{};
-  uint8_t state_{};
+  uint8_t expect_state_{}, cap_state_{};
 
   bool referee_is_online_;
   bool capacity_is_online_;

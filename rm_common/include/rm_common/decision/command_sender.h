@@ -91,7 +91,7 @@ public:
   virtual void updateGameStatus(const rm_msgs::GameStatus data)
   {
   }
-  virtual void updateCapacityData(const rm_msgs::CapacityData data)
+  virtual void updateCapacityData(const rm_msgs::PowerManagementSampleAndStatusData data)
   {
   }
   virtual void updatePowerHeatData(const rm_msgs::PowerHeatData data)
@@ -218,10 +218,6 @@ public:
       accel_z_.init(xml_rpc_value);
   }
 
-  void updateGameStatus(const rm_msgs::GameStatus data) override
-  {
-    power_limit_->setGameProgress(data);
-  }
   void updateGameRobotStatus(const rm_msgs::GameRobotStatus data) override
   {
     power_limit_->setGameRobotData(data);
@@ -230,7 +226,7 @@ public:
   {
     power_limit_->setChassisPowerBuffer(data);
   }
-  void updateCapacityData(const rm_msgs::CapacityData data) override
+  void updateCapacityData(const rm_msgs::PowerManagementSampleAndStatusData data) override
   {
     power_limit_->setCapacityData(data);
   }

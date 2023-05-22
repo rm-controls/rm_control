@@ -69,7 +69,6 @@
 #include <rm_msgs/MapSentryData.h>
 #include <rm_msgs/RadarMarkData.h>
 #include <rm_msgs/PowerHeatData.h>
-#include <rm_msgs/SuperCapacitor.h>
 #include <rm_msgs/GimbalDesError.h>
 #include <rm_msgs/BulletAllowance.h>
 #include <rm_msgs/GameRobotStatus.h>
