@@ -232,7 +232,7 @@ void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
 }
 void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
 {
-  if (chassis_trigger_change_ui_ && !is_adding_)
+  if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateChassisCmdData(data);
   if (spin_flash_ui_ && !is_adding_)
     spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
@@ -262,7 +262,7 @@ void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& da
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
-  if (chassis_trigger_change_ui_ && !is_adding_)
+  if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateManualCmdData(data);
   if (shooter_trigger_change_ui_ && !is_adding_)
     shooter_trigger_change_ui_->updateManualCmdData(data);
@@ -283,7 +283,7 @@ void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
 }
 void RefereeBase::trackCallBack(const rm_msgs::TrackDataConstPtr& data)
 {
-  if (target_view_angle_trigger_change_ui_)
+  if (target_view_angle_trigger_change_ui_ && !is_adding_)
     target_view_angle_trigger_change_ui_->updateTrackID(data->id);
 }
 }  // namespace rm_referee
