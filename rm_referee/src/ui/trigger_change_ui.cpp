@@ -36,8 +36,9 @@ void ChassisTriggerChangeUi::displayInCapacity()
 
 void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
-  static ros::Time burst_trigger_time;
-  static bool burst_delay = false;
+  static ros::Time trigger_time;
+  static int expect;
+  static bool delay = false;
   if (main_mode == 254)
   {
     graph_->setContent("Cap reset");
@@ -45,31 +46,41 @@ void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uin
     return;
   }
   graph_->setContent(getChassisState(main_mode));
-  if (main_flag)
-    graph_->setColor(rm_referee::GraphColor::ORANGE);
-  else if (sub_mode == 1)
+  if (sub_mode == 1)
     graph_->setColor(rm_referee::GraphColor::PINK);
   else
   {
-    if (base_.capacity_recent_mode_ == rm_common::PowerLimit::BURST && !burst_delay)
+    if ((base_.capacity_recent_mode_ == rm_common::PowerLimit::NORMAL ||
+         power_limit_state_ == rm_common::PowerLimit::NORMAL) &&
+        !delay)
     {
-      burst_trigger_time = ros::Time::now();
-      burst_delay = true;
+      trigger_time = ros::Time::now();
+      expect = power_limit_state_;
+      delay = true;
     }
-    else if (burst_delay)
+    else if (delay)
     {
-      if (ros::Time::now() - burst_trigger_time > ros::Duration(0.1))
+      if (expect != power_limit_state_)
       {
-        if (sub_flag)
+        trigger_time = ros::Time::now();
+        expect = power_limit_state_;
+      }
+      else if ((ros::Time::now() - trigger_time).toSec() > 0.2)
+      {
+        if (main_flag)
+          graph_->setColor(rm_referee::GraphColor::ORANGE);
+        else if (sub_flag)
           graph_->setColor(rm_referee::GraphColor::GREEN);
         else
           graph_->setColor(rm_referee::GraphColor::WHITE);
-        burst_delay = false;
+        delay = false;
       }
     }
     else
     {
-      if (sub_flag)
+      if (main_flag)
+        graph_->setColor(rm_referee::GraphColor::ORANGE);
+      else if (sub_flag)
         graph_->setColor(rm_referee::GraphColor::GREEN);
       else
         graph_->setColor(rm_referee::GraphColor::WHITE);
