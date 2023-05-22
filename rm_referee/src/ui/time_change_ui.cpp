@@ -38,15 +38,16 @@ void TimeChangeUi::updateForQueue()
 void TimeChangeGroupUi::updateForQueue()
 {
   updateConfig();
-  for (auto graph : graph_vector_)
-  {
-    graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
-    if (graph_queue_ && !graph.second->isRepeated() && ros::Time::now() - last_send_ > delay_)
+  if (ros::Time::now() - last_send_ > delay_)
+    for (auto graph : graph_vector_)
     {
-      graph_queue_->push_back(*graph.second);
-      last_send_ = ros::Time::now();
+      graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
+      if (graph_queue_ && !graph.second->isRepeated())
+      {
+        graph_queue_->push_back(*graph.second);
+        last_send_ = ros::Time::now();
+      }
     }
-  }
 }
 
 void CapacitorTimeChangeUi::add()
