@@ -93,7 +93,8 @@ public:
 
   Base& base_;
   ros::Timer add_ui_timer_, send_graph_ui_timer_;
-  int add_ui_times_ = 0;
+  int add_ui_times_, add_ui_max_times_, add_ui_frequency_;
+  double send_ui_queue_delay_;
   bool add_ui_flag_ = false, is_adding_ = false;
   ros::NodeHandle nh_;
 };
