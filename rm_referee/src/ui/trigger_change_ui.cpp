@@ -20,7 +20,7 @@ void ChassisTriggerChangeUi::update()
     updateConfig(chassis_mode_, power_limit_state_ == rm_common::PowerLimit::BURST, 0,
                  power_limit_state_ == rm_common::PowerLimit::CHARGE);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-
+  checkModeChange();
   displayTwice();
 }
 
@@ -32,6 +32,31 @@ void ChassisTriggerChangeUi::displayInCapacity()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 
   displayTwice();
+}
+
+void ChassisTriggerChangeUi::checkModeChange()
+{
+  static ros::Time trigger_time;
+  static bool is_different = false;
+
+  if (base_.capacity_recent_mode_ != power_limit_state_ && !is_different)
+  {
+    is_different = true;
+    trigger_time = ros::Time::now();
+  }
+  else if (is_different)
+  {
+    if (base_.capacity_recent_mode_ == power_limit_state_)
+    {
+      is_different = false;
+      return;
+    }
+    else if ((ros::Time::now() - trigger_time).toSec() > mode_change_threshold_)
+    {
+      is_different = false;
+      display(false);
+    }
+  }
 }
 
 void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)

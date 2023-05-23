@@ -33,11 +33,17 @@ public:
       graph_->setContent("raw");
     else
       graph_->setContent("follow");
+
+    if (rpc_value.hasMember("mode_change_threshold"))
+      mode_change_threshold_ = static_cast<double>(rpc_value["mode_change_threshold"]);
+    else
+      mode_change_threshold_ = 0.7;
   }
   void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
   void updateDbusData(const rm_msgs::DbusData::ConstPtr data);
   void updateCapacityResetStatus();
+  void checkModeChange();
 
 private:
   void update() override;
@@ -45,6 +51,7 @@ private:
   void displayInCapacity();
   std::string getChassisState(uint8_t mode);
   uint8_t chassis_mode_, power_limit_state_, s_l_, s_r_, key_ctrl_, key_shift_, key_b_;
+  double mode_change_threshold_;
 };
 
 class ShooterTriggerChangeUi : public TriggerChangeUi
