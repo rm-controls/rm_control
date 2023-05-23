@@ -34,6 +34,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
   XmlRpc::XmlRpcValue rpc_value;
+  send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
+  add_ui_frequency_ = getParam(nh, "add_ui_frequency", 5);
+  add_ui_max_times_ = getParam(nh, "add_ui_max_times", 10);
   if (nh.hasParam("ui"))
   {
     ros::NodeHandle ui_nh(nh, "ui");
@@ -87,13 +90,14 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     }
   }
 
-  add_ui_timer_ = nh.createTimer(ros::Duration(0.2), std::bind(&RefereeBase::addUi, this), false, false);
-  send_graph_ui_timer_ =
-      nh.createTimer(ros::Duration(0.15), std::bind(&RefereeBase::sendGraphQueueCallback, this), false, true);
+  add_ui_timer_ =
+      nh.createTimer(ros::Duration(1. / add_ui_frequency_), std::bind(&RefereeBase::addUi, this), false, false);
+  send_graph_ui_timer_ = nh.createTimer(ros::Duration(send_ui_queue_delay_),
+                                        std::bind(&RefereeBase::sendGraphQueueCallback, this), false, true);
 }
 void RefereeBase::addUi()
 {
-  if (add_ui_times_ > 10)
+  if (add_ui_times_ > add_ui_max_times_)
   {
     ROS_INFO("End add");
     add_ui_timer_.stop();
@@ -101,7 +105,7 @@ void RefereeBase::addUi()
     return;
   }
 
-  ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / 60.) * 100);
+  ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / static_cast<double>(add_ui_max_times_)) * 100);
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->add();
   if (gimbal_trigger_change_ui_)
