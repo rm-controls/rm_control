@@ -29,10 +29,13 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
   RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
   RefereeBase::track_sub_ = nh.subscribe<rm_msgs::TrackData>("/track", 10, &RefereeBase::trackCallBack, this);
+  RefereeBase::map_sentry_sub_ =
+      nh.subscribe<rm_msgs::MapSentryData>("/map_sentry_data", 10, &RefereeBase::mapSentryCallback, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
   XmlRpc::XmlRpcValue rpc_value;
+  interactive_data_sender_ = new UiBase(rpc_value, base_);
   if (nh.hasParam("ui"))
   {
     ros::NodeHandle ui_nh(nh, "ui");
@@ -284,5 +287,9 @@ void RefereeBase::trackCallBack(const rm_msgs::TrackDataConstPtr& data)
 {
   if (target_view_angle_trigger_change_ui_)
     target_view_angle_trigger_change_ui_->updateTrackID(data->id);
+}
+void RefereeBase::mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data)
+{
+  interactive_data_sender_->sendMapSentryData(data);
 }
 }  // namespace rm_referee

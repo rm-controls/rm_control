@@ -495,8 +495,8 @@ typedef struct
   uint8_t intention;
   uint16_t start_position_x;
   uint16_t start_position_y;
-  int8_t delta_x_[49];
-  int8_t delta_y_[49];
+  int8_t delta_x[49];
+  int8_t delta_y[49];
 } __packed MapSentryData;
 
 /***********************Frame tail(CRC8_CRC16)********************************************/
