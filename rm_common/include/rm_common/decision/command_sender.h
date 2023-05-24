@@ -157,11 +157,10 @@ public:
       ROS_ERROR("Max Z angular velocity no defined (namespace: %s)", nh.getNamespace().c_str());
     else
       max_angular_z_.init(xml_rpc_value);
-    std::string topic, chassis_topic;
+    std::string topic;
     nh.getParam("power_limit_topic", topic);
-    nh.getParam("chassis_power_limit_topic", chassis_topic);
     chassis_power_limit_subscriber_ =
-        nh.subscribe<rm_msgs::ChassisCmd>(chassis_topic, 1, &Vel2DCommandSender::chassisCmdCallback, this);
+        nh.subscribe<rm_msgs::ChassisCmd>(topic, 1, &Vel2DCommandSender::chassisCmdCallback, this);
   }
 
   void setLinearXVel(double scale)
@@ -219,9 +218,6 @@ public:
       ROS_ERROR("Accel Z no defined (namespace: %s)", nh.getNamespace().c_str());
     else
       accel_z_.init(xml_rpc_value);
-
-    std::string topic;
-    nh.getParam("power_limit_topic", topic);
   }
 
   void updateSafetyPower(int safety_power)
