@@ -46,6 +46,7 @@ public:
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
   virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
   virtual void trackCallBack(const rm_msgs::TrackDataConstPtr& data);
+  virtual void balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data);
 
   // send graph_type ui
   void sendGraphQueueCallback();
@@ -65,6 +66,7 @@ public:
   ros::Subscriber manual_data_sub_;
   ros::Subscriber camera_name_sub_;
   ros::Subscriber track_sub_;
+  ros::Subscriber balance_state_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
@@ -79,6 +81,7 @@ public:
   DartStatusTimeChangeUi* dart_status_time_change_ui_{};
   RotationTimeChangeUi* rotation_time_change_ui_{};
   LaneLineTimeChangeGroupUi* lane_line_time_change_ui_{};
+  BalancePitchTimeChangeGroupUi* balance_pitch_time_change_group_ui_{};
 
   FixedUi* fixed_ui_{};
 
@@ -90,7 +93,8 @@ public:
 
   Base& base_;
   ros::Timer add_ui_timer_, send_graph_ui_timer_;
-  int add_ui_times_ = 0;
+  int add_ui_times_, add_ui_max_times_, add_ui_frequency_;
+  double send_ui_queue_delay_;
   bool add_ui_flag_ = false, is_adding_ = false;
   ros::NodeHandle nh_;
 };
