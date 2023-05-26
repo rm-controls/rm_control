@@ -178,7 +178,7 @@ public:
         default:
           return rm_msgs::ShootCmd::SPEED_10M_PER_SECOND;  // Safety speed
       }
-    return -1;                                             // TODO unsafe!
+    return -1;  // TODO unsafe!
   }
 
   int getCoolingLimit()
