@@ -20,7 +20,7 @@ void ChassisTriggerChangeUi::update()
     updateConfig(chassis_mode_, power_limit_state_ == rm_common::PowerLimit::BURST, 0,
                  power_limit_state_ == rm_common::PowerLimit::CHARGE);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-
+  checkModeChange();
   displayTwice();
 }
 
@@ -34,8 +34,36 @@ void ChassisTriggerChangeUi::displayInCapacity()
   displayTwice();
 }
 
+void ChassisTriggerChangeUi::checkModeChange()
+{
+  static ros::Time trigger_time;
+  static bool is_different = false;
+
+  if (base_.capacity_recent_mode_ != power_limit_state_ && !is_different)
+  {
+    is_different = true;
+    trigger_time = ros::Time::now();
+  }
+  else if (is_different)
+  {
+    if (base_.capacity_recent_mode_ == power_limit_state_)
+    {
+      is_different = false;
+      return;
+    }
+    else if ((ros::Time::now() - trigger_time).toSec() > mode_change_threshold_)
+    {
+      is_different = false;
+      display(false);
+    }
+  }
+}
+
 void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
 {
+  static ros::Time trigger_time;
+  static int expect;
+  static bool delay = false;
   if (main_mode == 254)
   {
     graph_->setContent("Cap reset");
@@ -43,14 +71,46 @@ void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uin
     return;
   }
   graph_->setContent(getChassisState(main_mode));
-  if (main_flag)
-    graph_->setColor(rm_referee::GraphColor::ORANGE);
-  else if (sub_flag)
-    graph_->setColor(rm_referee::GraphColor::GREEN);
-  else if (sub_mode == 1)
+  if (sub_mode == 1)
     graph_->setColor(rm_referee::GraphColor::PINK);
   else
-    graph_->setColor(rm_referee::GraphColor::WHITE);
+  {
+    if ((base_.capacity_recent_mode_ == rm_common::PowerLimit::NORMAL ||
+         power_limit_state_ == rm_common::PowerLimit::NORMAL) &&
+        !delay)
+    {
+      trigger_time = ros::Time::now();
+      expect = power_limit_state_;
+      delay = true;
+    }
+    else if (delay)
+    {
+      if (expect != power_limit_state_)
+      {
+        trigger_time = ros::Time::now();
+        expect = power_limit_state_;
+      }
+      else if ((ros::Time::now() - trigger_time).toSec() > 0.2)
+      {
+        if (main_flag)
+          graph_->setColor(rm_referee::GraphColor::ORANGE);
+        else if (sub_flag)
+          graph_->setColor(rm_referee::GraphColor::GREEN);
+        else
+          graph_->setColor(rm_referee::GraphColor::WHITE);
+        delay = false;
+      }
+    }
+    else
+    {
+      if (main_flag)
+        graph_->setColor(rm_referee::GraphColor::ORANGE);
+      else if (sub_flag)
+        graph_->setColor(rm_referee::GraphColor::GREEN);
+      else
+        graph_->setColor(rm_referee::GraphColor::WHITE);
+    }
+  }
 }
 
 std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
@@ -85,7 +145,7 @@ void ChassisTriggerChangeUi::updateDbusData(const rm_msgs::DbusData::ConstPtr da
   key_b_ = data->key_b;
 }
 
-void ChassisTriggerChangeUi::updateCapacityData(const rm_msgs::CapacityData data)
+void ChassisTriggerChangeUi::updateCapacityResetStatus()
 {
   displayInCapacity();
 }

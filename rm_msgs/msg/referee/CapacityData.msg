@@ -1,7 +1,7 @@
 uint8 chassis_power
-uint8 buffer_power
-uint8 limit_power
+uint8 expect_power
+uint8 capacity_expect_charge_power
+float32 capacity_recent_charge_power
 float32 cap_power
-bool is_online
 
 time stamp

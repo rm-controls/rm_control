@@ -45,11 +45,11 @@ public:
   explicit CapacitorTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
     : TimeChangeUi(rpc_value, base, "capacitor", graph_queue){};
   void add() override;
-  void updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time);
+  void updateRemainCharge(const double remain_charge, const ros::Time& time);
 
 private:
   void updateConfig() override;
-  double cap_power_;
+  double remain_charge_;
 };
 
 class EffortTimeChangeUi : public TimeChangeUi

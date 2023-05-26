@@ -52,33 +52,33 @@ void TimeChangeGroupUi::updateForQueue()
 
 void CapacitorTimeChangeUi::add()
 {
-  if (cap_power_ != 0.)
+  if (remain_charge_ != 0.)
     graph_->setOperation(rm_referee::GraphOperation::ADD);
   UiBase::display(false);
 }
 
 void CapacitorTimeChangeUi::updateConfig()
 {
-  if (cap_power_ > 0.)
+  if (remain_charge_ > 0.)
   {
     graph_->setStartX(610);
     graph_->setStartY(100);
-    graph_->setEndX(610 + 600 * cap_power_);
+    graph_->setEndX(610 + 600 * remain_charge_);
     graph_->setEndY(100);
-    if (cap_power_ < 0.3)
-      graph_->setColor(rm_referee::GraphColor::ORANGE);
-    else if (cap_power_ > 0.7)
+    if (remain_charge_ > 0.7)
       graph_->setColor(rm_referee::GraphColor::GREEN);
+    else if (remain_charge_ > 0.3)
+      graph_->setColor(rm_referee::GraphColor::ORANGE);
     else
-      graph_->setColor(rm_referee::GraphColor::YELLOW);
+      graph_->setColor(rm_referee::GraphColor::PINK);
   }
   else
     return;
 }
 
-void CapacitorTimeChangeUi::updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time)
+void CapacitorTimeChangeUi::updateRemainCharge(const double remain_charge, const ros::Time& time)
 {
-  cap_power_ = data.cap_power;
+  remain_charge_ = remain_charge;
   updateForQueue();
 }
 
