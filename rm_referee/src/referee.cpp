@@ -284,8 +284,6 @@ int Referee::unpack(uint8_t* rx_data)
           power_heat_data.chassis_volt = static_cast<uint16_t>(power_heat_ref.chassis_volt * 0.001);        // mV->V
           power_heat_data.chassis_current = static_cast<uint16_t>(power_heat_ref.chassis_current * 0.001);  // mA->A
 
-          ROS_INFO_ONCE("Official serial data received.");
-
           power_heat_data.stamp = last_get_data_time_;
 
           power_heat_data_pub_.publish(power_heat_data);
@@ -502,7 +500,7 @@ int Referee::unpack(uint8_t* rx_data)
           break;
         }
         default:
-          ROS_WARN("Referee command ID not found.");
+          ROS_WARN("Referee command ID %d not found.", cmd_id);
           break;
       }
       base_.referee_data_is_online_ = true;
