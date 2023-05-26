@@ -56,6 +56,8 @@ public:
       ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("burst_shoot_frequency", burst_shoot_frequency_))
       ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("minimal_shoot_frequency", minimal_shoot_frequency_))
+      ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("safe_shoot_frequency", safe_shoot_frequency_))
       ROS_ERROR("Safe shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("heat_coeff", heat_coeff_))
@@ -74,6 +76,7 @@ public:
     LOW = 0,
     HIGH = 1,
     BURST = 2,
+    MINIMAL = 3
   } ShootHz;
 
   void setStatusOfShooter(const rm_msgs::GameRobotStatus data)
@@ -216,6 +219,11 @@ private:
       shoot_frequency_ = high_shoot_frequency_;
       burst_flag_ = false;
     }
+    else if (state_ == HeatLimit::MINIMAL)
+    {
+      shoot_frequency_ = minimal_shoot_frequency_;
+      burst_flag_ = false;
+    }
     else
     {
       shoot_frequency_ = safe_shoot_frequency_;
@@ -227,7 +235,7 @@ private:
   std::string type_{};
   bool burst_flag_ = false;
   double bullet_heat_, safe_shoot_frequency_{}, heat_coeff_{}, shoot_frequency_{}, low_shoot_frequency_{},
-      high_shoot_frequency_{}, burst_shoot_frequency_{};
+      high_shoot_frequency_{}, burst_shoot_frequency_{}, minimal_shoot_frequency_{};
 
   bool referee_is_online_;
   int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_, shooter_speed_limit_;
