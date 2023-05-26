@@ -75,6 +75,12 @@ public:
     CHARGE = 3,
   } Mode;
 
+  void updateSafetyPower(int safety_power)
+  {
+    if (safety_power > 0)
+      safety_power_ = safety_power;
+    ROS_INFO("update safety power: %d", safety_power);
+  }
   void updateState(uint8_t state)
   {
     state_ = state;
