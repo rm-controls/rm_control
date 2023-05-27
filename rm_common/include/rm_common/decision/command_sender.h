@@ -52,6 +52,7 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
+#include <std_msgs/UInt8.h>
 #include <std_msgs/Float64.h>
 #include <rm_msgs/MultiDofCmd.h>
 #include <std_msgs/String.h>
@@ -158,8 +159,8 @@ public:
       max_angular_z_.init(xml_rpc_value);
     std::string topic;
     nh.getParam("power_limit_topic", topic);
-    power_limit_subscriber_ =
-        nh.subscribe<rm_msgs::ChassisCmd>(topic, 1, &Vel2DCommandSender::powerLimitCallback, this);
+    chassis_power_limit_subscriber_ =
+        nh.subscribe<rm_msgs::ChassisCmd>(topic, 1, &Vel2DCommandSender::chassisCmdCallback, this);
   }
 
   void setLinearXVel(double scale)
@@ -188,13 +189,14 @@ public:
   }
 
 protected:
-  void powerLimitCallback(const rm_msgs::ChassisCmd::ConstPtr& msg)
+  void chassisCmdCallback(const rm_msgs::ChassisCmd::ConstPtr& msg)
   {
     power_limit_ = msg->power_limit;
   }
+
   LinearInterp max_linear_x_, max_linear_y_, max_angular_z_;
   double power_limit_ = 0;
-  ros::Subscriber power_limit_subscriber_;
+  ros::Subscriber chassis_power_limit_subscriber_;
 };
 
 class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisCmd>
@@ -218,6 +220,10 @@ public:
       accel_z_.init(xml_rpc_value);
   }
 
+  void updateSafetyPower(int safety_power)
+  {
+    power_limit_->updateSafetyPower(safety_power);
+  }
   void updateGameStatus(const rm_msgs::GameStatus data) override
   {
     power_limit_->setGameProgress(data);
@@ -241,9 +247,11 @@ public:
   void sendChassisCommand(const ros::Time& time, bool is_gyro)
   {
     power_limit_->setLimitPower(msg_, is_gyro);
+
     msg_.accel.linear.x = accel_x_.output(msg_.power_limit);
     msg_.accel.linear.y = accel_y_.output(msg_.power_limit);
     msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
+
     TimeStampCommandSenderBase<rm_msgs::ChassisCmd>::sendCommand(time);
   }
   void setZero() override{};
@@ -408,6 +416,24 @@ private:
   rm_msgs::GimbalDesError gimbal_des_error_;
   std_msgs::Bool suggest_fire_;
   uint8_t armor_type_{};
+};
+
+class BalanceCommandSender : public CommandSenderBase<std_msgs::UInt8>
+{
+public:
+  explicit BalanceCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::UInt8>(nh)
+  {
+  }
+
+  void setBalanceMode(const int mode)
+  {
+    msg_.data = mode;
+  }
+  int getBalanceMode()
+  {
+    return msg_.data;
+  }
+  void setZero() override{};
 };
 
 class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::TwistStamped>

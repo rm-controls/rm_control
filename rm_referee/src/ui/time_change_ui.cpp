@@ -192,6 +192,8 @@ void LaneLineTimeChangeGroupUi::updateConfig()
                        (cos(end_point_b_angle_ - pitch_angle_) * robot_height_ / sin(end_point_b_angle_)),
          spacing_y_a = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_a_angle_ - pitch_angle_),
          spacing_y_b = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_b_angle_ - pitch_angle_);
+  if (spacing_x_a < 0)
+    return;
 
   if (spacing_x_b < 0)
     return;
@@ -223,6 +225,37 @@ void LaneLineTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointSta
 
   end_point_a_angle_ = camera_range_ / 2 + pitch_angle_;
   end_point_b_angle_ = 0.6 * (0.25 + pitch_angle_);
+  updateForQueue();
+}
+
+void BalancePitchTimeChangeGroupUi::updateConfig()
+{
+  for (auto it : graph_vector_)
+  {
+    if (it.first == "triangle_left_side")
+    {
+      it.second->setStartX(centre_point_[0]);
+      it.second->setStartY(centre_point_[1]);
+      it.second->setEndX(triangle_left_point_[0]);
+      it.second->setEndY(triangle_left_point_[1]);
+    }
+    else if (it.first == "triangle_right_side")
+    {
+      it.second->setStartX(centre_point_[0]);
+      it.second->setStartY(centre_point_[1]);
+      it.second->setEndX(triangle_right_point_[0]);
+      it.second->setEndY(triangle_right_point_[1]);
+    }
+  }
+}
+
+void BalancePitchTimeChangeGroupUi::calculatePointPosition(const rm_msgs::BalanceStateConstPtr& data,
+                                                           const ros::Time& time)
+{
+  triangle_left_point_[0] = centre_point_[0] - length_ * sin(bottom_angle_ / 2 + data->theta);
+  triangle_left_point_[1] = centre_point_[1] + length_ * cos(bottom_angle_ / 2 + data->theta);
+  triangle_right_point_[0] = centre_point_[0] + length_ * sin(bottom_angle_ / 2 - data->theta);
+  triangle_right_point_[1] = centre_point_[1] + length_ * cos(bottom_angle_ / 2 - data->theta);
   updateForQueue();
 }
 

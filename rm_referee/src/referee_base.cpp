@@ -28,11 +28,15 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
   RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
+  RefereeBase::balance_state_sub_ = nh.subscribe("/state", 10, &RefereeBase::balanceStateCallback, this);
   RefereeBase::track_sub_ = nh.subscribe<rm_msgs::TrackData>("/track", 10, &RefereeBase::trackCallBack, this);
   if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
   XmlRpc::XmlRpcValue rpc_value;
+  send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
+  add_ui_frequency_ = getParam(nh, "add_ui_frequency", 5);
+  add_ui_max_times_ = getParam(nh, "add_ui_max_times", 10);
   if (nh.hasParam("ui"))
   {
     ros::NodeHandle ui_nh(nh, "ui");
@@ -71,6 +75,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         lane_line_time_change_ui_ = new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
       if (rpc_value[i]["name"] == "pitch")
         pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+      if (rpc_value[i]["name"] == "balance_pitch")
+        balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -86,23 +92,22 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     }
   }
 
-  add_ui_timer_ = nh.createTimer(ros::Duration(0.05), std::bind(&RefereeBase::addUi, this), false, false);
-  send_graph_ui_timer_ =
-      nh.createTimer(ros::Duration(0.1), std::bind(&RefereeBase::sendGraphQueueCallback, this), false, false);
+  add_ui_timer_ =
+      nh.createTimer(ros::Duration(1. / add_ui_frequency_), std::bind(&RefereeBase::addUi, this), false, false);
+  send_graph_ui_timer_ = nh.createTimer(ros::Duration(send_ui_queue_delay_),
+                                        std::bind(&RefereeBase::sendGraphQueueCallback, this), false, true);
 }
 void RefereeBase::addUi()
 {
-  if (add_ui_times_ > 60)
+  if (add_ui_times_ > add_ui_max_times_)
   {
     ROS_INFO("End add");
     add_ui_timer_.stop();
-    send_graph_ui_timer_.start();
     is_adding_ = false;
     return;
   }
 
-  ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / 60.) * 100);
-  send_graph_ui_timer_.stop();
+  ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / static_cast<double>(add_ui_max_times_)) * 100);
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->add();
   if (gimbal_trigger_change_ui_)
@@ -129,6 +134,8 @@ void RefereeBase::addUi()
     rotation_time_change_ui_->add();
   if (lane_line_time_change_ui_)
     lane_line_time_change_ui_->add();
+  if (balance_pitch_time_change_group_ui_)
+    balance_pitch_time_change_group_ui_->add();
   if (pitch_angle_time_change_ui_)
     pitch_angle_time_change_ui_->add();
   add_ui_times_++;
@@ -290,5 +297,10 @@ void RefereeBase::trackCallBack(const rm_msgs::TrackDataConstPtr& data)
 {
   if (target_view_angle_trigger_change_ui_)
     target_view_angle_trigger_change_ui_->updateTrackID(data->id);
+}
+void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data)
+{
+  if (balance_pitch_time_change_group_ui_)
+    balance_pitch_time_change_group_ui_->calculatePointPosition(data, ros::Time::now());
 }
 }  // namespace rm_referee
