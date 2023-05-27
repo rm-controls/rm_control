@@ -133,6 +133,8 @@ void CanBus::read(ros::Time time)
     if (data_ptr_.id2act_data_->find(frame.can_id) != data_ptr_.id2act_data_->end())
     {
       ActData& act_data = data_ptr_.id2act_data_->find(frame.can_id)->second;
+      if ((frame_stamp.stamp - act_data.stamp).toSec() < 0.0005)
+        continue;
       const ActCoeff& act_coeff = data_ptr_.type2act_coeffs_->find(act_data.type)->second;
       if (act_data.type.find("rm") != std::string::npos)
       {
@@ -165,7 +167,7 @@ void CanBus::read(ros::Time time)
         act_data.vel = act_coeff.act2vel * static_cast<double>(act_data.qd_raw);
         act_data.effort = act_coeff.act2effort * static_cast<double>(cur);
         // Low pass filter
-        act_data.lp_filter->input(act_data.vel);
+        act_data.lp_filter->input(act_data.vel, frame_stamp.stamp);
         act_data.vel = act_data.lp_filter->output();
         continue;
       }

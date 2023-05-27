@@ -70,7 +70,6 @@
 #include <rm_msgs/MapSentryData.h>
 #include <rm_msgs/RadarMarkData.h>
 #include <rm_msgs/PowerHeatData.h>
-#include <rm_msgs/SuperCapacitor.h>
 #include <rm_msgs/GimbalDesError.h>
 #include <rm_msgs/BulletAllowance.h>
 #include <rm_msgs/GameRobotStatus.h>
@@ -82,6 +81,7 @@
 #include <rm_msgs/ClientMapReceiveData.h>
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
+#include <rm_msgs/PowerManagementSampleAndStatusData.h>
 
 namespace rm_referee
 {
@@ -101,6 +101,7 @@ public:
 
   int client_id_ = 0;  // recipient's id
   int robot_id_ = 0;   // recent  robot's id
+  int capacity_recent_mode_, capacity_expect_mode_;
   std::string robot_color_;
   bool referee_data_is_online_ = false;
 
