@@ -112,6 +112,21 @@ private:
   uint8_t det_target_, shoot_frequency_, det_armor_target_, det_color_, gimbal_eject_;
 };
 
+class BalanceControlMethodTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit BalanceControlMethodTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "balance_control_method")
+  {
+  }
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
+
+private:
+  void update() override;
+  void updateConfig(uint8_t balance_control_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
+  uint8_t control_method_;
+};
+
 class TargetViewAngleTriggerChangeUi : public TriggerChangeUi
 {
 public:

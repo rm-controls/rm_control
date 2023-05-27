@@ -298,6 +298,34 @@ void TargetTriggerChangeUi::updateShootStateData(const rm_msgs::ShootState::Cons
   update();
 }
 
+void BalanceControlMethodTriggerChangeUi::update()
+{
+  updateConfig(control_method_, true);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  display();
+}
+
+void BalanceControlMethodTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
+{
+  control_method_ = data->balance_control_method;
+  update();
+}
+
+void BalanceControlMethodTriggerChangeUi::updateConfig(uint8_t balance_control_mode, bool main_flag, uint8_t sub_mode,
+                                                       bool sub_flag)
+{
+  if (balance_control_mode == rm_msgs::ManualToReferee::LQR)
+  {
+    graph_->setContent("LQR");
+    graph_->setColor(rm_referee::GraphColor::YELLOW);
+  }
+  else if (balance_control_mode == rm_msgs::ManualToReferee::MPC)
+  {
+    graph_->setContent("MPC");
+    graph_->setColor(rm_referee::GraphColor::GREEN);
+  }
+}
+
 void TargetViewAngleTriggerChangeUi::update()
 {
   updateConfig(track_id_ == 0, false);

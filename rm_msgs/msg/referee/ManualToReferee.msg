@@ -4,6 +4,11 @@ uint8 power_limit_state
 uint8 shoot_frequency
 bool cover_state
 
+#balance
+uint8 LQR = 0
+uint8 MPC = 1
+uint8 balance_control_method
+
 #hero
 bool gimbal_eject
 bool hero_eject_flag

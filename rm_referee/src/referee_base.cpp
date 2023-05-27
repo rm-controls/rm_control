@@ -56,6 +56,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         target_view_angle_trigger_change_ui_ = new TargetViewAngleTriggerChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "camera")
         camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "balance_control_method")
+        balance_control_method_trigger_change_ui_ = new BalanceControlMethodTriggerChangeUi(rpc_value[i], base_);
     }
 
     ui_nh.getParam("time_change", rpc_value);
@@ -118,6 +120,8 @@ void RefereeBase::addUi()
     target_view_angle_trigger_change_ui_->add();
   if (camera_trigger_change_ui_)
     camera_trigger_change_ui_->add();
+  if (balance_control_method_trigger_change_ui_)
+    balance_control_method_trigger_change_ui_->add();
   if (fixed_ui_)
     fixed_ui_->add();
   if (effort_time_change_ui_)
@@ -277,6 +281,8 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
     gimbal_trigger_change_ui_->updateManualCmdData(data);
   if (target_trigger_change_ui_ && !is_adding_)
     target_trigger_change_ui_->updateManualCmdData(data);
+  if (balance_control_method_trigger_change_ui_ && !is_adding_)
+    balance_control_method_trigger_change_ui_->updateManualCmdData(data);
   if (cover_flash_ui_ && !is_adding_)
     cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
 }
