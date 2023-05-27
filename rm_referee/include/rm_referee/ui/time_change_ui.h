@@ -168,4 +168,16 @@ private:
   std::vector<Graph*> lane_line_double_graph_;
 };
 
+class PitchAngleTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit PitchAngleTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
+    : TimeChangeUi(rpc_value, base, "pitch", graph_queue){};
+  void update() override;
+  void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
+
+private:
+  void updateConfig() override;
+  double pitch_angle_ = 0.;
+};
 }  // namespace rm_referee
