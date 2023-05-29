@@ -97,6 +97,10 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_);
       if (rpc_value[i]["name"] == "balance_pitch")
         balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
+      if (rpc_value[i]["name"] == "engineer_joint1")
+        engineer_joint1_time_change_ui = new JointValueTimeChangeUi(rpc_value[i], base_, &graph_queue_,"joint1");
+      if (rpc_value[i]["name"] == "engineer_joint2")
+        engineer_joint2_time_change_ui = new JointValueTimeChangeUi(rpc_value[i], base_, &graph_queue_,"joint2");
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -128,6 +132,10 @@ void RefereeBase::addUi()
   }
 
   ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / static_cast<double>(add_ui_max_times_)) * 100);
+  if (engineer_joint1_time_change_ui)
+    engineer_joint1_time_change_ui->add();
+  if (engineer_joint2_time_change_ui)
+    engineer_joint2_time_change_ui->add();
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->add();
   if (gimbal_trigger_change_ui_)
@@ -188,6 +196,7 @@ void RefereeBase::sendGraphQueueCallback()
     while (graph_queue_.size() > 20)
       graph_queue_.pop_back();
   }
+    ROS_INFO("size: %ld",graph_queue_.size());
 
   int index = graph_queue_.size() - 1;
   if (graph_queue_.size() >= 7)
@@ -260,6 +269,10 @@ void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& da
     lane_line_time_change_ui_->updateJointStateData(data, ros::Time::now());
   if (pitch_angle_time_change_ui_ && !is_adding_)
     pitch_angle_time_change_ui_->updateJointStateData(data, ros::Time::now());
+  if (engineer_joint1_time_change_ui && !is_adding_)
+      engineer_joint1_time_change_ui->updateJointStateData(data, ros::Time::now());
+  if (engineer_joint2_time_change_ui && !is_adding_)
+      engineer_joint2_time_change_ui->updateJointStateData(data, ros::Time::now());
 }
 void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
 {

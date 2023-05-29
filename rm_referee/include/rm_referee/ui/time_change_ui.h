@@ -241,4 +241,26 @@ private:
   void updateConfig() override;
   double pitch_angle_ = 0.;
 };
+
+class JointValueTimeChangeUi : public TimeChangeUi
+{
+public:
+    explicit JointValueTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue,
+                                     std::string name)
+            : TimeChangeUi(rpc_value, base, name, graph_queue)
+    {
+        min_val_ = static_cast<double>(rpc_value["config"]["min_val"]);
+        max_val_ = static_cast<double>(rpc_value["config"]["max_val"]);
+        name_ = name;
+        width_ = graph_->getConfig().end_x - graph_->getConfig().start_x;
+        ROS_INFO_STREAM("！！！！！！！！！！！！！！！！！");
+    };
+    void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
+
+private:
+    void updateConfig() override;
+    std::string name_;
+    double max_val_, min_val_, current_val_,width_;
+};
+
 }  // namespace rm_referee

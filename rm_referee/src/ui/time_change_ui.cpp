@@ -278,4 +278,28 @@ void PitchAngleTimeChangeUi::updateConfig()
   graph_->setContent(pitch);
   graph_->setColor(rm_referee::GraphColor::YELLOW);
 }
+
+void JointValueTimeChangeUi::updateConfig()
+{
+    double proportion = (current_val_-min_val_) / (max_val_ - min_val_);
+    graph_->setStartX(graph_->getConfig().start_x);
+    graph_->setStartY(graph_->getConfig().start_y);
+    graph_->setEndX( graph_->getConfig().start_x + width_ * proportion);
+    graph_->setEndY(graph_->getConfig().end_y);
+    if (proportion > 0.8)
+        graph_->setColor(rm_referee::GraphColor::PINK);
+    else if (proportion > 0.4)
+        graph_->setColor(rm_referee::GraphColor::ORANGE);
+    else
+        graph_->setColor(rm_referee::GraphColor::GREEN);
+}
+
+void JointValueTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
+{
+    for (unsigned int i = 0; i < data->name.size(); i++)
+        if (data->name[i] == name_)
+            current_val_ = data->position[i];
+    updateForQueue();
+}
+
 }  // namespace rm_referee
