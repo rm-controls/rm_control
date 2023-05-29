@@ -93,6 +93,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         rotation_time_change_ui_ = new RotationTimeChangeUi(rpc_value[i], base_, &graph_queue_);
       if (rpc_value[i]["name"] == "lane_line")
         lane_line_time_change_ui_ = new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
+      if (rpc_value[i]["name"] == "pitch")
+        pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_);
       if (rpc_value[i]["name"] == "balance_pitch")
         balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
     }
@@ -172,6 +174,8 @@ void RefereeBase::addUi()
     lane_line_time_change_ui_->add();
   if (balance_pitch_time_change_group_ui_)
     balance_pitch_time_change_group_ui_->add();
+  if (pitch_angle_time_change_ui_)
+    pitch_angle_time_change_ui_->add();
   add_ui_times_++;
 }
 
@@ -254,6 +258,8 @@ void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& da
     rotation_time_change_ui_->updateForQueue();
   if (lane_line_time_change_ui_ && !is_adding_)
     lane_line_time_change_ui_->updateJointStateData(data, ros::Time::now());
+  if (pitch_angle_time_change_ui_ && !is_adding_)
+    pitch_angle_time_change_ui_->updateJointStateData(data, ros::Time::now());
 }
 void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
 {

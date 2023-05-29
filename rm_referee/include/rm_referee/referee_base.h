@@ -91,6 +91,7 @@ public:
       *drag_state_trigger_change_ui_{}, *gripper_state_trigger_change_ui_{};
   ExchangeStateTriggerChangeUi* exchange_state_trigger_change_ui_{};
   PlanningResultTriggerChangeUi* planning_result_trigger_change_ui_{};
+  PitchAngleTimeChangeUi* pitch_angle_time_change_ui_{};
 
   FixedUi* fixed_ui_{};
 

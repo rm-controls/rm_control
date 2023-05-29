@@ -256,4 +256,26 @@ void BalancePitchTimeChangeGroupUi::calculatePointPosition(const rm_msgs::Balanc
   triangle_right_point_[1] = centre_point_[1] + length_ * cos(bottom_angle_ / 2 - data->theta);
   updateForQueue();
 }
+
+void PitchAngleTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
+{
+  for (unsigned int i = 0; i < data->name.size(); i++)
+    if (data->name[i] == "pitch_joint")
+      pitch_angle_ = data->position[i];
+  update();
+}
+
+void PitchAngleTimeChangeUi::update()
+{
+  updateConfig();
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  display(ros::Time::now());
+}
+
+void PitchAngleTimeChangeUi::updateConfig()
+{
+  std::string pitch = std::to_string(pitch_angle_);
+  graph_->setContent(pitch);
+  graph_->setColor(rm_referee::GraphColor::YELLOW);
+}
 }  // namespace rm_referee
