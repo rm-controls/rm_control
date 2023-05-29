@@ -251,16 +251,17 @@ public:
     {
         min_val_ = static_cast<double>(rpc_value["config"]["min_val"]);
         max_val_ = static_cast<double>(rpc_value["config"]["max_val"]);
+        direction_ = static_cast<std::string>(rpc_value["config"]["direction"]);
         name_ = name;
-        width_ = graph_->getConfig().end_x - graph_->getConfig().start_x;
-        ROS_INFO_STREAM("！！！！！！！！！！！！！！！！！");
+        length_ = sqrt(pow((graph_->getConfig().end_x - graph_->getConfig().start_x),2) + pow((graph_->getConfig().end_y - graph_->getConfig().start_y),2));
     };
     void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
 
 private:
     void updateConfig() override;
-    std::string name_;
-    double max_val_, min_val_, current_val_,width_;
+    int is_symmetry_;
+    std::string name_,direction_;
+    double max_val_, min_val_, current_val_,length_;
 };
 
 }  // namespace rm_referee
