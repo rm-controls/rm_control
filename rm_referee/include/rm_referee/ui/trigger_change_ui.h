@@ -6,6 +6,7 @@
 #include "rm_referee/ui/ui_base.h"
 #include <rm_common/decision/power_limit.h>
 #include "std_msgs/String.h"
+#include "std_msgs/Int32.h"
 
 namespace rm_referee
 {
@@ -197,4 +198,41 @@ private:
   std::string current_camera_{}, camera1_name_{}, camera2_name_{};
 };
 
+class ExchangeStateTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit ExchangeStateTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "exchange"){};
+  void updateExchangeStateData(const rm_msgs::ExchangerMsg ::ConstPtr& data);
+
+private:
+  void update() override;
+  void exchangeStateUpdateConfig(const rm_msgs::ExchangerMsg& exchange_state);
+  rm_msgs::ExchangerMsg exchange_state_;
+};
+
+class PlanningResultTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit PlanningResultTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "planning"){};
+  void updatePlanningResultData(const std_msgs::Int32 ::ConstPtr& data);
+
+private:
+  void update() override;
+  void planningResultUpdateConfig(const std_msgs::Int32& data);
+  std_msgs::Int32 planning_result_;
+};
+
+class StringTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit StringTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& name)
+    : TriggerChangeUi(rpc_value, base, name){};
+  void updateStringUiData(const std::string& data);
+
+private:
+  void update() override;
+  std::string data_;
+};
 }  // namespace rm_referee
