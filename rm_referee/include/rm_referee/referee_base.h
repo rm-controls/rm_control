@@ -83,6 +83,7 @@ public:
   RotationTimeChangeUi* rotation_time_change_ui_{};
   LaneLineTimeChangeGroupUi* lane_line_time_change_ui_{};
   BalancePitchTimeChangeGroupUi* balance_pitch_time_change_group_ui_{};
+  PitchAngleTimeChangeUi* pitch_angle_time_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
