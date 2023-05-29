@@ -41,6 +41,7 @@ add_message_files(
         TargetDetection.msg
         TargetDetectionArray.msg
         TrackData.msg
+        ExchangerMsg.msg
 )
 
 add_message_files(
