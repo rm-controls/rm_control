@@ -32,9 +32,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::track_sub_ = nh.subscribe<rm_msgs::TrackData>("/track", 10, &RefereeBase::trackCallBack, this);
   RefereeBase::map_sentry_sub_ =
       nh.subscribe<rm_msgs::MapSentryData>("/map_sentry_data", 10, &RefereeBase::mapSentryCallback, this);
-  if (base_.robot_id_ == rm_referee::RobotId::RED_RADAR || base_.robot_id_ == rm_referee::RobotId::BLUE_RADAR)
-    RefereeBase::radar_date_sub_ =
-        nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
+  RefereeBase::radar_receive_sub_ =
+      nh.subscribe<rm_msgs::ClientMapReceiveData>("/rm_radar", 10, &RefereeBase::radarReceiveCallback, this);
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
   add_ui_frequency_ = getParam(nh, "add_ui_frequency", 5);
@@ -306,6 +305,15 @@ void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data
 {
   if (balance_pitch_time_change_group_ui_)
     balance_pitch_time_change_group_ui_->calculatePointPosition(data, ros::Time::now());
+}
+void RefereeBase::radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data)
+{
+  rm_referee::ClientMapReceiveData send_data;
+  send_data.target_position_x = data->target_position_x;
+  send_data.target_position_y = data->target_position_y;
+  send_data.target_robot_ID = data->target_robot_ID;
+
+  interactive_data_sender_->sendRadarInteractiveData(send_data);
 }
 void RefereeBase::mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data)
 {
