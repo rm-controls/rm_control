@@ -6,6 +6,7 @@
 #include <ros/ros.h>
 #include <tf/transform_listener.h>
 #include <cmath>
+#include <Eigen/Dense>
 #include <rm_common/ori_tool.h>
 #include <rm_common/decision/heat_limit.h>
 #include <rm_msgs/StatusChangeRequest.h>
@@ -73,6 +74,7 @@ public:
   void erasure() override;
   void sendUi(const ros::Time& time) override;
   void sendDoubleGraph(const ros::Time& time, Graph* graph0, Graph* graph1);
+  void sendThreeGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2);
   void sendFiveGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2, Graph* graph3, Graph* graph4);
   void sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2, Graph* graph3, Graph* graph4,
                       Graph* graph5, Graph* graph6);

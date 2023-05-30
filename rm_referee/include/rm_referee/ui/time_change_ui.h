@@ -249,19 +249,88 @@ public:
                                      std::string name)
             : TimeChangeUi(rpc_value, base, name, graph_queue)
     {
-        min_val_ = static_cast<double>(rpc_value["config"]["min_val"]);
-        max_val_ = static_cast<double>(rpc_value["config"]["max_val"]);
-        direction_ = static_cast<std::string>(rpc_value["config"]["direction"]);
+        if (rpc_value.hasMember("data"))
+        {
+            XmlRpc::XmlRpcValue data = rpc_value["data"];
+            min_val_ = static_cast<double>(data["min_val"]);
+            max_val_ = static_cast<double>(data["max_val"]);
+            direction_ = static_cast<std::string>(data["direction"]);
+            length_ = static_cast<double>(data["line_length"]);
+        }
         name_ = name;
-        length_ = sqrt(pow((graph_->getConfig().end_x - graph_->getConfig().start_x),2) + pow((graph_->getConfig().end_y - graph_->getConfig().start_y),2));
     };
     void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
 
 private:
     void updateConfig() override;
-    int is_symmetry_;
     std::string name_,direction_;
     double max_val_, min_val_, current_val_,length_;
 };
 
+class SpaceTfTimeChangeUi : public TimeChangeGroupUi
+{
+public:
+    struct Vector2D {
+        double x;
+        double y;
+    };
+    explicit SpaceTfTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue,
+                                    std::string name)
+            : TimeChangeGroupUi(rpc_value, base, name, graph_queue)
+    {
+
+        name_ = name;
+        xyz_length_[0] = static_cast<double>(rpc_value["tf"]["xyz_length"][0]);
+        xyz_length_[1] = static_cast<double>(rpc_value["tf"]["xyz_length"][1]);
+        xyz_length_[2] = static_cast<double>(rpc_value["tf"]["xyz_length"][2]);
+
+        for (int i = 0; i < (int)x_range_.size(); ++i) {
+            x_range_[i] = static_cast<double>(rpc_value["tf"]["x_range"][i]);
+            y_range_[i] = static_cast<double>(rpc_value["tf"]["y_range"][i]);
+            z_range_[i] = static_cast<double>(rpc_value["tf"]["z_range"][i]);
+            pitch_range_[i] = static_cast<double>(rpc_value["tf"]["pitch_range"][i]);
+            pitch_range_[i] = static_cast<double>(rpc_value["tf"]["pitch_range"][i]);
+            pitch_range_[i] = static_cast<double>(rpc_value["tf"]["pitch_range"][i]);
+        }
+        start_point_.x = graph_->getConfig().start_x;
+        start_point_.y = graph_->getConfig().start_y;
+        for (int i = 0; i < (int)xyz_length_.size(); ++i) {
+            end_points_[i].x = start_point_.x +xyz_length_[i];
+            end_points_[i].y = start_point_.y +xyz_length_[i];
+        }
+        store_end_positions_ = end_points_;
+    };
+    void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
+    void calculateTransformedEndpoint(const Vector2D& start_point, std::vector<Vector2D>& end_points, double roll, double pitch, double yaw) {
+        Eigen::Matrix3d rotationMatrix;
+        rotationMatrix = Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX()) * rotationMatrix;
+        rotationMatrix = Eigen::AngleAxisd(pitch, Eigen::Vector3d::UnitY()) * rotationMatrix;
+        rotationMatrix = Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()) * rotationMatrix;
+
+        Eigen::Vector3d endpointVector(xyz_length_[0], 0., 0.);
+        Eigen::Vector3d transformedEndpointVector = rotationMatrix * endpointVector;
+
+        std::vector<Vector2D> temp_points_;
+        for (int i = 0; i < (int)end_points_.size(); ++i) {
+            temp_points_[i].x = transformedEndpointVector.y() + start_point.x;
+            temp_points_[i].y = transformedEndpointVector.z() + start_point.y;
+        }
+
+        double scaleFactor = space_scale_ / (space_scale_ + xyz_length_[0]);
+        for (int i = 0; i < (int)end_points_.size(); ++i) {
+            end_points[i].x = temp_points_[i].x * scaleFactor;
+            end_points[i].y = temp_points_[i].y * scaleFactor;
+        }
+    }
+private:
+    void updateConfig() override;
+    std::string name_;
+    double roll_val_,pitch_val_,yaw_val_,space_scale_{20};
+    std::vector<double>xyz_length_,current_val;
+    std::vector<double>x_range_,y_range_,z_range_;
+    std::vector<double>roll_range_,pitch_range_,yaw_range_;
+    std::vector<std::vector<double>> range_gather_;
+    Vector2D start_point_;
+    std::vector<Vector2D> end_points_{} , store_end_positions_{};
+};
 }  // namespace rm_referee
