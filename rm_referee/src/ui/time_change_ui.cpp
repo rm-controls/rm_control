@@ -127,6 +127,8 @@ void ProgressTimeChangeUi::updateConfig()
 void ProgressTimeChangeUi::updateEngineerUiData(const rm_msgs::EngineerUi::ConstPtr data,
                                                 const ros::Time& last_get_data_time)
 {
+  total_steps_ = data->total_steps;
+  finished_data_ = data->finished_step;
   TimeChangeUi::update();
 }
 
