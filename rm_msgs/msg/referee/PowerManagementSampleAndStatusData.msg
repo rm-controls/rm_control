@@ -4,6 +4,7 @@ float32 capacity_recent_charge_power
 float32 capacity_remain_charge
 uint8 capacity_expect_charge_power
 uint8 state_machine_running_state
+uint8 power_management_protection_info
 uint8 power_management_topology
 
 time stamp
