@@ -1,7 +1,7 @@
-string joint_temperature
 string current_step_name
-string reversal_state
-string gripper_state
-string drag_state
-string stone_num
-string servo_mode
+uint32 finished_step
+uint32 total_steps
+
+string step_queue_name
+bool symbol
+time stamp
