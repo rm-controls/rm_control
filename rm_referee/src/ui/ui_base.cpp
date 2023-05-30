@@ -139,7 +139,7 @@ void UiBase::sendMapSentryData(const rm_msgs::MapSentryDataConstPtr& data)
   map_sentry_data->intention = data->intention;
   map_sentry_data->start_position_x = data->start_position_x;
   map_sentry_data->start_position_y = data->start_position_y;
-  for (int i = 0; i < 39; i++)
+  for (int i = 0; i < 49; i++)
   {
     map_sentry_data->delta_x[i] = data->delta_x[i];
     map_sentry_data->delta_y[i] = data->delta_y[i];
