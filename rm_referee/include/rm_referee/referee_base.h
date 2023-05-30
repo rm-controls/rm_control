@@ -48,6 +48,7 @@ public:
   virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
   virtual void trackCallBack(const rm_msgs::TrackDataConstPtr& data);
   virtual void balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data);
+  virtual void radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data);
   virtual void mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data);
 
   // send graph_type ui
@@ -69,6 +70,7 @@ public:
   ros::Subscriber camera_name_sub_;
   ros::Subscriber track_sub_;
   ros::Subscriber balance_state_sub_;
+  ros::Subscriber radar_receive_sub_;
   ros::Subscriber map_sentry_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
