@@ -463,28 +463,24 @@ int Referee::unpack(uint8_t* rx_data)
         case rm_referee::POWER_MANAGEMENT_SAMPLE_AND_STATUS_DATA_CMD:
         {
           rm_msgs::PowerManagementSampleAndStatusData sample_and_status_pub_data;
-          rm_msgs::CapacityData capacity_pub_data;
           uint8_t data[sizeof(rm_referee::PowerManagementSampleAndStatusData)];
           memcpy(&data, rx_data + 7, sizeof(rm_referee::PowerManagementSampleAndStatusData));
-
-          capacity_pub_data.chassis_power = sample_and_status_pub_data.chassis_power =
-              (static_cast<uint16_t>((data[0] << 8) | data[1]) / 100.);
-          capacity_pub_data.expect_power = sample_and_status_pub_data.chassis_expect_power =
-              (static_cast<uint16_t>((data[2] << 8) | data[3]) / 100.);
-          capacity_pub_data.capacity_recent_charge_power = sample_and_status_pub_data.capacity_recent_charge_power =
+          sample_and_status_pub_data.chassis_power = (static_cast<uint16_t>((data[0] << 8) | data[1]) / 100.);
+          sample_and_status_pub_data.chassis_expect_power = (static_cast<uint16_t>((data[2] << 8) | data[3]) / 100.);
+          sample_and_status_pub_data.capacity_recent_charge_power =
               (static_cast<uint16_t>((data[4] << 8) | data[5]) / 100.);
-          capacity_pub_data.cap_power = sample_and_status_pub_data.capacity_remain_charge =
+          sample_and_status_pub_data.capacity_remain_charge =
               (static_cast<uint16_t>((data[6] << 8) | data[7]) / 10000.);
           sample_and_status_pub_data.capacity_expect_charge_power = static_cast<uint8_t>(data[8]);
           sample_and_status_pub_data.state_machine_running_state = base_.capacity_recent_mode_ =
               static_cast<uint8_t>(data[9] >> 4);
-          sample_and_status_pub_data.power_management_topology = static_cast<uint8_t>(data[9] & 0x0F);
-          capacity_pub_data.stamp = sample_and_status_pub_data.stamp = last_get_data_time_;
+          sample_and_status_pub_data.power_management_protection_info = static_cast<uint8_t>((data[9] >> 2) & 0x03);
+          sample_and_status_pub_data.power_management_topology = static_cast<uint8_t>(data[9] & 0x03);
+          sample_and_status_pub_data.stamp = last_get_data_time_;
 
           referee_ui_.capacityDataCallBack(sample_and_status_pub_data, last_get_data_time_);
 
           power_management_sample_and_status_data_pub_.publish(sample_and_status_pub_data);
-          capacity_data_pub_.publish(capacity_pub_data);
           break;
         }
         case rm_referee::POWER_MANAGEMENT_INITIALIZATION_EXCEPTION_CMD:

@@ -53,7 +53,6 @@ public:
     // pub
     game_robot_status_pub_ = nh.advertise<rm_msgs::GameRobotStatus>("game_robot_status", 1);
     game_status_pub_ = nh.advertise<rm_msgs::GameStatus>("game_status", 1);
-    capacity_data_pub_ = nh.advertise<rm_msgs::CapacityData>("capacity_data", 1);
     power_heat_data_pub_ = nh.advertise<rm_msgs::PowerHeatData>("power_heat_data", 1);
     game_robot_hp_pub_ = nh.advertise<rm_msgs::GameRobotHp>("game_robot_hp", 1);
     event_data_pub_ = nh.advertise<rm_msgs::EventData>("event_data", 1);
@@ -87,7 +86,6 @@ public:
 
   ros::Publisher game_robot_status_pub_;
   ros::Publisher game_status_pub_;
-  ros::Publisher capacity_data_pub_;
   ros::Publisher power_heat_data_pub_;
   ros::Publisher game_robot_hp_pub_;
   ros::Publisher event_data_pub_;
