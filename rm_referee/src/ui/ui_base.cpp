@@ -117,8 +117,6 @@ void UiBase::sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char
 
 void UiBase::sendUi(const ros::Time& time)
 {
-  if (time - last_send_ < ros::Duration(0.05))
-    return;
   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
 

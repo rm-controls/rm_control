@@ -22,7 +22,6 @@ add_message_files(
         LpData.msg
         KalmanData.msg
         MovingAverageData.msg
-        SuperCapacitor.msg
         GpioData.msg
         TofRadarData.msg
         MultiDofCmd.msg
@@ -42,6 +41,7 @@ add_message_files(
         TargetDetection.msg
         TargetDetectionArray.msg
         TrackData.msg
+        ExchangerMsg.msg
 )
 
 add_message_files(
@@ -71,6 +71,7 @@ add_message_files(
         ClientMapSendData.msg
         ClientMapReceiveData.msg
         MapSentryData.msg
+        PowerManagementSampleAndStatusData.msg
 )
 
 add_action_files(

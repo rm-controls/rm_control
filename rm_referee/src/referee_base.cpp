@@ -21,13 +21,16 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
                                                                     &RefereeBase::shootStateCallback, this);
   RefereeBase::gimbal_cmd_sub_ = nh.subscribe<rm_msgs::GimbalCmd>("/controllers/gimbal_controller/command", 10,
                                                                   &RefereeBase::gimbalCmdDataCallback, this);
-  RefereeBase::card_cmd_sub_ = nh.subscribe<rm_msgs::StateCmd>("/controllers/card_controller/command", 10,
-                                                               &RefereeBase::cardCmdDataCallback, this);
-  RefereeBase::engineer_cmd_sub_ =
-      nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 10, &RefereeBase::engineerUiDataCallback, this);
+  RefereeBase::engineer_ui_sub_ =
+      nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 30, &RefereeBase::engineerUiDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
+  RefereeBase::exchange_state_sub_ =
+      nh.subscribe<rm_msgs::ExchangerMsg>("/pnp_publisher", 10, &RefereeBase::exchangeStateDataCallBack, this);
+  RefereeBase::planning_result_sub_ =
+      nh.subscribe<std_msgs::Int32>("/planning_result", 10, &RefereeBase::planningResultDataCallBack, this);
   RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
+  RefereeBase::balance_state_sub_ = nh.subscribe("/state", 10, &RefereeBase::balanceStateCallback, this);
   RefereeBase::track_sub_ = nh.subscribe<rm_msgs::TrackData>("/track", 10, &RefereeBase::trackCallBack, this);
   RefereeBase::map_sentry_sub_ =
       nh.subscribe<rm_msgs::MapSentryData>("/map_sentry_data", 10, &RefereeBase::mapSentryCallback, this);
@@ -35,6 +38,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     RefereeBase::radar_date_sub_ =
         nh.subscribe<std_msgs::Int8MultiArray>("/data", 10, &RefereeBase::radarDataCallBack, this);
   XmlRpc::XmlRpcValue rpc_value;
+  send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
+  add_ui_frequency_ = getParam(nh, "add_ui_frequency", 5);
+  add_ui_max_times_ = getParam(nh, "add_ui_max_times", 10);
   interactive_data_sender_ = new UiBase(rpc_value, base_);
   if (nh.hasParam("ui"))
   {
@@ -55,6 +61,24 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         target_view_angle_trigger_change_ui_ = new TargetViewAngleTriggerChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "camera")
         camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "drag")
+        drag_state_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "drag");
+      if (rpc_value[i]["name"] == "gripper")
+        gripper_state_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "gripper");
+      if (rpc_value[i]["name"] == "exchange")
+        exchange_state_trigger_change_ui_ = new ExchangeStateTriggerChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "planning")
+        planning_result_trigger_change_ui_ = new PlanningResultTriggerChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "step")
+        step_name_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "step");
+      if (rpc_value[i]["name"] == "reversal")
+        reversal_state_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "reversal");
+      if (rpc_value[i]["name"] == "stone")
+        stone_num_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "stone");
+      if (rpc_value[i]["name"] == "temperature")
+        joint_temperature_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "temperature");
+      if (rpc_value[i]["name"] == "servo_mode")
+        servo_mode_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "mode");
     }
 
     ui_nh.getParam("time_change", rpc_value);
@@ -72,6 +96,10 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         rotation_time_change_ui_ = new RotationTimeChangeUi(rpc_value[i], base_, &graph_queue_);
       if (rpc_value[i]["name"] == "lane_line")
         lane_line_time_change_ui_ = new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
+      if (rpc_value[i]["name"] == "pitch")
+        pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+      if (rpc_value[i]["name"] == "balance_pitch")
+        balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -87,23 +115,22 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     }
   }
 
-  add_ui_timer_ = nh.createTimer(ros::Duration(0.05), std::bind(&RefereeBase::addUi, this), false, false);
-  send_graph_ui_timer_ =
-      nh.createTimer(ros::Duration(0.1), std::bind(&RefereeBase::sendGraphQueueCallback, this), false, false);
+  add_ui_timer_ =
+      nh.createTimer(ros::Duration(1. / add_ui_frequency_), std::bind(&RefereeBase::addUi, this), false, false);
+  send_graph_ui_timer_ = nh.createTimer(ros::Duration(send_ui_queue_delay_),
+                                        std::bind(&RefereeBase::sendGraphQueueCallback, this), false, true);
 }
 void RefereeBase::addUi()
 {
-  if (add_ui_times_ > 60)
+  if (add_ui_times_ > add_ui_max_times_)
   {
     ROS_INFO("End add");
     add_ui_timer_.stop();
-    send_graph_ui_timer_.start();
     is_adding_ = false;
     return;
   }
 
-  ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / 60.) * 100);
-  send_graph_ui_timer_.stop();
+  ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / static_cast<double>(add_ui_max_times_)) * 100);
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->add();
   if (gimbal_trigger_change_ui_)
@@ -116,6 +143,24 @@ void RefereeBase::addUi()
     target_view_angle_trigger_change_ui_->add();
   if (camera_trigger_change_ui_)
     camera_trigger_change_ui_->add();
+  if (drag_state_trigger_change_ui_)
+    drag_state_trigger_change_ui_->add();
+  if (gripper_state_trigger_change_ui_)
+    gripper_state_trigger_change_ui_->add();
+  if (exchange_state_trigger_change_ui_)
+    exchange_state_trigger_change_ui_->add();
+  if (planning_result_trigger_change_ui_)
+    planning_result_trigger_change_ui_->add();
+  if (step_name_trigger_change_ui_)
+    step_name_trigger_change_ui_->add();
+  if (servo_mode_trigger_change_ui_)
+    servo_mode_trigger_change_ui_->add();
+  if (reversal_state_trigger_change_ui_)
+    reversal_state_trigger_change_ui_->add();
+  if (stone_num_trigger_change_ui_)
+    stone_num_trigger_change_ui_->add();
+  if (joint_temperature_trigger_change_ui_)
+    joint_temperature_trigger_change_ui_->add();
   if (fixed_ui_)
     fixed_ui_->add();
   if (effort_time_change_ui_)
@@ -130,6 +175,10 @@ void RefereeBase::addUi()
     rotation_time_change_ui_->add();
   if (lane_line_time_change_ui_)
     lane_line_time_change_ui_->add();
+  if (balance_pitch_time_change_group_ui_)
+    balance_pitch_time_change_group_ui_->add();
+  if (pitch_angle_time_change_ui_)
+    pitch_angle_time_change_ui_->add();
   add_ui_times_++;
 }
 
@@ -184,12 +233,13 @@ void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, 
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {
 }
-void RefereeBase::capacityDataCallBack(const rm_msgs::CapacityData& data, ros::Time& last_get_data_time)
+void RefereeBase::capacityDataCallBack(const rm_msgs::PowerManagementSampleAndStatusData& data,
+                                       ros::Time& last_get_data_time)
 {
   if (capacitor_time_change_ui_ && !is_adding_)
-    capacitor_time_change_ui_->updateCapacityData(data, last_get_data_time);
+    capacitor_time_change_ui_->updateRemainCharge(data.capacity_remain_charge, last_get_data_time);
   if (chassis_trigger_change_ui_ && !is_adding_)
-    chassis_trigger_change_ui_->updateCapacityData(data);
+    chassis_trigger_change_ui_->updateCapacityResetStatus();
 }
 void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_data_time)
 {
@@ -211,6 +261,8 @@ void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& da
     rotation_time_change_ui_->updateForQueue();
   if (lane_line_time_change_ui_ && !is_adding_)
     lane_line_time_change_ui_->updateJointStateData(data, ros::Time::now());
+  if (pitch_angle_time_change_ui_ && !is_adding_)
+    pitch_angle_time_change_ui_->updateJointStateData(data, ros::Time::now());
 }
 void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
 {
@@ -234,7 +286,7 @@ void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
 }
 void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
 {
-  if (chassis_trigger_change_ui_ && !is_adding_)
+  if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateChassisCmdData(data);
   if (spin_flash_ui_ && !is_adding_)
     spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
@@ -254,17 +306,27 @@ void RefereeBase::gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data
   if (gimbal_trigger_change_ui_ && !is_adding_)
     gimbal_trigger_change_ui_->updateGimbalCmdData(data);
 }
-void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
-{
-}
+
 void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data)
 {
-  if (progress_time_change_ui_ && !is_adding_)
-    progress_time_change_ui_->updateEngineerUiData(data, ros::Time::now());
+  if (drag_state_trigger_change_ui_ && !is_adding_)
+    drag_state_trigger_change_ui_->updateStringUiData(data->drag_state);
+  if (gripper_state_trigger_change_ui_ && !is_adding_)
+    gripper_state_trigger_change_ui_->updateStringUiData(data->gripper_state);
+  if (stone_num_trigger_change_ui_ && !is_adding_)
+    stone_num_trigger_change_ui_->updateStringUiData(data->stone_num);
+  if (step_name_trigger_change_ui_ && !is_adding_)
+    step_name_trigger_change_ui_->updateStringUiData(data->current_step_name);
+  if (servo_mode_trigger_change_ui_ && !is_adding_)
+    servo_mode_trigger_change_ui_->updateStringUiData(data->servo_mode);
+  if (reversal_state_trigger_change_ui_ && !is_adding_)
+    reversal_state_trigger_change_ui_->updateStringUiData(data->reversal_state);
+  if (joint_temperature_trigger_change_ui_ && !is_adding_)
+    joint_temperature_trigger_change_ui_->updateStringUiData(data->joint_temperature);
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
-  if (chassis_trigger_change_ui_ && !is_adding_)
+  if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateManualCmdData(data);
   if (shooter_trigger_change_ui_ && !is_adding_)
     shooter_trigger_change_ui_->updateManualCmdData(data);
@@ -285,8 +347,23 @@ void RefereeBase::cameraNameCallBack(const std_msgs::StringConstPtr& data)
 }
 void RefereeBase::trackCallBack(const rm_msgs::TrackDataConstPtr& data)
 {
-  if (target_view_angle_trigger_change_ui_)
+  if (target_view_angle_trigger_change_ui_ && !is_adding_)
     target_view_angle_trigger_change_ui_->updateTrackID(data->id);
+}
+void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data)
+{
+  if (balance_pitch_time_change_group_ui_)
+    balance_pitch_time_change_group_ui_->calculatePointPosition(data, ros::Time::now());
+}
+void RefereeBase::exchangeStateDataCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data)
+{
+  if (exchange_state_trigger_change_ui_ && !is_adding_)
+    exchange_state_trigger_change_ui_->updateExchangeStateData(data);
+}
+void RefereeBase::planningResultDataCallBack(const std_msgs::Int32::ConstPtr& data)
+{
+  if (planning_result_trigger_change_ui_ && !is_adding_)
+    planning_result_trigger_change_ui_->updatePlanningResultData(data);
 }
 void RefereeBase::mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data)
 {

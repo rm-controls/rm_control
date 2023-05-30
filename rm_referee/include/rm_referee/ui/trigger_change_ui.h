@@ -6,6 +6,7 @@
 #include "rm_referee/ui/ui_base.h"
 #include <rm_common/decision/power_limit.h>
 #include "std_msgs/String.h"
+#include "std_msgs/Int32.h"
 
 namespace rm_referee
 {
@@ -33,11 +34,17 @@ public:
       graph_->setContent("raw");
     else
       graph_->setContent("follow");
+
+    if (rpc_value.hasMember("mode_change_threshold"))
+      mode_change_threshold_ = static_cast<double>(rpc_value["mode_change_threshold"]);
+    else
+      mode_change_threshold_ = 0.7;
   }
   void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
   void updateDbusData(const rm_msgs::DbusData::ConstPtr data);
-  void updateCapacityData(const rm_msgs::CapacityData data);
+  void updateCapacityResetStatus();
+  void checkModeChange();
 
 private:
   void update() override;
@@ -45,6 +52,7 @@ private:
   void displayInCapacity();
   std::string getChassisState(uint8_t mode);
   uint8_t chassis_mode_, power_limit_state_, s_l_, s_r_, key_ctrl_, key_shift_, key_b_;
+  double mode_change_threshold_;
 };
 
 class ShooterTriggerChangeUi : public TriggerChangeUi
@@ -190,4 +198,41 @@ private:
   std::string current_camera_{}, camera1_name_{}, camera2_name_{};
 };
 
+class ExchangeStateTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit ExchangeStateTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "exchange"){};
+  void updateExchangeStateData(const rm_msgs::ExchangerMsg ::ConstPtr& data);
+
+private:
+  void update() override;
+  void exchangeStateUpdateConfig(const rm_msgs::ExchangerMsg& exchange_state);
+  rm_msgs::ExchangerMsg exchange_state_;
+};
+
+class PlanningResultTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit PlanningResultTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base)
+    : TriggerChangeUi(rpc_value, base, "planning"){};
+  void updatePlanningResultData(const std_msgs::Int32 ::ConstPtr& data);
+
+private:
+  void update() override;
+  void planningResultUpdateConfig(const std_msgs::Int32& data);
+  std_msgs::Int32 planning_result_;
+};
+
+class StringTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit StringTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& name)
+    : TriggerChangeUi(rpc_value, base, name){};
+  void updateStringUiData(const std::string& data);
+
+private:
+  void update() override;
+  std::string data_;
+};
 }  // namespace rm_referee

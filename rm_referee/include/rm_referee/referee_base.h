@@ -25,7 +25,8 @@ public:
   virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data,
                                        const ros::Time& last_get_data_time);
   virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data, const ros::Time& last_get_data_time);
-  virtual void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data, ros::Time& last_get_data_time);
+  virtual void capacityDataCallBack(const rm_msgs::PowerManagementSampleAndStatusData& data,
+                                    ros::Time& last_get_data_time);
   virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data, const ros::Time& last_get_data_time);
   virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data, const ros::Time& last_get_data_time);
   virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data,
@@ -40,12 +41,14 @@ public:
   virtual void vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data);
   virtual void shootStateCallback(const rm_msgs::ShootState::ConstPtr& data);
   virtual void gimbalCmdDataCallback(const rm_msgs::GimbalCmd::ConstPtr& data);
-  virtual void cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data);
   virtual void engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data);
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
   virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
+  virtual void exchangeStateDataCallBack(const rm_msgs::ExchangerMsg::ConstPtr& data);
+  virtual void planningResultDataCallBack(const std_msgs::Int32::ConstPtr& data);
   virtual void trackCallBack(const rm_msgs::TrackDataConstPtr& data);
+  virtual void balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data);
   virtual void mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data);
 
   // send graph_type ui
@@ -61,11 +64,14 @@ public:
   ros::Subscriber detection_status_sub_;
   ros::Subscriber card_cmd_sub_;
   ros::Subscriber calibration_status_sub_;
-  ros::Subscriber engineer_cmd_sub_;
+  ros::Subscriber engineer_ui_sub_;
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
   ros::Subscriber camera_name_sub_;
   ros::Subscriber track_sub_;
+  ros::Subscriber exchange_state_sub_;
+  ros::Subscriber planning_result_sub_;
+  ros::Subscriber balance_state_sub_;
   ros::Subscriber map_sentry_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
@@ -81,6 +87,13 @@ public:
   DartStatusTimeChangeUi* dart_status_time_change_ui_{};
   RotationTimeChangeUi* rotation_time_change_ui_{};
   LaneLineTimeChangeGroupUi* lane_line_time_change_ui_{};
+  BalancePitchTimeChangeGroupUi* balance_pitch_time_change_group_ui_{};
+  StringTriggerChangeUi *step_name_trigger_change_ui_{}, *servo_mode_trigger_change_ui_{},
+      *reversal_state_trigger_change_ui_{}, *stone_num_trigger_change_ui_{}, *joint_temperature_trigger_change_ui_{},
+      *drag_state_trigger_change_ui_{}, *gripper_state_trigger_change_ui_{};
+  ExchangeStateTriggerChangeUi* exchange_state_trigger_change_ui_{};
+  PlanningResultTriggerChangeUi* planning_result_trigger_change_ui_{};
+  PitchAngleTimeChangeUi* pitch_angle_time_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
@@ -94,7 +107,8 @@ public:
 
   Base& base_;
   ros::Timer add_ui_timer_, send_graph_ui_timer_;
-  int add_ui_times_ = 0;
+  int add_ui_times_, add_ui_max_times_, add_ui_frequency_;
+  double send_ui_queue_delay_;
   bool add_ui_flag_ = false, is_adding_ = false;
   ros::NodeHandle nh_;
 };

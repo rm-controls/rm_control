@@ -52,33 +52,33 @@ void TimeChangeGroupUi::updateForQueue()
 
 void CapacitorTimeChangeUi::add()
 {
-  if (cap_power_ != 0.)
+  if (remain_charge_ != 0.)
     graph_->setOperation(rm_referee::GraphOperation::ADD);
   UiBase::display(false);
 }
 
 void CapacitorTimeChangeUi::updateConfig()
 {
-  if (cap_power_ > 0.)
+  if (remain_charge_ > 0.)
   {
     graph_->setStartX(610);
     graph_->setStartY(100);
-    graph_->setEndX(610 + 600 * cap_power_);
+    graph_->setEndX(610 + 600 * remain_charge_);
     graph_->setEndY(100);
-    if (cap_power_ < 0.3)
-      graph_->setColor(rm_referee::GraphColor::ORANGE);
-    else if (cap_power_ > 0.7)
+    if (remain_charge_ > 0.7)
       graph_->setColor(rm_referee::GraphColor::GREEN);
+    else if (remain_charge_ > 0.3)
+      graph_->setColor(rm_referee::GraphColor::ORANGE);
     else
-      graph_->setColor(rm_referee::GraphColor::YELLOW);
+      graph_->setColor(rm_referee::GraphColor::PINK);
   }
   else
     return;
 }
 
-void CapacitorTimeChangeUi::updateCapacityData(const rm_msgs::CapacityData data, const ros::Time& time)
+void CapacitorTimeChangeUi::updateRemainCharge(const double remain_charge, const ros::Time& time)
 {
-  cap_power_ = data.cap_power;
+  remain_charge_ = remain_charge;
   updateForQueue();
 }
 
@@ -127,8 +127,6 @@ void ProgressTimeChangeUi::updateConfig()
 void ProgressTimeChangeUi::updateEngineerUiData(const rm_msgs::EngineerUi::ConstPtr data,
                                                 const ros::Time& last_get_data_time)
 {
-  total_steps_ = data->total_steps;
-  finished_data_ = data->finished_step;
   TimeChangeUi::update();
 }
 
@@ -192,6 +190,8 @@ void LaneLineTimeChangeGroupUi::updateConfig()
                        (cos(end_point_b_angle_ - pitch_angle_) * robot_height_ / sin(end_point_b_angle_)),
          spacing_y_a = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_a_angle_ - pitch_angle_),
          spacing_y_b = screen_y_ / 2 * tan(M_PI / 2 - camera_range_ / 2) * tan(end_point_b_angle_ - pitch_angle_);
+  if (spacing_x_a < 0)
+    return;
 
   if (spacing_x_b < 0)
     return;
@@ -224,5 +224,58 @@ void LaneLineTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointSta
   end_point_a_angle_ = camera_range_ / 2 + pitch_angle_;
   end_point_b_angle_ = 0.6 * (0.25 + pitch_angle_);
   updateForQueue();
+}
+
+void BalancePitchTimeChangeGroupUi::updateConfig()
+{
+  for (auto it : graph_vector_)
+  {
+    if (it.first == "triangle_left_side")
+    {
+      it.second->setStartX(centre_point_[0]);
+      it.second->setStartY(centre_point_[1]);
+      it.second->setEndX(triangle_left_point_[0]);
+      it.second->setEndY(triangle_left_point_[1]);
+    }
+    else if (it.first == "triangle_right_side")
+    {
+      it.second->setStartX(centre_point_[0]);
+      it.second->setStartY(centre_point_[1]);
+      it.second->setEndX(triangle_right_point_[0]);
+      it.second->setEndY(triangle_right_point_[1]);
+    }
+  }
+}
+
+void BalancePitchTimeChangeGroupUi::calculatePointPosition(const rm_msgs::BalanceStateConstPtr& data,
+                                                           const ros::Time& time)
+{
+  triangle_left_point_[0] = centre_point_[0] - length_ * sin(bottom_angle_ / 2 + data->theta);
+  triangle_left_point_[1] = centre_point_[1] + length_ * cos(bottom_angle_ / 2 + data->theta);
+  triangle_right_point_[0] = centre_point_[0] + length_ * sin(bottom_angle_ / 2 - data->theta);
+  triangle_right_point_[1] = centre_point_[1] + length_ * cos(bottom_angle_ / 2 - data->theta);
+  updateForQueue();
+}
+
+void PitchAngleTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
+{
+  for (unsigned int i = 0; i < data->name.size(); i++)
+    if (data->name[i] == "pitch_joint")
+      pitch_angle_ = data->position[i];
+  update();
+}
+
+void PitchAngleTimeChangeUi::update()
+{
+  updateConfig();
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  display(ros::Time::now());
+}
+
+void PitchAngleTimeChangeUi::updateConfig()
+{
+  std::string pitch = std::to_string(pitch_angle_);
+  graph_->setContent(pitch);
+  graph_->setColor(rm_referee::GraphColor::YELLOW);
 }
 }  // namespace rm_referee
