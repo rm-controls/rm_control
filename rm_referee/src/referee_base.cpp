@@ -122,8 +122,6 @@ void RefereeBase::addUi()
     target_view_angle_trigger_change_ui_->add();
   if (camera_trigger_change_ui_)
     camera_trigger_change_ui_->add();
-  if (fixed_ui_)
-    fixed_ui_->add();
   if (effort_time_change_ui_)
     effort_time_change_ui_->add();
   if (progress_time_change_ui_)
@@ -140,6 +138,8 @@ void RefereeBase::addUi()
     balance_pitch_time_change_group_ui_->add();
   if (pitch_angle_time_change_ui_)
     pitch_angle_time_change_ui_->add();
+  if (fixed_ui_)
+    fixed_ui_->add();
   add_ui_times_++;
 }
 
