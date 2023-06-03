@@ -582,8 +582,8 @@ typedef struct
 typedef struct
 {
   uint8_t abnormal_reset_reason;
-  uint8_t state_machine_before_reset_mode;
-  uint8_t power_management_before_reset_topology;
+  uint8_t power_management_before_reset_topology : 4;
+  uint8_t state_machine_before_reset_mode : 4;
 } __packed PowerManagementUnknownExceptionData;
 
 /***********************Frame tail(CRC8_CRC16)********************************************/

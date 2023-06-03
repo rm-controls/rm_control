@@ -81,6 +81,10 @@
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
 #include <rm_msgs/PowerManagementSampleAndStatusData.h>
+#include <rm_msgs/PowerManagementSystemExceptionData.h>
+#include <rm_msgs/PowerManagementInitializationExceptionData.h>
+#include <rm_msgs/PowerManagementProcessStackOverflowData.h>
+#include <rm_msgs/PowerManagementUnknownExceptionData.h>
 
 namespace rm_referee
 {
