@@ -33,6 +33,7 @@ add_service_files(
         StatusChange.srv
         CameraStatus.srv
         EnableImuTrigger.srv
+        ShooterSpeed.srv
 )
 
 add_message_files(

@@ -46,6 +46,7 @@
 #include <controller_manager_msgs/SwitchController.h>
 #include <control_msgs/QueryCalibrationState.h>
 #include <rm_msgs/StatusChange.h>
+#include <rm_msgs/ShooterSpeed.h>
 
 namespace rm_common
 {
@@ -260,5 +261,29 @@ public:
 
 private:
   bool is_set_{};
+};
+
+class ShooterSpeedCaller : public ServiceCallerBase<rm_msgs::ShooterSpeed>
+{
+public:
+  explicit ShooterSpeedCaller(ros::NodeHandle& nh) : ServiceCallerBase<rm_msgs::ShooterSpeed>(nh, "/shooter_speed")
+  {
+    service_.request.shooter_speed = 0.0;
+    callService();
+  }
+  void RaiseSpeed()
+  {
+    service_.request.shooter_speed += 1.0;
+  }
+  void DropSpeed()
+  {
+    service_.request.shooter_speed -= 1.0;
+  }
+  bool getIsChange()
+  {
+    if (isCalling())
+      return false;
+    return service_.response.is_success;
+  }
 };
 }  // namespace rm_common
