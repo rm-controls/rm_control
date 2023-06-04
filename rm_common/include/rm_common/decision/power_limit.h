@@ -120,7 +120,7 @@ public:
       {
         if (capacity_is_online_)
         {
-          if (chassis_power_limit_ > 120)
+          if (chassis_power_limit_ > burst_power_)
             chassis_cmd.power_limit = burst_power_;
           else
           {
