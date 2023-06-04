@@ -74,6 +74,15 @@ public:
     ros::NodeHandle power_management_nh = ros::NodeHandle(nh, "power_management");
     power_management_sample_and_status_data_pub_ =
         power_management_nh.advertise<rm_msgs::PowerManagementSampleAndStatusData>("sample_and_status", 1);
+    power_management_initialization_exception_pub_ =
+        power_management_nh.advertise<rm_msgs::PowerManagementInitializationExceptionData>("initialization_exception",
+                                                                                           1);
+    power_management_system_exception_data_ =
+        power_management_nh.advertise<rm_msgs::PowerManagementSystemExceptionData>("system_exception", 1);
+    power_management_process_stack_overflow_pub_ =
+        power_management_nh.advertise<rm_msgs::PowerManagementProcessStackOverflowData>("stack_overflow", 1);
+    power_management_unknown_exception_pub_ =
+        power_management_nh.advertise<rm_msgs::PowerManagementUnknownExceptionData>("unknown_exception", 1);
     // initSerial
     base_.initSerial();
   };
@@ -103,6 +112,10 @@ public:
   ros::Publisher radar_mark_pub_;
   ros::Publisher client_map_send_data_pub_;
   ros::Publisher power_management_sample_and_status_data_pub_;
+  ros::Publisher power_management_initialization_exception_pub_;
+  ros::Publisher power_management_system_exception_data_;
+  ros::Publisher power_management_process_stack_overflow_pub_;
+  ros::Publisher power_management_unknown_exception_pub_;
 
   Base base_;
   std::vector<uint8_t> rx_buffer_;
