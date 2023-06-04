@@ -301,7 +301,7 @@ void JointValueTimeChangeUi::updateConfig()
     }
     if (abs(proportion) > 0.96)
         graph_->setColor(rm_referee::GraphColor::BLACK);
-    else if (abs(proportion) > 0.9)
+    else if (abs(proportion) > 0.8)
         graph_->setColor(rm_referee::GraphColor::PINK);
     else if (abs(proportion) > 0.6)
         graph_->setColor(rm_referee::GraphColor::PURPLE);
@@ -319,49 +319,80 @@ void JointValueTimeChangeUi::updateJointStateData(const sensor_msgs::JointState:
     updateForQueue();
 }
 
-void SpaceTfTimeChangeUi::updateConfig()
+void SpaceTfTimeChangeGroupUi::updateConfig()
 {
-    std::vector<double> proportions;
-    for (int i = 0; i < (int)current_val.size(); ++i) {
-        proportions[i] = (current_val[i] - range_gather_[i][0]) / (range_gather_[i][1] - range_gather_[i][0]);
+    roll_val_ = current_val_[5] ;
+    pitch_val_ = current_val_[3] + 1.578000;
+    yaw_val_ = current_val_[4] ;
+
+    calculateTransformedEndpoint(start_point_,store_end_points_,roll_val_,pitch_val_,yaw_val_);
+    std::vector<double> proportions{0.,0.,0.,0.,0.,0.};
+    for (int i = 0; i < (int)range_gather_.size(); ++i)
+    {
+        proportions[i] = (current_val_[i] - range_gather_[i][0]) / (range_gather_[i][1] - range_gather_[i][0]);
     }
     int times = 0;
     for (auto it = graph_vector_.begin(); it != graph_vector_.end(); ++it) {
         it->second->setStartX(start_point_.x);
-        it->second->setStartY(start_point_.x);
-        calculateTransformedEndpoint(start_point_,end_points_,roll_val_,pitch_val_,yaw_val_);
-        it->second->setEndX(end_points_[times].x);
-        it->second->setEndY(end_points_[times].y);
-        if (abs(proportions[times]) > 0.96)
-            it->second->setColor(rm_referee::GraphColor::BLACK);
-        else if (abs(proportions[times]) > 0.9)
+        it->second->setStartY(start_point_.y);
+//        if (((store_end_points_[times].x == start_point_.x) && (store_end_points_[times].y != start_point_.y)))
+//        {
+//            it->second->setEndX(vision_points_[times].x);
+//            it->second->setEndY(vision_points_[times].y * proportions[times]);
+//        }
+//        else if (((store_end_points_[times].x != start_point_.x) && (store_end_points_[times].y == start_point_.y)))
+//        {
+//            it->second->setEndX(vision_points_[times].x * proportions[times]);
+//            it->second->setEndY(vision_points_[times].y);
+//        }
+//        else if (((store_end_points_[times].x != start_point_.x) && (store_end_points_[times].y != start_point_.y)))
+//        {
+//            it->second->setEndX(vision_points_[times].x * proportions[times]);
+//            it->second->setEndY(vision_points_[times].y * proportions[times]);
+//        } else
+//        {
+//            ROS_INFO_STREAM("NOT A LINE");
+//        }
+
+        it->second->setEndX(vision_points_[times].x);
+        it->second->setEndY(vision_points_[times].y );
+//        if (abs(proportions[times]) > 0.96)
+//            it->second->setColor(rm_referee::GraphColor::BLACK);
+//        else if (abs(proportions[times]) > 0.8)
+//            it->second->setColor(rm_referee::GraphColor::PINK);
+//        else if (abs(proportions[times]) > 0.6)
+//            it->second->setColor(rm_referee::GraphColor::PURPLE);
+//        else if (abs(proportions[times]) > 0.3)
+//            it->second->setColor(rm_referee::GraphColor::ORANGE);
+//        else
+//            it->second->setColor(rm_referee::GraphColor::GREEN);
+        if (it->first == "x")
             it->second->setColor(rm_referee::GraphColor::PINK);
-        else if (abs(proportions[times]) > 0.6)
-            it->second->setColor(rm_referee::GraphColor::PURPLE);
-        else if (abs(proportions[times]) > 0.3)
-            it->second->setColor(rm_referee::GraphColor::ORANGE);
-        else
+        else if (it->first == "y")
             it->second->setColor(rm_referee::GraphColor::GREEN);
+        else if (it->first == "z")
+            it->second->setColor(rm_referee::GraphColor::CYAN);
         times++;
+        //ROS_INFO_STREAM(times);
     }
 }
 
-void SpaceTfTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
+void SpaceTfTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
     for (unsigned int i = 0; i < data->name.size(); i++)
     {
-        if (data->name[i] == "joint1")
-            current_val[0] = data->position[i];
-        else if (data->name[i] == "joint2")
-            current_val[1] = data->position[i];
+        if (data->name[i] == "joint2")
+            current_val_[0] = data->position[i];
         else if (data->name[i] == "joint3")
-            current_val[2] = data->position[i];
+            current_val_[1] = data->position[i];
+        else if (data->name[i] == "joint1")
+            current_val_[2] = data->position[i];
         else if (data->name[i] == "joint4")
-            current_val[3] = data->position[i];
+            current_val_[3] = data->position[i];
         else if (data->name[i] == "joint5")
-            current_val[4] = data->position[i];
+            current_val_[4] = data->position[i];
         else if (data->name[i] == "joint6")
-            current_val[5] = data->position[i];
+            current_val_[5] = data->position[i];
     }
     updateForQueue();
 }

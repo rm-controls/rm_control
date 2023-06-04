@@ -267,70 +267,164 @@ private:
     double max_val_, min_val_, current_val_,length_;
 };
 
-class SpaceTfTimeChangeUi : public TimeChangeGroupUi
+class SpaceTfTimeChangeGroupUi : public TimeChangeGroupUi
 {
 public:
     struct Vector2D {
-        double x;
-        double y;
+        int x;
+        int y;
     };
-    explicit SpaceTfTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue,
+    explicit SpaceTfTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue,
                                     std::string name)
             : TimeChangeGroupUi(rpc_value, base, name, graph_queue)
     {
-
         name_ = name;
-        xyz_length_[0] = static_cast<double>(rpc_value["tf"]["xyz_length"][0]);
-        xyz_length_[1] = static_cast<double>(rpc_value["tf"]["xyz_length"][1]);
-        xyz_length_[2] = static_cast<double>(rpc_value["tf"]["xyz_length"][2]);
+        XmlRpc::XmlRpcValue config = rpc_value["config"];
+        start_point_.x = static_cast<int>(config["start_position"][0]);
+        start_point_.y = static_cast<int>(config["start_position"][1]);
+        if (rpc_value.hasMember("tf")) {
+            XmlRpc::XmlRpcValue tf = rpc_value["tf"];
+            for (int i = 0; i < (int)xyz_length_.size(); ++i)
+            {
+                xyz_length_[i] = static_cast<int>(xmlRpcGetDouble(tf["xyz_length"], i));
+            }
+            for (int i = 0; i < (int)x_range_.size(); ++i) {
+                x_range_[i] = xmlRpcGetDouble(tf["x_range"], i);
+                y_range_[i] = xmlRpcGetDouble(tf["y_range"], i);
+                z_range_[i] = xmlRpcGetDouble(tf["z_range"], i);
+                roll_range_[i] = xmlRpcGetDouble(tf["roll_range"], i);
+                pitch_range_[i] = xmlRpcGetDouble(tf["pitch_range"], i);
+                yaw_range_[i] = xmlRpcGetDouble(tf["yaw_range"], i);
+            }
+            range_gather_.push_back(x_range_);
+            range_gather_.push_back(y_range_);
+            range_gather_.push_back(z_range_);
+            range_gather_.push_back(roll_range_);
+            range_gather_.push_back(pitch_range_);
+            range_gather_.push_back(yaw_range_);
+        }
+        Vector2D temp_vec{0,0};
+        end_points_.clear();
+        temp_vec.x = start_point_.x ;
+        temp_vec.y = start_point_.y ;
+        end_points_.push_back(temp_vec);
+        temp_vec.x = start_point_.x - xyz_length_[1];
+        temp_vec.y = start_point_.y;
+        end_points_.push_back(temp_vec);
+        temp_vec.x = start_point_.x;
+        temp_vec.y = start_point_.y + xyz_length_[2];
+        end_points_.push_back(temp_vec);
+//        for (int i = 0; i < (int)end_points_.size(); ++i) {
+//            ROS_INFO_STREAM("-------------------");
+//            ROS_INFO_STREAM(end_points_[i].x);
+//            ROS_INFO_STREAM(end_points_[i].y);
+//            ROS_INFO_STREAM("-------------------");
+//        }
+        store_end_points_ = end_points_;
+        vision_points_ = end_points_;
 
-        for (int i = 0; i < (int)x_range_.size(); ++i) {
-            x_range_[i] = static_cast<double>(rpc_value["tf"]["x_range"][i]);
-            y_range_[i] = static_cast<double>(rpc_value["tf"]["y_range"][i]);
-            z_range_[i] = static_cast<double>(rpc_value["tf"]["z_range"][i]);
-            pitch_range_[i] = static_cast<double>(rpc_value["tf"]["pitch_range"][i]);
-            pitch_range_[i] = static_cast<double>(rpc_value["tf"]["pitch_range"][i]);
-            pitch_range_[i] = static_cast<double>(rpc_value["tf"]["pitch_range"][i]);
-        }
-        start_point_.x = graph_->getConfig().start_x;
-        start_point_.y = graph_->getConfig().start_y;
-        for (int i = 0; i < (int)xyz_length_.size(); ++i) {
-            end_points_[i].x = start_point_.x +xyz_length_[i];
-            end_points_[i].y = start_point_.y +xyz_length_[i];
-        }
-        store_end_positions_ = end_points_;
+        XmlRpc::XmlRpcValue mimic_config;
+        mimic_config["type"] = "line";
+        if (rpc_value["config"].hasMember("width"))
+            mimic_config["width"] = rpc_value["config"]["width"];
+        else
+            mimic_config["width"] = 2;
+        if (rpc_value["config"].hasMember("delay"))
+            mimic_config["delay"] = rpc_value["config"]["delay"];
+        else
+            mimic_config["delay"] = 0.2;
+
+        mimic_config["start_position"][0] = start_point_.x;
+        mimic_config["start_position"][1] = start_point_.y;
+
+        mimic_config["end_position"][0] = end_points_[0].x;
+        mimic_config["end_position"][1] = end_points_[0].y;
+        graph_vector_.insert(std::make_pair<std::string, Graph*>("x", new Graph(mimic_config, base_, id_++)));
+        mimic_config["end_position"][0] = end_points_[1].x;
+        mimic_config["end_position"][1] = end_points_[1].y;
+        graph_vector_.insert(std::make_pair<std::string, Graph*>("y", new Graph(mimic_config, base_, id_++)));
+        mimic_config["end_position"][0] = end_points_[2].x;
+        mimic_config["end_position"][1] = end_points_[2].y;
+        graph_vector_.insert(std::make_pair<std::string, Graph*>("z", new Graph(mimic_config, base_, id_++)));
     };
     void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
     void calculateTransformedEndpoint(const Vector2D& start_point, std::vector<Vector2D>& end_points, double roll, double pitch, double yaw) {
         Eigen::Matrix3d rotationMatrix;
+        rotationMatrix.setIdentity();
         rotationMatrix = Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX()) * rotationMatrix;
         rotationMatrix = Eigen::AngleAxisd(pitch, Eigen::Vector3d::UnitY()) * rotationMatrix;
         rotationMatrix = Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()) * rotationMatrix;
 
         Eigen::Vector3d endpointVector(xyz_length_[0], 0., 0.);
         Eigen::Vector3d transformedEndpointVector = rotationMatrix * endpointVector;
+//        ROS_INFO_STREAM("-------------------");
+//        ROS_INFO_STREAM(transformedEndpointVector);
+//        ROS_INFO_STREAM("-------------------");
+//        ROS_INFO_STREAM(rotationMatrix);
+//        ROS_INFO_STREAM("-------------------");
 
-        std::vector<Vector2D> temp_points_;
-        for (int i = 0; i < (int)end_points_.size(); ++i) {
-            temp_points_[i].x = transformedEndpointVector.y() + start_point.x;
-            temp_points_[i].y = transformedEndpointVector.z() + start_point.y;
-        }
 
-        double scaleFactor = space_scale_ / (space_scale_ + xyz_length_[0]);
-        for (int i = 0; i < (int)end_points_.size(); ++i) {
-            end_points[i].x = temp_points_[i].x * scaleFactor;
-            end_points[i].y = temp_points_[i].y * scaleFactor;
+        for (int i = 0; i < (int)store_end_points_.size(); ++i) {
+//            ROS_INFO_STREAM("enter");
+            store_end_points_[i].x = end_points_[i].x - transformedEndpointVector.y();
+            store_end_points_[i].y = end_points_[i].y + transformedEndpointVector.z() ;
+
+//            store_end_points_[0].x = transformedEndpointVector.y() + start_point.x;
+//            store_end_points_[0].y = transformedEndpointVector.z() + start_point.y;
+//            store_end_points_[1].x = transformedEndpointVector.y() + start_point.x;
+//            store_end_points_[1].y = transformedEndpointVector.z() + start_point.y;
+//            store_end_points_[2].x = transformedEndpointVector.y() + start_point.x;
+//            store_end_points_[2].y = transformedEndpointVector.z() + start_point.y;
+//            ROS_INFO_STREAM("!!!!!!!!!!!!!!!!!!!!!!!");
+//            ROS_INFO_STREAM("-------------------________________");
+//            ROS_INFO_STREAM(store_end_points_[0].x);
+//            ROS_INFO_STREAM("-------------------");
+//            ROS_INFO_STREAM(store_end_points_[0].y);
+//
+//            ROS_INFO_STREAM(store_end_points_[1].x);
+//            ROS_INFO_STREAM("-------------------");
+//            ROS_INFO_STREAM(store_end_points_[1].y);
+//
+//            ROS_INFO_STREAM(store_end_points_[2].x);
+//            ROS_INFO_STREAM("-------------------");
+//            ROS_INFO_STREAM(store_end_points_[2].y);
+//            ROS_INFO_STREAM("-------------------_____________________");
+
+//            ROS_INFO_STREAM("!!!!!!!!!!!!!!!!!!!!!!!!");
+//            ROS_INFO_STREAM("out");
         }
+//        ROS_INFO_STREAM("-------------------");
+
+//        double scaleFactor = space_scale_ / (space_scale_ + xyz_length_[0]);
+        double scaleFactor = 1.;
+        for (int i = 0; i < (int)end_points_.size(); ++i) {
+            vision_points_[i].x = store_end_points_[i].x * scaleFactor;
+            vision_points_[i].y = store_end_points_[i].y * scaleFactor;
+//            ROS_INFO_STREAM("-------------------________________");
+//            ROS_INFO_STREAM(vision_points_[0].x);
+//            ROS_INFO_STREAM("-------------------");
+//            ROS_INFO_STREAM(vision_points_[0].y);
+//
+//            ROS_INFO_STREAM(vision_points_[1].x);
+//            ROS_INFO_STREAM("-------------------");
+//            ROS_INFO_STREAM(vision_points_[1].y);
+//
+//            ROS_INFO_STREAM(vision_points_[2].x);
+//            ROS_INFO_STREAM("-------------------");
+//            ROS_INFO_STREAM(vision_points_[2].y);
+//            ROS_INFO_STREAM("-------------------_____________________");
+        }
+//        ROS_INFO_STREAM("-------------------");
     }
 private:
     void updateConfig() override;
-    std::string name_;
-    double roll_val_,pitch_val_,yaw_val_,space_scale_{20};
-    std::vector<double>xyz_length_,current_val;
-    std::vector<double>x_range_,y_range_,z_range_;
-    std::vector<double>roll_range_,pitch_range_,yaw_range_;
-    std::vector<std::vector<double>> range_gather_;
-    Vector2D start_point_;
-    std::vector<Vector2D> end_points_{} , store_end_positions_{};
+    std::string name_{};
+    double roll_val_{},pitch_val_{},yaw_val_{},space_scale_{1000};
+    std::vector<double>current_val_{0,0,0,0,0,0};
+    std::vector<int>xyz_length_{0,0,0};
+    std::vector<double>x_range_{0.,0.},y_range_{0.,0.},z_range_{0.,0.},roll_range_{0.,0.},pitch_range_{0.,0.},yaw_range_{0.,0.};
+    std::vector<std::vector<double>> range_gather_{};
+    Vector2D start_point_{};
+    std::vector<Vector2D> end_points_{} , vision_points_{} ,store_end_points_{};
 };
 }  // namespace rm_referee
