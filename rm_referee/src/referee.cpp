@@ -486,13 +486,64 @@ int Referee::unpack(uint8_t* rx_data)
         case rm_referee::POWER_MANAGEMENT_INITIALIZATION_EXCEPTION_CMD:
         {
           rm_referee::PowerManagementInitializationExceptionData initialization_exception_ref;
-          std::string string;
+          rm_msgs::PowerManagementInitializationExceptionData initialization_exception_pub_data;
           memcpy(&initialization_exception_ref, rx_data + 7,
                  sizeof(rm_referee::PowerManagementInitializationExceptionData));
 
-          initialization_exception_ref.error_code = initialization_exception_ref.error_code;
-          for (int i = 0; i < 31; i++)
-            string[i] = initialization_exception_ref.string[i];
+          initialization_exception_pub_data.error_code = initialization_exception_ref.error_code;
+          initialization_exception_pub_data.string = initialization_exception_ref.string;
+          initialization_exception_pub_data.stamp = last_get_data_time_;
+          power_management_initialization_exception_pub_.publish(initialization_exception_pub_data);
+          break;
+        }
+        case rm_referee::POWER_MANAGEMENT_SYSTEM_EXCEPTION_CMD:
+        {
+          unsigned char* tmp_rx_data_ptr = rx_data + 7;
+          rm_msgs::PowerManagementSystemExceptionData system_exception_pub_data;
+
+          system_exception_pub_data.r0 =
+              tmp_rx_data_ptr[0] << 24 | tmp_rx_data_ptr[1] << 16 | tmp_rx_data_ptr[2] << 8 | tmp_rx_data_ptr[3];
+          system_exception_pub_data.r1 =
+              tmp_rx_data_ptr[4] << 24 | tmp_rx_data_ptr[5] << 16 | tmp_rx_data_ptr[6] << 8 | tmp_rx_data_ptr[7];
+          system_exception_pub_data.r2 =
+              tmp_rx_data_ptr[8] << 24 | tmp_rx_data_ptr[9] << 16 | tmp_rx_data_ptr[10] << 8 | tmp_rx_data_ptr[11];
+          system_exception_pub_data.r3 =
+              tmp_rx_data_ptr[12] << 24 | tmp_rx_data_ptr[13] << 16 | tmp_rx_data_ptr[14] << 8 | tmp_rx_data_ptr[15];
+          system_exception_pub_data.r12 =
+              tmp_rx_data_ptr[16] << 24 | tmp_rx_data_ptr[17] << 16 | tmp_rx_data_ptr[18] << 8 | tmp_rx_data_ptr[19];
+          system_exception_pub_data.LR =
+              tmp_rx_data_ptr[20] << 24 | tmp_rx_data_ptr[21] << 16 | tmp_rx_data_ptr[22] << 8 | tmp_rx_data_ptr[23];
+          system_exception_pub_data.PC =
+              tmp_rx_data_ptr[24] << 24 | tmp_rx_data_ptr[25] << 16 | tmp_rx_data_ptr[26] << 8 | tmp_rx_data_ptr[27];
+          system_exception_pub_data.PSR =
+              tmp_rx_data_ptr[28] << 24 | tmp_rx_data_ptr[29] << 16 | tmp_rx_data_ptr[30] << 8 | tmp_rx_data_ptr[31];
+          system_exception_pub_data.stamp = last_get_data_time_;
+          power_management_system_exception_data_.publish(system_exception_pub_data);
+          break;
+        }
+        case rm_referee::POWER_MANAGEMENT_PROCESS_STACK_OVERFLOW_CMD:
+        {
+          rm_referee::PowerManagementProcessStackOverflowData stack_overflow_ref;
+          rm_msgs::PowerManagementProcessStackOverflowData stack_overflow_pub_data;
+          memcpy(&stack_overflow_ref, rx_data + 7, sizeof(rm_referee::PowerManagementProcessStackOverflowData));
+
+          stack_overflow_pub_data.process_name = stack_overflow_ref.process_name;
+          stack_overflow_pub_data.stamp = last_get_data_time_;
+          power_management_process_stack_overflow_pub_.publish(stack_overflow_pub_data);
+        }
+        case rm_referee::POWER_MANAGEMENT_UNKNOWN_EXCEPTION_CMD:
+        {
+          rm_referee::PowerManagementUnknownExceptionData unknown_exception_ref;
+          rm_msgs::PowerManagementUnknownExceptionData unknown_exception_pub_data;
+          memcpy(&unknown_exception_ref, rx_data + 7, sizeof(rm_referee::PowerManagementUnknownExceptionData));
+
+          unknown_exception_pub_data.abnormal_reset_reason = unknown_exception_ref.abnormal_reset_reason;
+          unknown_exception_pub_data.power_management_before_reset_topology =
+              unknown_exception_ref.power_management_before_reset_topology;
+          unknown_exception_pub_data.state_machine_before_reset_mode =
+              unknown_exception_ref.state_machine_before_reset_mode;
+          unknown_exception_pub_data.stamp = last_get_data_time_;
+          power_management_unknown_exception_pub_.publish(unknown_exception_pub_data);
           break;
         }
         default:

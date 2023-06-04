@@ -1,0 +1,5 @@
+uint8 abnormal_reset_reason
+uint8 state_machine_before_reset_mode
+uint8 power_management_before_reset_topology
+
+time stamp
