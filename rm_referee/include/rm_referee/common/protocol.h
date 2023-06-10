@@ -178,6 +178,14 @@ typedef enum
 
 typedef enum
 {
+  NO_PROBLEM = 0,
+  HIGH_CURRENT = 1,
+  REFEREE_POWER_DOWN = 2,
+  REFEREE_DISCONNECT = 3
+} PowerManagementProtectionInfo;
+
+typedef enum
+{
   POWER_ON = 1,
   EXTERNAL_BUTTON = 2,
   SOFT = 3,
@@ -528,22 +536,24 @@ typedef struct
   uint8_t intention;
   uint16_t start_position_x;
   uint16_t start_position_y;
-  int8_t delta_x_[49];
-  int8_t delta_y_[49];
+  int8_t delta_x[49];
+  int8_t delta_y[49];
 } __packed MapSentryData;
 
 typedef struct
 {
-  int8_t chassis_power_high_8_bit;
-  int8_t chassis_power_low_8_bit;
-  int8_t chassis_expect_power_high_8_bit;
-  int8_t chassis_expect_power_low_8_bit;
-  int8_t capacity_recent_charge_power_high_8_bit;
-  int8_t capacity_recent_charge_power_low_8_bit;
-  int8_t capacity_remain_charge_high_8_bit;
-  int8_t capacity_remain_charge_low_8_bit;
-  int8_t capacity_expect_charge_power;
-  int8_t state_machine_running_state_and_power_management_topology_byte;
+  uint8_t chassis_power_high_8_bit;
+  uint8_t chassis_power_low_8_bit;
+  uint8_t chassis_expect_power_high_8_bit;
+  uint8_t chassis_expect_power_low_8_bit;
+  uint8_t capacity_recent_charge_power_high_8_bit;
+  uint8_t capacity_recent_charge_power_low_8_bit;
+  uint8_t capacity_remain_charge_high_8_bit;
+  uint8_t capacity_remain_charge_low_8_bit;
+  uint8_t capacity_expect_charge_power;
+  uint8_t power_management_topology : 2;
+  uint8_t power_management_protection_info : 2;
+  uint8_t state_machine_running_state : 4;
 } __packed PowerManagementSampleAndStatusData;
 
 typedef struct
@@ -572,8 +582,8 @@ typedef struct
 typedef struct
 {
   uint8_t abnormal_reset_reason;
-  uint8_t state_machine_before_reset_mode;
-  uint8_t power_management_before_reset_topology;
+  uint8_t power_management_before_reset_topology : 4;
+  uint8_t state_machine_before_reset_mode : 4;
 } __packed PowerManagementUnknownExceptionData;
 
 /***********************Frame tail(CRC8_CRC16)********************************************/

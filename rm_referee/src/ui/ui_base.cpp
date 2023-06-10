@@ -127,6 +127,60 @@ void UiBase::sendUi(const ros::Time& time)
     sendSingleGraph(time, graph_);
 }
 
+void UiBase::sendMapSentryData(const rm_msgs::MapSentryDataConstPtr& data)
+{
+  uint8_t tx_data[sizeof(rm_referee::MapSentryData)] = { 0 };
+  auto map_sentry_data = (rm_referee::MapSentryData*)tx_data;
+
+  for (int i = 0; i < 128; i++)
+    tx_buffer_[i] = 0;
+  map_sentry_data->intention = data->intention;
+  map_sentry_data->start_position_x = data->start_position_x;
+  map_sentry_data->start_position_y = data->start_position_y;
+  for (int i = 0; i < 49; i++)
+  {
+    map_sentry_data->delta_x[i] = data->delta_x[i];
+    map_sentry_data->delta_y[i] = data->delta_y[i];
+  }
+  pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::MAP_SENTRY_CMD, sizeof(rm_referee::MapSentryData));
+  tx_len_ = k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::MapSentryData) + k_tail_length_);
+
+  try
+  {
+    base_.serial_.write(tx_buffer_, tx_len_);
+  }
+  catch (serial::PortNotOpenedException& e)
+  {
+  }
+
+  clearTxBuffer();
+}
+
+void UiBase::sendRadarInteractiveData(rm_referee::ClientMapReceiveData& data)
+{
+  uint8_t tx_data[sizeof(rm_referee::ClientMapReceiveData)] = { 0 };
+  auto radar_interactive_data = (rm_referee::ClientMapReceiveData*)tx_data;
+
+  for (int i = 0; i < 128; i++)
+    tx_buffer_[i] = 0;
+  radar_interactive_data->target_robot_ID = data.target_robot_ID;
+  radar_interactive_data->target_position_x = data.target_position_x;
+  radar_interactive_data->target_position_y = data.target_position_y;
+  pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::CLIENT_MAP_CMD, sizeof(rm_referee::ClientMapReceiveData));
+  tx_len_ =
+      k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::ClientMapReceiveData) + k_tail_length_);
+
+  try
+  {
+    base_.serial_.write(tx_buffer_, tx_len_);
+  }
+  catch (serial::PortNotOpenedException& e)
+  {
+  }
+
+  clearTxBuffer();
+}
+
 void UiBase::sendCharacter(const ros::Time& time, rm_referee::Graph* graph)
 {
   int data_len;
