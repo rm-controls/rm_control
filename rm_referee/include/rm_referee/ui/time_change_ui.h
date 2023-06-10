@@ -314,12 +314,6 @@ public:
         temp_vec.x = start_point_.x;
         temp_vec.y = start_point_.y + xyz_length_[2];
         end_points_.push_back(temp_vec);
-//        for (int i = 0; i < (int)end_points_.size(); ++i) {
-//            ROS_INFO_STREAM("-------------------");
-//            ROS_INFO_STREAM(end_points_[i].x);
-//            ROS_INFO_STREAM(end_points_[i].y);
-//            ROS_INFO_STREAM("-------------------");
-//        }
         store_end_points_ = end_points_;
         vision_points_ = end_points_;
 
@@ -357,69 +351,21 @@ public:
 
         Eigen::Vector3d endpointVector(xyz_length_[0], 0., 0.);
         Eigen::Vector3d transformedEndpointVector = rotationMatrix * endpointVector;
-//        ROS_INFO_STREAM("-------------------");
-//        ROS_INFO_STREAM(transformedEndpointVector);
-//        ROS_INFO_STREAM("-------------------");
-//        ROS_INFO_STREAM(rotationMatrix);
-//        ROS_INFO_STREAM("-------------------");
-
 
         for (int i = 0; i < (int)store_end_points_.size(); ++i) {
-//            ROS_INFO_STREAM("enter");
             store_end_points_[i].x = end_points_[i].x - transformedEndpointVector.y();
             store_end_points_[i].y = end_points_[i].y + transformedEndpointVector.z() ;
-
-//            store_end_points_[0].x = transformedEndpointVector.y() + start_point.x;
-//            store_end_points_[0].y = transformedEndpointVector.z() + start_point.y;
-//            store_end_points_[1].x = transformedEndpointVector.y() + start_point.x;
-//            store_end_points_[1].y = transformedEndpointVector.z() + start_point.y;
-//            store_end_points_[2].x = transformedEndpointVector.y() + start_point.x;
-//            store_end_points_[2].y = transformedEndpointVector.z() + start_point.y;
-//            ROS_INFO_STREAM("!!!!!!!!!!!!!!!!!!!!!!!");
-//            ROS_INFO_STREAM("-------------------________________");
-//            ROS_INFO_STREAM(store_end_points_[0].x);
-//            ROS_INFO_STREAM("-------------------");
-//            ROS_INFO_STREAM(store_end_points_[0].y);
-//
-//            ROS_INFO_STREAM(store_end_points_[1].x);
-//            ROS_INFO_STREAM("-------------------");
-//            ROS_INFO_STREAM(store_end_points_[1].y);
-//
-//            ROS_INFO_STREAM(store_end_points_[2].x);
-//            ROS_INFO_STREAM("-------------------");
-//            ROS_INFO_STREAM(store_end_points_[2].y);
-//            ROS_INFO_STREAM("-------------------_____________________");
-
-//            ROS_INFO_STREAM("!!!!!!!!!!!!!!!!!!!!!!!!");
-//            ROS_INFO_STREAM("out");
         }
-//        ROS_INFO_STREAM("-------------------");
-
-//        double scaleFactor = space_scale_ / (space_scale_ + xyz_length_[0]);
         double scaleFactor = 1.;
         for (int i = 0; i < (int)end_points_.size(); ++i) {
             vision_points_[i].x = store_end_points_[i].x * scaleFactor;
             vision_points_[i].y = store_end_points_[i].y * scaleFactor;
-//            ROS_INFO_STREAM("-------------------________________");
-//            ROS_INFO_STREAM(vision_points_[0].x);
-//            ROS_INFO_STREAM("-------------------");
-//            ROS_INFO_STREAM(vision_points_[0].y);
-//
-//            ROS_INFO_STREAM(vision_points_[1].x);
-//            ROS_INFO_STREAM("-------------------");
-//            ROS_INFO_STREAM(vision_points_[1].y);
-//
-//            ROS_INFO_STREAM(vision_points_[2].x);
-//            ROS_INFO_STREAM("-------------------");
-//            ROS_INFO_STREAM(vision_points_[2].y);
-//            ROS_INFO_STREAM("-------------------_____________________");
         }
-//        ROS_INFO_STREAM("-------------------");
     }
 private:
     void updateConfig() override;
     std::string name_{};
-    double roll_val_{},pitch_val_{},yaw_val_{},space_scale_{1000};
+    double roll_val_{},pitch_val_{},yaw_val_{};
     std::vector<double>current_val_{0,0,0,0,0,0};
     std::vector<int>xyz_length_{0,0,0};
     std::vector<double>x_range_{0.,0.},y_range_{0.,0.},z_range_{0.,0.},roll_range_{0.,0.},pitch_range_{0.,0.},yaw_range_{0.,0.};

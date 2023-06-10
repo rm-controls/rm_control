@@ -337,37 +337,8 @@ void SpaceTfTimeChangeGroupUi::updateConfig()
     for (auto it = graph_vector_.begin(); it != graph_vector_.end(); ++it) {
         it->second->setStartX(start_point_.x);
         it->second->setStartY(start_point_.y);
-//        if (((store_end_points_[times].x == start_point_.x) && (store_end_points_[times].y != start_point_.y)))
-//        {
-//            it->second->setEndX(vision_points_[times].x);
-//            it->second->setEndY(vision_points_[times].y * proportions[times]);
-//        }
-//        else if (((store_end_points_[times].x != start_point_.x) && (store_end_points_[times].y == start_point_.y)))
-//        {
-//            it->second->setEndX(vision_points_[times].x * proportions[times]);
-//            it->second->setEndY(vision_points_[times].y);
-//        }
-//        else if (((store_end_points_[times].x != start_point_.x) && (store_end_points_[times].y != start_point_.y)))
-//        {
-//            it->second->setEndX(vision_points_[times].x * proportions[times]);
-//            it->second->setEndY(vision_points_[times].y * proportions[times]);
-//        } else
-//        {
-//            ROS_INFO_STREAM("NOT A LINE");
-//        }
-
         it->second->setEndX(vision_points_[times].x);
         it->second->setEndY(vision_points_[times].y );
-//        if (abs(proportions[times]) > 0.96)
-//            it->second->setColor(rm_referee::GraphColor::BLACK);
-//        else if (abs(proportions[times]) > 0.8)
-//            it->second->setColor(rm_referee::GraphColor::PINK);
-//        else if (abs(proportions[times]) > 0.6)
-//            it->second->setColor(rm_referee::GraphColor::PURPLE);
-//        else if (abs(proportions[times]) > 0.3)
-//            it->second->setColor(rm_referee::GraphColor::ORANGE);
-//        else
-//            it->second->setColor(rm_referee::GraphColor::GREEN);
         if (it->first == "x")
             it->second->setColor(rm_referee::GraphColor::PINK);
         else if (it->first == "y")
