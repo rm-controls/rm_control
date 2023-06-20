@@ -2,8 +2,8 @@
 Changelog for package rm_gazebo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.20 (2023-06-20)
+-------------------
 * Merge branch 'master' into suggest_fire
 * Merge branch 'rm-controls:master' into master
 * Merge branch 'dev/ui_refact' into dev/balance_cmd_send

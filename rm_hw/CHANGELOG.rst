@@ -2,8 +2,8 @@
 Changelog for package rm_hw
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.20 (2023-06-20)
+-------------------
 * Merge branch 'master' into dev/sentry_map
   # Conflicts:
   #	rm_referee/include/rm_referee/referee_base.h

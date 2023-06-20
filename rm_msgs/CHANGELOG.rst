@@ -2,8 +2,8 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.20 (2023-06-20)
+-------------------
 * Merge pull request `#170 <https://github.com/ye-luo-xi-tui/rm_control/issues/170>`_ from chenhuiYu00/dev/power_management
   Add other unpack code for power management
 * Merge pull request `#171 <https://github.com/ye-luo-xi-tui/rm_control/issues/171>`_ from Edwinlinks/for-sentry

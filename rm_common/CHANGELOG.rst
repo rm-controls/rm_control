@@ -2,8 +2,8 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.20 (2023-06-20)
+-------------------
 * Merge branch 'master' into dev/power_management
 * Fix a judge to adapt 2023 season rule.
 * Merge branch 'master' into dev/sentry_map
