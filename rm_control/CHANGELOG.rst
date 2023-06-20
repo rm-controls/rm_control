@@ -2,6 +2,20 @@
 Changelog for package rm_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.20 (2023-06-20)
+-------------------
+* Merge branch 'master' into suggest_fire
+* Merge branch 'rm-controls:master' into master
+* Merge branch 'dev/ui_refact' into dev/balance_cmd_send
+* Merge branch 'master' into dev/ui_refact
+  # Conflicts:
+  #	rm_referee/include/rm_referee/common/protocol.h
+  #	rm_referee/src/ui/graph.cpp
+* Merge pull request `#146 <https://github.com/ye-luo-xi-tui/rm_control/issues/146>`_ from ye-luo-xi-tui/master
+  0.1.19
+* Merge branch 'rm-controls:master' into master
+* Contributors: 1moule, ye-luo-xi-tui, yuchen, 王湘鈜
+
 0.1.19 (2023-05-03)
 -------------------
 * Merge branch 'master' into multi_dof_controller
