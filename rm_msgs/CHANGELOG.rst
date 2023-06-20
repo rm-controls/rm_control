@@ -2,6 +2,93 @@
 Changelog for package rm_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#170 <https://github.com/ye-luo-xi-tui/rm_control/issues/170>`_ from chenhuiYu00/dev/power_management
+  Add other unpack code for power management
+* Merge pull request `#171 <https://github.com/ye-luo-xi-tui/rm_control/issues/171>`_ from Edwinlinks/for-sentry
+  Add KEY_H for sentry to force run out.
+* Add KEY_H for sentry to force run out.
+* Update CMakeLists.txt
+* Add power management msgs.
+* Merge pull request `#168 <https://github.com/ye-luo-xi-tui/rm_control/issues/168>`_ from chenhuiYu00/dev/update_power_management
+  Update PowerManagement protocol v1.2
+* Update PowerManagement protocol v1.2
+* Merge branch 'master' into dev/sentry_map
+  # Conflicts:
+  #	rm_referee/src/referee_base.cpp
+* Merge branch 'master' into dev/sentry_map
+  # Conflicts:
+  #	rm_referee/include/rm_referee/referee_base.h
+  #	rm_referee/src/referee_base.cpp
+* Merge pull request `#165 <https://github.com/ye-luo-xi-tui/rm_control/issues/165>`_ from rm-controls/revert-164-Add_engineerui
+  Revert "Merge the engineer's ui into master"
+* Revert "Merge the engineer's ui into master"
+* Merge pull request `#164 <https://github.com/ye-luo-xi-tui/rm_control/issues/164>`_ from ljq-lv/Add_engineerui
+  Merge the engineer's ui into master
+* Merge branch 'master' into Add_engineerui
+* Merge pull request `#163 <https://github.com/ye-luo-xi-tui/rm_control/issues/163>`_ from 1moule/pitch_ui
+  Add pitch angle ui for hero
+* Merge the engineer's ui into master
+* Add the function of directly setting the target color and add the enumeration of purple.
+* Merge branch 'master' into pitch_ui
+* Merge branch 'master' into pitch_ui
+  # Conflicts:
+  #	rm_referee/include/rm_referee/referee_base.h
+  #	rm_referee/include/rm_referee/ui/time_change_ui.h
+  #	rm_referee/src/referee_base.cpp
+  #	rm_referee/src/ui/time_change_ui.cpp
+* Merge pull request `#158 <https://github.com/ye-luo-xi-tui/rm_control/issues/158>`_ from chenhuiYu00/dev/power_management
+  Update new power management
+* Merge branch 'master' into windwill_auto_fire
+* Merge pull request `#157 <https://github.com/ye-luo-xi-tui/rm_control/issues/157>`_ from chenhuiYu00/dev/balance_cmd_send
+  Add balance command sender and balance pitch ui
+* Merge branch 'dev/power_management' into dev/balance_cmd_send_power_management
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+* Merge remote-tracking branch 'chenhuiYu/dev/power_management' into dev/power_management
+* Merge branch 'master' into dev/balance_cmd_send
+  # Conflicts:
+  #	rm_referee/src/referee_base.cpp
+  #	rm_referee/src/ui/time_change_ui.cpp
+* Merge branch 'master' into dev/power_management
+* Merge pull request `#155 <https://github.com/ye-luo-xi-tui/rm_control/issues/155>`_ from Edwinlinks/for-sentry
+  Add key u for sentry fsm.
+* Add key u for sentry fsm.
+* Delete SuperCapacitor.msg and change var in CapacityData.msg
+* Merge branch 'master' into dev/power_management
+* Merge branch 'master' into dev/ui_refact
+* Judge power management msg.
+* Merge branch 'master' into suggest_fire
+* Merge branch 'master' into dev/balance_cmd_send
+* Merge pull request `#152 <https://github.com/ye-luo-xi-tui/rm_control/issues/152>`_ from d0h0s/master
+  Added enumerate variables for dart
+* Merge pull request `#153 <https://github.com/ye-luo-xi-tui/rm_control/issues/153>`_ from Edwinlinks/for-sentry
+  Add four keys for conducting sentry.
+* Add four keys for conducting sentry.
+* Added enumerate variables for dart.
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#149 <https://github.com/ye-luo-xi-tui/rm_control/issues/149>`_ from 1moule/buff_srv
+  Added the enumeration type of small buff and big buff.
+* Added the enumeration type of small buff and big buff.
+* Merge branch 'dev/ui_refact' into dev/balance_cmd_send
+* Update power management protocol.
+* Merge branch 'master' into dev/ui_refact
+  # Conflicts:
+  #	rm_referee/include/rm_referee/common/protocol.h
+  #	rm_referee/src/ui/graph.cpp
+* Merge pull request `#146 <https://github.com/ye-luo-xi-tui/rm_control/issues/146>`_ from ye-luo-xi-tui/master
+  0.1.19
+* Add acc data in BalanceState msg.
+* Merge branch 'master' into dev/balance_pitch_ui
+* Merge branch 'rm-controls:master' into master
+* Add balance command sender.
+* Merge branch 'rm-controls:master' into master
+* Merge branch 'master' into suggest_fire
+* Merge pull request `#1 <https://github.com/ye-luo-xi-tui/rm_control/issues/1>`_ from rm-controls/master
+  1
+* Contributors: 1moule, BruceLannn, Edwinlinks, d0h0s, ljq-lv, ye-luo-xi-tui, yuchen, 王湘鈜
+
 0.1.19 (2023-05-03)
 -------------------
 * Merge pull request `#143 <https://github.com/ye-luo-xi-tui/rm_control/issues/143>`_ from rm-controls/new_protocol
