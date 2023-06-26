@@ -242,11 +242,11 @@ private:
   double pitch_angle_ = 0.;
 };
 
-class JointValueTimeChangeUi : public TimeChangeUi
+class JointPositionTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit JointValueTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue,
-                                  std::string name)
+  explicit JointPositionTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue,
+                                     std::string name)
     : TimeChangeUi(rpc_value, base, name, graph_queue)
   {
     if (rpc_value.hasMember("data"))
