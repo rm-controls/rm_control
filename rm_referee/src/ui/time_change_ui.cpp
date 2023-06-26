@@ -281,7 +281,7 @@ void PitchAngleTimeChangeUi::updateConfig()
   graph_->setColor(rm_referee::GraphColor::YELLOW);
 }
 
-void JointValueTimeChangeUi::updateConfig()
+void JointPositionTimeChangeUi::updateConfig()
 {
   double proportion = (current_val_ - min_val_) / (max_val_ - min_val_);
   graph_->setStartX(graph_->getConfig().start_x);
@@ -313,7 +313,7 @@ void JointValueTimeChangeUi::updateConfig()
     graph_->setColor(rm_referee::GraphColor::GREEN);
 }
 
-void JointValueTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
+void JointPositionTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
   for (unsigned int i = 0; i < data->name.size(); i++)
     if (data->name[i] == name_)
