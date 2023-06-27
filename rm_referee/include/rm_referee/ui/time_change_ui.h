@@ -346,35 +346,12 @@ public:
   };
   void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
   void calculateTransformedEndpoint(const Vector2D& start_point, std::vector<Vector2D>& end_points, double roll,
-                                    double pitch, double yaw)
-  {
-    Eigen::Matrix3d rotationMatrix;
-    rotationMatrix.setIdentity();
-    rotationMatrix = Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX()) * rotationMatrix;
-    rotationMatrix = Eigen::AngleAxisd(pitch, Eigen::Vector3d::UnitY()) * rotationMatrix;
-    rotationMatrix = Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()) * rotationMatrix;
-
-    Eigen::Vector3d endpointVector(xyz_length_[0], 0., 0.);
-    Eigen::Vector3d transformedEndpointVector = rotationMatrix * endpointVector;
-
-    for (int i = 0; i < (int)store_end_points_.size(); ++i)
-    {
-      store_end_points_[i].x = end_points_[i].x - transformedEndpointVector.y();
-      store_end_points_[i].y = end_points_[i].y + transformedEndpointVector.z();
-    }
-    double scaleFactor = 1.;
-    for (int i = 0; i < (int)end_points_.size(); ++i)
-    {
-      vision_points_[i].x = store_end_points_[i].x * scaleFactor;
-      vision_points_[i].y = store_end_points_[i].y * scaleFactor;
-    }
-  }
+                                    double pitch, double yaw);
 
 private:
   void updateConfig() override;
   std::string name_{};
-  double roll_val_{}, pitch_val_{}, yaw_val_{};
-  std::vector<double> current_val_{ 0, 0, 0, 0, 0, 0 };
+  std::vector<double> tf_info_{ 0, 0, 0, 0, 0, 0 };
   std::vector<int> xyz_length_{ 0, 0, 0 };
   std::vector<double> x_range_{ 0., 0. }, y_range_{ 0., 0. }, z_range_{ 0., 0. }, roll_range_{ 0., 0. },
       pitch_range_{ 0., 0. }, yaw_range_{ 0., 0. };

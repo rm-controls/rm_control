@@ -286,7 +286,7 @@ void JointPositionTimeChangeUi::updateConfig()
   double proportion = (current_val_ - min_val_) / (max_val_ - min_val_);
   graph_->setStartX(graph_->getConfig().start_x);
   graph_->setStartY(graph_->getConfig().start_y);
-  if (direction_ == "standard")
+  if (direction_ == "horizontal")
   {
     graph_->setEndY(graph_->getConfig().start_y);
     graph_->setEndX(graph_->getConfig().start_x + length_ * proportion);
@@ -323,15 +323,11 @@ void JointPositionTimeChangeUi::updateJointStateData(const sensor_msgs::JointSta
 
 void SpaceTfTimeChangeGroupUi::updateConfig()
 {
-  roll_val_ = current_val_[5];
-  pitch_val_ = current_val_[3] + 1.578000;
-  yaw_val_ = current_val_[4];
-
-  calculateTransformedEndpoint(start_point_, store_end_points_, roll_val_, pitch_val_, yaw_val_);
+  calculateTransformedEndpoint(start_point_, store_end_points_, tf_info_[3], tf_info_[4], tf_info_[5]);
   std::vector<double> proportions{ 0., 0., 0., 0., 0., 0. };
   for (int i = 0; i < (int)range_gather_.size(); ++i)
   {
-    proportions[i] = (current_val_[i] - range_gather_[i][0]) / (range_gather_[i][1] - range_gather_[i][0]);
+    proportions[i] = (tf_info_[i] - range_gather_[i][0]) / (range_gather_[i][1] - range_gather_[i][0]);
   }
   int times = 0;
   for (auto it = graph_vector_.begin(); it != graph_vector_.end(); ++it)
@@ -347,27 +343,47 @@ void SpaceTfTimeChangeGroupUi::updateConfig()
     else if (it->first == "z")
       it->second->setColor(rm_referee::GraphColor::CYAN);
     times++;
-    // ROS_INFO_STREAM(times);
   }
 }
 
 void SpaceTfTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
-  for (unsigned int i = 0; i < data->name.size(); i++)
-  {
-    if (data->name[i] == "joint2")
-      current_val_[0] = data->position[i];
-    else if (data->name[i] == "joint3")
-      current_val_[1] = data->position[i];
-    else if (data->name[i] == "joint1")
-      current_val_[2] = data->position[i];
-    else if (data->name[i] == "joint4")
-      current_val_[3] = data->position[i];
-    else if (data->name[i] == "joint5")
-      current_val_[4] = data->position[i];
-    else if (data->name[i] == "joint6")
-      current_val_[5] = data->position[i];
-  }
+  geometry_msgs::TransformStamped tool2base;
+  tool2base = tf_buffer_.lookupTransform("base_link", "tools_link", ros::Time(0));
+  double roll, pitch, yaw;
+  quatToRPY(tool2base.transform.rotation, roll, pitch, yaw);
+  tf_info_[0] = tool2base.transform.translation.x;
+  tf_info_[1] = tool2base.transform.translation.y;
+  tf_info_[2] = tool2base.transform.translation.z;
+  tf_info_[3] = roll;
+  tf_info_[4] = pitch;
+  tf_info_[5] = yaw;
   updateForQueue();
+}
+
+void SpaceTfTimeChangeGroupUi::calculateTransformedEndpoint(const Vector2D& start_point,
+                                                            std::vector<Vector2D>& end_points, double roll,
+                                                            double pitch, double yaw)
+{
+  Eigen::Matrix3d rotationMatrix;
+  rotationMatrix.setIdentity();
+  rotationMatrix = Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX()) * rotationMatrix;
+  rotationMatrix = Eigen::AngleAxisd(pitch, Eigen::Vector3d::UnitY()) * rotationMatrix;
+  rotationMatrix = Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()) * rotationMatrix;
+
+  Eigen::Vector3d endpointVector(xyz_length_[0], 0., 0.);
+  Eigen::Vector3d transformedEndpointVector = rotationMatrix * endpointVector;
+
+  for (int i = 0; i < (int)store_end_points_.size(); ++i)
+  {
+    store_end_points_[i].x = end_points_[i].x - transformedEndpointVector.y();
+    store_end_points_[i].y = end_points_[i].y + transformedEndpointVector.z();
+  }
+  double scaleFactor = 1.;
+  for (int i = 0; i < (int)end_points_.size(); ++i)
+  {
+    vision_points_[i].x = store_end_points_[i].x * scaleFactor;
+    vision_points_[i].y = store_end_points_[i].y * scaleFactor;
+  }
 }
 }  // namespace rm_referee
