@@ -80,11 +80,11 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "balance_pitch")
         balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
       if (rpc_value[i]["name"] == "engineer_joint1")
-        engineer_joint1_time_change_ui = new JointValueTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint1");
+        engineer_joint1_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint1");
       if (rpc_value[i]["name"] == "engineer_joint2")
-        engineer_joint2_time_change_ui = new JointValueTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint2");
+        engineer_joint2_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint2");
       if (rpc_value[i]["name"] == "engineer_joint3")
-        engineer_joint3_time_change_ui = new JointValueTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint3");
+        engineer_joint3_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint3");
       if (rpc_value[i]["name"] == "engineer_tf")
         engineer_tf_time_change_ui = new SpaceTfTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, "engineer_tf");
     }
