@@ -365,21 +365,6 @@ void SpaceTfTimeChangeGroupUi::updateConfig()
   }
 }
 
-void SpaceTfTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
-{
-  geometry_msgs::TransformStamped tool2base;
-  tool2base = tf_buffer_.lookupTransform("base_link", "tools_link", ros::Time(0));
-  double roll, pitch, yaw;
-  quatToRPY(tool2base.transform.rotation, roll, pitch, yaw);
-  tf_info_[0] = tool2base.transform.translation.x;
-  tf_info_[1] = tool2base.transform.translation.y;
-  tf_info_[2] = tool2base.transform.translation.z;
-  tf_info_[3] = roll;
-  tf_info_[4] = pitch;
-  tf_info_[5] = yaw;
-  updateForQueue();
-}
-
 void SpaceTfTimeChangeGroupUi::calculateTransformedEndpoint(const Vector2D& start_point,
                                                             std::vector<Vector2D>& end_points, double roll,
                                                             double pitch, double yaw)
