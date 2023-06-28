@@ -279,6 +279,14 @@ public:
                                     std::string name)
     : TimeChangeGroupUi(rpc_value, base, name, graph_queue)
   {
+    tf_info_.resize(6, 0.);
+    xyz_length_.resize(3, 0.);
+    x_range_.resize(2, 0.);
+    y_range_.resize(2, 0.);
+    z_range_.resize(2, 0.);
+    roll_range_.resize(2, 0.);
+    pitch_range_.resize(2, 0);
+    yaw_range_.resize(2, 0.);
     name_ = name;
     XmlRpc::XmlRpcValue config = rpc_value["config"];
     start_point_.x = static_cast<int>(config["start_position"][0]);
@@ -351,10 +359,9 @@ public:
 private:
   void updateConfig() override;
   std::string name_{};
-  std::vector<double> tf_info_{ 0, 0, 0, 0, 0, 0 };
-  std::vector<int> xyz_length_{ 0, 0, 0 };
-  std::vector<double> x_range_{ 0., 0. }, y_range_{ 0., 0. }, z_range_{ 0., 0. }, roll_range_{ 0., 0. },
-      pitch_range_{ 0., 0. }, yaw_range_{ 0., 0. };
+  std::vector<double> tf_info_{};
+  std::vector<int> xyz_length_{};
+  std::vector<double> x_range_{}, y_range_{}, z_range_{}, roll_range_{}, pitch_range_{}, yaw_range_{};
   std::vector<std::vector<double>> range_gather_{};
   Vector2D start_point_{};
   std::vector<Vector2D> end_points_{}, vision_points_{}, store_end_points_{};
