@@ -247,7 +247,7 @@ void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& da
   if (engineer_joint3_time_change_ui && !is_adding_)
     engineer_joint3_time_change_ui->updateJointStateData(data, ros::Time::now());
   if (engineer_tf_time_change_ui && !is_adding_)
-    engineer_tf_time_change_ui->updateJointStateData(data, ros::Time::now());
+    engineer_tf_time_change_ui->updateForQueue();
 }
 void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
 {

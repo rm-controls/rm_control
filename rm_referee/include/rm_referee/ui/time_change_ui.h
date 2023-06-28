@@ -352,7 +352,6 @@ public:
     mimic_config["end_position"][1] = end_points_[2].y;
     graph_vector_.insert(std::make_pair<std::string, Graph*>("z", new Graph(mimic_config, base_, id_++)));
   };
-  void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
   void calculateTransformedEndpoint(const Vector2D& start_point, std::vector<Vector2D>& end_points, double roll,
                                     double pitch, double yaw);
 

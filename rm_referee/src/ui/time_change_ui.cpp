@@ -323,6 +323,25 @@ void JointPositionTimeChangeUi::updateJointStateData(const sensor_msgs::JointSta
 
 void SpaceTfTimeChangeGroupUi::updateConfig()
 {
+  if (!tf_buffer_.canTransform("base_link", "tools_link", ros::Time(0)))
+    return;
+  try
+  {
+    geometry_msgs::TransformStamped tool2base;
+    tool2base = tf_buffer_.lookupTransform("base_link", "tools_link", ros::Time(0));
+    double roll, pitch, yaw;
+    quatToRPY(tool2base.transform.rotation, roll, pitch, yaw);
+    tf_info_[0] = tool2base.transform.translation.x;
+    tf_info_[1] = tool2base.transform.translation.y;
+    tf_info_[2] = tool2base.transform.translation.z;
+    tf_info_[3] = roll;
+    tf_info_[4] = pitch;
+    tf_info_[5] = yaw;
+  }
+  catch (tf2::TransformException& ex)
+  {
+    ROS_WARN("%s", ex.what());
+  }
   calculateTransformedEndpoint(start_point_, store_end_points_, tf_info_[3], tf_info_[4], tf_info_[5]);
   std::vector<double> proportions{ 0., 0., 0., 0., 0., 0. };
   for (int i = 0; i < (int)range_gather_.size(); ++i)
