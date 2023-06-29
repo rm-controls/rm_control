@@ -263,22 +263,23 @@ private:
   bool is_set_{};
 };
 
-class ShooterSpeedCaller : public ServiceCallerBase<rm_msgs::ExtraFrictionWheelSpeed>
+class ExtraFrictionWheelSpeedCaller : public ServiceCallerBase<rm_msgs::ExtraFrictionWheelSpeed>
 {
 public:
-  explicit ShooterSpeedCaller(ros::NodeHandle& nh)
+  explicit ExtraFrictionWheelSpeedCaller(ros::NodeHandle& nh)
     : ServiceCallerBase<rm_msgs::ExtraFrictionWheelSpeed>(nh, "/extra_friction_wheel_speed")
   {
-    service_.request.shooter_speed = 0.0;
+    nh.param("extra_speed", extra_speed_, 0.);
+    service_.request.extra_speed = 0.0;
     callService();
   }
   void RaiseSpeed()
   {
-    service_.request.shooter_speed += 1.0;
+    service_.request.extra_speed += extra_speed_;
   }
   void DropSpeed()
   {
-    service_.request.shooter_speed -= 1.0;
+    service_.request.extra_speed -= extra_speed_;
   }
   bool getIsChange()
   {
@@ -286,5 +287,8 @@ public:
       return false;
     return service_.response.is_success;
   }
+
+private:
+  double extra_speed_{};
 };
 }  // namespace rm_common
