@@ -33,7 +33,7 @@ add_service_files(
         StatusChange.srv
         CameraStatus.srv
         EnableImuTrigger.srv
-        ShooterSpeed.srv
+        ExtraFrictionWheelSpeed.srv
 )
 
 add_message_files(

@@ -46,7 +46,7 @@
 #include <controller_manager_msgs/SwitchController.h>
 #include <control_msgs/QueryCalibrationState.h>
 #include <rm_msgs/StatusChange.h>
-#include <rm_msgs/ShooterSpeed.h>
+#include <rm_msgs/ExtraFrictionWheelSpeed.h>
 
 namespace rm_common
 {
@@ -263,10 +263,11 @@ private:
   bool is_set_{};
 };
 
-class ShooterSpeedCaller : public ServiceCallerBase<rm_msgs::ShooterSpeed>
+class ShooterSpeedCaller : public ServiceCallerBase<rm_msgs::ExtraFrictionWheelSpeed>
 {
 public:
-  explicit ShooterSpeedCaller(ros::NodeHandle& nh) : ServiceCallerBase<rm_msgs::ShooterSpeed>(nh, "/shooter_speed")
+  explicit ShooterSpeedCaller(ros::NodeHandle& nh)
+    : ServiceCallerBase<rm_msgs::ExtraFrictionWheelSpeed>(nh, "/extra_friction_wheel_speed")
   {
     service_.request.shooter_speed = 0.0;
     callService();
