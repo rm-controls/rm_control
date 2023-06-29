@@ -6,7 +6,6 @@
 #include <ros/ros.h>
 #include <tf/transform_listener.h>
 #include <cmath>
-#include <Eigen/Dense>
 #include <rm_common/ori_tool.h>
 #include <rm_common/decision/heat_limit.h>
 #include <rm_msgs/StatusChangeRequest.h>
