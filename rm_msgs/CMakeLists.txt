@@ -38,7 +38,6 @@ add_service_files(
 add_message_files(
         DIRECTORY msg/detection
         FILES
-        EntireCarState.msg
         TargetDetection.msg
         TargetDetectionArray.msg
         TrackData.msg
