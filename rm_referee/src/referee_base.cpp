@@ -85,8 +85,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         engineer_joint2_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint2");
       if (rpc_value[i]["name"] == "engineer_joint3")
         engineer_joint3_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint3");
-      if (rpc_value[i]["name"] == "engineer_tf")
-        engineer_tf_time_change_ui = new SpaceTfTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, "engineer_tf");
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -154,8 +152,6 @@ void RefereeBase::addUi()
     engineer_joint2_time_change_ui->add();
   if (engineer_joint3_time_change_ui)
     engineer_joint3_time_change_ui->add();
-  if (engineer_tf_time_change_ui)
-    engineer_tf_time_change_ui->add();
   add_ui_times_++;
 }
 
@@ -246,8 +242,6 @@ void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& da
     engineer_joint2_time_change_ui->updateJointStateData(data, ros::Time::now());
   if (engineer_joint3_time_change_ui && !is_adding_)
     engineer_joint3_time_change_ui->updateJointStateData(data, ros::Time::now());
-  if (engineer_tf_time_change_ui && !is_adding_)
-    engineer_tf_time_change_ui->updateForQueue();
 }
 void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
 {

@@ -90,7 +90,6 @@ public:
   PitchAngleTimeChangeUi* pitch_angle_time_change_ui_{};
   JointPositionTimeChangeUi *engineer_joint1_time_change_ui{}, *engineer_joint2_time_change_ui{},
       *engineer_joint3_time_change_ui{};
-  SpaceTfTimeChangeGroupUi* engineer_tf_time_change_ui{};
 
   FixedUi* fixed_ui_{};
 
