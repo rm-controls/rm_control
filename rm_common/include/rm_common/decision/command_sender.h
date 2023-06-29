@@ -491,6 +491,10 @@ public:
     msg_.data = off_pos_;
     state = false;
   }
+  void setPos(double on_pos)
+  {
+    on_pos_ = on_pos;
+  }
   bool getState() const
   {
     return state;
