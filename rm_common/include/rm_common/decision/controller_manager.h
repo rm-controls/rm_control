@@ -91,6 +91,16 @@ public:
       }
     }
   }
+  void loadController(const std::string& controller)
+  {
+    controller_manager_msgs::LoadController load_controller;
+    load_controller.request.name = controller;
+    load_client_.call(load_controller);
+    if (load_controller.response.ok)
+      ROS_INFO("Loaded %s", controller.c_str());
+    else
+      ROS_ERROR("Fail to load %s", controller.c_str());
+  }
   void startController(const std::string& controller)
   {
     if (std::find(start_buffer_.begin(), start_buffer_.end(), controller) == start_buffer_.end())
@@ -145,16 +155,6 @@ public:
   }
 
 private:
-  void loadController(const std::string& controller)
-  {
-    controller_manager_msgs::LoadController load_controller;
-    load_controller.request.name = controller;
-    load_client_.call(load_controller);
-    if (load_controller.response.ok)
-      ROS_INFO("Loaded %s", controller.c_str());
-    else
-      ROS_ERROR("Fail to load %s", controller.c_str());
-  }
   ros::ServiceClient load_client_;
   std::vector<std::string> state_controllers_, main_controllers_, calibration_controllers_;
   std::vector<std::string> start_buffer_, stop_buffer_;

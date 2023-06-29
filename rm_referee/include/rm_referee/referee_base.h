@@ -25,7 +25,8 @@ public:
   virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data,
                                        const ros::Time& last_get_data_time);
   virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data, const ros::Time& last_get_data_time);
-  virtual void capacityDataCallBack(const rm_msgs::CapacityData& capacity_data, ros::Time& last_get_data_time);
+  virtual void capacityDataCallBack(const rm_msgs::PowerManagementSampleAndStatusData& data,
+                                    ros::Time& last_get_data_time);
   virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data, const ros::Time& last_get_data_time);
   virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data, const ros::Time& last_get_data_time);
   virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data,
@@ -45,6 +46,13 @@ public:
   virtual void manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data);
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
   virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
+  virtual void trackCallBack(const rm_msgs::TrackDataConstPtr& data);
+  virtual void balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data);
+  virtual void radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data);
+  virtual void mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data);
+
+  // send graph_type ui
+  void sendGraphQueueCallback();
 
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
@@ -60,29 +68,42 @@ public:
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
   ros::Subscriber camera_name_sub_;
+  ros::Subscriber track_sub_;
+  ros::Subscriber balance_state_sub_;
+  ros::Subscriber radar_receive_sub_;
+  ros::Subscriber map_sentry_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
   GimbalTriggerChangeUi* gimbal_trigger_change_ui_{};
   TargetTriggerChangeUi* target_trigger_change_ui_{};
+  TargetViewAngleTriggerChangeUi* target_view_angle_trigger_change_ui_{};
   CameraTriggerChangeUi* camera_trigger_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};
   ProgressTimeChangeUi* progress_time_change_ui_{};
   DartStatusTimeChangeUi* dart_status_time_change_ui_{};
-  LaneLineTimeChangeUi* lane_line_time_change_ui_{};
+  RotationTimeChangeUi* rotation_time_change_ui_{};
+  LaneLineTimeChangeGroupUi* lane_line_time_change_ui_{};
+  BalancePitchTimeChangeGroupUi* balance_pitch_time_change_group_ui_{};
+  PitchAngleTimeChangeUi* pitch_angle_time_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
 
+  GroupUiBase* graph_queue_sender_{};
+  std::vector<Graph> graph_queue_;
+
+  UiBase* interactive_data_sender_{};
+
   Base& base_;
-  ros::Timer add_ui_timer_;
-  int add_ui_times_ = 0;
-  bool add_ui_flag_ = false;
-  Graph* interactive_data_sender_;
+  ros::Timer add_ui_timer_, send_graph_ui_timer_;
+  int add_ui_times_, add_ui_max_times_, add_ui_frequency_;
+  double send_ui_queue_delay_;
+  bool add_ui_flag_ = false, is_adding_ = false;
   ros::NodeHandle nh_;
 };
 }  // namespace rm_referee

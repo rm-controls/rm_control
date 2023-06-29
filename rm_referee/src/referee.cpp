@@ -70,8 +70,6 @@ void Referee::read()
         k_i += frame_len;
     }
   }
-  super_capacitor_.read(rx_buffer_);
-  publishCapacityData();
   getRobotInfo();
   clearRxBuffer();
 }
@@ -462,8 +460,94 @@ int Referee::unpack(uint8_t* rx_data)
           client_map_send_data_pub_.publish(client_map_send_data);
           break;
         }
+        case rm_referee::POWER_MANAGEMENT_SAMPLE_AND_STATUS_DATA_CMD:
+        {
+          rm_msgs::PowerManagementSampleAndStatusData sample_and_status_pub_data;
+          uint8_t data[sizeof(rm_referee::PowerManagementSampleAndStatusData)];
+          memcpy(&data, rx_data + 7, sizeof(rm_referee::PowerManagementSampleAndStatusData));
+          sample_and_status_pub_data.chassis_power = (static_cast<uint16_t>((data[0] << 8) | data[1]) / 100.);
+          sample_and_status_pub_data.chassis_expect_power = (static_cast<uint16_t>((data[2] << 8) | data[3]) / 100.);
+          sample_and_status_pub_data.capacity_recent_charge_power =
+              (static_cast<uint16_t>((data[4] << 8) | data[5]) / 100.);
+          sample_and_status_pub_data.capacity_remain_charge =
+              (static_cast<uint16_t>((data[6] << 8) | data[7]) / 10000.);
+          sample_and_status_pub_data.capacity_expect_charge_power = static_cast<uint8_t>(data[8]);
+          sample_and_status_pub_data.state_machine_running_state = base_.capacity_recent_mode_ =
+              static_cast<uint8_t>(data[9] >> 4);
+          sample_and_status_pub_data.power_management_protection_info = static_cast<uint8_t>((data[9] >> 2) & 0x03);
+          sample_and_status_pub_data.power_management_topology = static_cast<uint8_t>(data[9] & 0x03);
+          sample_and_status_pub_data.stamp = last_get_data_time_;
+
+          referee_ui_.capacityDataCallBack(sample_and_status_pub_data, last_get_data_time_);
+
+          power_management_sample_and_status_data_pub_.publish(sample_and_status_pub_data);
+          break;
+        }
+        case rm_referee::POWER_MANAGEMENT_INITIALIZATION_EXCEPTION_CMD:
+        {
+          rm_referee::PowerManagementInitializationExceptionData initialization_exception_ref;
+          rm_msgs::PowerManagementInitializationExceptionData initialization_exception_pub_data;
+          memcpy(&initialization_exception_ref, rx_data + 7,
+                 sizeof(rm_referee::PowerManagementInitializationExceptionData));
+
+          initialization_exception_pub_data.error_code = initialization_exception_ref.error_code;
+          initialization_exception_pub_data.string = initialization_exception_ref.string;
+          initialization_exception_pub_data.stamp = last_get_data_time_;
+          power_management_initialization_exception_pub_.publish(initialization_exception_pub_data);
+          break;
+        }
+        case rm_referee::POWER_MANAGEMENT_SYSTEM_EXCEPTION_CMD:
+        {
+          unsigned char* tmp_rx_data_ptr = rx_data + 7;
+          rm_msgs::PowerManagementSystemExceptionData system_exception_pub_data;
+
+          system_exception_pub_data.r0 =
+              tmp_rx_data_ptr[0] << 24 | tmp_rx_data_ptr[1] << 16 | tmp_rx_data_ptr[2] << 8 | tmp_rx_data_ptr[3];
+          system_exception_pub_data.r1 =
+              tmp_rx_data_ptr[4] << 24 | tmp_rx_data_ptr[5] << 16 | tmp_rx_data_ptr[6] << 8 | tmp_rx_data_ptr[7];
+          system_exception_pub_data.r2 =
+              tmp_rx_data_ptr[8] << 24 | tmp_rx_data_ptr[9] << 16 | tmp_rx_data_ptr[10] << 8 | tmp_rx_data_ptr[11];
+          system_exception_pub_data.r3 =
+              tmp_rx_data_ptr[12] << 24 | tmp_rx_data_ptr[13] << 16 | tmp_rx_data_ptr[14] << 8 | tmp_rx_data_ptr[15];
+          system_exception_pub_data.r12 =
+              tmp_rx_data_ptr[16] << 24 | tmp_rx_data_ptr[17] << 16 | tmp_rx_data_ptr[18] << 8 | tmp_rx_data_ptr[19];
+          system_exception_pub_data.LR =
+              tmp_rx_data_ptr[20] << 24 | tmp_rx_data_ptr[21] << 16 | tmp_rx_data_ptr[22] << 8 | tmp_rx_data_ptr[23];
+          system_exception_pub_data.PC =
+              tmp_rx_data_ptr[24] << 24 | tmp_rx_data_ptr[25] << 16 | tmp_rx_data_ptr[26] << 8 | tmp_rx_data_ptr[27];
+          system_exception_pub_data.PSR =
+              tmp_rx_data_ptr[28] << 24 | tmp_rx_data_ptr[29] << 16 | tmp_rx_data_ptr[30] << 8 | tmp_rx_data_ptr[31];
+          system_exception_pub_data.stamp = last_get_data_time_;
+          power_management_system_exception_data_.publish(system_exception_pub_data);
+          break;
+        }
+        case rm_referee::POWER_MANAGEMENT_PROCESS_STACK_OVERFLOW_CMD:
+        {
+          rm_referee::PowerManagementProcessStackOverflowData stack_overflow_ref;
+          rm_msgs::PowerManagementProcessStackOverflowData stack_overflow_pub_data;
+          memcpy(&stack_overflow_ref, rx_data + 7, sizeof(rm_referee::PowerManagementProcessStackOverflowData));
+
+          stack_overflow_pub_data.process_name = stack_overflow_ref.process_name;
+          stack_overflow_pub_data.stamp = last_get_data_time_;
+          power_management_process_stack_overflow_pub_.publish(stack_overflow_pub_data);
+        }
+        case rm_referee::POWER_MANAGEMENT_UNKNOWN_EXCEPTION_CMD:
+        {
+          rm_referee::PowerManagementUnknownExceptionData unknown_exception_ref;
+          rm_msgs::PowerManagementUnknownExceptionData unknown_exception_pub_data;
+          memcpy(&unknown_exception_ref, rx_data + 7, sizeof(rm_referee::PowerManagementUnknownExceptionData));
+
+          unknown_exception_pub_data.abnormal_reset_reason = unknown_exception_ref.abnormal_reset_reason;
+          unknown_exception_pub_data.power_management_before_reset_topology =
+              unknown_exception_ref.power_management_before_reset_topology;
+          unknown_exception_pub_data.state_machine_before_reset_mode =
+              unknown_exception_ref.state_machine_before_reset_mode;
+          unknown_exception_pub_data.stamp = last_get_data_time_;
+          power_management_unknown_exception_pub_.publish(unknown_exception_pub_data);
+          break;
+        }
         default:
-          ROS_WARN("Referee command ID not found.");
+          ROS_WARN("Referee command ID %d not found.", cmd_id);
           break;
       }
       base_.referee_data_is_online_ = true;
@@ -496,6 +580,9 @@ void Referee::getRobotInfo()
       case rm_referee::RobotId::BLUE_STANDARD_5:
         base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_5_CLIENT;
         break;
+      case rm_referee::RobotId::BLUE_AERIAL:
+        base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
+        break;
       case rm_referee::RobotId::RED_HERO:
         base_.client_id_ = rm_referee::ClientId::RED_HERO_CLIENT;
         break;
@@ -511,156 +598,10 @@ void Referee::getRobotInfo()
       case rm_referee::RobotId::RED_STANDARD_5:
         base_.client_id_ = rm_referee::ClientId::RED_STANDARD_5_CLIENT;
         break;
+      case rm_referee::RobotId::RED_AERIAL:
+        base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
+        break;
     }
   }
-}
-
-void Referee::publishCapacityData()
-{
-  rm_msgs::SuperCapacitor super_capacitor_data;
-  rm_msgs::CapacityData capacity_data;
-
-  super_capacitor_data.capacity = static_cast<float>(super_capacitor_.capacity_data_.cap_power);
-  super_capacitor_data.chassis_power_buffer = static_cast<uint16_t>(super_capacitor_.capacity_data_.buffer_power);
-  super_capacitor_data.limit_power = static_cast<float>(super_capacitor_.capacity_data_.limit_power);
-  super_capacitor_data.chassis_power = static_cast<float>(super_capacitor_.capacity_data_.chassis_power);
-  super_capacitor_data.stamp = super_capacitor_.last_get_data_time_;
-
-  capacity_data.buffer_power = super_capacitor_.capacity_data_.buffer_power;
-  capacity_data.is_online = super_capacitor_.capacity_data_.is_online;
-  capacity_data.cap_power = super_capacitor_.capacity_data_.cap_power;
-  capacity_data.chassis_power = super_capacitor_.capacity_data_.chassis_power;
-  capacity_data.limit_power = super_capacitor_.capacity_data_.limit_power;
-  capacity_data.stamp = last_get_data_time_;
-
-  referee_ui_.capacityDataCallBack(capacity_data, last_get_data_time_);
-
-  super_capacitor_pub_.publish(super_capacitor_data);
-  capacity_data_pub_.publish(capacity_data);
-}
-
-void SuperCapacitor::read(const std::vector<uint8_t>& rx_buffer)
-{
-  int count = 0;
-  memset(receive_buffer_, 0x00, sizeof(receive_buffer_));
-  memset(ping_pong_buffer_, 0x00, sizeof(ping_pong_buffer_));
-  receive_buf_counter_ = 0;
-  for (unsigned char k_i : rx_buffer)
-  {
-    dtpReceivedCallBack(k_i);
-    count++;
-    if (count >= static_cast<int>(sizeof(receive_buffer_)))
-    {
-      memset(receive_buffer_, 0x00, sizeof(receive_buffer_));
-      memset(ping_pong_buffer_, 0x00, sizeof(ping_pong_buffer_));
-      receive_buf_counter_ = 0;
-    }
-  }
-  if (capacity_data_.chassis_power >= 120.)
-    capacity_data_.chassis_power = 120.;
-  if (capacity_data_.chassis_power <= 0.)
-    capacity_data_.chassis_power = 0.;
-  if (capacity_data_.buffer_power >= 25.)
-    capacity_data_.buffer_power = 25.;
-  if (capacity_data_.buffer_power <= 0.)
-    capacity_data_.buffer_power = 0.;
-  if (capacity_data_.cap_power >= 1.)
-    capacity_data_.cap_power = 1.;
-  if (ros::Time::now() - last_get_data_time_ > ros::Duration(0.1))
-    capacity_data_.is_online = false;
-}
-
-void SuperCapacitor::receiveCallBack(unsigned char package_id, const unsigned char* data)
-{
-  if (package_id == 0)
-  {
-    last_get_data_time_ = ros::Time::now();
-    capacity_data_.is_online = true;
-    capacity_data_.chassis_power = static_cast<double>(int16ToFloat((data[0] << 8) | data[1]));
-    capacity_data_.limit_power = static_cast<double>(int16ToFloat((data[2] << 8) | data[3]));
-    capacity_data_.buffer_power = static_cast<double>(int16ToFloat((data[4] << 8) | data[5]));
-    capacity_data_.cap_power = static_cast<double>(int16ToFloat((data[6] << 8) | data[7]));
-  }
-}
-
-void SuperCapacitor::dtpReceivedCallBack(unsigned char receive_byte)
-{
-  unsigned char check_flag;
-  unsigned int sof_pos, eof_pos, check_counter;
-
-  receive_buffer_[receive_buf_counter_] = receive_byte;
-  receive_buf_counter_ = receive_buf_counter_ + 1;
-  check_flag = 0;
-  sof_pos = 0;
-  eof_pos = 0;
-  check_counter = 0;
-  while (true)
-  {
-    if (check_flag == 0 && receive_buffer_[check_counter] == 0xff)
-    {
-      check_flag = 1;
-      sof_pos = check_counter;
-    }
-    else if (check_flag == 1 && receive_buffer_[check_counter] == 0xff)
-    {
-      eof_pos = check_counter;
-      break;
-    }
-    if (check_counter >= (receive_buf_counter_ - 1))
-      break;
-    else
-      check_counter++;
-  }  // Find Package In Buffer
-
-  if ((eof_pos - sof_pos) == 11)
-  {
-    unsigned int temp_var;
-    unsigned char data_buffer[8] = { 0 };
-    unsigned char valid_buffer[12] = { 0 };
-
-    for (temp_var = 0; temp_var < 12; temp_var++)  // Copy Data To Another Buffer
-      valid_buffer[temp_var] = receive_buffer_[sof_pos + temp_var];
-
-    eof_pos++;
-    memset(ping_pong_buffer_, 0x00, sizeof(ping_pong_buffer_));
-    for (temp_var = 0; temp_var < receive_buf_counter_ - eof_pos; temp_var++)
-      ping_pong_buffer_[temp_var] = receive_buffer_[eof_pos + temp_var];
-    receive_buf_counter_ = receive_buf_counter_ - eof_pos;
-    memset(receive_buffer_, 0x00, sizeof(receive_buffer_));
-    for (temp_var = 0; temp_var < receive_buf_counter_; temp_var++)
-      receive_buffer_[temp_var] = ping_pong_buffer_[temp_var];
-
-    unsigned char pid_bit = valid_buffer[1] >> 4;  // Get The PID Bit
-    if (pid_bit == ((~(valid_buffer[1] & 0x0f)) & 0x0f))
-    {  // PID Verify
-      for (temp_var = 0; temp_var < 8; ++temp_var)
-        data_buffer[temp_var] = valid_buffer[2 + temp_var];
-      if (valid_buffer[10] != 0x00)
-      {  // Some Byte had been replaced
-        unsigned char temp_filter = 0x00;
-        for (temp_var = 0; temp_var < 8; ++temp_var)
-          if (((valid_buffer[10] & (temp_filter | (0x01 << temp_var))) >> temp_var) == 1)  // This Byte Need To Adjust
-            data_buffer[temp_var] = 0xff;                                                  // Adjust to 0xff
-      }
-      receiveCallBack(pid_bit, data_buffer);
-    }
-  }
-  else if ((eof_pos - sof_pos) != 0 && eof_pos != 0)
-  {
-    memset(receive_buffer_, 0x00, sizeof(receive_buffer_));
-    memset(ping_pong_buffer_, 0x00, sizeof(ping_pong_buffer_));
-    receive_buf_counter_ = 0;
-  }
-}
-
-float SuperCapacitor::int16ToFloat(unsigned short data0)
-{
-  if (data0 == 0)
-    return 0;
-  float* fp32;
-  unsigned int f_int32 =
-      ((data0 & 0x8000) << 16) | (((((data0 >> 10) & 0x1f) - 0x0f + 0x7f) & 0xff) << 23) | ((data0 & 0x03FF) << 13);
-  fp32 = reinterpret_cast<float*>(&f_int32);
-  return *fp32;
 }
 }  // namespace rm_referee

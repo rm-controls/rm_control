@@ -2,6 +2,136 @@
 Changelog for package rm_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.20 (2023-06-20)
+-------------------
+* Merge branch 'master' into dev/power_management
+* Fix a judge to adapt 2023 season rule.
+* Merge branch 'master' into dev/sentry_map
+  # Conflicts:
+  #	rm_referee/include/rm_referee/referee_base.h
+  #	rm_referee/src/referee_base.cpp
+* Merge pull request `#161 <https://github.com/ye-luo-xi-tui/rm_control/issues/161>`_ from chenhuiYu00/dev/balance_modechange
+  Move loadController() into public.
+* Merge branch 'master' into Add_engineerui
+* Merge pull request `#163 <https://github.com/ye-luo-xi-tui/rm_control/issues/163>`_ from 1moule/pitch_ui
+  Add pitch angle ui for hero
+* Add the function of directly setting the target color and add the enumeration of purple.
+* Move loadController() into public.
+* Merge branch 'master' into pitch_ui
+* Merge branch 'master' into pitch_ui
+  # Conflicts:
+  #	rm_referee/include/rm_referee/referee_base.h
+  #	rm_referee/include/rm_referee/ui/time_change_ui.h
+  #	rm_referee/src/referee_base.cpp
+  #	rm_referee/src/ui/time_change_ui.cpp
+* Merge pull request `#158 <https://github.com/ye-luo-xi-tui/rm_control/issues/158>`_ from chenhuiYu00/dev/power_management
+  Update new power management
+* Merge branch 'master' into dev/power_management
+* Merge pull request `#159 <https://github.com/ye-luo-xi-tui/rm_control/issues/159>`_ from 1moule/windwill_auto_fire
+  Add minimal shoot frequency for hitting buff.
+* Modify for format.
+* Merge branch 'master' into windwill_auto_fire
+* Add minimal shoot frequency for hitting buff.
+* Merge pull request `#157 <https://github.com/ye-luo-xi-tui/rm_control/issues/157>`_ from chenhuiYu00/dev/balance_cmd_send
+  Add balance command sender and balance pitch ui
+* Merge branch 'dev/balance_cmd_send' into dev/power_management
+* Delete unused code.
+* Merge branch 'dev/power_management' into dev/balance_cmd_send_power_management
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+* Update super capacitor use strategy
+* Delete game_progress\_
+* Cancel calibration during 3min preparing
+* Adjust is_online judge in power_limit.h
+* Merge branch 'master' into dev/power_management
+* Merge branch 'master' into dev/ui_refact
+* Merge branch 'master' into dev/balance_cmd_send
+* Merge pull request `#154 <https://github.com/ye-luo-xi-tui/rm_control/issues/154>`_ from 1moule/suggest_fire
+  Modify the shooter command sender to enable hero to automatically hitting rotating armor
+* Merge branch 'master' into suggest_fire
+* Merge branch 'master' into dev/balance_cmd_send
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#148 <https://github.com/ye-luo-xi-tui/rm_control/issues/148>`_ from 1moule/switch_buff
+  Add a function to set target type.
+* Add a function to set target type.
+* Merge branch 'dev/ui_refact' into dev/balance_cmd_send
+* Merge branch 'master' into dev/ui_refact
+  # Conflicts:
+  #	rm_referee/include/rm_referee/common/protocol.h
+  #	rm_referee/src/ui/graph.cpp
+* Merge pull request `#146 <https://github.com/ye-luo-xi-tui/rm_control/issues/146>`_ from ye-luo-xi-tui/master
+  0.1.19
+* Cancel referee power limit judge.
+* Add safety power select.
+* Merge branch 'master' into dev/balance_cmd_send
+* Merge branch 'master' into dev/balance_pitch_ui
+* Merge branch 'rm-controls:master' into master
+* Add chassis cmd send referee_power_limit get.
+* Merge branch 'master' into suggest_fire
+* Merge branch 'master' into suggest_fire
+* Merge branch 'rm-controls:master' into master
+* Change vel2D cmd sender's callback function.
+* Add balance command sender.
+* Modify type of the function "setArmorType".
+* Merge branch 'rm-controls:master' into master
+* Add armor type to the judgment of checkerror.
+* Merge branch 'master' into suggest_fire
+* Modify shooter command sender to enable visual control firing.
+* Merge pull request `#1 <https://github.com/ye-luo-xi-tui/rm_control/issues/1>`_ from rm-controls/master
+  1
+* Contributors: 1moule, BruceLannn, ye-luo-xi-tui, yuchen, 王湘鈜
+
+0.1.19 (2023-05-03)
+-------------------
+* Merge pull request `#142 <https://github.com/ye-luo-xi-tui/rm_control/issues/142>`_ from 1moule/master
+  Modify the radio frequency in the burst mode
+* Merge branch 'master' into new_protocol
+* Merge branch 'rm-controls:master' into master
+* Modify the radio frequency in the burst mode.
+* Merge pull request `#139 <https://github.com/ye-luo-xi-tui/rm_control/issues/139>`_ from ye-luo-xi-tui/master
+  Add safe_speed_limit
+* Merge remote-tracking branch 'origin/master'
+* Fix format.
+* Merge branch 'rm-controls:master' into master
+* Add safe_speed_limit.
+* Merge pull request `#122 <https://github.com/ye-luo-xi-tui/rm_control/issues/122>`_ from L-SY/multi_dof_controller
+  Add MultiDofCommandSender for multi_dof_controller.
+* Change function name.
+* Change function name.
+* Merge pull request `#128 <https://github.com/ye-luo-xi-tui/rm_control/issues/128>`_ from chenhuiYu00/dev/fix_power_limit
+  Fixed bug in burst model
+* Merge pull request `#132 <https://github.com/ye-luo-xi-tui/rm_control/issues/132>`_ from 1moule/one_click_turn_cmd_sender
+  Add a function in gimbal command sender for U-turn
+* Merge branch 'master' into one_click_turn_cmd_sender
+* Merge branch 'master' into one_click_turn_cmd_sender
+* Merge pull request `#127 <https://github.com/ye-luo-xi-tui/rm_control/issues/127>`_ from Aung-xiao/power_limit_pr
+  Modify sentry's power limit
+* delete old sentry power limit
+* Fixed bug in burst model.
+* Merge branch 'master' into switch_camera_command_sender
+* modify sentry power limit
+* Merge pull request `#126 <https://github.com/ye-luo-xi-tui/rm_control/issues/126>`_ from NaHCO3bc/add_fun_in_heat_limit
+  Add two function to get data about cooling.
+* Merge branch 'master' into multi_dof_controller
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+  #	rm_msgs/CMakeLists.txt
+* Merge branch 'master' into one_click_turn_cmd_sender
+* Add two function to get data about cooling.
+* Merge branch 'master' into switch_camera_command_sender
+  # Conflicts:
+  #	rm_referee/include/rm_referee/ui/trigger_change_ui.h
+  #	rm_referee/src/ui/trigger_change_ui.cpp
+* Add multi_dof_commandsender.
+* Merge pull request `#120 <https://github.com/ye-luo-xi-tui/rm_control/issues/120>`_ from ye-luo-xi-tui/master
+  0.1.18
+* Added a function in gimbal command sender to set the point of direct mode.
+* Add multi_dof_command_sender.
+* Remove the modification about command sender on this branch.
+* Add ui for switch camera and modefy command sender.
+* Add a command sender for switching cameras.
+* Contributors: 1moule, Aung-xiao, LSY, NaHCO3bc, ye-luo-xi-tui, yezi, yuchen
+
 0.1.18 (2023-03-25)
 -------------------
 * Merge pull request `#119 <https://github.com/ye-luo-xi-tui/rm_control/issues/119>`_ from 1moule/fix_power_limit

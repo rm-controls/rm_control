@@ -5,8 +5,10 @@ uint8 exposure
 uint8 use_id_classification
 uint8 RED = 0
 uint8 BLUE = 1
+uint8 PURPLE = 2
 uint8 ARMOR = 0
-uint8 BUFF = 1
+uint8 SMALL_BUFF = 1
+uint8 BIG_BUFF = 2
 uint8 ARMOR_ALL = 0
 uint8 ARMOR_OUTPOST_BASE = 1
 uint8 ARMOR_WITHOUT_OUTPOST_BASE = 2

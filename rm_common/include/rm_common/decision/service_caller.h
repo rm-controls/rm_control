@@ -205,6 +205,10 @@ public:
     else
       ROS_INFO_STREAM("Set enemy color failed: referee offline");
   }
+  void setColor(uint8_t color)
+  {
+    service_.request.color = color;
+  }
   void switchEnemyColor()
   {
     service_.request.color = service_.request.color == rm_msgs::StatusChangeRequest::RED;
@@ -212,6 +216,10 @@ public:
   void switchTargetType()
   {
     service_.request.target = service_.request.target == rm_msgs::StatusChangeRequest::ARMOR;
+  }
+  void setTargetType(uint8_t target)
+  {
+    service_.request.target = target;
   }
   void switchArmorTargetType()
   {
