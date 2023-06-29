@@ -291,12 +291,12 @@ void JointPositionTimeChangeUi::updateConfig()
     graph_->setEndY(graph_->getConfig().start_y);
     graph_->setEndX(graph_->getConfig().start_x + length_ * proportion);
   }
-  if (direction_ == "vertical")
+  else if (direction_ == "vertical")
   {
     graph_->setEndY(graph_->getConfig().start_y + length_ * proportion);
     graph_->setEndX(graph_->getConfig().end_x);
   }
-  if (direction_ == "slant")
+  else
   {
     graph_->setEndY(graph_->getConfig().start_y + length_ * proportion);
     graph_->setEndX(graph_->getConfig().start_x + length_ * proportion);
