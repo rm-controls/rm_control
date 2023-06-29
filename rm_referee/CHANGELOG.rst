@@ -2,6 +2,139 @@
 Changelog for package rm_referee
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.20 (2023-06-20)
+-------------------
+* Merge pull request `#170 <https://github.com/ye-luo-xi-tui/rm_control/issues/170>`_ from chenhuiYu00/dev/power_management
+  Add other unpack code for power management
+* Update power management unpack code.
+* Merge pull request `#169 <https://github.com/ye-luo-xi-tui/rm_control/issues/169>`_ from chenhuiYu00/dev/update_chassis_topic
+  Update chassis topic.
+* Update chassis topic.
+* Merge pull request `#168 <https://github.com/ye-luo-xi-tui/rm_control/issues/168>`_ from chenhuiYu00/dev/update_power_management
+  Update PowerManagement protocol v1.2
+* Update PowerManagement protocol v1.2
+* Merge pull request `#167 <https://github.com/ye-luo-xi-tui/rm_control/issues/167>`_ from chenhuiYu00/dev/radar_interactive
+  Add radar interactive
+* Merge pull request `#166 <https://github.com/ye-luo-xi-tui/rm_control/issues/166>`_ from chenhuiYu00/dev/sentry_map
+  Add sentry map
+* Add radar interactive.
+* Merge branch 'master' into dev/sentry_map
+  # Conflicts:
+  #	rm_referee/src/referee_base.cpp
+* Merge branch 'master' into dev/sentry_map
+  # Conflicts:
+  #	rm_referee/include/rm_referee/referee_base.h
+  #	rm_referee/src/referee_base.cpp
+* Fixed cycle number.
+* Merge pull request `#165 <https://github.com/ye-luo-xi-tui/rm_control/issues/165>`_ from rm-controls/revert-164-Add_engineerui
+  Revert "Merge the engineer's ui into master"
+* Revert "Merge the engineer's ui into master"
+* Merge pull request `#164 <https://github.com/ye-luo-xi-tui/rm_control/issues/164>`_ from ljq-lv/Add_engineerui
+  Merge the engineer's ui into master
+* Merge branch 'master' into Add_engineerui
+* Merge pull request `#163 <https://github.com/ye-luo-xi-tui/rm_control/issues/163>`_ from 1moule/pitch_ui
+  Add pitch angle ui for hero
+* Merge the engineer's ui into master
+* Merge branch 'master' into pitch_ui
+* Merge branch 'master' into pitch_ui
+  # Conflicts:
+  #	rm_referee/include/rm_referee/referee_base.h
+  #	rm_referee/include/rm_referee/ui/time_change_ui.h
+  #	rm_referee/src/referee_base.cpp
+  #	rm_referee/src/ui/time_change_ui.cpp
+* Add pitch angle ui.
+* Merge pull request `#158 <https://github.com/ye-luo-xi-tui/rm_control/issues/158>`_ from chenhuiYu00/dev/power_management
+  Update new power management
+* Merge branch 'master' into windwill_auto_fire
+* Change ros info during unpack.
+* Merge pull request `#157 <https://github.com/ye-luo-xi-tui/rm_control/issues/157>`_ from chenhuiYu00/dev/balance_cmd_send
+  Add balance command sender and balance pitch ui
+* Add capacity mode check mode function.
+* Add map sentry interactive data send.
+* Merge branch 'dev/balance_cmd_send' into dev/power_management
+  # Conflicts:
+  #	rm_referee/src/referee_base.cpp
+* Parameterize add ui and send ui config.
+* Reduce add ui frequency.
+* Update NORMAL delay.
+* Fixed foolish delay bug.
+* Merge branch 'dev/power_management' into dev/balance_cmd_send_power_management
+  # Conflicts:
+  #	rm_common/include/rm_common/decision/command_sender.h
+* Merge remote-tracking branch 'chenhuiYu/dev/power_management' into dev/power_management
+* Update super capacitor use strategy
+* Allow chassis ui update during add ui.
+* Reduce update ui frequency.
+* Merge branch 'master' into dev/balance_cmd_send
+* Update balance pitch ui for new ui logic.
+* Merge pull request `#156 <https://github.com/ye-luo-xi-tui/rm_control/issues/156>`_ from chenhuiYu00/ui_refact
+  Fixed bug in graph queue update
+* Merge branch 'master' into dev/balance_cmd_send
+  # Conflicts:
+  #	rm_referee/src/referee_base.cpp
+  #	rm_referee/src/ui/time_change_ui.cpp
+* Merge pull request `#145 <https://github.com/ye-luo-xi-tui/rm_control/issues/145>`_ from chenhuiYu00/ui_refact
+  Refact ui send logic and add rotation，target state ui
+* Merge branch 'dev/ui_refact' into dev/power_management
+* Fixed queue bug.
+* Delete unused function.
+* Merge branch 'dev/ui_refact' into dev/power_management
+  # Conflicts:
+  #	rm_referee/include/rm_referee/ui/time_change_ui.h
+  #	rm_referee/src/ui/time_change_ui.cpp
+* Add exit BURST delay.
+* Fixed unpack bug.
+* Delete old capacity protocol publisher and related code.
+* Fixed ui send bug.
+* Merge branch 'master' into dev/power_management
+* Rename TriggerScalerTriggerChangeUi.
+* Merge branch 'master' into dev/ui_refact
+* Add power management sample and state data publish.
+* Update power management protocol ver1.1
+* Fixed getRobotInfo();
+* Merge branch 'master' into suggest_fire
+* Merge branch 'master' into dev/balance_cmd_send
+* Merge branch 'rm-controls:master' into master
+* Merge pull request `#150 <https://github.com/ye-luo-xi-tui/rm_control/issues/150>`_ from 1moule/buff_ui
+  Update big buff and small buff ui.
+* Update big buff and small buff ui.
+* Add graph queue.
+* Fixed unpack problem in capacity serial .
+* Merge branch 'dev/ui_refact' into dev/balance_cmd_send
+* Add debug info.
+* Update power management protocol.
+* Fixed merge problem.
+* Merge branch 'master' into dev/ui_refact
+  # Conflicts:
+  #	rm_referee/include/rm_referee/common/protocol.h
+  #	rm_referee/src/ui/graph.cpp
+* Add balance pitch ui.
+* Merge pull request `#146 <https://github.com/ye-luo-xi-tui/rm_control/issues/146>`_ from ye-luo-xi-tui/master
+  0.1.19
+* Merge branch 'dev/ui_refact' into dev/balance_cmd_send
+  # Conflicts:
+  #	rm_referee/include/rm_referee/referee_base.h
+  #	rm_referee/include/rm_referee/ui/time_change_ui.h
+  #	rm_referee/include/rm_referee/ui/ui_base.h
+  #	rm_referee/src/referee_base.cpp
+  #	rm_referee/src/ui/ui_base.cpp
+* Change ui circle add.
+* Add target scale trigger change ui.
+* Add rotation time change ui.
+* Fixed bugs in referee refactoring.
+* Refactoring referee.
+* Merge pull request `#144 <https://github.com/ye-luo-xi-tui/rm_control/issues/144>`_ from ye-luo-xi-tui/master
+  Fix problem generate by merge conflict
+* Add balance pitch ui.
+* Merge branch 'master' into dev/balance_cmd_send
+* Merge branch 'master' into suggest_fire
+* Merge branch 'rm-controls:master' into master
+* Merge branch 'rm-controls:master' into master
+* Merge branch 'master' into suggest_fire
+* Merge pull request `#1 <https://github.com/ye-luo-xi-tui/rm_control/issues/1>`_ from rm-controls/master
+  1
+* Contributors: 1moule, BruceLannn, ljq-lv, ye-luo-xi-tui, yuchen, 王湘鈜
+
 0.1.19 (2023-05-03)
 -------------------
 * Fix problem generate by merge conflict.

@@ -72,6 +72,10 @@ add_message_files(
         ClientMapReceiveData.msg
         MapSentryData.msg
         PowerManagementSampleAndStatusData.msg
+        PowerManagementInitializationExceptionData.msg
+        PowerManagementProcessStackOverflowData.msg
+        PowerManagementSystemExceptionData.msg
+        PowerManagementUnknownExceptionData.msg
 )
 
 add_action_files(
