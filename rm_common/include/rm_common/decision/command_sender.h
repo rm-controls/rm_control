@@ -495,6 +495,10 @@ public:
   {
     on_pos_ = on_pos;
   }
+  double getOffPos()
+  {
+    return off_pos_;
+  }
   bool getState() const
   {
     return state;
