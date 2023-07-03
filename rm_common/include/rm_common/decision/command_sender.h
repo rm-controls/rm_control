@@ -57,6 +57,7 @@
 #include <rm_msgs/MultiDofCmd.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Bool.h>
+#include <control_msgs/JointControllerState.h>
 
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
@@ -681,6 +682,204 @@ public:
 
 private:
   ros::Time time_;
+};
+
+class DoubleBarrelCommandSender
+{
+public:
+  DoubleBarrelCommandSender(ros::NodeHandle& nh)
+  {
+    ros::NodeHandle shooter_ID1_nh(nh, "shooter_ID1");
+    shooter_ID1_cmd_sender_ = new ShooterCommandSender(shooter_ID1_nh);
+    ros::NodeHandle shooter_ID2_nh(nh, "shooter_ID2");
+    shooter_ID2_cmd_sender_ = new ShooterCommandSender(shooter_ID2_nh);
+    ros::NodeHandle barrel_nh(nh, "barrel");
+    barrel_command_sender_ = new rm_common::JointPointCommandSender(barrel_nh, joint_state_);
+
+    barrel_nh.getParam("is_double_barrel", is_double_barrel_);
+    barrel_nh.getParam("id1_point", id1_point_);
+    barrel_nh.getParam("id2_point", id2_point_);
+    barrel_nh.getParam("restart_push_threshold", restart_push_threshold_);
+    barrel_nh.getParam("cooling_threshold", cooling_threshold_);
+
+    joint_state_sub_ = nh.subscribe<sensor_msgs::JointState>("/joint_states", 10,
+                                                             &DoubleBarrelCommandSender::jointStateCallback, this);
+    trigger_state_sub_ = nh.subscribe<control_msgs::JointControllerState>(
+        "/controllers/shooter_controller/trigger/state", 10, &DoubleBarrelCommandSender::triggerStateCallback, this);
+  }
+
+  void updateGameRobotStatus(const rm_msgs::GameRobotStatus data)
+  {
+    shooter_ID1_cmd_sender_->updateGameRobotStatus(data);
+    shooter_ID2_cmd_sender_->updateGameRobotStatus(data);
+  }
+  void updatePowerHeatData(const rm_msgs::PowerHeatData data)
+  {
+    shooter_ID1_cmd_sender_->heat_limit_->setCoolingHeatOfShooter(data);
+    shooter_ID2_cmd_sender_->heat_limit_->setCoolingHeatOfShooter(data);
+  }
+  void updateRefereeStatus(bool status)
+  {
+    shooter_ID1_cmd_sender_->updateRefereeStatus(status);
+    shooter_ID2_cmd_sender_->updateRefereeStatus(status);
+  }
+  void updateGimbalDesError(const rm_msgs::GimbalDesError& error)
+  {
+    shooter_ID1_cmd_sender_->updateGimbalDesError(error);
+    shooter_ID2_cmd_sender_->updateGimbalDesError(error);
+  }
+  void updateTrackData(const rm_msgs::TrackData& data)
+  {
+    shooter_ID1_cmd_sender_->updateTrackData(data);
+    shooter_ID2_cmd_sender_->updateTrackData(data);
+  }
+  void updateSuggestFireData(const std_msgs::Bool& data)
+  {
+    shooter_ID1_cmd_sender_->updateSuggestFireData(data);
+    shooter_ID2_cmd_sender_->updateSuggestFireData(data);
+  }
+
+  void setMode(int mode)
+  {
+    shooter_ID1_cmd_sender_->setMode(mode);
+    shooter_ID2_cmd_sender_->setMode(mode);
+  }
+  void setZero()
+  {
+    shooter_ID1_cmd_sender_->setZero();
+    shooter_ID2_cmd_sender_->setZero();
+  }
+  void checkError(const ros::Time& time)
+  {
+    shooter_ID1_cmd_sender_->checkError(time);
+    shooter_ID2_cmd_sender_->checkError(time);
+  }
+  void sendCommand(const ros::Time& time)
+  {
+    if (doSwitch())
+    {
+      switch_barrel_ = true;
+      switch_done_ = false;
+    }
+    if ((shooter_ID1_cmd_sender_->getMsg()->mode == rm_msgs::ShootCmd::PUSH ||
+         shooter_ID2_cmd_sender_->getMsg()->mode == rm_msgs::ShootCmd::PUSH) &&
+        switch_barrel_)
+    {
+      setMode(rm_msgs::ShootCmd::READY);
+      if (!switch_done_)
+        switchBarrel();
+      else
+        doRestartPush();
+    }
+    shooter_ID1_cmd_sender_->sendCommand(time);
+    shooter_ID2_cmd_sender_->sendCommand(time);
+  }
+  int initBarrelId()
+  {
+    ros::Time time = ros::Time::now();
+    barrel_id_ = 0;
+    barrel_command_sender_->setPoint(id1_point_);
+    barrel_command_sender_->sendCommand(time);
+    return barrel_id_;
+  }
+  void setArmorType(uint8_t armor_type)
+  {
+    shooter_ID1_cmd_sender_->setArmorType(armor_type);
+    shooter_ID2_cmd_sender_->setArmorType(armor_type);
+  }
+  void setShootFrequency(uint8_t mode)
+  {
+    shooter_ID1_cmd_sender_->setShootFrequency(mode);
+    shooter_ID2_cmd_sender_->setShootFrequency(mode);
+  }
+  uint8_t getShootFrequency()
+  {
+    return shooter_ID1_cmd_sender_->getShootFrequency();
+  }
+  double getSpeed()
+  {
+    return shooter_ID1_cmd_sender_->getSpeed();
+  }
+
+private:
+  int getBarrelId()
+  {
+    if (barrel_command_sender_->getMsg()->data == id1_point_)
+      barrel_id_ = 0;
+    else
+      barrel_id_ = 1;
+    return barrel_id_;
+  }
+  void switchBarrel()
+  {
+    ros::Time time = ros::Time::now();
+    if (std::fmod(std::abs(trigger_error_), 2. * M_PI) < 0.01)
+      switch_done_ = true;
+    if (switch_done_)
+    {
+      barrel_command_sender_->getMsg()->data == id2_point_ ? barrel_command_sender_->setPoint(id1_point_) :
+                                                             barrel_command_sender_->setPoint(id2_point_);
+      barrel_command_sender_->sendCommand(time);
+    }
+  }
+  void doRestartPush()
+  {
+    if (std::abs(joint_state_.position[barrel_command_sender_->getIndex()] - barrel_command_sender_->getMsg()->data) <
+        restart_push_threshold_)
+    {
+      switch_barrel_ = false;
+      setMode(rm_msgs::ShootCmd::PUSH);
+    }
+  }
+
+  bool doSwitch()
+  {
+    if (!is_double_barrel_)
+      return false;
+    int shooter_ID1_cooling_limit = shooter_ID1_cmd_sender_->heat_limit_->getCoolingLimit();
+    int shooter_ID2_cooling_limit = shooter_ID2_cmd_sender_->heat_limit_->getCoolingLimit();
+    int shooter_ID1_cooling_heat = shooter_ID1_cmd_sender_->heat_limit_->getCoolingHeat();
+    int shooter_ID2_cooling_heat = shooter_ID2_cmd_sender_->heat_limit_->getCoolingHeat();
+
+    if (shooter_ID1_cooling_limit == 0 || shooter_ID2_cooling_limit == 0)
+    {
+      ROS_WARN("Can not get cooling limit");
+      return false;
+    }
+
+    if (shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < cooling_threshold_[0] ||
+        shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < cooling_threshold_[0])
+    {
+      if (getBarrelId())
+        return shooter_ID2_cooling_limit - shooter_ID2_cooling_heat < cooling_threshold_[0] &&
+               shooter_ID1_cooling_limit - shooter_ID1_cooling_heat > cooling_threshold_[1];
+      else
+        return shooter_ID1_cooling_limit - shooter_ID1_cooling_heat < cooling_threshold_[0] &&
+               shooter_ID2_cooling_limit - shooter_ID2_cooling_heat > cooling_threshold_[1];
+    }
+    else
+      return false;
+  }
+  void triggerStateCallback(const control_msgs::JointControllerState::ConstPtr& data)
+  {
+    trigger_error_ = data->error;
+  }
+  void jointStateCallback(const sensor_msgs::JointState::ConstPtr& data)
+  {
+    joint_state_ = *data;
+  }
+  ShooterCommandSender* shooter_ID1_cmd_sender_;
+  ShooterCommandSender* shooter_ID2_cmd_sender_;
+  JointPointCommandSender* barrel_command_sender_{};
+  ros::Subscriber trigger_state_sub_;
+  ros::Subscriber joint_state_sub_;
+  sensor_msgs::JointState joint_state_;
+  bool is_double_barrel_{ false }, switch_barrel_{ false }, switch_done_{ true };
+  double trigger_error_;
+  int barrel_id_;
+  double id1_point_, id2_point_;
+  double restart_push_threshold_;
+  std::vector<int> cooling_threshold_;
 };
 
 }  // namespace rm_common
