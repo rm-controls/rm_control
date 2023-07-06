@@ -58,7 +58,6 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Bool.h>
 #include <control_msgs/JointControllerState.h>
-#include <unordered_map>
 
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
