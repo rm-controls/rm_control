@@ -197,4 +197,16 @@ private:
   std::string current_camera_{}, camera1_name_{}, camera2_name_{};
 };
 
+class StringTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit StringTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& name)
+    : TriggerChangeUi(rpc_value, base, name){};
+  void updateStringUiData(const std::string& data);
+
+private:
+  void update() override;
+  std::string data_;
+};
+
 }  // namespace rm_referee

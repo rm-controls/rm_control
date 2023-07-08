@@ -64,7 +64,7 @@ public:
   ros::Subscriber detection_status_sub_;
   ros::Subscriber card_cmd_sub_;
   ros::Subscriber calibration_status_sub_;
-  ros::Subscriber engineer_cmd_sub_;
+  ros::Subscriber engineer_ui_sub_;
   ros::Subscriber radar_date_sub_;
   ros::Subscriber manual_data_sub_;
   ros::Subscriber camera_name_sub_;
@@ -79,6 +79,9 @@ public:
   TargetTriggerChangeUi* target_trigger_change_ui_{};
   TargetViewAngleTriggerChangeUi* target_view_angle_trigger_change_ui_{};
   CameraTriggerChangeUi* camera_trigger_change_ui_{};
+  StringTriggerChangeUi* stone_num_trigger_change_ui_{};
+  StringTriggerChangeUi* gripper_state_trigger_change_ui_{};
+  StringTriggerChangeUi* step_name_trigger_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};

@@ -23,7 +23,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
                                                                   &RefereeBase::gimbalCmdDataCallback, this);
   RefereeBase::card_cmd_sub_ = nh.subscribe<rm_msgs::StateCmd>("/controllers/card_controller/command", 10,
                                                                &RefereeBase::cardCmdDataCallback, this);
-  RefereeBase::engineer_cmd_sub_ =
+  RefereeBase::engineer_ui_sub_ =
       nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 10, &RefereeBase::engineerUiDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
@@ -58,6 +58,12 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         target_view_angle_trigger_change_ui_ = new TargetViewAngleTriggerChangeUi(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "camera")
         camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "stone")
+        stone_num_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "stone");
+      if (rpc_value[i]["name"] == "gripper")
+        gripper_state_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "gripper");
+      if (rpc_value[i]["name"] == "step")
+        step_name_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "step");
     }
 
     ui_nh.getParam("time_change", rpc_value);
@@ -152,6 +158,12 @@ void RefereeBase::addUi()
     engineer_joint2_time_change_ui->add();
   if (engineer_joint3_time_change_ui)
     engineer_joint3_time_change_ui->add();
+  if (stone_num_trigger_change_ui_)
+    stone_num_trigger_change_ui_->add();
+  if (gripper_state_trigger_change_ui_)
+    gripper_state_trigger_change_ui_->add();
+  if (step_name_trigger_change_ui_)
+    step_name_trigger_change_ui_->add();
   add_ui_times_++;
 }
 
@@ -290,8 +302,12 @@ void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 }
 void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data)
 {
-  if (progress_time_change_ui_ && !is_adding_)
-    progress_time_change_ui_->updateEngineerUiData(data, ros::Time::now());
+  if (stone_num_trigger_change_ui_ && !is_adding_)
+    stone_num_trigger_change_ui_->updateStringUiData(data->stone_num);
+  if (gripper_state_trigger_change_ui_ && !is_adding_)
+    gripper_state_trigger_change_ui_->updateStringUiData(data->gripper_state);
+  if (step_name_trigger_change_ui_ && !is_adding_)
+    step_name_trigger_change_ui_->updateStringUiData(data->current_step_name);
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {

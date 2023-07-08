@@ -349,4 +349,19 @@ void CameraTriggerChangeUi::update()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   display();
 }
+
+void StringTriggerChangeUi::updateStringUiData(const std::string& data)
+{
+  data_ = data;
+  update();
+}
+
+void StringTriggerChangeUi::update()
+{
+  graph_->setContent(data_);
+  graph_->setColor(rm_referee::GraphColor::GREEN);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  display();
+}
+
 }  // namespace rm_referee
