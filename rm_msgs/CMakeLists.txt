@@ -25,7 +25,7 @@ add_message_files(
         GpioData.msg
         TofRadarData.msg
         MultiDofCmd.msg
-        ExchangeMsg.msg
+        ExchangerMsg.msg
 )
 
 add_service_files(
