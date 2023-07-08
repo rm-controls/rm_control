@@ -76,6 +76,7 @@ add_message_files(
         PowerManagementProcessStackOverflowData.msg
         PowerManagementSystemExceptionData.msg
         PowerManagementUnknownExceptionData.msg
+        EngineerMotion.msg
 )
 
 add_action_files(

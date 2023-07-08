@@ -70,7 +70,7 @@ class ProgressTimeChangeUi : public TimeChangeUi
 public:
   explicit ProgressTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
     : TimeChangeUi(rpc_value, base, "progress", graph_queue){};
-  void updateEngineerUiData(const rm_msgs::EngineerUi::ConstPtr data, const ros::Time& last_get_data_time);
+  void updateEngineerMotionData(const rm_msgs::EngineerMotion::ConstPtr data, const ros::Time& last_get_data_time);
 
 private:
   void updateConfig() override;
