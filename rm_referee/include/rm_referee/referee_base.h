@@ -85,7 +85,6 @@ public:
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};
-  ProgressTimeChangeUi* progress_time_change_ui_{};
   DartStatusTimeChangeUi* dart_status_time_change_ui_{};
   RotationTimeChangeUi* rotation_time_change_ui_{};
   LaneLineTimeChangeGroupUi* lane_line_time_change_ui_{};

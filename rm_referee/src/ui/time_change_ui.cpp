@@ -4,6 +4,7 @@
 
 #include "rm_referee/ui/time_change_ui.h"
 
+class ConstPtr;
 namespace rm_referee
 {
 void TimeChangeUi::update()
@@ -112,24 +113,6 @@ void EffortTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::Con
       TimeChangeUi::update();
     }
   }
-}
-
-void ProgressTimeChangeUi::updateConfig()
-{
-  char data_str[30] = { ' ' };
-  if (total_steps_ != 0)
-    sprintf(data_str, " %.1f%%", finished_data_ / total_steps_ * 100.);
-  else
-    sprintf(data_str, " %.1f%%", finished_data_ / total_steps_ * 100.);
-  graph_->setContent(data_str);
-}
-
-void ProgressTimeChangeUi::updateEngineerMotionData(const rm_msgs::EngineerMotion::ConstPtr data,
-                                                    const ros::Time& last_get_data_time)
-{
-  total_steps_ = data->total_steps;
-  finished_data_ = data->finished_step;
-  TimeChangeUi::update();
 }
 
 void DartStatusTimeChangeUi::updateConfig()

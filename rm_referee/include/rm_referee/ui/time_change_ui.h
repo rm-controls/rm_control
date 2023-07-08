@@ -65,19 +65,6 @@ private:
   std::string joint_name_;
 };
 
-class ProgressTimeChangeUi : public TimeChangeUi
-{
-public:
-  explicit ProgressTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
-    : TimeChangeUi(rpc_value, base, "progress", graph_queue){};
-  void updateEngineerMotionData(const rm_msgs::EngineerMotion::ConstPtr data, const ros::Time& last_get_data_time);
-
-private:
-  void updateConfig() override;
-  uint32_t finished_data_, total_steps_;
-  std::string step_name_;
-};
-
 class DartStatusTimeChangeUi : public TimeChangeUi
 {
 public:
