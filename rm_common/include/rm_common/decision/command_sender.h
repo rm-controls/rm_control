@@ -699,8 +699,7 @@ public:
     barrel_nh.getParam("is_double_barrel", is_double_barrel_);
     barrel_nh.getParam("id1_point", id1_point_);
     barrel_nh.getParam("id2_point", id2_point_);
-    barrel_nh.getParam("restart_push_threshold", restart_push_threshold_);
-    barrel_nh.getParam("cooling_threshold", cooling_threshold_);
+    barrel_nh.getParam("check_launch_threshold", check_launch_threshold_);
 
     joint_state_sub_ = nh.subscribe<sensor_msgs::JointState>("/joint_states", 10,
                                                              &DoubleBarrelCommandSender::jointStateCallback, this);
@@ -754,16 +753,8 @@ public:
   void sendCommand(const ros::Time& time)
   {
     if (checkSwitch())
-    {
       need_switch_ = true;
-      if (getBarrel()->getMsg()->mode == rm_msgs::ShootCmd::PUSH)
-        setMode(rm_msgs::ShootCmd::READY);
-    }
-
-    if (need_switch_)
-      switchBarrel();
-    else
-      checklaunch();
+    checklaunch();
 
     getBarrel()->sendCommand(time);
   }
@@ -810,15 +801,26 @@ private:
                                                              barrel_command_sender_->setPoint(id2_point_);
       barrel_command_sender_->sendCommand(time);
       need_switch_ = false;
+      need_launch_ = true;
     }
   }
 
   void checklaunch()
   {
-    if (std::abs(joint_state_.position[barrel_command_sender_->getIndex()] - barrel_command_sender_->getMsg()->data) <
-        restart_push_threshold_)
+    if (getBarrel()->getMsg()->mode == rm_msgs::ShootCmd::PUSH)
     {
-      setMode(rm_msgs::ShootCmd::PUSH);
+      if (need_switch_ || need_launch_)
+      {
+        setMode(rm_msgs::ShootCmd::READY);
+        if (need_switch_)
+          switchBarrel();
+        if (need_launch_ && (std::abs(joint_state_.position[barrel_command_sender_->getIndex()] -
+                                      barrel_command_sender_->getMsg()->data) < check_launch_threshold_))
+        {
+          setMode(rm_msgs::ShootCmd::PUSH);
+          need_launch_ = false;
+        }
+      }
     }
   }
 
@@ -826,10 +828,24 @@ private:
   {
     if (!is_double_barrel_)
       return false;
+    if (shooter_ID1_cmd_sender_->heat_limit_->getCoolingLimit() == 0 ||
+        shooter_ID2_cmd_sender_->heat_limit_->getCoolingLimit() == 0)
+    {
+      ROS_WARN_ONCE("Can not get cooling limit");
+      return false;
+    }
 
-    if (shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() == 0.0 ||
-        shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() == 0.0)
-      return true;
+    if ((shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() == 0.0 ||
+         shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() == 0.0) &&
+        getBarrel()->getMsg()->mode == rm_msgs::ShootCmd::PUSH)
+    {
+      if (getBarrel() == shooter_ID1_cmd_sender_)
+        return getBarrel()->heat_limit_->getShootFrequency() == 0.0 &&
+               shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() > 10;
+      else
+        return getBarrel()->heat_limit_->getShootFrequency() == 0.0 &&
+               shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() > 10;
+    }
     else
       return false;
   }
@@ -847,12 +863,11 @@ private:
   ros::Subscriber trigger_state_sub_;
   ros::Subscriber joint_state_sub_;
   sensor_msgs::JointState joint_state_;
-  bool is_double_barrel_{ false }, need_switch_{ false };
+  bool is_double_barrel_{ false }, need_switch_{ false }, need_launch_{ false };
   double trigger_error_;
   bool is_id1_{ false };
   double id1_point_, id2_point_;
-  double restart_push_threshold_;
-  std::vector<int> cooling_threshold_;
+  double check_launch_threshold_;
 };
 
 }  // namespace rm_common
