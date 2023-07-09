@@ -758,11 +758,13 @@ public:
 
     getBarrel()->sendCommand(time);
   }
-  void initBarrelId()
+  void init()
   {
     ros::Time time = ros::Time::now();
     barrel_command_sender_->setPoint(id1_point_);
     barrel_command_sender_->sendCommand(time);
+    shooter_ID1_cmd_sender_->sendCommand(time);
+    shooter_ID2_cmd_sender_->sendCommand(time);
   }
   void setArmorType(uint8_t armor_type)
   {
@@ -841,10 +843,10 @@ private:
     {
       if (getBarrel() == shooter_ID1_cmd_sender_)
         return getBarrel()->heat_limit_->getShootFrequency() == 0.0 &&
-               shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() > 10;
+               shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() > 8;
       else
         return getBarrel()->heat_limit_->getShootFrequency() == 0.0 &&
-               shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() > 10;
+               shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() > 8;
     }
     else
       return false;
