@@ -241,4 +241,29 @@ private:
   void updateConfig() override;
   double pitch_angle_ = 0.;
 };
+
+class JointPositionTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit JointPositionTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue,
+                                     std::string name)
+    : TimeChangeUi(rpc_value, base, name, graph_queue)
+  {
+    if (rpc_value.hasMember("data"))
+    {
+      XmlRpc::XmlRpcValue data = rpc_value["data"];
+      min_val_ = static_cast<double>(data["min_val"]);
+      max_val_ = static_cast<double>(data["max_val"]);
+      direction_ = static_cast<std::string>(data["direction"]);
+      length_ = static_cast<double>(data["line_length"]);
+    }
+    name_ = name;
+  };
+  void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
+
+private:
+  void updateConfig() override;
+  std::string name_, direction_;
+  double max_val_, min_val_, current_val_, length_;
+};
 }  // namespace rm_referee
