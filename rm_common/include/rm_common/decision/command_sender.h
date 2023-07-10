@@ -762,6 +762,8 @@ public:
   {
     ros::Time time = ros::Time::now();
     barrel_command_sender_->setPoint(id1_point_);
+    shooter_ID1_cmd_sender_->setMode(rm_msgs::ShootCmd::STOP);
+    shooter_ID2_cmd_sender_->setMode(rm_msgs::ShootCmd::STOP);
     barrel_command_sender_->sendCommand(time);
     shooter_ID1_cmd_sender_->sendCommand(time);
     shooter_ID2_cmd_sender_->sendCommand(time);
