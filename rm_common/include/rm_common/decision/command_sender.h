@@ -699,7 +699,9 @@ public:
     barrel_nh.getParam("is_double_barrel", is_double_barrel_);
     barrel_nh.getParam("id1_point", id1_point_);
     barrel_nh.getParam("id2_point", id2_point_);
+    barrel_nh.getParam("frequency_threshold", frequency_threshold_);
     barrel_nh.getParam("check_launch_threshold", check_launch_threshold_);
+    barrel_nh.getParam("check_switch_threshold", check_switch_threshold_);
 
     joint_state_sub_ = nh.subscribe<sensor_msgs::JointState>("/joint_states", 10,
                                                              &DoubleBarrelCommandSender::jointStateCallback, this);
@@ -798,7 +800,7 @@ private:
   void switchBarrel()
   {
     ros::Time time = ros::Time::now();
-    bool time_to_switch = (std::fmod(std::abs(trigger_error_), 2. * M_PI) < 0.01);
+    bool time_to_switch = (std::fmod(std::abs(trigger_error_), 2. * M_PI) < check_switch_threshold_);
     if (time_to_switch)
     {
       barrel_command_sender_->getMsg()->data == id2_point_ ? barrel_command_sender_->setPoint(id1_point_) :
@@ -845,10 +847,10 @@ private:
     {
       if (getBarrel() == shooter_ID1_cmd_sender_)
         return getBarrel()->heat_limit_->getShootFrequency() == 0.0 &&
-               shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() > 8;
+               shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() > frequency_threshold_;
       else
         return getBarrel()->heat_limit_->getShootFrequency() == 0.0 &&
-               shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() > 8;
+               shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() > frequency_threshold_;
     }
     else
       return false;
@@ -871,7 +873,8 @@ private:
   double trigger_error_;
   bool is_id1_{ false };
   double id1_point_, id2_point_;
-  double check_launch_threshold_;
+  double frequency_threshold_;
+  double check_launch_threshold_, check_switch_threshold_;
 };
 
 }  // namespace rm_common
