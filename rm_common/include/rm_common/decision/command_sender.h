@@ -810,24 +810,18 @@ private:
                                                              barrel_command_sender_->setPoint(id2_point_);
       barrel_command_sender_->sendCommand(time);
       need_switch_ = false;
-      need_launch_ = true;
+      is_switching_ = true;
     }
   }
 
   void checklaunch()
   {
-    if (getBarrel()->getMsg()->mode == rm_msgs::ShootCmd::PUSH)
+    if (is_switching_)
     {
-      if (!need_switch_ && need_launch_)
-      {
-        setMode(rm_msgs::ShootCmd::READY);
-        if (std::abs(joint_state_.position[barrel_command_sender_->getIndex()] -
-                     barrel_command_sender_->getMsg()->data) < check_launch_threshold_)
-        {
-          setMode(rm_msgs::ShootCmd::PUSH);
-          need_launch_ = false;
-        }
-      }
+      setMode(rm_msgs::ShootCmd::READY);
+      if (std::abs(joint_state_.position[barrel_command_sender_->getIndex()] - barrel_command_sender_->getMsg()->data) <
+          check_launch_threshold_)
+        is_switching_ = false;
     }
   }
 
@@ -842,9 +836,8 @@ private:
       return false;
     }
 
-    if ((shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() == 0.0 ||
-         shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() == 0.0) &&
-        getBarrel()->getMsg()->mode == rm_msgs::ShootCmd::PUSH)
+    if (shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() == 0.0 ||
+        shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() == 0.0)
     {
       if (getBarrel() == shooter_ID1_cmd_sender_)
         return getBarrel()->heat_limit_->getShootFrequency() == 0.0 &&
@@ -870,7 +863,7 @@ private:
   ros::Subscriber trigger_state_sub_;
   ros::Subscriber joint_state_sub_;
   sensor_msgs::JointState joint_state_;
-  bool is_double_barrel_{ false }, need_switch_{ false }, need_launch_{ false };
+  bool is_double_barrel_{ false }, need_switch_{ false }, is_switching_{ false };
   double trigger_error_;
   bool is_id1_{ false };
   double id1_point_, id2_point_;
