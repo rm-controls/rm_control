@@ -1,12 +1,12 @@
-# Rm_dbus
+# rm_dbus
 
 ## Overview
 
 The rm_dbus package can read and unpack data transmitted through
-the serial port after pressing a button.Then assign true or false
-to the key variable.
+a serial port.It will always read the serial port and unpack the data as soon as it is received. 
+Then assign true or false to the key variable.
 
-**Keywords:** read, unpack, key variable
+**Keywords:** read, unpack, serial port, key variable
 
 ### License
 
@@ -22,7 +22,7 @@ The rm_dbus package has been tested under [ROS](http://www.ros.org) Melodic and 
 
 ### Installation from Packages
 
-To install all packages from the this repository as Debian packages use
+To install all packages from this repository as Debian packages use
 
     sudo apt-get install ros-noetic-rm-dbus
 
@@ -55,7 +55,7 @@ Describe the quickest way to run this software, for example:
 
 Run the main node with
 
-	roslaunch rm_dbus rm_dbus
+	rosrun rm_dbus rm_dbus
 
 ## Config files
 
@@ -67,7 +67,7 @@ dbus.yaml
 
 ### rm_dbus
 
-Keep running the run function, that is, keep running read(), unpack(), and getdata().
+Keep running the run function, that is, keep running read(), unpack(), and getData().
 
 #### Published Topics
 
