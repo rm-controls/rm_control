@@ -756,6 +756,8 @@ public:
   {
     if (checkSwitch())
       need_switch_ = true;
+    if (need_switch_)
+      switchBarrel();
     checklaunch();
 
     getBarrel()->sendCommand(time);
@@ -801,6 +803,7 @@ private:
   {
     ros::Time time = ros::Time::now();
     bool time_to_switch = (std::fmod(std::abs(trigger_error_), 2. * M_PI) < check_switch_threshold_);
+    setMode(rm_msgs::ShootCmd::READY);
     if (time_to_switch)
     {
       barrel_command_sender_->getMsg()->data == id2_point_ ? barrel_command_sender_->setPoint(id1_point_) :
@@ -815,13 +818,11 @@ private:
   {
     if (getBarrel()->getMsg()->mode == rm_msgs::ShootCmd::PUSH)
     {
-      if (need_switch_ || need_launch_)
+      if (!need_switch_ && need_launch_)
       {
         setMode(rm_msgs::ShootCmd::READY);
-        if (need_switch_)
-          switchBarrel();
-        if (need_launch_ && (std::abs(joint_state_.position[barrel_command_sender_->getIndex()] -
-                                      barrel_command_sender_->getMsg()->data) < check_launch_threshold_))
+        if (std::abs(joint_state_.position[barrel_command_sender_->getIndex()] -
+                     barrel_command_sender_->getMsg()->data) < check_launch_threshold_)
         {
           setMode(rm_msgs::ShootCmd::PUSH);
           need_launch_ = false;
