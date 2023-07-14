@@ -2,137 +2,67 @@
 
 ## Overview
 
-This is a template: replace, remove, and add where required. Describe here what this package does and what it's meant
-for in a few sentences.
+This package is to rewrite the Gazebo_ ros _control::RobotHWSim, adding the imu sensors.
+The world file include the world of gazebo simulate.
 
-**Keywords:** example, package, template
+**Keywords:** ros, gazebo, imu
 
-Or, add some keywords to the Bitbucket or GitHub repository.
 
 ### License
 
-The source code is released under a [BSD 3-Clause license](LICENSE).
+The source code is released under a [BSD 3-Clause license](https://github.com/rm-controls/rm_controllers/blob/master/LICENSE).
 
-**Author: Péter Fankhauser<br />
-Affiliation: [ANYbotics](https://www.anybotics.com/)<br />
-Maintainer: Péter Fankhauser, pfankhauser@anybotics.com**
+**Author: DynamicX<br />
+Affiliation: DynamicX<br />
+Maintainer: DynamicX**
 
-The PACKAGE NAME package has been tested under [ROS] Indigo, Melodic and Noetic on respectively Ubuntu 14.04, 18.04 and
-20.04. This is research code, expect that it changes often and any fitness for a particular purpose is disclaimed.
+The rm_gazebo package has been tested under [ROS](http://www.ros.org) Melodic and Noetic on respectively 18.04 and 20.04. This is research code, expect that it changes often and any fitness for a particular purpose is disclaimed.
+
 
 [![Build Status](http://rsl-ci.ethz.ch/buildStatus/icon?job=ros_best_practices)](http://rsl-ci.ethz.ch/job/ros_best_practices/)
 
 ![Example image](doc/example.jpg)
 
+
+### Hardware interface type
+
++ `ImuSensorHandle` 
++ `RmImuSensorHandle` 
++ `RobotStateInterface`
+
 ## Installation
 
 ### Installation from Packages
 
-To install all packages from the this repository as Debian packages use
+To install all packages from this repository as Debian packages use
 
-    sudo apt-get install ros-noetic-...
+```shell
+sudo apt-get install ros-noetic-rm-gazebo
+```
 
-Or better, use `rosdep`:
+or better use `rosdep`:
 
-	sudo rosdep install --from-paths src
+```shell
+sudo rosdep install --from-paths src
+```
 
-### Building from Source
 
-#### Dependencies
-
-- [Robot Operating System (ROS)](http://wiki.ros.org) (middleware for robotics),
-- [roboticsgroup_upatras_gazebo_plugins](https://github.com/roboticsgroup/roboticsgroup_upatras_gazebo_plugins)
-
-  sudo rosdep install --from-paths src
-
-#### Building
-
-To build from source, clone the latest version from this repository into your catkin workspace and compile the package
-using
-
-	cd catkin_workspace/src
-	git clone https://github.com/ethz-asl/ros_best_practices.git
-	cd ../
-	rosdep install --from-paths . --ignore-src
-	catkin_make
-
-### Unit Tests
-
-Run the unit tests with
-
-	catkin_make run_tests_ros_package_template
-
-### Static code analysis
-
-Run the static code analysis with
-
-	catkin_make roslint_ros_package_template
-
-## Usage
-
-Describe the quickest way to run this software, for example:
-
-Run the main node with
-
-	roslaunch ros_package_template ros_package_template.launch
 
 ## Config files
 
-Config file folder/set 1
+* **imus.yaml** the orientation covariance diagonal, angular velocity covariance and linear acceleration covariance config of imu.
 
-* **config_file_1.yaml** Shortly explain the content of this config file
+* **mimic_joint.yaml** the pid gains are used by the gazebo mimic joint plugin.
 
-Config file folder/set 2
+* ****
 
-* **...**
+## ROS API
 
-## Launch files
-
-* **launch_file_1.launch:** shortly explain what is launched (e.g standard simulation, simulation with gdb,...)
-
-  Argument set 1
-
-    - **`argument_1`** Short description (e.g. as commented in launch file). Default: `default_value`.
-
-  Argument set 2
-
-    - **`...`**
-
-* **...**
-
-## Nodes
-
-### ros_package_template
-
-Reads temperature measurements and computed the average.
-
-#### Subscribed Topics
-
-* **`/temperature`** ([sensor_msgs/Temperature])
-
-  The temperature measurements from which the average is computed.
-
-#### Published Topics
-
-...
 
 #### Services
 
-* **`get_average`** ([std_srvs/Trigger])
+* **`switch_imu_status`** 
 
-  Returns information about the current average. For example, you can trigger the computation from the console with
-
-  	rosservice call /ros_package_template/get_average
-
-#### Parameters
-
-* **`subscriber_topic`** (string, default: "/temperature")
-
-  The name of the input topic.
-
-* **`cache_size`** (int, default: 200, min: 0, max: 1000)
-
-  The size of the cache.
 
 ## Bugs & Feature Requests
 
@@ -140,4 +70,3 @@ Please report bugs and request features using the [Issue Tracker](https://github
 .
 
 
-[ROS]: http://www.ros.org
