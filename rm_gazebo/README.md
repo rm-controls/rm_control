@@ -87,7 +87,7 @@ sudo rosdep install --from-paths src
 
 * **imus** (`xml_rpc_value`)
 
-#### default orientation
+#### default covariance param
 * **orientation_covariance_diagonal**
 
 $$
