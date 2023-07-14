@@ -1,10 +1,12 @@
-# rm-gazebo
+# rm_gazebo
+
+
 ## Overview
 
-This package is to rewrite the Gazebo_ ros _control::RobotHWSim, adding the imu sensors.
-The world file include the world of gazebo simulate.
+This package is to modify the class of `Gazebo_ros_control::RobotHWSim`, adding the imu sensors hardware interface for gazebo robot hardware simulation.
+The world folder contains the gazebo simulate world.
 
-**Keywords:** ros, gazebo, imu
+**Keywords:** ros, gazebo, imu, hardware interface
 
 
 ### License
@@ -20,7 +22,6 @@ The rm_gazebo package has been tested under [ROS](http://www.ros.org) Melodic an
 
 [![Build Status](http://rsl-ci.ethz.ch/buildStatus/icon?job=ros_best_practices)](http://rsl-ci.ethz.ch/job/ros_best_practices/)
 
-![Example image](doc/example.jpg)
 
 
 ### Hardware interface type
@@ -30,6 +31,16 @@ The rm_gazebo package has been tested under [ROS](http://www.ros.org) Melodic an
 + `RobotStateInterface`
 
 ## Installation
+
+### Dependencies
+
+- roscpp
+- rm_common
+- gazebo
+- gazebo_ros
+- gazebo_ros_control
+- rm_description<
+- roboticsgroup_upatras_gazebo_plugins
 
 ### Installation from Packages
 
@@ -45,7 +56,7 @@ or better use `rosdep`:
 sudo rosdep install --from-paths src
 ```
 
-## Config files
+### Config files
 
 * **imus.yaml** the orientation covariance diagonal, angular velocity covariance and linear acceleration covariance config of imu.
 
@@ -53,15 +64,69 @@ sudo rosdep install --from-paths src
 
 * ****
 
-## ROS API
+### Launch files
+
+* **big_resource.launch:** launch the simulate with the world of big resource.
+
+* **empty_world.launch:**launch the simulate with the world of empty world.
+
+* **exchange_station.launch:**launch the simulate with the world of exchange station.
+
+* **rmuc.launch.launch:**launch the simulate with the world for rmuc.
+
+* **sentry_world.launch:**launch the simulate with the world for sentry.
+
+* **small_resource.launch:**launch the simulate with the world of small_resource.
+
+* **stone.launch:**launch the simulate with the world of a stone.
+
+* **small_resource.launch:**launch the simulate with the world of warthog race .
 
 
-#### Services
+### Services
 
-* **`switch_imu_status`** 
+* **`switch_imu_status`**  control the imu status and send the imu status message
+
+### Parameters
+
+* **imus** (`xml_rpc_value`)
+
+#### default orientation
+* **orientation_covariance_diagonal**
+$$
+ \left[
+ \begin{matrix}
+   0.0012 & 0 & 0 \\
+   0 & 0.0012 & 0 \\
+   0 & 0 & 0.0012
+  \end{matrix}
+  \right] \tag{3}
+$$
 
 
-## Bugs & Feature Requests
+* **angular_velocity_covariance**
+$$
+ \left[
+ \begin{matrix}
+   0.0004 & 0 & 0 \\
+   0 & 0.0004 & 0 \\
+   0 & 0 & 0.0004
+  \end{matrix}
+  \right] \tag{3}
+$$
+
+* **linear_acceleration_covariance**
+$$
+ \left[
+ \begin{matrix}
+   0.01 & 0 & 0 \\
+   0 & 0.01 & 0 \\
+   0 & 0 & 0.01
+  \end{matrix}
+  \right] \tag{3}
+$$
+
+### Bugs & Feature Requests
 
 Please report bugs and request features using the [Issue Tracker](https://github.com/gdut-dynamic-x/rm_template/issues)
 .
