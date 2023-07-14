@@ -280,4 +280,44 @@ void PitchAngleTimeChangeUi::updateConfig()
   graph_->setContent(pitch);
   graph_->setColor(rm_referee::GraphColor::YELLOW);
 }
+
+void JointPositionTimeChangeUi::updateConfig()
+{
+  double proportion = (current_val_ - min_val_) / (max_val_ - min_val_);
+  graph_->setStartX(graph_->getConfig().start_x);
+  graph_->setStartY(graph_->getConfig().start_y);
+  if (direction_ == "horizontal")
+  {
+    graph_->setEndY(graph_->getConfig().start_y);
+    graph_->setEndX(graph_->getConfig().start_x + length_ * proportion);
+  }
+  else if (direction_ == "vertical")
+  {
+    graph_->setEndY(graph_->getConfig().start_y + length_ * proportion);
+    graph_->setEndX(graph_->getConfig().end_x);
+  }
+  else
+  {
+    graph_->setEndY(graph_->getConfig().start_y + length_ * proportion);
+    graph_->setEndX(graph_->getConfig().start_x + length_ * proportion);
+  }
+  if (abs(proportion) > 0.96)
+    graph_->setColor(rm_referee::GraphColor::BLACK);
+  else if (abs(proportion) > 0.8)
+    graph_->setColor(rm_referee::GraphColor::PINK);
+  else if (abs(proportion) > 0.6)
+    graph_->setColor(rm_referee::GraphColor::PURPLE);
+  else if (abs(proportion) > 0.3)
+    graph_->setColor(rm_referee::GraphColor::ORANGE);
+  else
+    graph_->setColor(rm_referee::GraphColor::GREEN);
+}
+
+void JointPositionTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
+{
+  for (unsigned int i = 0; i < data->name.size(); i++)
+    if (data->name[i] == name_)
+      current_val_ = data->position[i];
+  updateForQueue();
+}
 }  // namespace rm_referee
