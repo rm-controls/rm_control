@@ -1,5 +1,4 @@
-# Package Name
-
+# rm-gazebo
 ## Overview
 
 This package is to rewrite the Gazebo_ ros _control::RobotHWSim, adding the imu sensors.
@@ -45,8 +44,6 @@ or better use `rosdep`:
 ```shell
 sudo rosdep install --from-paths src
 ```
-
-
 
 ## Config files
 
