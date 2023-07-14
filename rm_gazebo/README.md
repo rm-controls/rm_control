@@ -68,19 +68,19 @@ sudo rosdep install --from-paths src
 
 * **big_resource.launch:** launch the simulate with the world of big resource.
 
-* **empty_world.launch:**launch the simulate with the world of empty world.
+* **empty_world.launch:** launch the simulate with the world of empty world.
 
-* **exchange_station.launch:**launch the simulate with the world of exchange station.
+* **exchange_station.launch:** launch the simulate with the world of exchange station.
 
-* **rmuc.launch.launch:**launch the simulate with the world for rmuc.
+* **rmuc.launch.launch:** launch the simulate with the world for rmuc.
 
-* **sentry_world.launch:**launch the simulate with the world for sentry.
+* **sentry_world.launch:** launch the simulate with the world for sentry.
 
-* **small_resource.launch:**launch the simulate with the world of small_resource.
+* **small_resource.launch:** launch the simulate with the world of small_resource.
 
-* **stone.launch:**launch the simulate with the world of a stone.
+* **stone.launch:** launch the simulate with the world of a stone.
 
-* **small_resource.launch:**launch the simulate with the world of warthog race .
+* **small_resource.launch:** launch the simulate with the world of warthog race .
 
 
 ### Services
@@ -93,6 +93,7 @@ sudo rosdep install --from-paths src
 
 #### default orientation
 * **orientation_covariance_diagonal**
+
 $$
  \left[
  \begin{matrix}
@@ -105,6 +106,7 @@ $$
 
 
 * **angular_velocity_covariance**
+
 $$
  \left[
  \begin{matrix}
@@ -116,6 +118,7 @@ $$
 $$
 
 * **linear_acceleration_covariance**
+
 $$
  \left[
  \begin{matrix}
