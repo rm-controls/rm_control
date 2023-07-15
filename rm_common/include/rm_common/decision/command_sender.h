@@ -702,6 +702,8 @@ public:
     barrel_nh.getParam("frequency_threshold", frequency_threshold_);
     barrel_nh.getParam("check_launch_threshold", check_launch_threshold_);
     barrel_nh.getParam("check_switch_threshold", check_switch_threshold_);
+    barrel_nh.getParam("ready_duration", ready_duration_);
+    barrel_nh.getParam("is_switching_duration", is_switching_duration_);
 
     joint_state_sub_ = nh.subscribe<sensor_msgs::JointState>("/joint_states", 10,
                                                              &DoubleBarrelCommandSender::jointStateCallback, this);
@@ -759,7 +761,8 @@ public:
     if (need_switch_)
       switchBarrel();
     checklaunch();
-
+    if (getBarrel()->getMsg()->mode == rm_msgs::ShootCmd::PUSH)
+      last_push_time_ = time;
     getBarrel()->sendCommand(time);
   }
   void init()
@@ -804,11 +807,12 @@ private:
     ros::Time time = ros::Time::now();
     bool time_to_switch = (std::fmod(std::abs(trigger_error_), 2. * M_PI) < check_switch_threshold_);
     setMode(rm_msgs::ShootCmd::READY);
-    if (time_to_switch)
+    if (time_to_switch || (time - last_push_time_).toSec() > ready_duration_)
     {
       barrel_command_sender_->getMsg()->data == id2_point_ ? barrel_command_sender_->setPoint(id1_point_) :
                                                              barrel_command_sender_->setPoint(id2_point_);
       barrel_command_sender_->sendCommand(time);
+      last_switch_time_ = time;
       need_switch_ = false;
       is_switching_ = true;
     }
@@ -816,11 +820,13 @@ private:
 
   void checklaunch()
   {
+    ros::Time time = ros::Time::now();
     if (is_switching_)
     {
       setMode(rm_msgs::ShootCmd::READY);
-      if (std::abs(joint_state_.position[barrel_command_sender_->getIndex()] - barrel_command_sender_->getMsg()->data) <
-          check_launch_threshold_)
+      if ((time - last_switch_time_).toSec() > is_switching_duration_ ||
+          (std::abs(joint_state_.position[barrel_command_sender_->getIndex()] -
+                    barrel_command_sender_->getMsg()->data) < check_launch_threshold_))
         is_switching_ = false;
     }
   }
@@ -864,6 +870,8 @@ private:
   ros::Subscriber joint_state_sub_;
   sensor_msgs::JointState joint_state_;
   bool is_double_barrel_{ false }, need_switch_{ false }, is_switching_{ false };
+  ros::Time last_switch_time_, last_push_time_;
+  double ready_duration_, is_switching_duration_;
   double trigger_error_;
   bool is_id1_{ false };
   double id1_point_, id2_point_;
