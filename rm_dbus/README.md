@@ -47,7 +47,7 @@ using
 	git clone https://github.com/rm-controls/rm_control.git
 	cd ../
 	rosdep install --from-paths . --ignore-src
-	catkin_make
+	catkin build
 
 ## Usage
 
@@ -59,21 +59,21 @@ Run the main node with
 
 ## Config files
 
-dbus.yaml
+Config file config/dbus.yaml
 
-* **`serial_port`** Set up serial port.
+* **dbus.yaml** Set up serial port.
 
 ## Nodes
 
 ### rm_dbus
 
-Keep running the run function, that is, keep running read(), unpack(), and getData().
+Read serial port data in real time, unpack, and publish to `/dbus_data`.
 
 #### Published Topics
 
 * **`/dbus_data`** ([rm_msgs/DbusData])
 
-  The dbus data used to execute the corresponding action. The corresponding action write in rm_manual.
+  Publish dbus data on ROS. The dbus data used to execute the corresponding action.
 
 #### Parameters
 
