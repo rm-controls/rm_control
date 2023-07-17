@@ -3,8 +3,8 @@
 
 ## Overview
 
-This package is to modify the class of `Gazebo_ros_control::RobotHWSim`, adding the imu sensors hardware interface for gazebo robot hardware simulation.
-The world folder contains the gazebo simulate world.
+The code is to modify the class `Gazebo_ros_control::RobotHWSim`, adding the imu sensors hardware interface for gazebo robot hardware simulation.
+The "world" folder contains the gazebo simulate world.
 
 **Keywords:** ros, gazebo, imu, hardware interface
 
@@ -127,7 +127,7 @@ $$
 
 ### Bugs & Feature Requests
 
-Please report bugs and request features using the [Issue Tracker](https://github.com/gdut-dynamic-x/rm_template/issues)
+Please report bugs and request features using the [Issue Tracker](https://github.com/gdut-dynamic-x/rm_gazebo/issues)
 .
 
 
