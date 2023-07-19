@@ -699,11 +699,12 @@ public:
     barrel_nh.getParam("is_double_barrel", is_double_barrel_);
     barrel_nh.getParam("id1_point", id1_point_);
     barrel_nh.getParam("id2_point", id2_point_);
-    barrel_nh.getParam("frequency_threshold", frequency_threshold_);
+    barrel_nh.getParam("current_id_frequency_threshold", current_id_fre_threshold_);
+    barrel_nh.getParam("current_id_frequency_threshold", another_id_fre_threshold_);
     barrel_nh.getParam("check_launch_threshold", check_launch_threshold_);
     barrel_nh.getParam("check_switch_threshold", check_switch_threshold_);
     barrel_nh.getParam("ready_duration", ready_duration_);
-    barrel_nh.getParam("is_switching_duration", is_switching_duration_);
+    barrel_nh.getParam("switching_duration", switching_duration_);
 
     joint_state_sub_ = nh.subscribe<sensor_msgs::JointState>("/joint_states", 10,
                                                              &DoubleBarrelCommandSender::jointStateCallback, this);
@@ -824,7 +825,7 @@ private:
     if (is_switching_)
     {
       setMode(rm_msgs::ShootCmd::READY);
-      if ((time - last_switch_time_).toSec() > is_switching_duration_ ||
+      if ((time - last_switch_time_).toSec() > switching_duration_ ||
           (std::abs(joint_state_.position[barrel_command_sender_->getIndex()] -
                     barrel_command_sender_->getMsg()->data) < check_launch_threshold_))
         is_switching_ = false;
@@ -841,16 +842,15 @@ private:
       ROS_WARN_ONCE("Can not get cooling limit");
       return false;
     }
-
-    if (shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() == 0.0 ||
-        shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() == 0.0)
+    if (shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() < current_id_fre_threshold_ ||
+        shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() < current_id_fre_threshold_)
     {
       if (getBarrel() == shooter_ID1_cmd_sender_)
-        return getBarrel()->heat_limit_->getShootFrequency() == 0.0 &&
-               shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() > frequency_threshold_;
+        return getBarrel()->heat_limit_->getShootFrequency() < current_id_fre_threshold_ &&
+               shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() > another_id_fre_threshold_;
       else
-        return getBarrel()->heat_limit_->getShootFrequency() == 0.0 &&
-               shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() > frequency_threshold_;
+        return getBarrel()->heat_limit_->getShootFrequency() < current_id_fre_threshold_ &&
+               shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() > another_id_fre_threshold_;
     }
     else
       return false;
@@ -871,11 +871,11 @@ private:
   sensor_msgs::JointState joint_state_;
   bool is_double_barrel_{ false }, need_switch_{ false }, is_switching_{ false };
   ros::Time last_switch_time_, last_push_time_;
-  double ready_duration_, is_switching_duration_;
+  double ready_duration_, switching_duration_;
   double trigger_error_;
   bool is_id1_{ false };
   double id1_point_, id2_point_;
-  double frequency_threshold_;
+  double current_id_fre_threshold_, another_id_fre_threshold_;
   double check_launch_threshold_, check_switch_threshold_;
 };
 
