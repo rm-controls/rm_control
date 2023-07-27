@@ -10,6 +10,6 @@ uint8 SPEED_18M_PER_SECOND = 4
 uint8 SPEED_30M_PER_SECOND = 5
 
 uint8 mode
-uint8 speed
+float64 qd_des
 float64 hz
 time stamp

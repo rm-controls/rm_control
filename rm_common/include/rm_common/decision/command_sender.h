@@ -319,6 +319,11 @@ public:
     nh.param("speed_16m_per_speed", speed_16_, 16.);
     nh.param("speed_18m_per_speed", speed_18_, 18.);
     nh.param("speed_30m_per_speed", speed_30_, 30.);
+    nh.getParam("qd_10", qd_10_);
+    nh.getParam("qd_15", qd_15_);
+    nh.getParam("qd_16", qd_16_);
+    nh.getParam("qd_18", qd_18_);
+    nh.getParam("qd_30", qd_30_);
     if (!nh.getParam("gimbal_error_tolerance", gimbal_error_tolerance_))
       ROS_ERROR("gimbal error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
@@ -366,26 +371,51 @@ public:
   }
   void sendCommand(const ros::Time& time) override
   {
-    msg_.speed = heat_limit_->getSpeedLimit();
+    msg_.qd_des = getQdDes();
     msg_.hz = heat_limit_->getShootFrequency();
     TimeStampCommandSenderBase<rm_msgs::ShootCmd>::sendCommand(time);
   }
   double getSpeed()
   {
-    switch (msg_.speed)
+    setSpeedDesAndQdDes();
+    return speed_des_;
+  }
+  double getQdDes()
+  {
+    setSpeedDesAndQdDes();
+    return qd_des_;
+  }
+
+  void setSpeedDesAndQdDes()
+  {
+    switch (heat_limit_->getSpeedLimit())
     {
       case rm_msgs::ShootCmd::SPEED_10M_PER_SECOND:
-        return speed_10_;
+      {
+        speed_des_ = speed_10_;
+        qd_des_ = qd_10_;
+      }
       case rm_msgs::ShootCmd::SPEED_15M_PER_SECOND:
-        return speed_15_;
+      {
+        speed_des_ = speed_15_;
+        qd_des_ = qd_15_;
+      }
       case rm_msgs::ShootCmd::SPEED_16M_PER_SECOND:
-        return speed_16_;
+      {
+        speed_des_ = speed_16_;
+        qd_des_ = qd_16_;
+      }
       case rm_msgs::ShootCmd::SPEED_18M_PER_SECOND:
-        return speed_18_;
+      {
+        speed_des_ = speed_18_;
+        qd_des_ = qd_18_;
+      }
       case rm_msgs::ShootCmd::SPEED_30M_PER_SECOND:
-        return speed_30_;
+      {
+        speed_des_ = speed_30_;
+        qd_des_ = qd_30_;
+      }
     }
-    return 0.;
   }
   void setArmorType(uint8_t armor_type)
   {
@@ -403,7 +433,8 @@ public:
   HeatLimit* heat_limit_{};
 
 private:
-  double speed_10_, speed_15_, speed_16_, speed_18_, speed_30_;
+  double speed_10_, speed_15_, speed_16_, speed_18_, speed_30_, speed_des_;
+  double qd_10_, qd_15_, qd_16_, qd_18_, qd_30_, qd_des_;
   double gimbal_error_tolerance_{};
   double target_acceleration_tolerance_{};
   rm_msgs::TrackData track_data_;
