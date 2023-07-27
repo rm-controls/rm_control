@@ -699,8 +699,7 @@ public:
     barrel_nh.getParam("is_double_barrel", is_double_barrel_);
     barrel_nh.getParam("id1_point", id1_point_);
     barrel_nh.getParam("id2_point", id2_point_);
-    barrel_nh.getParam("current_id_frequency_threshold", current_id_fre_threshold_);
-    barrel_nh.getParam("current_id_frequency_threshold", another_id_fre_threshold_);
+    barrel_nh.getParam("frequency_threshold", frequency_threshold_);
     barrel_nh.getParam("check_launch_threshold", check_launch_threshold_);
     barrel_nh.getParam("check_switch_threshold", check_switch_threshold_);
     barrel_nh.getParam("ready_duration", ready_duration_);
@@ -842,15 +841,15 @@ private:
       ROS_WARN_ONCE("Can not get cooling limit");
       return false;
     }
-    if (shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() < current_id_fre_threshold_ ||
-        shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() < current_id_fre_threshold_)
+    if (shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() < frequency_threshold_ ||
+        shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() < frequency_threshold_)
     {
       if (getBarrel() == shooter_ID1_cmd_sender_)
-        return getBarrel()->heat_limit_->getShootFrequency() < current_id_fre_threshold_ &&
-               shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() > another_id_fre_threshold_;
+        return getBarrel()->heat_limit_->getShootFrequency() < frequency_threshold_ &&
+               shooter_ID2_cmd_sender_->heat_limit_->getShootFrequency() > frequency_threshold_;
       else
-        return getBarrel()->heat_limit_->getShootFrequency() < current_id_fre_threshold_ &&
-               shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() > another_id_fre_threshold_;
+        return getBarrel()->heat_limit_->getShootFrequency() < frequency_threshold_ &&
+               shooter_ID1_cmd_sender_->heat_limit_->getShootFrequency() > frequency_threshold_;
     }
     else
       return false;
@@ -875,7 +874,7 @@ private:
   double trigger_error_;
   bool is_id1_{ false };
   double id1_point_, id2_point_;
-  double current_id_fre_threshold_, another_id_fre_threshold_;
+  double frequency_threshold_;
   double check_launch_threshold_, check_switch_threshold_;
 };
 
