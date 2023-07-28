@@ -385,7 +385,6 @@ public:
     setSpeedDesAndQdDes();
     return qd_des_;
   }
-
   void setSpeedDesAndQdDes()
   {
     switch (heat_limit_->getSpeedLimit())
@@ -394,26 +393,31 @@ public:
       {
         speed_des_ = speed_10_;
         qd_des_ = qd_10_;
+        break;
       }
       case rm_msgs::ShootCmd::SPEED_15M_PER_SECOND:
       {
         speed_des_ = speed_15_;
         qd_des_ = qd_15_;
+        break;
       }
       case rm_msgs::ShootCmd::SPEED_16M_PER_SECOND:
       {
         speed_des_ = speed_16_;
         qd_des_ = qd_16_;
+        break;
       }
       case rm_msgs::ShootCmd::SPEED_18M_PER_SECOND:
       {
         speed_des_ = speed_18_;
         qd_des_ = qd_18_;
+        break;
       }
       case rm_msgs::ShootCmd::SPEED_30M_PER_SECOND:
       {
         speed_des_ = speed_30_;
         qd_des_ = qd_30_;
+        break;
       }
     }
   }
@@ -433,8 +437,8 @@ public:
   HeatLimit* heat_limit_{};
 
 private:
-  double speed_10_, speed_15_, speed_16_, speed_18_, speed_30_, speed_des_;
-  double qd_10_, qd_15_, qd_16_, qd_18_, qd_30_, qd_des_;
+  double speed_10_{}, speed_15_{}, speed_16_{}, speed_18_{}, speed_30_{}, speed_des_{};
+  double qd_10_{}, qd_15_{}, qd_16_{}, qd_18_{}, qd_30_{}, qd_des_{};
   double gimbal_error_tolerance_{};
   double target_acceleration_tolerance_{};
   rm_msgs::TrackData track_data_;
