@@ -324,6 +324,7 @@ public:
     nh.getParam("qd_16", qd_16_);
     nh.getParam("qd_18", qd_18_);
     nh.getParam("qd_30", qd_30_);
+    nh.param("extra_rotate_speed_once", extra_rotate_speed_once_, 0.);
     if (!nh.getParam("gimbal_error_tolerance", gimbal_error_tolerance_))
       ROS_ERROR("gimbal error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
@@ -383,7 +384,7 @@ public:
   double getQdDes()
   {
     setSpeedDesAndQdDes();
-    return qd_des_;
+    return qd_des_ + total_extra_rotate_speed_;
   }
   void setSpeedDesAndQdDes()
   {
@@ -421,6 +422,14 @@ public:
       }
     }
   }
+  void dropSpeed()
+  {
+    total_extra_rotate_speed_ -= extra_rotate_speed_once_;
+  }
+  void raiseSpeed()
+  {
+    total_extra_rotate_speed_ += extra_rotate_speed_once_;
+  }
   void setArmorType(uint8_t armor_type)
   {
     armor_type_ = armor_type;
@@ -441,6 +450,8 @@ private:
   double qd_10_{}, qd_15_{}, qd_16_{}, qd_18_{}, qd_30_{}, qd_des_{};
   double gimbal_error_tolerance_{};
   double target_acceleration_tolerance_{};
+  double extra_rotate_speed_once_{};
+  double total_extra_rotate_speed_{};
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
   std_msgs::Bool suggest_fire_;
