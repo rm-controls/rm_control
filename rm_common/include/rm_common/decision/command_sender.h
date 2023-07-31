@@ -372,7 +372,7 @@ public:
   }
   void sendCommand(const ros::Time& time) override
   {
-    msg_.wheel_speed_des = getWheelSpeedDes();
+    msg_.wheel_speed = getWheelSpeedDes();
     msg_.hz = heat_limit_->getShootFrequency();
     TimeStampCommandSenderBase<rm_msgs::ShootCmd>::sendCommand(time);
   }
