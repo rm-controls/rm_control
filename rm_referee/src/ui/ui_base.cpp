@@ -13,6 +13,16 @@ void UiBase::add()
   displayTwice(false);
 }
 
+void UiBase::addForQueue(int add_times)
+{
+  for (int i = 0; i < add_times; i++)
+  {
+    graph_->setOperation(rm_referee::GraphOperation::ADD);
+    graph_queue_->push_back(*graph_);
+    last_send_ = ros::Time::now();
+  }
+}
+
 void UiBase::update()
 {
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
@@ -32,6 +42,19 @@ void GroupUiBase::add()
   for (auto character : character_vector_)
     character.second->setOperation(rm_referee::GraphOperation::ADD);
   displayTwice(false);
+}
+
+void GroupUiBase::addForQueue(int add_times)
+{
+  for (int i = 0; i < add_times; i++)
+  {
+    for (auto graph : graph_vector_)
+    {
+      graph.second->setOperation(rm_referee::GraphOperation::ADD);
+      graph_queue_->push_back(*graph.second);
+      last_send_ = ros::Time::now();
+    }
+  }
 }
 
 void GroupUiBase::update()
