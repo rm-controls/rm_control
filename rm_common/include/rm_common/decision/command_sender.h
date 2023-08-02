@@ -320,6 +320,12 @@ public:
     nh.param("speed_16m_per_speed", speed_16_, 16.);
     nh.param("speed_18m_per_speed", speed_18_, 18.);
     nh.param("speed_30m_per_speed", speed_30_, 30.);
+    nh.getParam("wheel_speed_10", wheel_speed_10_);
+    nh.getParam("wheel_speed_15", wheel_speed_15_);
+    nh.getParam("wheel_speed_16", wheel_speed_16_);
+    nh.getParam("wheel_speed_18", wheel_speed_18_);
+    nh.getParam("wheel_speed_30", wheel_speed_30_);
+    nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
     if (!nh.getParam("gimbal_error_tolerance", gimbal_error_tolerance_))
       ROS_ERROR("gimbal error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
@@ -367,26 +373,63 @@ public:
   }
   void sendCommand(const ros::Time& time) override
   {
-    msg_.speed = heat_limit_->getSpeedLimit();
+    msg_.wheel_speed = getWheelSpeedDes();
     msg_.hz = heat_limit_->getShootFrequency();
     TimeStampCommandSenderBase<rm_msgs::ShootCmd>::sendCommand(time);
   }
   double getSpeed()
   {
-    switch (msg_.speed)
+    setSpeedDesAndWheelSpeedDes();
+    return speed_des_;
+  }
+  double getWheelSpeedDes()
+  {
+    setSpeedDesAndWheelSpeedDes();
+    return wheel_speed_des_ + total_extra_wheel_speed_;
+  }
+  void setSpeedDesAndWheelSpeedDes()
+  {
+    switch (heat_limit_->getSpeedLimit())
     {
       case rm_msgs::ShootCmd::SPEED_10M_PER_SECOND:
-        return speed_10_;
+      {
+        speed_des_ = speed_10_;
+        wheel_speed_des_ = wheel_speed_10_;
+        break;
+      }
       case rm_msgs::ShootCmd::SPEED_15M_PER_SECOND:
-        return speed_15_;
+      {
+        speed_des_ = speed_15_;
+        wheel_speed_des_ = wheel_speed_15_;
+        break;
+      }
       case rm_msgs::ShootCmd::SPEED_16M_PER_SECOND:
-        return speed_16_;
+      {
+        speed_des_ = speed_16_;
+        wheel_speed_des_ = wheel_speed_16_;
+        break;
+      }
       case rm_msgs::ShootCmd::SPEED_18M_PER_SECOND:
-        return speed_18_;
+      {
+        speed_des_ = speed_18_;
+        wheel_speed_des_ = wheel_speed_18_;
+        break;
+      }
       case rm_msgs::ShootCmd::SPEED_30M_PER_SECOND:
-        return speed_30_;
+      {
+        speed_des_ = speed_30_;
+        wheel_speed_des_ = wheel_speed_30_;
+        break;
+      }
     }
-    return 0.;
+  }
+  void dropSpeed()
+  {
+    total_extra_wheel_speed_ -= extra_wheel_speed_once_;
+  }
+  void raiseSpeed()
+  {
+    total_extra_wheel_speed_ += extra_wheel_speed_once_;
   }
   void setArmorType(uint8_t armor_type)
   {
@@ -404,9 +447,13 @@ public:
   HeatLimit* heat_limit_{};
 
 private:
-  double speed_10_, speed_15_, speed_16_, speed_18_, speed_30_;
+  double speed_10_{}, speed_15_{}, speed_16_{}, speed_18_{}, speed_30_{}, speed_des_{};
+  double wheel_speed_10_{}, wheel_speed_15_{}, wheel_speed_16_{}, wheel_speed_18_{}, wheel_speed_30_{},
+      wheel_speed_des_{};
   double gimbal_error_tolerance_{};
   double target_acceleration_tolerance_{};
+  double extra_wheel_speed_once_{};
+  double total_extra_wheel_speed_{};
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
   std_msgs::Bool suggest_fire_;
