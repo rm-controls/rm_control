@@ -36,6 +36,7 @@ add_service_files(
         CameraStatus.srv
         EnableImuTrigger.srv
         EnableGyro.srv
+        ChangeVel.srv
 )
 
 add_message_files(
