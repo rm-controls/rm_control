@@ -114,7 +114,7 @@ bool RmRobotHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
   actuator_state_pub_.reset(
       new realtime_tools::RealtimePublisher<rm_msgs::ActuatorState>(root_nh, "/actuator_states", 100));
 
-  service_server_ = robot_hw_nh.advertiseService("enable_imu_trigger", &RmRobotHW::enableImuTrigger, this);
+  service_server_ = robot_hw_nh.advertiseService("imu_trigger", &RmRobotHW::enableImuTrigger, this);
   return true;
 }
 
