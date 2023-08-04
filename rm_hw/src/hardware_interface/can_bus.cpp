@@ -68,7 +68,10 @@ void CanBus::write()
     if (item.second.type.find("rm") != std::string::npos)
     {
       if (item.second.halted)
+      {
+        ROS_ERROR_STREAM(item.second.name << "LOSE CAN");
         continue;
+      }
       const ActCoeff& act_coeff = data_ptr_.type2act_coeffs_->find(item.second.type)->second;
       int id = item.first - 0x201;
       double cmd =
