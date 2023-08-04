@@ -210,8 +210,6 @@ void RefereeBase::sendGraphQueueCallback()
 
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
 {
-  if (fixed_ui_ && !is_adding_)
-    fixed_ui_->update();
 }
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {
