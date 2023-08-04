@@ -82,6 +82,7 @@ public:
   StringTriggerChangeUi* stone_num_trigger_change_ui_{};
   StringTriggerChangeUi* gripper_state_trigger_change_ui_{};
   StringTriggerChangeUi* step_name_trigger_change_ui_{};
+  StringTriggerChangeUi* drag_state_trigger_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};

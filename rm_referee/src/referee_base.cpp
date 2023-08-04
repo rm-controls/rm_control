@@ -64,6 +64,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         gripper_state_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "gripper");
       if (rpc_value[i]["name"] == "step")
         step_name_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "step");
+      if (rpc_value[i]["name"] == "drag")
+        drag_state_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "drag");
     }
 
     ui_nh.getParam("time_change", rpc_value);
@@ -120,6 +122,18 @@ void RefereeBase::addUi()
   }
 
   ROS_INFO_THROTTLE(0.8, "Adding ui... %.1f%%", (add_ui_times_ / static_cast<double>(add_ui_max_times_)) * 100);
+  if (engineer_joint1_time_change_ui)
+    engineer_joint1_time_change_ui->add();
+  if (engineer_joint2_time_change_ui)
+    engineer_joint2_time_change_ui->add();
+  if (engineer_joint3_time_change_ui)
+    engineer_joint3_time_change_ui->add();
+  if (stone_num_trigger_change_ui_)
+    stone_num_trigger_change_ui_->add();
+  if (gripper_state_trigger_change_ui_)
+    gripper_state_trigger_change_ui_->add();
+  if (drag_state_trigger_change_ui_)
+    drag_state_trigger_change_ui_->add();
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->add();
   if (gimbal_trigger_change_ui_)
@@ -148,18 +162,6 @@ void RefereeBase::addUi()
     balance_pitch_time_change_group_ui_->add();
   if (pitch_angle_time_change_ui_)
     pitch_angle_time_change_ui_->add();
-  if (engineer_joint1_time_change_ui)
-    engineer_joint1_time_change_ui->add();
-  if (engineer_joint2_time_change_ui)
-    engineer_joint2_time_change_ui->add();
-  if (engineer_joint3_time_change_ui)
-    engineer_joint3_time_change_ui->add();
-  if (stone_num_trigger_change_ui_)
-    stone_num_trigger_change_ui_->add();
-  if (gripper_state_trigger_change_ui_)
-    gripper_state_trigger_change_ui_->add();
-  if (step_name_trigger_change_ui_)
-    step_name_trigger_change_ui_->add();
   add_ui_times_++;
 }
 
@@ -236,6 +238,12 @@ void RefereeBase::eventDataCallBack(const rm_msgs::EventData& data, const ros::T
 }
 void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& data)
 {
+  if (engineer_joint1_time_change_ui && !is_adding_)
+    engineer_joint1_time_change_ui->updateJointStateData(data, ros::Time::now());
+  if (engineer_joint2_time_change_ui && !is_adding_)
+    engineer_joint2_time_change_ui->updateJointStateData(data, ros::Time::now());
+  if (engineer_joint3_time_change_ui && !is_adding_)
+    engineer_joint3_time_change_ui->updateJointStateData(data, ros::Time::now());
   if (effort_time_change_ui_ && !is_adding_)
     effort_time_change_ui_->updateJointStateData(data, ros::Time::now());
   if (rotation_time_change_ui_ && !is_adding_)
@@ -244,12 +252,6 @@ void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& da
     lane_line_time_change_ui_->updateJointStateData(data, ros::Time::now());
   if (pitch_angle_time_change_ui_ && !is_adding_)
     pitch_angle_time_change_ui_->updateJointStateData(data, ros::Time::now());
-  if (engineer_joint1_time_change_ui && !is_adding_)
-    engineer_joint1_time_change_ui->updateJointStateData(data, ros::Time::now());
-  if (engineer_joint2_time_change_ui && !is_adding_)
-    engineer_joint2_time_change_ui->updateJointStateData(data, ros::Time::now());
-  if (engineer_joint3_time_change_ui && !is_adding_)
-    engineer_joint3_time_change_ui->updateJointStateData(data, ros::Time::now());
 }
 void RefereeBase::actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data)
 {
@@ -302,8 +304,8 @@ void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& da
     stone_num_trigger_change_ui_->updateStringUiData(data->stone_num);
   if (gripper_state_trigger_change_ui_ && !is_adding_)
     gripper_state_trigger_change_ui_->updateStringUiData(data->gripper_state);
-  if (step_name_trigger_change_ui_ && !is_adding_)
-    step_name_trigger_change_ui_->updateStringUiData(data->current_step_name);
+  if (drag_state_trigger_change_ui_ && !is_adding_)
+    drag_state_trigger_change_ui_->updateStringUiData(data->drag_state);
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
