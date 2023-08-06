@@ -261,7 +261,7 @@ class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd
 public:
   explicit GimbalCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::GimbalCmd>(nh)
   {
-    if (!nh.getParam("max_yaw_vel", max_yaw_rate_))
+    if (!nh.getParam("max_yaw_vel", max_yaw_vel_))
       ROS_ERROR("Max yaw velocity no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("max_pitch_vel", max_pitch_vel_))
       ROS_ERROR("Max pitch velocity no defined (namespace: %s)", nh.getNamespace().c_str());
@@ -273,7 +273,11 @@ public:
   ~GimbalCommandSender() = default;
   void setRate(double scale_yaw, double scale_pitch)
   {
-    msg_.rate_yaw = scale_yaw * max_yaw_rate_;
+    if (std::abs(scale_yaw) > 1)
+      scale_yaw = scale_yaw > 0 ? 1 : -1;
+    if (std::abs(scale_pitch) > 1)
+      scale_pitch = scale_pitch > 0 ? 1 : -1;
+    msg_.rate_yaw = scale_yaw * max_yaw_vel_;
     msg_.rate_pitch = scale_pitch * max_pitch_vel_;
     if (eject_flag_)
     {
@@ -304,7 +308,7 @@ public:
   }
 
 private:
-  double max_yaw_rate_{}, max_pitch_vel_{}, track_timeout_{}, eject_sensitivity_ = 1.;
+  double max_yaw_vel_{}, max_pitch_vel_{}, track_timeout_{}, eject_sensitivity_ = 1.;
   bool eject_flag_{};
 };
 
