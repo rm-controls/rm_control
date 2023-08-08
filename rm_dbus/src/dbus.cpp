@@ -149,8 +149,18 @@ void DBus::unpack()
   if (d_bus_data_.ch3 <= 10 && d_bus_data_.ch3 >= -10)
     d_bus_data_.ch3 = 0;
 
-  d_bus_data_.s1 = ((buff_[5] >> 4) & 0x000C) >> 2;
-  d_bus_data_.s0 = (buff_[5] >> 4) & 0x0003;
+  if (d_bus_data_.s0 != ((buff_[5] >> 4) & 0x0003))
+    s0_count_++;
+  else
+    s0_count_ = 0;
+  if (d_bus_data_.s1 != ((buff_[5] >> 4) & 0x000C) >> 2)
+    s1_count_++;
+  else
+    s1_count_ = 0;
+  if (s0_count_ > 3)
+    d_bus_data_.s0 = (buff_[5] >> 4) & 0x0003;
+  if (s1_count_ > 3)
+    d_bus_data_.s1 = ((buff_[5] >> 4) & 0x000C) >> 2;
 
   if ((abs(d_bus_data_.ch0) > 660) || (abs(d_bus_data_.ch1) > 660) || (abs(d_bus_data_.ch2) > 660) ||
       (abs(d_bus_data_.ch3) > 660))
