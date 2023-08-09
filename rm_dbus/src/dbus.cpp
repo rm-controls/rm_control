@@ -149,18 +149,8 @@ void DBus::unpack()
   if (d_bus_data_.ch3 <= 10 && d_bus_data_.ch3 >= -10)
     d_bus_data_.ch3 = 0;
 
-  if (d_bus_data_.s0 != ((buff_[5] >> 4) & 0x0003))
-    s0_count_++;
-  else
-    s0_count_ = 0;
-  if (d_bus_data_.s1 != ((buff_[5] >> 4) & 0x000C) >> 2)
-    s1_count_++;
-  else
-    s1_count_ = 0;
-  if (s0_count_ > 3)
-    d_bus_data_.s0 = (buff_[5] >> 4) & 0x0003;
-  if (s1_count_ > 3)
-    d_bus_data_.s1 = ((buff_[5] >> 4) & 0x000C) >> 2;
+  d_bus_data_.s0 = ((buff_[5] >> 4) & 0x0003);
+  d_bus_data_.s1 = ((buff_[5] >> 4) & 0x000C) >> 2;
 
   if ((abs(d_bus_data_.ch0) > 660) || (abs(d_bus_data_.ch1) > 660) || (abs(d_bus_data_.ch2) > 660) ||
       (abs(d_bus_data_.ch3) > 660))
@@ -178,41 +168,43 @@ void DBus::unpack()
   is_success = true;
 }
 
-void DBus::getData(rm_msgs::DbusData* d_bus_data) const
+void DBus::getData(rm_msgs::DbusData& d_bus_data) const
 {
   if (is_success)
   {
-    d_bus_data->ch_r_x = static_cast<double>(d_bus_data_.ch0 / 660.0);
-    d_bus_data->ch_r_y = static_cast<double>(d_bus_data_.ch1 / 660.0);
-    d_bus_data->ch_l_x = static_cast<double>(d_bus_data_.ch2 / 660.0);
-    d_bus_data->ch_l_y = static_cast<double>(d_bus_data_.ch3 / 660.0);
-    d_bus_data->m_x = static_cast<double>(d_bus_data_.x / 1600.0);
-    d_bus_data->m_y = static_cast<double>(d_bus_data_.y / 1600.0);
-    d_bus_data->m_z = static_cast<double>(d_bus_data_.z / 1600.0);
-    d_bus_data->wheel = static_cast<double>(d_bus_data_.wheel / 660.0);
+    d_bus_data.ch_r_x = static_cast<double>(d_bus_data_.ch0 / 660.0);
+    d_bus_data.ch_r_y = static_cast<double>(d_bus_data_.ch1 / 660.0);
+    d_bus_data.ch_l_x = static_cast<double>(d_bus_data_.ch2 / 660.0);
+    d_bus_data.ch_l_y = static_cast<double>(d_bus_data_.ch3 / 660.0);
+    d_bus_data.m_x = static_cast<double>(d_bus_data_.x / 1600.0);
+    d_bus_data.m_y = static_cast<double>(d_bus_data_.y / 1600.0);
+    d_bus_data.m_z = static_cast<double>(d_bus_data_.z / 1600.0);
+    d_bus_data.wheel = static_cast<double>(d_bus_data_.wheel / 660.0);
 
-    d_bus_data->s_l = d_bus_data_.s1;
-    d_bus_data->s_r = d_bus_data_.s0;
-    d_bus_data->p_l = d_bus_data_.l;
-    d_bus_data->p_r = d_bus_data_.r;
+    if (d_bus_data_.s1 != 0)
+      d_bus_data.s_l = d_bus_data_.s1;
+    if (d_bus_data_.s0 != 0)
+      d_bus_data.s_r = d_bus_data_.s0;
+    d_bus_data.p_l = d_bus_data_.l;
+    d_bus_data.p_r = d_bus_data_.r;
 
-    d_bus_data->key_w = d_bus_data_.key & 0x01 ? true : false;
-    d_bus_data->key_s = d_bus_data_.key & 0x02 ? true : false;
-    d_bus_data->key_a = d_bus_data_.key & 0x04 ? true : false;
-    d_bus_data->key_d = d_bus_data_.key & 0x08 ? true : false;
-    d_bus_data->key_shift = d_bus_data_.key & 0x10 ? true : false;
-    d_bus_data->key_ctrl = d_bus_data_.key & 0x20 ? true : false;
-    d_bus_data->key_q = d_bus_data_.key & 0x40 ? true : false;
-    d_bus_data->key_e = d_bus_data_.key & 0x80 ? true : false;
-    d_bus_data->key_r = (d_bus_data_.key >> 8) & 0x01 ? true : false;
-    d_bus_data->key_f = (d_bus_data_.key >> 8) & 0x02 ? true : false;
-    d_bus_data->key_g = (d_bus_data_.key >> 8) & 0x04 ? true : false;
-    d_bus_data->key_z = (d_bus_data_.key >> 8) & 0x08 ? true : false;
-    d_bus_data->key_x = (d_bus_data_.key >> 8) & 0x10 ? true : false;
-    d_bus_data->key_c = (d_bus_data_.key >> 8) & 0x20 ? true : false;
-    d_bus_data->key_v = (d_bus_data_.key >> 8) & 0x40 ? true : false;
-    d_bus_data->key_b = (d_bus_data_.key >> 8) & 0x80 ? true : false;
+    d_bus_data.key_w = d_bus_data_.key & 0x01 ? true : false;
+    d_bus_data.key_s = d_bus_data_.key & 0x02 ? true : false;
+    d_bus_data.key_a = d_bus_data_.key & 0x04 ? true : false;
+    d_bus_data.key_d = d_bus_data_.key & 0x08 ? true : false;
+    d_bus_data.key_shift = d_bus_data_.key & 0x10 ? true : false;
+    d_bus_data.key_ctrl = d_bus_data_.key & 0x20 ? true : false;
+    d_bus_data.key_q = d_bus_data_.key & 0x40 ? true : false;
+    d_bus_data.key_e = d_bus_data_.key & 0x80 ? true : false;
+    d_bus_data.key_r = (d_bus_data_.key >> 8) & 0x01 ? true : false;
+    d_bus_data.key_f = (d_bus_data_.key >> 8) & 0x02 ? true : false;
+    d_bus_data.key_g = (d_bus_data_.key >> 8) & 0x04 ? true : false;
+    d_bus_data.key_z = (d_bus_data_.key >> 8) & 0x08 ? true : false;
+    d_bus_data.key_x = (d_bus_data_.key >> 8) & 0x10 ? true : false;
+    d_bus_data.key_c = (d_bus_data_.key >> 8) & 0x20 ? true : false;
+    d_bus_data.key_v = (d_bus_data_.key >> 8) & 0x40 ? true : false;
+    d_bus_data.key_b = (d_bus_data_.key >> 8) & 0x80 ? true : false;
     if (is_update_)
-      d_bus_data->stamp = ros::Time::now();
+      d_bus_data.stamp = ros::Time::now();
   }
 }
