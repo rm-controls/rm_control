@@ -67,12 +67,11 @@ public:
   DBus() = default;
   ~DBus() = default;
   void init(const char* serial);
-  void getData(rm_msgs::DbusData* d_bus_data) const;
+  void getData(rm_msgs::DbusData& d_bus_data) const;
   void read();
 
 private:
   DBusData_t d_bus_data_{};
-  int s0_count_ = 0, s1_count_ = 0;
   int port_{};
   int16_t buff_[18]{};
   bool is_success{};
