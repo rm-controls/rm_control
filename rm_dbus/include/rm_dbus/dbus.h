@@ -72,7 +72,6 @@ public:
 
 private:
   DBusData_t d_bus_data_{};
-  int last_s0_ = 0, last_s1_ = 0;
   int port_{};
   int16_t buff_[18]{};
   bool is_success{};
