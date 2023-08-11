@@ -121,6 +121,10 @@ std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
     return "follow";
   else if (mode == rm_msgs::ChassisCmd::TWIST)
     return "twist";
+  else if (mode == rm_msgs::ChassisCmd::UP_SLOPE)
+    return "up_slope";
+  else if (mode == rm_msgs::ChassisCmd::FALLEN)
+    return "fallen";
   else
     return "error";
 }

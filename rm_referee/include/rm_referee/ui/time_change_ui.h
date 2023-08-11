@@ -126,12 +126,12 @@ public:
     else
       ROS_WARN("LaneLineTimeChangeGroupUi config 's member 'data' not defined.");
 
-    if (rpc_value.hasMember("reference_joint"))
+    if (rpc_value.hasMember("reference_frame"))
     {
-      reference_joint_ = static_cast<std::string>(rpc_value["reference_joint"]);
+      reference_frame_ = static_cast<std::string>(rpc_value["reference_frame"]);
     }
     else
-      ROS_WARN("LaneLineTimeChangeGroupUi config 's member 'reference_joint' not defined.");
+      ROS_WARN("LaneLineTimeChangeGroupUi config 's member 'reference_frame' not defined.");
 
     graph_vector_.insert(
         std::pair<std::string, Graph*>(graph_name_ + "_left", new Graph(rpc_value["config"], base_, id_++)));
@@ -144,7 +144,7 @@ public:
   void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
 
 protected:
-  std::string reference_joint_;
+  std::string reference_frame_;
   double robot_radius_, robot_height_, camera_range_, surface_coefficient_ = 0.5;
   double pitch_angle_ = 0., screen_x_ = 1920, screen_y_ = 1080;
   double end_point_a_angle_, end_point_b_angle_;

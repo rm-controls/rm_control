@@ -60,6 +60,6 @@ DBusNode::DBusNode()
 void DBusNode::run()
 {
   dbus_.read();
-  dbus_.getData(&dbus_cmd_);
+  dbus_.getData(dbus_cmd_);
   dbus_pub_.publish(dbus_cmd_);
 }

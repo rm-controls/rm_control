@@ -202,9 +202,22 @@ void LaneLineTimeChangeGroupUi::updateConfig()
 
 void LaneLineTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
-  for (unsigned int i = 0; i < data->name.size(); i++)
-    if (data->name[i] == reference_joint_)
-      pitch_angle_ = data->position[i];
+  if (!tf_buffer_.canTransform(reference_frame_, "odom", ros::Time(0)))
+    return;
+  try
+  {
+    double roll, pitch, yaw;
+    quatToRPY(tf_buffer_.lookupTransform(reference_frame_, "odom", ros::Time(0)).transform.rotation, roll, pitch, yaw);
+    pitch_angle_ = pitch;
+  }
+  catch (tf2::TransformException& ex)
+  {
+    ROS_WARN_THROTTLE(3.0, "%s \n Replace joint state data", ex.what());
+
+    for (unsigned int i = 0; i < data->name.size(); i++)
+      if (data->name[i] == reference_frame_ + "_joint")
+        pitch_angle_ = data->position[i];
+  }
 
   end_point_a_angle_ = camera_range_ / 2 + pitch_angle_;
   end_point_b_angle_ = 0.6 * (0.25 + pitch_angle_);

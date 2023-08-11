@@ -30,6 +30,7 @@ public:
   virtual void add();
   virtual void update();
   virtual void erasure();
+  virtual void addForQueue(int add_times = 1);
   virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data){};
   virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time){};
   virtual void sendUi(const ros::Time& time);
@@ -74,6 +75,7 @@ public:
   void add() override;
   void update() override;
   void erasure() override;
+  void addForQueue(int add_times = 1) override;
   void sendUi(const ros::Time& time) override;
   void sendDoubleGraph(const ros::Time& time, Graph* graph0, Graph* graph1);
   void sendFiveGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2, Graph* graph3, Graph* graph4);

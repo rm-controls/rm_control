@@ -51,17 +51,17 @@ public:
 
   {
     if (!nh.getParam("low_shoot_frequency", low_shoot_frequency_))
-      ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
+      ROS_ERROR("Low shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("high_shoot_frequency", high_shoot_frequency_))
-      ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
+      ROS_ERROR("High shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("burst_shoot_frequency", burst_shoot_frequency_))
-      ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
+      ROS_ERROR("Burst shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("minimal_shoot_frequency", minimal_shoot_frequency_))
-      ROS_ERROR("Expect shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
+      ROS_ERROR("Minimal shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("safe_shoot_frequency", safe_shoot_frequency_))
       ROS_ERROR("Safe shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("heat_coeff", heat_coeff_))
-      ROS_ERROR("Safe shoot heat coeff frequency no defined (namespace: %s)", nh.getNamespace().c_str());
+      ROS_ERROR("Heat coeff no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("type", type_))
       ROS_ERROR("Shooter type no defined (namespace: %s)", nh.getNamespace().c_str());
     nh.param("safe_speed_limit", shooter_speed_limit_, 15);
