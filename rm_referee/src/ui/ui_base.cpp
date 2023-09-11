@@ -18,7 +18,7 @@ void UiBase::addForQueue(int add_times)
   for (int i = 0; i < add_times; i++)
   {
     graph_->setOperation(rm_referee::GraphOperation::ADD);
-    graph_queue_->push_back(*graph_);
+    graph_queue_->push(*graph_);
     last_send_ = ros::Time::now();
   }
 }
@@ -51,7 +51,7 @@ void GroupUiBase::addForQueue(int add_times)
     for (auto graph : graph_vector_)
     {
       graph.second->setOperation(rm_referee::GraphOperation::ADD);
-      graph_queue_->push_back(*graph.second);
+      graph_queue_->push(*graph.second);
       last_send_ = ros::Time::now();
     }
   }

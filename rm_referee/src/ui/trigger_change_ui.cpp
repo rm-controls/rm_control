@@ -11,7 +11,23 @@ void TriggerChangeUi::setContent(const std::string& content)
   graph_->setContent(content);
   display();
 }
+/*
+void TriggerChangeUi::updateForQueue()
+{
 
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+
+    if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+      return;
+
+    std::string characters = graph_->getCharacters();
+    if (!characters.empty())
+      character_queue_.push(characters);
+    else
+      sendSingleGraph(time, graph_);
+
+}
+*/
 void ChassisTriggerChangeUi::update()
 {
   if (s_l_ == rm_msgs::DbusData::MID && s_r_ == rm_msgs::DbusData::UP)

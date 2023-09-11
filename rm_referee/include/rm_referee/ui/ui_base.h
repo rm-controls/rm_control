@@ -7,6 +7,7 @@
 #include <tf/transform_listener.h>
 #include <Eigen/Dense>
 #include <cmath>
+#include <queue>
 #include <rm_common/ori_tool.h>
 #include <rm_common/decision/heat_limit.h>
 #include <rm_msgs/StatusChangeRequest.h>
@@ -18,13 +19,14 @@ namespace rm_referee
 class UiBase
 {
 public:
-  explicit UiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue = nullptr)
+  explicit UiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue = nullptr)
     : base_(base), tf_listener_(tf_buffer_)
   {
     if (rpc_value.hasMember("config"))
       if (rpc_value["config"].hasMember("delay"))
         delay_ = ros::Duration(static_cast<double>(rpc_value["config"]["delay"]));
     graph_queue_ = graph_queue;
+    //character_queue_ = character_queue;
   };
   ~UiBase() = default;
   virtual void add();
@@ -57,7 +59,8 @@ protected:
   Base& base_;
   Graph* graph_;
   static int id_;
-  std::vector<Graph>* graph_queue_;
+  std::queue<Graph> * graph_queue_;
+  std::queue<Graph> * character_queue_;
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
 
@@ -69,7 +72,7 @@ protected:
 class GroupUiBase : public UiBase
 {
 public:
-  explicit GroupUiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue = nullptr)
+  explicit GroupUiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue = nullptr)
     : UiBase(rpc_value, base, graph_queue){};
   ~GroupUiBase() = default;
   void add() override;
@@ -93,7 +96,7 @@ protected:
 class FixedUi : public GroupUiBase
 {
 public:
-  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue = nullptr)
+  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue = nullptr)
     : GroupUiBase(rpc_value, base, graph_queue)
   {
     for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)

@@ -30,7 +30,7 @@ void TimeChangeUi::updateForQueue()
 
   if (graph_queue_ && !graph_->isRepeated() && ros::Time::now() - last_send_ > delay_)
   {
-    graph_queue_->push_back(*graph_);
+    graph_queue_->push(*graph_);
     last_send_ = ros::Time::now();
   }
 }
@@ -44,7 +44,7 @@ void TimeChangeGroupUi::updateForQueue()
       graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
       if (graph_queue_ && !graph.second->isRepeated())
       {
-        graph_queue_->push_back(*graph.second);
+        graph_queue_->push(*graph.second);
         last_send_ = ros::Time::now();
       }
     }
