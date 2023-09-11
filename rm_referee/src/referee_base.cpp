@@ -113,7 +113,7 @@ void RefereeBase::addUi()
     add_ui_timer_.stop();
     if (!graph_queue_.empty())
       while (graph_queue_.size() > 0)
-        graph_queue_.pop_back();
+        graph_queue_.pop();
     is_adding_ = false;
     send_graph_ui_timer_.setPeriod(ros::Duration(send_ui_queue_delay_));
     return;
@@ -159,6 +159,7 @@ void RefereeBase::addUi()
   add_ui_times_++;
 }
 
+
 void RefereeBase::sendGraphQueueCallback()
 {
   if (graph_queue_.empty())
@@ -169,48 +170,61 @@ void RefereeBase::sendGraphQueueCallback()
     ROS_WARN_THROTTLE(2.0, "Sending UI too frequently, please modify the configuration file or code to "
                            "reduce the frequency");
     while (graph_queue_.size() > 50)
-      graph_queue_.pop_back();
+      graph_queue_.pop();
   }
 
-  int index = graph_queue_.size() - 1;
 
   if (!is_adding_)
   {
+
+/*
+    std::string characters = graph_->getCharacters();
+    if (!characters.empty())
+      sendCharacter(time, graph_);
+*/
     if (graph_queue_.size() >= 7)
     {
-      graph_queue_sender_->sendSevenGraph(ros::Time::now(), &graph_queue_.at(index), &graph_queue_.at(index - 1),
-                                          &graph_queue_.at(index - 2), &graph_queue_.at(index - 3),
-                                          &graph_queue_.at(index - 4), &graph_queue_.at(index - 5),
-                                          &graph_queue_.at(index - 6));
-      for (int i = 0; i < 7; i++)
-        graph_queue_.pop_back();
-    }
+      for(int i=0;i<7;i++)
+        ui_buffer.push_back(RefereeBase::returnGraph(graph_queue_));
+    
+      graph_queue_sender_->sendSevenGraph(ros::Time::now(), &ui_buffer.at(0), &ui_buffer.at(1),
+                                          &ui_buffer.at(2), &ui_buffer.at(3),
+                                          &ui_buffer.at(4), &ui_buffer.at(5),
+                                          &ui_buffer.at(6));
+      ui_buffer.clear();
+     } 
     else if (graph_queue_.size() >= 5)
     {
-      graph_queue_sender_->sendFiveGraph(ros::Time::now(), &graph_queue_.at(index), &graph_queue_.at(index - 1),
-                                         &graph_queue_.at(index - 2), &graph_queue_.at(index - 3),
-                                         &graph_queue_.at(index - 4));
-      for (int i = 0; i < 5; i++)
-        graph_queue_.pop_back();
+      for(int i=0;i<5;i++)
+        ui_buffer.push_back(RefereeBase::returnGraph(graph_queue_));
+      
+      graph_queue_sender_->sendFiveGraph(ros::Time::now(), &ui_buffer.at(0), &ui_buffer.at(1),
+                                         &ui_buffer.at(2), &ui_buffer.at(3),
+                                         &ui_buffer.at(4));
+      ui_buffer.clear();
     }
     else if (graph_queue_.size() >= 2)
     {
-      graph_queue_sender_->sendDoubleGraph(ros::Time::now(), &graph_queue_.at(index), &graph_queue_.at(index - 1));
-      for (int i = 0; i < 2; i++)
-        graph_queue_.pop_back();
+      for(int i=0;i<2;i++)
+        ui_buffer.push_back(RefereeBase::returnGraph(graph_queue_));
+      
+      graph_queue_sender_->sendDoubleGraph(ros::Time::now(), &ui_buffer.at(0), &ui_buffer.at(1));
+      ui_buffer.clear();
     }
     else if (graph_queue_.size() == 1)
     {
-      graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.at(index));
-      graph_queue_.pop_back();
+      ui_buffer.push_back(RefereeBase::returnGraph(graph_queue_));
+      graph_queue_sender_->sendSingleGraph(ros::Time::now(), &ui_buffer.at(0));
+      ui_buffer.clear();
     }
+    
   }
-  else
-  {
-    graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.at(index));
-    graph_queue_.pop_back();
-  }
+  else{
+      ui_buffer.push_back(RefereeBase::returnGraph(graph_queue_));
+      graph_queue_sender_->sendSingleGraph(ros::Time::now(), &ui_buffer.at(0));
+      ui_buffer.clear();
 
+      }
   send_graph_ui_timer_.start();
 }
 
@@ -270,7 +284,7 @@ void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
     is_adding_ = true;
     if (!graph_queue_.empty())
       while (graph_queue_.size() > 0)
-        graph_queue_.pop_back();
+        graph_queue_.pop();
     send_graph_ui_timer_.setPeriod(ros::Duration(0.05));
     add_ui_timer_.start();
     add_ui_times_ = 0;

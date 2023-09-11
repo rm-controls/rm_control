@@ -13,6 +13,7 @@
 #include "rm_referee/ui/time_change_ui.h"
 #include "rm_referee/ui/flash_ui.h"
 
+
 namespace rm_referee
 {
 class RefereeBase
@@ -97,7 +98,15 @@ public:
   SpinFlashUi* spin_flash_ui_{};
 
   GroupUiBase* graph_queue_sender_{};
-  std::vector<Graph> graph_queue_;
+  std::queue<Graph> graph_queue_;
+  //std::queue<Graph> character_queue_;
+  Graph returnGraph(std::queue<Graph>& queue_)
+{
+Graph first_element = queue_.front();
+queue_.pop();
+return first_element;
+}
+std::vector<Graph> ui_buffer;
 
   UiBase* interactive_data_sender_{};
 

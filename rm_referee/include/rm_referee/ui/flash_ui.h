@@ -12,7 +12,7 @@ class FlashUi : public UiBase
 {
 public:
   explicit FlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name,
-                   std::vector<Graph>* graph_queue)
+                   std::queue<Graph> * graph_queue)
     : UiBase(rpc_value, base, graph_queue)
   {
     graph_ = new Graph(rpc_value["config"], base_, id_++);
@@ -24,7 +24,7 @@ public:
 class CoverFlashUi : public FlashUi
 {
 public:
-  explicit CoverFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
+  explicit CoverFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue)
     : FlashUi(rpc_value, base, "cover", graph_queue){};
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time) override;
 
@@ -36,7 +36,7 @@ private:
 class SpinFlashUi : public FlashUi
 {
 public:
-  explicit SpinFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
+  explicit SpinFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue)
     : FlashUi(rpc_value, base, "spin", graph_queue){};
   void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_data_time);
 

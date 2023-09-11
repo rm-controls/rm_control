@@ -13,7 +13,7 @@ class TriggerChangeUi : public UiBase
 {
 public:
   explicit TriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name,
-                           std::vector<Graph>* graph_queue)
+                           std::queue<Graph> * graph_queue)
     : UiBase(rpc_value, base, graph_queue)
   {
     if (graph_name == "chassis")
@@ -23,11 +23,12 @@ public:
   };
   virtual void setContent(const std::string& content);
   virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
+  void updateForQueue();
 };
 class ChassisTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit ChassisTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
+  explicit ChassisTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue)
     : TriggerChangeUi(rpc_value, base, "chassis", graph_queue)
   {
     if (base.robot_id_ == rm_referee::RobotId::RED_ENGINEER || base.robot_id_ == rm_referee::RobotId::BLUE_ENGINEER)
@@ -58,7 +59,7 @@ private:
 class ShooterTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit ShooterTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
+  explicit ShooterTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue)
     : TriggerChangeUi(rpc_value, base, "shooter", graph_queue)
   {
     graph_->setContent("0");
@@ -76,7 +77,7 @@ private:
 class GimbalTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit GimbalTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
+  explicit GimbalTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue)
     : TriggerChangeUi(rpc_value, base, "gimbal", graph_queue)
   {
     graph_->setContent("0");
@@ -94,7 +95,7 @@ private:
 class TargetTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit TargetTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
+  explicit TargetTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue)
     : TriggerChangeUi(rpc_value, base, "target", graph_queue)
   {
     graph_->setContent("armor");
@@ -116,7 +117,7 @@ private:
 class TargetViewAngleTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit TargetViewAngleTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
+  explicit TargetViewAngleTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue)
     : TriggerChangeUi(rpc_value, base, "target_scale", graph_queue)
   {
   }
@@ -177,7 +178,7 @@ public:
 class CameraTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit CameraTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
+  explicit CameraTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue)
     : TriggerChangeUi(rpc_value, base, "camera", graph_queue)
   {
     if (rpc_value.hasMember("camera_name"))
