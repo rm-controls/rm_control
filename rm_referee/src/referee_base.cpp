@@ -47,44 +47,44 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     for (int i = 0; i < rpc_value.size(); i++)
     {
       if (rpc_value[i]["name"] == "chassis")
-        chassis_trigger_change_ui_ = new ChassisTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        chassis_trigger_change_ui_ = new ChassisTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "shooter")
-        shooter_trigger_change_ui_ = new ShooterTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        shooter_trigger_change_ui_ = new ShooterTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "gimbal")
-        gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "target")
-        target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "target_view_angle")
-        target_view_angle_trigger_change_ui_ = new TargetViewAngleTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        target_view_angle_trigger_change_ui_ = new TargetViewAngleTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "camera")
-        camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("time_change", rpc_value);
     for (int i = 0; i < rpc_value.size(); i++)
     {
       if (rpc_value[i]["name"] == "capacitor")
-        capacitor_time_change_ui_ = new CapacitorTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        capacitor_time_change_ui_ = new CapacitorTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "effort")
-        effort_time_change_ui_ = new EffortTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        effort_time_change_ui_ = new EffortTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "progress")
-        progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "dart_status")
-        dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "rotation")
-        rotation_time_change_ui_ = new RotationTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        rotation_time_change_ui_ = new RotationTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "lane_line")
-        lane_line_time_change_ui_ = new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
+        lane_line_time_change_ui_ = new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "pitch")
-        pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "balance_pitch")
-        balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
+        balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "engineer_joint1")
-        engineer_joint1_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint1");
+        engineer_joint1_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_,"joint1");
       if (rpc_value[i]["name"] == "engineer_joint2")
-        engineer_joint2_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint2");
+        engineer_joint2_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_,"joint2");
       if (rpc_value[i]["name"] == "engineer_joint3")
-        engineer_joint3_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint3");
+        engineer_joint3_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_,"joint3");
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -94,9 +94,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     for (int i = 0; i < rpc_value.size(); i++)
     {
       if (rpc_value[i]["name"] == "cover")
-        cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_);
+        cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "spin")
-        spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_);
+        spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
   }
 
@@ -162,27 +162,35 @@ void RefereeBase::addUi()
 
 void RefereeBase::sendGraphQueueCallback()
 {
-  if (graph_queue_.empty())
+  if (graph_queue_.empty() || character_queue_.empty())
     return;
 
   if (graph_queue_.size() > 50)
   {
-    ROS_WARN_THROTTLE(2.0, "Sending UI too frequently, please modify the configuration file or code to "
+    ROS_WARN_THROTTLE(2.0, "Sending graph UI too frequently, please modify the configuration file or code to "
                            "reduce the frequency");
     while (graph_queue_.size() > 50)
       graph_queue_.pop();
   }
 
+  if (character_queue_.size() > 7)
+  {
+    ROS_WARN_THROTTLE(2.0, "Sending character UI too frequently, please modify the configuration file or code to "
+                           "reduce the frequency");
+    while (character_queue_.size() > 7)
+      character_queue_.pop();
+  }
+
 
   if (!is_adding_)
   {
+    if(!character_queue_.empty())
+    {
+      graph_queue_sender_->sendCharacter(ros::Time::now(), &character_queue_.front());
+      character_queue_.pop();
+    }
 
-/*
-    std::string characters = graph_->getCharacters();
-    if (!characters.empty())
-      sendCharacter(time, graph_);
-*/
-    if (graph_queue_.size() >= 7)
+    else if (graph_queue_.size() >= 7)
     {
       for(int i=0;i<7;i++)
         ui_buffer.push_back(RefereeBase::returnGraph(graph_queue_));
@@ -213,16 +221,14 @@ void RefereeBase::sendGraphQueueCallback()
     }
     else if (graph_queue_.size() == 1)
     {
-      ui_buffer.push_back(RefereeBase::returnGraph(graph_queue_));
-      graph_queue_sender_->sendSingleGraph(ros::Time::now(), &ui_buffer.at(0));
-      ui_buffer.clear();
+      graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.front());
+      graph_queue_.pop();
     }
     
   }
   else{
-      ui_buffer.push_back(RefereeBase::returnGraph(graph_queue_));
-      graph_queue_sender_->sendSingleGraph(ros::Time::now(), &ui_buffer.at(0));
-      ui_buffer.clear();
+      graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.front());
+      graph_queue_.pop();
 
       }
   send_graph_ui_timer_.start();

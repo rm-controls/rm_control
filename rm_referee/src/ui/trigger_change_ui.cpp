@@ -11,23 +11,116 @@ void TriggerChangeUi::setContent(const std::string& content)
   graph_->setContent(content);
   display();
 }
-/*
-void TriggerChangeUi::updateForQueue()
+
+void TriggerChangeUi::updateForQueue(bool check_repeat)
 {
-
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-
-    if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+  if (check_repeat)
+    if (graph_->isRepeated())
       return;
+  graph_->updateLastConfig();
 
-    std::string characters = graph_->getCharacters();
-    if (!characters.empty())
-      character_queue_.push(characters);
-    else
-      sendSingleGraph(time, graph_);
+  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+    return;
+
+  std::string characters = graph_->getCharacters();
+  if (!characters.empty())
+    character_queue_->push(*graph_);
+  else
+    graph_queue_->push(*graph_);
 
 }
-*/
+void TriggerChangeUi::updateTwiceForQueue(bool check_repeat)
+{
+  if (check_repeat)
+    if (graph_->isRepeated())
+      return;
+  graph_->updateLastConfig();
+
+  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+    return;
+
+  std::string characters = graph_->getCharacters();
+  if (!characters.empty())
+  {
+    for(int i = 0; i < 2; i++)
+      character_queue_->push(*graph_);
+  }
+  else{
+    for(int i = 0; i < 2; i++)
+      graph_queue_->push(*graph_);
+  }
+
+}
+
+void TriggerChangeGroupUi::setContent(const std::string& content)
+{
+  graph_->setContent(content);
+  display();
+}
+
+void TriggerChangeGroupUi::updateForQueue(bool check_repeat)
+{
+  if (check_repeat)
+  {
+    bool is_repeat = true;
+    for (auto it : graph_vector_)
+      if (!it.second->isRepeated())
+        is_repeat = false;
+    for (auto it : character_vector_)
+      if (!it.second->isRepeated())
+        is_repeat = false;
+    if (is_repeat)
+      return;
+  }
+
+  for (auto it : graph_vector_)
+    it.second->updateLastConfig();
+  for (auto it : character_vector_)
+    it.second->updateLastConfig();
+
+  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+    return;
+
+  for (auto it : character_vector_)
+    character_queue_->push(*graph_);
+  for (auto it : graph_vector_)
+    graph_queue_->push(*graph_);
+
+}
+
+void TriggerChangeGroupUi::updateTwiceForQueue(bool check_repeat)
+{
+  if (check_repeat)
+  {
+    bool is_repeat = true;
+    for (auto it : graph_vector_)
+      if (!it.second->isRepeated())
+        is_repeat = false;
+    for (auto it : character_vector_)
+      if (!it.second->isRepeated())
+        is_repeat = false;
+    if (is_repeat)
+      return;
+  }
+
+  for (auto it : graph_vector_)
+    it.second->updateLastConfig();
+  for (auto it : character_vector_)
+    it.second->updateLastConfig();
+
+  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+    return;
+
+  for (auto it : character_vector_)
+    for(int i = 0; i < 2; i++)
+      character_queue_->push(*graph_);
+  for (auto it : graph_vector_)
+    for(int i = 0; i < 2; i++)
+      graph_queue_->push(*graph_);
+
+}
+
+
 void ChassisTriggerChangeUi::update()
 {
   if (s_l_ == rm_msgs::DbusData::MID && s_r_ == rm_msgs::DbusData::UP)
@@ -37,7 +130,7 @@ void ChassisTriggerChangeUi::update()
                  power_limit_state_ == rm_common::PowerLimit::CHARGE);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   checkModeChange();
-  displayTwice();
+  updateTwiceForQueue();
 }
 
 void ChassisTriggerChangeUi::displayInCapacity()
@@ -47,7 +140,7 @@ void ChassisTriggerChangeUi::displayInCapacity()
     updateConfig(254, 0);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 
-  displayTwice();
+  updateTwiceForQueue();
 }
 
 void ChassisTriggerChangeUi::checkModeChange()
@@ -70,7 +163,7 @@ void ChassisTriggerChangeUi::checkModeChange()
     else if ((ros::Time::now() - trigger_time).toSec() > mode_change_threshold_)
     {
       is_different = false;
-      display(false);
+      updateForQueue(false);
     }
   }
 }
@@ -174,7 +267,7 @@ void ShooterTriggerChangeUi::update()
 {
   updateConfig(shooter_mode_, 0, shoot_frequency_, false);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  TriggerChangeUi::display();
+  updateForQueue();
 }
 
 void ShooterTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -218,7 +311,7 @@ void GimbalTriggerChangeUi::update()
   updateConfig(gimbal_mode_, gimbal_eject_);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 
-  displayTwice();
+  updateTwiceForQueue();
 }
 
 void GimbalTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -261,7 +354,7 @@ void TargetTriggerChangeUi::update()
   else
     updateConfig(gimbal_eject_, shoot_frequency_, det_armor_target_, det_color_ == rm_msgs::StatusChangeRequest::RED);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  TriggerChangeUi::display();
+  updateForQueue();
 }
 
 void TargetTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -322,7 +415,7 @@ void TargetViewAngleTriggerChangeUi::update()
 {
   updateConfig(track_id_ == 0, false);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  displayTwice();
+  updateTwiceForQueue();
 }
 
 void TargetViewAngleTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -343,7 +436,8 @@ void PolygonTriggerChangeGroupUi::update()
 {
   for (auto graph : graph_vector_)
     graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
-  display();
+  updateForQueue();
+
 }
 
 void CameraTriggerChangeUi::updateCameraName(const std_msgs::StringConstPtr& data)
@@ -367,6 +461,6 @@ void CameraTriggerChangeUi::update()
 {
   updateConfig();
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  display();
+  updateForQueue();
 }
 }  // namespace rm_referee

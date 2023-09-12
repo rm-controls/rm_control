@@ -99,7 +99,7 @@ public:
 
   GroupUiBase* graph_queue_sender_{};
   std::queue<Graph> graph_queue_;
-  //std::queue<Graph> character_queue_;
+  std::queue<Graph> character_queue_;
   Graph returnGraph(std::queue<Graph>& queue_)
 {
 Graph first_element = queue_.front();
