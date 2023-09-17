@@ -282,8 +282,6 @@ void PitchAngleTimeChangeUi::updateJointStateData(const sensor_msgs::JointState:
 
 void PitchAngleTimeChangeUi::update()
 {
-  updateConfig();
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   updateForQueue();
 }
 

@@ -437,7 +437,6 @@ void PolygonTriggerChangeGroupUi::update()
   for (auto graph : graph_vector_)
     graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
   updateForQueue();
-
 }
 
 void CameraTriggerChangeUi::updateCameraName(const std_msgs::StringConstPtr& data)
