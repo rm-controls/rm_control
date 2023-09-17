@@ -129,7 +129,7 @@ void ProgressTimeChangeUi::updateEngineerUiData(const rm_msgs::EngineerUi::Const
 {
   total_steps_ = data->total_steps;
   finished_data_ = data->finished_step;
-  TimeChangeUi::update();
+  TimeChangeUi::updateForQueue();
 }
 
 void DartStatusTimeChangeUi::updateConfig()
@@ -157,7 +157,7 @@ void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::C
                                                  const ros::Time& last_get_data_time)
 {
   dart_launch_opening_status_ = data->dart_launch_opening_status;
-  TimeChangeUi::update();
+  TimeChangeUi::updateForQueue();
 }
 
 void RotationTimeChangeUi::updateConfig()
@@ -284,7 +284,7 @@ void PitchAngleTimeChangeUi::update()
 {
   updateConfig();
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  display(ros::Time::now());
+  updateForQueue();
 }
 
 void PitchAngleTimeChangeUi::updateConfig()

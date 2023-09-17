@@ -102,8 +102,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
 
   add_ui_timer_ =
       nh.createTimer(ros::Duration(1. / add_ui_frequency_), std::bind(&RefereeBase::addUi, this), false, false);
-  send_graph_ui_timer_ = nh.createTimer(ros::Duration(send_ui_queue_delay_),
-                                        std::bind(&RefereeBase::sendGraphQueueCallback, this), false, true);
+  send_serial_data_timer_ = nh.createTimer(ros::Duration(send_ui_queue_delay_),
+                                        std::bind(&RefereeBase::sendSerialDataCallback, this), false, true);
 }
 void RefereeBase::addUi()
 {
@@ -115,7 +115,7 @@ void RefereeBase::addUi()
       while (graph_queue_.size() > 0)
         graph_queue_.pop();
     is_adding_ = false;
-    send_graph_ui_timer_.setPeriod(ros::Duration(send_ui_queue_delay_));
+    send_serial_data_timer_.setPeriod(ros::Duration(send_ui_queue_delay_));
     return;
   }
 
@@ -160,7 +160,7 @@ void RefereeBase::addUi()
 }
 
 
-void RefereeBase::sendGraphQueueCallback()
+void RefereeBase::sendSerialDataCallback()
 {
   if (graph_queue_.empty() || character_queue_.empty())
     return;
@@ -173,18 +173,28 @@ void RefereeBase::sendGraphQueueCallback()
       graph_queue_.pop();
   }
 
-  if (character_queue_.size() > 7)
+  if (character_queue_.size() > 6)
   {
-    ROS_WARN_THROTTLE(2.0, "Sending character UI too frequently, please modify the configuration file or code to "
-                           "reduce the frequency");
+    ROS_WARN_THROTTLE(2.0, "Sending character UI too frequently");
     while (character_queue_.size() > 7)
       character_queue_.pop();
   }
 
-
   if (!is_adding_)
   {
-    if(!character_queue_.empty())
+    if(send_radar_receive_data_)
+    {
+      interactive_data_sender_->sendRadarInteractiveData(radar_receive_data);
+      send_radar_receive_data_ = false;
+    }
+
+    else if (send_map_sentry_data_)
+    {
+      interactive_data_sender_->sendMapSentryData(map_sentry_data);
+      send_map_sentry_data_ = false;
+    }
+
+    else if(!character_queue_.empty())
     {
       graph_queue_sender_->sendCharacter(ros::Time::now(), &character_queue_.front());
       character_queue_.pop();
@@ -226,18 +236,19 @@ void RefereeBase::sendGraphQueueCallback()
     }
     
   }
-  else{
+  else
+  {
       graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.front());
       graph_queue_.pop();
 
-      }
-  send_graph_ui_timer_.start();
+  }
+  send_serial_data_timer_.start();
 }
 
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
 {
   if (fixed_ui_ && !is_adding_)
-    fixed_ui_->update();
+    fixed_ui_->updateForQueue();
 }
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {
@@ -291,7 +302,7 @@ void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
     if (!graph_queue_.empty())
       while (graph_queue_.size() > 0)
         graph_queue_.pop();
-    send_graph_ui_timer_.setPeriod(ros::Duration(0.05));
+    send_serial_data_timer_.setPeriod(ros::Duration(0.05));
     add_ui_timer_.start();
     add_ui_times_ = 0;
   }
@@ -366,15 +377,22 @@ void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data
 }
 void RefereeBase::radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data)
 {
-  rm_referee::ClientMapReceiveData send_data;
-  send_data.target_position_x = data->target_position_x;
-  send_data.target_position_y = data->target_position_y;
-  send_data.target_robot_ID = data->target_robot_ID;
+  radar_receive_data.target_position_x = data->target_position_x;
+  radar_receive_data.target_position_y = data->target_position_y;
+  radar_receive_data.target_robot_ID = data->target_robot_ID;
 
-  interactive_data_sender_->sendRadarInteractiveData(send_data);
+  send_radar_receive_data_ = true;
 }
 void RefereeBase::mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data)
 {
-  interactive_data_sender_->sendMapSentryData(data);
+  map_sentry_data.intention = data->intention;
+  map_sentry_data.start_position_x = data->start_position_x;
+  map_sentry_data.start_position_y = data->start_position_y;
+  for (int i = 0; i < 49; i++)
+  {
+    map_sentry_data.delta_x[i] = data->delta_x[i];
+    map_sentry_data.delta_y[i] = data->delta_y[i];
+  }
+  send_map_sentry_data_ = true;
 }
 }  // namespace rm_referee

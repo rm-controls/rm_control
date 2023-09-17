@@ -150,20 +150,20 @@ void UiBase::sendUi(const ros::Time& time)
     sendSingleGraph(time, graph_);
 }
 
-void UiBase::sendMapSentryData(const rm_msgs::MapSentryDataConstPtr& data)
+void UiBase::sendMapSentryData(rm_referee::MapSentryData& data)
 {
   uint8_t tx_data[sizeof(rm_referee::MapSentryData)] = { 0 };
   auto map_sentry_data = (rm_referee::MapSentryData*)tx_data;
 
   for (int i = 0; i < 128; i++)
     tx_buffer_[i] = 0;
-  map_sentry_data->intention = data->intention;
-  map_sentry_data->start_position_x = data->start_position_x;
-  map_sentry_data->start_position_y = data->start_position_y;
+  map_sentry_data->intention = data.intention;
+  map_sentry_data->start_position_x = data.start_position_x;
+  map_sentry_data->start_position_y = data.start_position_y;
   for (int i = 0; i < 49; i++)
   {
-    map_sentry_data->delta_x[i] = data->delta_x[i];
-    map_sentry_data->delta_y[i] = data->delta_y[i];
+    map_sentry_data->delta_x[i] = data.delta_x[i];
+    map_sentry_data->delta_y[i] = data.delta_y[i];
   }
   pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::MAP_SENTRY_CMD, sizeof(rm_referee::MapSentryData));
   tx_len_ = k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::MapSentryData) + k_tail_length_);
@@ -360,6 +360,20 @@ void GroupUiBase::sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* gr
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_SEVEN_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(time, data_len);
+}
+
+void FixedUi::updateForQueue()
+{
+  if (ros::Time::now() - last_send_ > delay_)
+    for (auto graph : graph_vector_)
+    {
+      graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
+      if (graph_queue_ && !graph.second->isRepeated())
+      {
+        graph_queue_->push(*graph.second);
+        last_send_ = ros::Time::now();
+      }
+    }
 }
 
 void UiBase::pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const
