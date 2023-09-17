@@ -41,7 +41,7 @@ public:
   void sendSingleGraph(const ros::Time& time, Graph* graph);
   void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);
   void sendRadarInteractiveData(rm_referee::ClientMapReceiveData& data);
-  void sendMapSentryData(const rm_msgs::MapSentryDataConstPtr& data);
+  void sendMapSentryData(rm_referee::MapSentryData& data);
 
   void sendSerial(const ros::Time& time, int data_len);
   void clearTxBuffer();
@@ -67,6 +67,7 @@ protected:
   ros::Time last_send_;
   ros::Duration delay_ = ros::Duration(0.);
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
+
 };
 
 class GroupUiBase : public UiBase
@@ -103,6 +104,9 @@ public:
       graph_vector_.insert(
           std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
   };
+  ~FixedUi() = default;
+  void updateForQueue();
 };
+
 
 }  // namespace rm_referee

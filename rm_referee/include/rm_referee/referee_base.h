@@ -52,8 +52,8 @@ public:
   virtual void radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data);
   virtual void mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data);
 
-  // send graph_type ui
-  void sendGraphQueueCallback();
+  // send  ui
+  void sendSerialDataCallback();
 
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
@@ -102,16 +102,19 @@ public:
   std::queue<Graph> character_queue_;
   Graph returnGraph(std::queue<Graph>& queue_)
 {
-Graph first_element = queue_.front();
-queue_.pop();
-return first_element;
+  Graph first_element = queue_.front();
+  queue_.pop();
+  return first_element;
 }
-std::vector<Graph> ui_buffer;
+  std::vector<Graph> ui_buffer;
 
+  rm_referee::ClientMapReceiveData radar_receive_data;
+  rm_referee::MapSentryData map_sentry_data;
+  bool send_radar_receive_data_ = false, send_map_sentry_data_ = false;
   UiBase* interactive_data_sender_{};
 
   Base& base_;
-  ros::Timer add_ui_timer_, send_graph_ui_timer_;
+  ros::Timer add_ui_timer_, send_serial_data_timer_;
   int add_ui_times_, add_ui_max_times_, add_ui_frequency_;
   double send_ui_queue_delay_;
   bool add_ui_flag_ = false, is_adding_ = false;
