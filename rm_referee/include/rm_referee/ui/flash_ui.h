@@ -12,8 +12,8 @@ class FlashUi : public UiBase
 {
 public:
   explicit FlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name,
-                   std::queue<Graph> * graph_queue, std::queue<Graph> * character_queue)
-    : UiBase(rpc_value, base, graph_queue)
+                   std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
+    : UiBase(rpc_value, base, graph_queue, character_queue)
   {
     graph_ = new Graph(rpc_value["config"], base_, id_++);
   }
@@ -25,7 +25,7 @@ public:
 class CoverFlashUi : public FlashUi
 {
 public:
-  explicit CoverFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue, std::queue<Graph> * character_queue)
+  explicit CoverFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
     : FlashUi(rpc_value, base, "cover", graph_queue, character_queue){};
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time) override;
 
@@ -38,7 +38,7 @@ private:
 class SpinFlashUi : public FlashUi
 {
 public:
-  explicit SpinFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue, std::queue<Graph> * character_queue)
+  explicit SpinFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
     : FlashUi(rpc_value, base, "spin", graph_queue, character_queue){};
   void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_data_time);
 

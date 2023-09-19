@@ -25,6 +25,7 @@ void FlashUi::updateForQueue(const ros::Time& time, bool state, bool once)
   }
   if (graph_->isRepeated())
     return;
+
   graph_->updateLastConfig();
 
   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
@@ -32,14 +33,11 @@ void FlashUi::updateForQueue(const ros::Time& time, bool state, bool once)
 
   std::string characters = graph_->getCharacters();
   if (!characters.empty())
-  {
-    for(int i = 0; i < 2; i++)
-      character_queue_->push(*graph_);
-  }
-  else{
-    for(int i = 0; i < 2; i++)
-      graph_queue_->push(*graph_);
-  }
+    character_queue_->push_back(*graph_);
+  else
+      graph_queue_->push_back(*graph_);
+
+  ROS_INFO_THROTTLE(1.0, "update flash ui");
 }
 
 void CoverFlashUi::display(const ros::Time& time)

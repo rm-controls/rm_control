@@ -18,7 +18,7 @@ void UiBase::addForQueue(int add_times)
   for (int i = 0; i < add_times; i++)
   {
     graph_->setOperation(rm_referee::GraphOperation::ADD);
-    graph_queue_->push(*graph_);
+    graph_queue_->push_back(*graph_);
     last_send_ = ros::Time::now();
   }
 }
@@ -51,7 +51,7 @@ void GroupUiBase::addForQueue(int add_times)
     for (auto graph : graph_vector_)
     {
       graph.second->setOperation(rm_referee::GraphOperation::ADD);
-      graph_queue_->push(*graph.second);
+      graph_queue_->push_back(*graph.second);
       last_send_ = ros::Time::now();
     }
   }
@@ -352,9 +352,10 @@ void GroupUiBase::sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* gr
   tx_data.header.receiver_id = base_.client_id_;
   tx_data.config[0] = graph0->getConfig();
   tx_data.config[1] = graph1->getConfig();
-  tx_data.config[3] = graph2->getConfig();
-  tx_data.config[4] = graph3->getConfig();
-  tx_data.config[5] = graph4->getConfig();
+  tx_data.config[2] = graph2->getConfig();
+  tx_data.config[3] = graph3->getConfig();
+  tx_data.config[4] = graph4->getConfig();
+  tx_data.config[5] = graph5->getConfig();
   tx_data.config[6] = graph5->getConfig();
 
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_SEVEN_CMD;
@@ -364,16 +365,25 @@ void GroupUiBase::sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* gr
 
 void FixedUi::updateForQueue()
 {
-  if (ros::Time::now() - last_send_ > delay_)
-    for (auto graph : graph_vector_)
-    {
-      graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
-      if (graph_queue_ && !graph.second->isRepeated())
-      {
-        graph_queue_->push(*graph.second);
-        last_send_ = ros::Time::now();
-      }
-    }
+  while(update_fixed_ui_times < 1)
+  {
+  for (auto it : graph_vector_)
+    it.second->updateLastConfig();
+
+  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+    return;
+
+  for (auto it : graph_vector_)
+  {
+    std::string characters = it.second->getCharacters();
+    if (!characters.empty())
+        character_queue_->push_back(*it.second);
+    else
+        graph_queue_->push_back(*it.second);
+  }
+  ROS_INFO_THROTTLE(1.0, "update fixed ui");
+  update_fixed_ui_times++;
+  }
 }
 
 void UiBase::pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const

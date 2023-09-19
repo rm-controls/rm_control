@@ -7,7 +7,7 @@
 #include <tf/transform_listener.h>
 #include <Eigen/Dense>
 #include <cmath>
-#include <queue>
+#include <deque>
 #include <rm_common/ori_tool.h>
 #include <rm_common/decision/heat_limit.h>
 #include <rm_msgs/StatusChangeRequest.h>
@@ -19,7 +19,7 @@ namespace rm_referee
 class UiBase
 {
 public:
-  explicit UiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue = nullptr, std::queue<Graph> * character_queue = nullptr )
+  explicit UiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue = nullptr, std::deque<Graph>* character_queue = nullptr )
     : base_(base), tf_listener_(tf_buffer_)
   {
     if (rpc_value.hasMember("config"))
@@ -59,21 +59,20 @@ protected:
   Base& base_;
   Graph* graph_;
   static int id_;
-  std::queue<Graph> * graph_queue_;
-  std::queue<Graph> * character_queue_;
+  std::deque<Graph>* graph_queue_;
+  std::deque<Graph>* character_queue_;
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
 
   ros::Time last_send_;
   ros::Duration delay_ = ros::Duration(0.);
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
-
 };
 
 class GroupUiBase : public UiBase
 {
 public:
-  explicit GroupUiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue = nullptr, std::queue<Graph> * character_queue = nullptr)
+  explicit GroupUiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue = nullptr, std::deque<Graph> * character_queue = nullptr)
     : UiBase(rpc_value, base, graph_queue, character_queue){};
   ~GroupUiBase() = default;
   void add() override;
@@ -97,16 +96,15 @@ protected:
 class FixedUi : public GroupUiBase
 {
 public:
-  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::queue<Graph> * graph_queue = nullptr, std::queue<Graph> * character_queue = nullptr)
+  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue = nullptr, std::deque<Graph>* character_queue = nullptr)
     : GroupUiBase(rpc_value, base, graph_queue, character_queue)
   {
-    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
+    for(int i = 0; i < static_cast<int>(rpc_value.size()); i++)
       graph_vector_.insert(
           std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
   };
-  ~FixedUi() = default;
   void updateForQueue();
+  int update_fixed_ui_times = 0;
 };
-
 
 }  // namespace rm_referee
