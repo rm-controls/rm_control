@@ -24,9 +24,9 @@ void TriggerChangeUi::updateForQueue(bool check_repeat)
 
   std::string characters = graph_->getCharacters();
   if (!characters.empty())
-    character_queue_->push(*graph_);
+    character_queue_->push_back(*graph_);
   else
-    graph_queue_->push(*graph_);
+    graph_queue_->push_back(*graph_);
 
 }
 void TriggerChangeUi::updateTwiceForQueue(bool check_repeat)
@@ -43,11 +43,11 @@ void TriggerChangeUi::updateTwiceForQueue(bool check_repeat)
   if (!characters.empty())
   {
     for(int i = 0; i < 2; i++)
-      character_queue_->push(*graph_);
+      character_queue_->push_back(*graph_);
   }
   else{
     for(int i = 0; i < 2; i++)
-      graph_queue_->push(*graph_);
+      graph_queue_->push_back(*graph_);
   }
 
 }
@@ -82,9 +82,9 @@ void TriggerChangeGroupUi::updateForQueue(bool check_repeat)
     return;
 
   for (auto it : character_vector_)
-    character_queue_->push(*graph_);
+    character_queue_->push_back(*it.second);
   for (auto it : graph_vector_)
-    graph_queue_->push(*graph_);
+    graph_queue_->push_back(*it.second);
 
 }
 
@@ -113,10 +113,10 @@ void TriggerChangeGroupUi::updateTwiceForQueue(bool check_repeat)
 
   for (auto it : character_vector_)
     for(int i = 0; i < 2; i++)
-      character_queue_->push(*graph_);
+      character_queue_->push_back(*it.second);
   for (auto it : graph_vector_)
     for(int i = 0; i < 2; i++)
-      graph_queue_->push(*graph_);
+      graph_queue_->push_back(*it.second);
 
 }
 

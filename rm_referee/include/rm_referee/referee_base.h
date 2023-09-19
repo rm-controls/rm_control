@@ -98,18 +98,12 @@ public:
   SpinFlashUi* spin_flash_ui_{};
 
   GroupUiBase* graph_queue_sender_{};
-  std::queue<Graph> graph_queue_;
-  std::queue<Graph> character_queue_;
-  Graph returnGraph(std::queue<Graph>& queue_)
-{
-  Graph first_element = queue_.front();
-  queue_.pop();
-  return first_element;
-}
-  std::vector<Graph> ui_buffer;
+  std::deque<Graph> graph_queue_;
+  std::deque<Graph> character_queue_;
 
   rm_referee::ClientMapReceiveData radar_receive_data;
   rm_referee::MapSentryData map_sentry_data;
+  ros::Time radar_receive_last_send, map_sentry_last_send;
   bool send_radar_receive_data_ = false, send_map_sentry_data_ = false;
   UiBase* interactive_data_sender_{};
 

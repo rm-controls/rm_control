@@ -28,10 +28,16 @@ void TimeChangeUi::updateForQueue()
   updateConfig();
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 
-  if (graph_queue_ && !graph_->isRepeated() && ros::Time::now() - last_send_ > delay_)
+  if ( !graph_->isRepeated() && ros::Time::now() - last_send_ > delay_)
   {
-    graph_queue_->push(*graph_);
+    std::string characters = graph_->getCharacters();
+    if (!characters.empty())
+      character_queue_->push_back(*graph_);
+    else
+      graph_queue_->push_back(*graph_);
+
     last_send_ = ros::Time::now();
+
   }
 }
 
@@ -42,9 +48,14 @@ void TimeChangeGroupUi::updateForQueue()
     for (auto graph : graph_vector_)
     {
       graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
-      if (graph_queue_ && !graph.second->isRepeated())
+      if ( !graph.second->isRepeated() )
       {
-        graph_queue_->push(*graph.second);
+        std::string characters = graph.second->getCharacters();
+        if (!characters.empty())
+          character_queue_->push_back(*graph.second);
+        else
+          graph_queue_->push_back(*graph.second);
+
         last_send_ = ros::Time::now();
       }
     }
