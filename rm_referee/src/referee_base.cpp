@@ -162,7 +162,7 @@ void RefereeBase::addUi()
 void RefereeBase::sendSerialDataCallback()
 {
   if (graph_queue_.empty() && character_queue_.empty()){
-    ROS_INFO_THROTTLE(1.0, "No data to send");
+    ROS_INFO_THROTTLE(0.1, "No data to send");
     return;
   }
 
@@ -222,7 +222,6 @@ void RefereeBase::sendSerialDataCallback()
                                           &graph_queue_.at(4), &graph_queue_.at(5),
                                           &graph_queue_.at(6));
       ROS_INFO_THROTTLE(1.0, " send 7 graph");
-
       for (int i = 0; i < 7; i++)
         graph_queue_.pop_front();
     }
@@ -247,6 +246,7 @@ void RefereeBase::sendSerialDataCallback()
     {
       graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.at(0));
       graph_queue_.pop_front();
+      ROS_INFO_THROTTLE(1.0, " send 1 graph");
     }
   }
   else
