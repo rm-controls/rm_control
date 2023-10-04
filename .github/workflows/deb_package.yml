@@ -28,8 +28,9 @@ jobs:
           host: ${{ secrets.SOURCE_SSH_HOST }}
           username: ${{ secrets.SOURCE_SSH_NAME }}
           key: ${{ secrets.SOURCE_SSH_KEYGEN }}
+          port: ${{ secrets.SOURCE_SSH_PORT }}
           source: "*.deb"
-          target: "/usr/local/web/rm-source/ubuntu/incoming/"
+          target: "/home/dynamicx/dynamicx_package_hub/wwwroot/ppa/incoming"
       - name: Deploy deb package to source
         if: ${{ github.repository == 'rm-controls/rm_control' }}
         uses: appleboy/ssh-action@master
@@ -37,7 +38,8 @@ jobs:
           host: ${{ secrets.SOURCE_SSH_HOST }}
           username: ${{ secrets.SOURCE_SSH_NAME }}
           key: ${{ secrets.SOURCE_SSH_KEYGEN }}
+          port: ${{ secrets.SOURCE_SSH_PORT }}
           script: |
-                  cd /usr/local/web/rm-source/ubuntu/incoming/
-                  reprepro  -s  -b  /usr/local/web/rm-source/ubuntu/  --waitforlock  1000  includedeb focal /usr/local/web/rm-source/ubuntu/incoming/*.deb && \
-                  rm -f *.deb
+                  cd /home/dynamicx/dynamicx_package_hub/wwwroot/ppa/
+                  sudo reprepro -s -b . includedeb focal /home/ubuntu/dynamicx_package_hub/wwwroot/ppa/incoming/*.deb && \
+                  rm -f incoming/*.deb
