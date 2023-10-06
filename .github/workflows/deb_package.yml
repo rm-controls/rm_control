@@ -22,7 +22,7 @@ jobs:
           ros_distro: noetic
           timestamp: true
       - name: Upload deb package to source
-        if: ${{ github.repository == 'rm-controls/rm_control' }}
+#        if: ${{ github.repository == 'rm-controls/rm_control' }}
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SOURCE_SSH_HOST }}
@@ -30,9 +30,9 @@ jobs:
           key: ${{ secrets.SOURCE_SSH_KEYGEN }}
           port: ${{ secrets.SOURCE_SSH_PORT }}
           source: "*.deb"
-          target: "/home/dynamicx/dynamicx_package_hub/wwwroot/ppa/incoming"
+          target: "/home/dynamicx/package_hub/wwwroot/ppa/incoming"
       - name: Deploy deb package to source
-        if: ${{ github.repository == 'rm-controls/rm_control' }}
+#        if: ${{ github.repository == 'rm-controls/rm_control' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SOURCE_SSH_HOST }}
@@ -40,6 +40,5 @@ jobs:
           key: ${{ secrets.SOURCE_SSH_KEYGEN }}
           port: ${{ secrets.SOURCE_SSH_PORT }}
           script: |
-                  cd /home/dynamicx/dynamicx_package_hub/wwwroot/ppa/
-                  sudo reprepro -s -b . includedeb focal /home/ubuntu/dynamicx_package_hub/wwwroot/ppa/incoming/*.deb && \
-                  rm -f incoming/*.deb
+                  cd /home/dynamicx/package_hub/wwwroot/ppa/
+                  bash deploy.sh
