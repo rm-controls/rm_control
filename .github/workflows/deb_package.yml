@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    #if: ${{ github.repository == 'rm-controls/rm_control' }}
+    if: ${{ github.repository == 'rm-controls/rm_control' }}
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -22,7 +22,7 @@ jobs:
           ros_distro: noetic
           timestamp: true
       - name: Upload deb package to source
-#        if: ${{ github.repository == 'rm-controls/rm_control' }}
+        if: ${{ github.repository == 'rm-controls/rm_control' }}
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SOURCE_SSH_HOST }}
@@ -32,7 +32,7 @@ jobs:
           source: "*.deb"
           target: "/home/dynamicx/package_hub/wwwroot/ppa/incoming"
       - name: Deploy deb package to source
-#        if: ${{ github.repository == 'rm-controls/rm_control' }}
+        if: ${{ github.repository == 'rm-controls/rm_control' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SOURCE_SSH_HOST }}
