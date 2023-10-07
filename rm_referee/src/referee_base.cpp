@@ -162,7 +162,7 @@ void RefereeBase::addUi()
 void RefereeBase::sendSerialDataCallback()
 {
   if (graph_queue_.empty() && character_queue_.empty()){
-    ROS_INFO_THROTTLE(0.1, "No data to send");
+    ROS_INFO_THROTTLE(1.0, "No ui to send");
     return;
   }
 
