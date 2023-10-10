@@ -1,0 +1,3 @@
+float32 gyro_speed
+---
+bool is_gyro

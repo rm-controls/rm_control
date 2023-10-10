@@ -67,7 +67,7 @@ public:
   DBus() = default;
   ~DBus() = default;
   void init(const char* serial);
-  void getData(rm_msgs::DbusData* d_bus_data) const;
+  void getData(rm_msgs::DbusData& d_bus_data) const;
   void read();
 
 private:
