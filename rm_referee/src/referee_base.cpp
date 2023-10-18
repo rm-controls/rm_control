@@ -23,7 +23,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
                                                                   &RefereeBase::gimbalCmdDataCallback, this);
   RefereeBase::card_cmd_sub_ = nh.subscribe<rm_msgs::StateCmd>("/controllers/card_controller/command", 10,
                                                                &RefereeBase::cardCmdDataCallback, this);
-  RefereeBase::engineer_cmd_sub_ =
+  RefereeBase::engineer_ui_sub_ =
       nh.subscribe<rm_msgs::EngineerUi>("/engineer_ui", 10, &RefereeBase::engineerUiDataCallback, this);
   RefereeBase::manual_data_sub_ =
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
@@ -67,8 +67,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         capacitor_time_change_ui_ = new CapacitorTimeChangeUi(rpc_value[i], base_, &graph_queue_);
       if (rpc_value[i]["name"] == "effort")
         effort_time_change_ui_ = new EffortTimeChangeUi(rpc_value[i], base_, &graph_queue_);
-      if (rpc_value[i]["name"] == "progress")
-        progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value[i], base_, &graph_queue_);
       if (rpc_value[i]["name"] == "dart_status")
         dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_, &graph_queue_);
       if (rpc_value[i]["name"] == "rotation")
@@ -136,8 +134,6 @@ void RefereeBase::addUi()
     fixed_ui_->addForQueue();
   if (effort_time_change_ui_)
     effort_time_change_ui_->addForQueue();
-  if (progress_time_change_ui_)
-    progress_time_change_ui_->addForQueue();
   if (dart_status_time_change_ui_)
     dart_status_time_change_ui_->addForQueue();
   if (capacitor_time_change_ui_)
@@ -310,8 +306,12 @@ void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 }
 void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data)
 {
-  if (progress_time_change_ui_ && !is_adding_)
-    progress_time_change_ui_->updateEngineerUiData(data, ros::Time::now());
+  if (stone_num_trigger_change_ui_ && !is_adding_)
+    stone_num_trigger_change_ui_->updateStringUiData(data->stone_num);
+  if (gripper_state_trigger_change_ui_ && !is_adding_)
+    gripper_state_trigger_change_ui_->updateStringUiData(data->gripper_state);
+  if (drag_state_trigger_change_ui_ && !is_adding_)
+    drag_state_trigger_change_ui_->updateStringUiData(data->drag_state);
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {

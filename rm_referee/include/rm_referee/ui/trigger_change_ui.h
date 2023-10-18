@@ -201,8 +201,9 @@ private:
 class StringTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit StringTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& name)
-    : TriggerChangeUi(rpc_value, base, name){};
+  explicit StringTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& name,
+                                 std::vector<Graph>* graph_queue)
+    : TriggerChangeUi(rpc_value, base, name, graph_queue){};
   void updateStringUiData(const std::string& data);
 
 private:
