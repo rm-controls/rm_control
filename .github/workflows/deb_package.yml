@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    #if: ${{ github.repository == 'rm-controls/rm_control' }}
+    if: ${{ github.repository == 'rm-controls/rm_control' }}
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -28,8 +28,9 @@ jobs:
           host: ${{ secrets.SOURCE_SSH_HOST }}
           username: ${{ secrets.SOURCE_SSH_NAME }}
           key: ${{ secrets.SOURCE_SSH_KEYGEN }}
+          port: ${{ secrets.SOURCE_SSH_PORT }}
           source: "*.deb"
-          target: "/usr/local/web/rm-source/ubuntu/incoming/"
+          target: "/home/dynamicx/package_hub/wwwroot/ppa/incoming"
       - name: Deploy deb package to source
         if: ${{ github.repository == 'rm-controls/rm_control' }}
         uses: appleboy/ssh-action@master
@@ -37,7 +38,7 @@ jobs:
           host: ${{ secrets.SOURCE_SSH_HOST }}
           username: ${{ secrets.SOURCE_SSH_NAME }}
           key: ${{ secrets.SOURCE_SSH_KEYGEN }}
+          port: ${{ secrets.SOURCE_SSH_PORT }}
           script: |
-                  cd /usr/local/web/rm-source/ubuntu/incoming/
-                  reprepro  -s  -b  /usr/local/web/rm-source/ubuntu/  --waitforlock  1000  includedeb focal /usr/local/web/rm-source/ubuntu/incoming/*.deb && \
-                  rm -f *.deb
+                  cd /home/dynamicx/package_hub/wwwroot/ppa/
+                  bash deploy.sh
