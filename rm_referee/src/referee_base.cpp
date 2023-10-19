@@ -34,6 +34,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::MapSentryData>("/map_sentry_data", 10, &RefereeBase::mapSentryCallback, this);
   RefereeBase::radar_receive_sub_ =
       nh.subscribe<rm_msgs::ClientMapReceiveData>("/rm_radar", 10, &RefereeBase::radarReceiveCallback, this);
+  RefereeBase::sentry_deviate_sub_ =
+      nh.subscribe<rm_msgs::SentryDeviate>("/deviate", 10, &RefereeBase::sentryDeviateCallback, this);
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
   add_ui_frequency_ = getParam(nh, "add_ui_frequency", 5);
@@ -343,6 +345,9 @@ void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data
 {
   if (balance_pitch_time_change_group_ui_)
     balance_pitch_time_change_group_ui_->calculatePointPosition(data, ros::Time::now());
+}
+void RefereeBase::sentryDeviateCallback(const rm_msgs::SentryDeviateConstPtr& data)
+{
 }
 void RefereeBase::radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data)
 {
