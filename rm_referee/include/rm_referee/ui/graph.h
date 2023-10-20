@@ -38,6 +38,7 @@ public:
   void setContent(const std::string& content)
   {
     content_ = content;
+    config_.end_angle = static_cast<int>(content_.length());
   }
   void setEndX(int end_x)
   {
@@ -78,6 +79,7 @@ public:
     last_config_ = config_;
   }
 
+  bool isString;
 private:
   void initPosition(XmlRpc::XmlRpcValue value, std::vector<std::pair<int, int>>& positions);
   rm_referee::GraphColor getColor(const std::string& color);
@@ -87,6 +89,7 @@ private:
   std::vector<std::pair<int, int>> start_positions_{}, end_positions_{};
   rm_referee::GraphConfig config_{}, last_config_{};
   std::string title_{}, content_{}, last_title_{}, last_content_{};
+
 };
 
 }  // namespace rm_referee

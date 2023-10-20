@@ -15,11 +15,19 @@ Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base
     config_.graphic_type = rm_referee::GraphType::STRING;
   if (config_.graphic_type == getType("string"))
   {
+    this->isString = true;
     if (config.hasMember("size"))
       config_.start_angle = static_cast<int>(config["size"]);
+    if (config.hasMember("title"))
+      title_ = static_cast<std::string>(config["title"]);
+    if (config.hasMember("content"))
+      content_ = static_cast<std::string>(config["content"]);
+
+    config_.end_angle = static_cast<int>((title_ + content_).length());
   }
   else
   {
+    this->isString = false;
     if (config.hasMember("start_angle"))
       config_.start_angle = static_cast<int>(config["start_angle"]);
   }
@@ -53,10 +61,6 @@ Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base
     config_.radius = static_cast<int>(config["radius"]);
   if (config.hasMember("width"))
     config_.width = static_cast<int>(config["width"]);
-  if (config.hasMember("title"))
-    title_ = static_cast<std::string>(config["title"]);
-  if (config.hasMember("content"))
-    content_ = static_cast<std::string>(config["content"]);
   config_.operate_type = rm_referee::GraphOperation::DELETE;
   last_config_ = config_;
   last_title_ = title_;

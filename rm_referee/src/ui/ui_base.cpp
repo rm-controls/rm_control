@@ -375,8 +375,7 @@ void FixedUi::updateForQueue()
 
   for (auto it : graph_vector_)
   {
-    std::string characters = it.second->getCharacters();
-    if (!characters.empty())
+    if (graph_->isString)
         character_queue_->push_back(*it.second);
     else
         graph_queue_->push_back(*it.second);
@@ -411,6 +410,7 @@ void UiBase::sendSerial(const ros::Time& time, int data_len)
   {
   }
   clearTxBuffer();
+
 }
 
 void UiBase::clearTxBuffer()

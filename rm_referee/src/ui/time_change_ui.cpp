@@ -30,8 +30,7 @@ void TimeChangeUi::updateForQueue()
 
   if ( !graph_->isRepeated() && ros::Time::now() - last_send_ > delay_)
   {
-    std::string characters = graph_->getCharacters();
-    if (!characters.empty())
+    if (graph_->isString)
       character_queue_->push_back(*graph_);
     else
       graph_queue_->push_back(*graph_);
@@ -48,17 +47,13 @@ void TimeChangeGroupUi::updateForQueue()
     for (auto graph : graph_vector_)
     {
       graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
-      if ( !graph.second->isRepeated() )
-      {
-        std::string characters = graph.second->getCharacters();
-        if (!characters.empty())
+      if(graph_->isString)
           character_queue_->push_back(*graph.second);
-        else
+      else
           graph_queue_->push_back(*graph.second);
 
         last_send_ = ros::Time::now();
       }
-    }
 }
 
 void CapacitorTimeChangeUi::add()
