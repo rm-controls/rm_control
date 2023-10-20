@@ -166,16 +166,16 @@ void RefereeBase::sendSerialDataCallback()
     return;
   }
 
-  if (graph_queue_.size() > 50)
-    ROS_WARN_THROTTLE(2.0, "Sending graph UI too frequently, please modify the configuration file or code to "
-                           "reduce the frequency");
-
-  if (character_queue_.size() > 20)
-    ROS_WARN_THROTTLE(2.0, "Sending character UI too frequently, please modify the configuration file or code to "
-                           "reduce the frequency");
-
   if (!is_adding_)
   {
+    if (graph_queue_.size() > 50)
+        ROS_WARN_THROTTLE(2.0, "Sending graph UI too frequently, please modify the configuration file or code to "
+                               "reduce the frequency");
+
+    if (character_queue_.size() > 8)
+        ROS_WARN_THROTTLE(2.0, "Sending character UI too frequently, please modify the configuration file or code to "
+                               "reduce the frequency");
+
     if (graph_queue_.size() > 50)
     {
       ROS_WARN_THROTTLE(2.0, "Sending graph UI too frequently, now reduce the queue");
