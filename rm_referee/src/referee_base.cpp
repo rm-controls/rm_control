@@ -112,7 +112,10 @@ void RefereeBase::addUi()
     ROS_INFO_THROTTLE(2.0, "End adding");
     add_ui_timer_.stop();
     if (!graph_queue_.empty())
-        graph_queue_.clear();
+    {
+      graph_queue_.clear();
+      ROS_WARN_THROTTLE(0.5, "Some UI is not add completely, now clear the queue");
+    }
     is_adding_ = false;
     send_serial_data_timer_.setPeriod(ros::Duration(send_ui_queue_delay_));
     return;
@@ -168,13 +171,6 @@ void RefereeBase::sendSerialDataCallback()
 
   if (!is_adding_)
   {
-    if (graph_queue_.size() > 50)
-        ROS_WARN_THROTTLE(2.0, "Sending graph UI too frequently, please modify the configuration file or code to "
-                               "reduce the frequency");
-
-    if (character_queue_.size() > 8)
-        ROS_WARN_THROTTLE(2.0, "Sending character UI too frequently, please modify the configuration file or code to "
-                               "reduce the frequency");
 
     if (graph_queue_.size() > 50)
     {
@@ -197,6 +193,7 @@ void RefereeBase::sendSerialDataCallback()
       interactive_data_sender_->sendRadarInteractiveData(radar_receive_data);
       radar_receive_last_send = ros::Time::now();
       send_radar_receive_data_ = false;
+      ROS_INFO_THROTTLE(1.0, " send radar receive data");
     }
 
     else if (send_map_sentry_data_)
@@ -206,9 +203,10 @@ void RefereeBase::sendSerialDataCallback()
       interactive_data_sender_->sendMapSentryData(map_sentry_data);
       radar_receive_last_send = ros::Time::now();
       send_map_sentry_data_ = false;
+      ROS_INFO_THROTTLE(1.0, " send map sentry data");
     }
 
-     else if(!character_queue_.empty() && graph_queue_.size() <= 10)
+     else if(!character_queue_.empty())
     {
       graph_queue_sender_->sendCharacter(ros::Time::now(), &character_queue_.front());
       character_queue_.pop_front();
@@ -255,6 +253,7 @@ void RefereeBase::sendSerialDataCallback()
     {
       graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.at(0));
       graph_queue_.pop_front();
+      ROS_INFO_THROTTLE(1.0, " adding send 1 graph");
     }
   }
   send_serial_data_timer_.start();
