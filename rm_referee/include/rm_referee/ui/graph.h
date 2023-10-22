@@ -38,7 +38,8 @@ public:
   void setContent(const std::string& content)
   {
     content_ = content;
-    config_.end_angle = static_cast<int>(content_.length());
+    if (!title_.empty() || !content_.empty())
+      config_.end_angle = static_cast<int>((title_ + content_).size());
   }
   void setEndX(int end_x)
   {
@@ -70,16 +71,17 @@ public:
   {
     return config_ == last_config_ && title_ == last_title_ && content_ == last_content_;
   }
+  bool isString()
+  {
+    return config_.graphic_type == rm_referee::GraphType::STRING;
+  }
   void updateLastConfig()
   {
-    if (!title_.empty() && !content_.empty())
-      config_.end_angle = static_cast<int>((title_ + content_).size());
     last_content_ = content_;
     last_title_ = title_;
     last_config_ = config_;
   }
 
-  bool isString;
 private:
   void initPosition(XmlRpc::XmlRpcValue value, std::vector<std::pair<int, int>>& positions);
   rm_referee::GraphColor getColor(const std::string& color);
@@ -89,7 +91,6 @@ private:
   std::vector<std::pair<int, int>> start_positions_{}, end_positions_{};
   rm_referee::GraphConfig config_{}, last_config_{};
   std::string title_{}, content_{}, last_title_{}, last_content_{};
-
 };
 
 }  // namespace rm_referee

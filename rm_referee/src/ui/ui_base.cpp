@@ -143,8 +143,7 @@ void UiBase::sendUi(const ros::Time& time)
   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
 
-  std::string characters = graph_->getCharacters();
-  if (!characters.empty())
+  if (graph_->isString())
     sendCharacter(time, graph_);
   else
     sendSingleGraph(time, graph_);
@@ -296,7 +295,7 @@ void GroupUiBase::display(const ros::Time& time)
 
 void GroupUiBase::sendUi(const ros::Time& time)
 {
-  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
 
   for (auto it : character_vector_)
@@ -375,7 +374,7 @@ void FixedUi::updateForQueue()
 
   for (auto it : graph_vector_)
   {
-    if (graph_->isString)
+    if (graph_->isString())
         character_queue_->push_back(*it.second);
     else
         graph_queue_->push_back(*it.second);
@@ -410,7 +409,6 @@ void UiBase::sendSerial(const ros::Time& time, int data_len)
   {
   }
   clearTxBuffer();
-
 }
 
 void UiBase::clearTxBuffer()

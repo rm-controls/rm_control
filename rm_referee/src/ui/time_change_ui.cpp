@@ -28,32 +28,34 @@ void TimeChangeUi::updateForQueue()
   updateConfig();
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 
-  if ( !graph_->isRepeated() && ros::Time::now() - last_send_ > delay_)
+  if (graph_queue_ && character_queue_ && ros::Time::now() - last_send_ > delay_)
   {
-    if (graph_->isString)
+    if (graph_->isString())
       character_queue_->push_back(*graph_);
     else
       graph_queue_->push_back(*graph_);
 
     last_send_ = ros::Time::now();
-
   }
 }
 
 void TimeChangeGroupUi::updateForQueue()
 {
   updateConfig();
-  if (ros::Time::now() - last_send_ > delay_)
-    for (auto graph : graph_vector_)
+  if (graph_queue_ && character_queue_ && ros::Time::now() - last_send_ > delay_)
+  {
+    for (auto it : character_vector_)
     {
-      graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
-      if(graph_->isString)
-          character_queue_->push_back(*graph.second);
-      else
-          graph_queue_->push_back(*graph.second);
-
-        last_send_ = ros::Time::now();
-      }
+      it.second->setOperation(rm_referee::GraphOperation::UPDATE);
+      character_queue_->push_back(*it.second);
+    }
+    for (auto it : graph_vector_)
+    {
+      it.second->setOperation(rm_referee::GraphOperation::UPDATE);
+      graph_queue_->push_back(*it.second);
+    }
+    last_send_ = ros::Time::now();
+  }
 }
 
 void CapacitorTimeChangeUi::add()
@@ -133,8 +135,9 @@ void ProgressTimeChangeUi::updateConfig()
 void ProgressTimeChangeUi::updateEngineerUiData(const rm_msgs::EngineerUi::ConstPtr data,
                                                 const ros::Time& last_get_data_time)
 {
-  total_steps_ = data->total_steps;
+  /*total_steps_ = data->total_steps;
   finished_data_ = data->finished_step;
+   */
   TimeChangeUi::updateForQueue();
 }
 

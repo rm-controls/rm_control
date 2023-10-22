@@ -22,7 +22,7 @@ void TriggerChangeUi::updateForQueue(bool check_repeat)
   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
 
-  if (graph_->isString)
+  if (graph_->isString())
     character_queue_->push_back(*graph_);
   else
     graph_queue_->push_back(*graph_);
@@ -38,7 +38,7 @@ void TriggerChangeUi::updateTwiceForQueue(bool check_repeat)
   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
 
-  if (graph_->isString)
+  if (graph_->isString())
   {
     for(int i = 0; i < 2; i++)
       character_queue_->push_back(*graph_);
@@ -108,6 +108,7 @@ void TriggerChangeGroupUi::updateTwiceForQueue(bool check_repeat)
 
   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
+
 
   for (auto it : character_vector_)
     for(int i = 0; i < 2; i++)

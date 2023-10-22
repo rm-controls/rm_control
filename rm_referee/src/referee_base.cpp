@@ -161,28 +161,28 @@ void RefereeBase::addUi()
   add_ui_times_++;
 }
 
-
 void RefereeBase::sendSerialDataCallback()
 {
   if (graph_queue_.empty() && character_queue_.empty()){
-    ROS_INFO_THROTTLE(1.0, "No ui to send");
+    ROS_INFO_THROTTLE(1.0, "No UI to send");
     return;
   }
 
   if (!is_adding_)
   {
-
     if (graph_queue_.size() > 50)
     {
-      ROS_WARN_THROTTLE(2.0, "Sending graph UI too frequently, now reduce the queue");
+      ROS_WARN_THROTTLE(0.5, "Sending graph UI too frequently, please modify the configuration file or code to"
+                             "reduce the frequency . Now pop the queue");
       while (graph_queue_.size() > 50)
         graph_queue_.pop_front();
     }
 
     if (character_queue_.size() > 8)
     {
-      ROS_WARN_THROTTLE(2.0, "Sending character UI too frequently, now reduce the queue");
-      while (character_queue_.size() > 7)
+      ROS_WARN_THROTTLE(0.5, "Sending character UI too frequently, please modify the configuration file or code to"
+                             "reduce the frequency . Now pop the queue");
+      while (character_queue_.size() > 8)
         character_queue_.pop_front();
     }
 
@@ -206,9 +206,9 @@ void RefereeBase::sendSerialDataCallback()
       ROS_INFO_THROTTLE(1.0, " send map sentry data");
     }
 
-     else if(!character_queue_.empty())
+     else if(!character_queue_.empty() && graph_queue_.size() <= 14)
     {
-      graph_queue_sender_->sendCharacter(ros::Time::now(), &character_queue_.front());
+      graph_queue_sender_->sendCharacter(ros::Time::now(), &character_queue_.at(0));
       character_queue_.pop_front();
       ROS_INFO_THROTTLE(1.0, " send character");
     }
@@ -249,13 +249,46 @@ void RefereeBase::sendSerialDataCallback()
   }
   else
   {
-    if(!graph_queue_.empty())
+    if (graph_queue_.size() >= 7)
+    {
+      graph_queue_sender_->sendSevenGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1),
+                                          &graph_queue_.at(2), &graph_queue_.at(3),
+                                          &graph_queue_.at(4), &graph_queue_.at(5),
+                                          &graph_queue_.at(6));
+      ROS_INFO_THROTTLE(1.0, " add 7 graph");
+      for (int i = 0; i < 7; i++)
+        graph_queue_.pop_front();
+    }
+    else if (graph_queue_.size() >= 5)
+    {
+      graph_queue_sender_->sendFiveGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1),
+                                         &graph_queue_.at(2), &graph_queue_.at(3),
+                                         &graph_queue_.at(4));
+      ROS_INFO_THROTTLE(1.0, " add 5 graph");
+      for (int i = 0; i < 5; i++)
+        graph_queue_.pop_front();
+    }
+    else if (graph_queue_.size() >= 2)
+    {
+      graph_queue_sender_->sendDoubleGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1));
+      for (int i = 0; i < 2; i++)
+        graph_queue_.pop_front();
+
+      ROS_INFO_THROTTLE(1.0, " add 2 graph");
+    }
+    else if (graph_queue_.size() == 1)
     {
       graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.at(0));
       graph_queue_.pop_front();
-      ROS_INFO_THROTTLE(1.0, " adding send 1 graph");
+      ROS_INFO_THROTTLE(1.0, " add 1 graph");
     }
   }
+  if (base_.robot_id_ == 0 )
+  {
+    ROS_WARN_THROTTLE(1.0, "robot base id = 0, the serial or referee system may not be connected");
+  }
+  if ( base_.client_id_ == 0)
+    ROS_WARN_THROTTLE(1.0, "client base id = 0, the serial or referee system may not be connected\"");
   send_serial_data_timer_.start();
 }
 

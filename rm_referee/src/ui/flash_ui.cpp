@@ -28,16 +28,14 @@ void FlashUi::updateForQueue(const ros::Time& time, bool state, bool once)
 
   graph_->updateLastConfig();
 
-  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+   if(base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
 
-  std::string characters = graph_->getCharacters();
-  if (!characters.empty())
+  if (graph_->isString())
     character_queue_->push_back(*graph_);
   else
-      graph_queue_->push_back(*graph_);
+    graph_queue_->push_back(*graph_);
 
-  ROS_INFO_THROTTLE(1.0, "update flash ui");
 }
 
 void CoverFlashUi::display(const ros::Time& time)
