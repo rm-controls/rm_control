@@ -54,6 +54,7 @@ public:
 
   // send  ui
   void sendSerialDataCallback();
+  void queueSend();
 
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;

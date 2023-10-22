@@ -234,7 +234,6 @@ class PitchAngleTimeChangeUi : public TimeChangeUi
 public:
   explicit PitchAngleTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
     : TimeChangeUi(rpc_value, base, "pitch", graph_queue, character_queue){};
-  void update() override;
   void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
 
 private:

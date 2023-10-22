@@ -34,7 +34,6 @@ void TimeChangeUi::updateForQueue()
       character_queue_->push_back(*graph_);
     else
       graph_queue_->push_back(*graph_);
-
     last_send_ = ros::Time::now();
   }
 }
@@ -117,7 +116,7 @@ void EffortTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::Con
     {
       joint_effort_ = data->effort[max_index];
       joint_name_ = data->name[max_index];
-      TimeChangeUi::update();
+      updateForQueue();
     }
   }
 }
@@ -135,9 +134,8 @@ void ProgressTimeChangeUi::updateConfig()
 void ProgressTimeChangeUi::updateEngineerUiData(const rm_msgs::EngineerUi::ConstPtr data,
                                                 const ros::Time& last_get_data_time)
 {
-  /*total_steps_ = data->total_steps;
+  total_steps_ = data->total_steps;
   finished_data_ = data->finished_step;
-   */
   TimeChangeUi::updateForQueue();
 }
 
@@ -286,11 +284,6 @@ void PitchAngleTimeChangeUi::updateJointStateData(const sensor_msgs::JointState:
   for (unsigned int i = 0; i < data->name.size(); i++)
     if (data->name[i] == "pitch_joint")
       pitch_angle_ = data->position[i];
-  update();
-}
-
-void PitchAngleTimeChangeUi::update()
-{
   updateForQueue();
 }
 

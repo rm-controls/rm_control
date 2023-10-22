@@ -6,11 +6,6 @@
 
 namespace rm_referee
 {
-void TriggerChangeUi::setContent(const std::string& content)
-{
-  graph_->setContent(content);
-  display();
-}
 
 void TriggerChangeUi::updateForQueue(bool check_repeat)
 {
@@ -19,14 +14,10 @@ void TriggerChangeUi::updateForQueue(bool check_repeat)
       return;
   graph_->updateLastConfig();
 
-  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
-    return;
-
   if (graph_->isString())
     character_queue_->push_back(*graph_);
   else
     graph_queue_->push_back(*graph_);
-
 }
 void TriggerChangeUi::updateTwiceForQueue(bool check_repeat)
 {
@@ -34,9 +25,6 @@ void TriggerChangeUi::updateTwiceForQueue(bool check_repeat)
     if (graph_->isRepeated())
       return;
   graph_->updateLastConfig();
-
-  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
-    return;
 
   if (graph_->isString())
   {
@@ -47,13 +35,6 @@ void TriggerChangeUi::updateTwiceForQueue(bool check_repeat)
     for(int i = 0; i < 2; i++)
       graph_queue_->push_back(*graph_);
   }
-
-}
-
-void TriggerChangeGroupUi::setContent(const std::string& content)
-{
-  graph_->setContent(content);
-  display();
 }
 
 void TriggerChangeGroupUi::updateForQueue(bool check_repeat)
@@ -75,9 +56,6 @@ void TriggerChangeGroupUi::updateForQueue(bool check_repeat)
     it.second->updateLastConfig();
   for (auto it : character_vector_)
     it.second->updateLastConfig();
-
-  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
-    return;
 
   for (auto it : character_vector_)
     character_queue_->push_back(*it.second);
@@ -105,10 +83,6 @@ void TriggerChangeGroupUi::updateTwiceForQueue(bool check_repeat)
     it.second->updateLastConfig();
   for (auto it : character_vector_)
     it.second->updateLastConfig();
-
-  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
-    return;
-
 
   for (auto it : character_vector_)
     for(int i = 0; i < 2; i++)

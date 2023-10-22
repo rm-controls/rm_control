@@ -21,12 +21,10 @@ public:
     else
       graph_ = new Graph(rpc_value["config"], base_, id_++);
   };
-  virtual void setContent(const std::string& content);
   virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
   void updateForQueue(bool check_repeat = true);
   void updateTwiceForQueue(bool check_repeat = true);
 };
-
 
 class TriggerChangeGroupUi : public GroupUiBase
 {
@@ -37,7 +35,6 @@ public:
   {
     graph_name_ = graph_name;
   };
-  virtual void setContent(const std::string& content);
   virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
   void updateForQueue(bool check_repeat = true);
   void updateTwiceForQueue(bool check_repeat = true);
