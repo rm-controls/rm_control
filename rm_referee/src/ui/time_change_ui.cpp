@@ -40,7 +40,7 @@ void TimeChangeGroupUi::updateForQueue()
   updateConfig();
   if (graph_queue_ && character_queue_ && ros::Time::now() - last_send_ > delay_)
   {
-   GroupUiBase::updateForQueue();
+    GroupUiBase::updateForQueue();
     last_send_ = ros::Time::now();
   }
 }

@@ -31,7 +31,7 @@ class TriggerChangeGroupUi : public GroupUiBase
 {
 public:
   explicit TriggerChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name,
-                           std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
+                                std::deque<Graph>* graph_queue, std::deque<Graph>* character_queue)
     : GroupUiBase(rpc_value, base, graph_queue, character_queue)
   {
     graph_name_ = graph_name;
@@ -48,7 +48,8 @@ protected:
 class ChassisTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit ChassisTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
+  explicit ChassisTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                  std::deque<Graph>* character_queue)
     : TriggerChangeUi(rpc_value, base, "chassis", graph_queue, character_queue)
   {
     if (base.robot_id_ == rm_referee::RobotId::RED_ENGINEER || base.robot_id_ == rm_referee::RobotId::BLUE_ENGINEER)
@@ -79,7 +80,8 @@ private:
 class ShooterTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit ShooterTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
+  explicit ShooterTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                  std::deque<Graph>* character_queue)
     : TriggerChangeUi(rpc_value, base, "shooter", graph_queue, character_queue)
   {
     graph_->setContent("0");
@@ -97,7 +99,8 @@ private:
 class GimbalTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit GimbalTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
+  explicit GimbalTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                 std::deque<Graph>* character_queue)
     : TriggerChangeUi(rpc_value, base, "gimbal", graph_queue, character_queue)
   {
     graph_->setContent("0");
@@ -115,7 +118,8 @@ private:
 class TargetTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit TargetTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
+  explicit TargetTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                 std::deque<Graph>* character_queue)
     : TriggerChangeUi(rpc_value, base, "target", graph_queue, character_queue)
   {
     graph_->setContent("armor");
@@ -137,7 +141,8 @@ private:
 class TargetViewAngleTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit TargetViewAngleTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
+  explicit TargetViewAngleTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                          std::deque<Graph>* character_queue)
     : TriggerChangeUi(rpc_value, base, "target_scale", graph_queue, character_queue)
   {
   }
@@ -152,7 +157,8 @@ private:
 class PolygonTriggerChangeGroupUi : public TriggerChangeGroupUi
 {
 public:
-  explicit PolygonTriggerChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
+  explicit PolygonTriggerChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                       std::deque<Graph>* character_queue)
     : TriggerChangeGroupUi(rpc_value, base, "Polygon", graph_queue, character_queue)
   {
     ROS_ASSERT(rpc_value.hasMember("points"));
@@ -193,13 +199,15 @@ public:
     }
   }
   void update() override;
-  //virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){} void setContent(const std::string &content) override;
+  // virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){} void
+  // setContent(const std::string &content) override;
 };
 
 class CameraTriggerChangeUi : public TriggerChangeUi
 {
 public:
-  explicit CameraTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue, std::deque<Graph> * character_queue)
+  explicit CameraTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                 std::deque<Graph>* character_queue)
     : TriggerChangeUi(rpc_value, base, "camera", graph_queue, character_queue)
   {
     if (rpc_value.hasMember("camera_name"))

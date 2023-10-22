@@ -55,7 +55,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "target")
         target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "target_view_angle")
-        target_view_angle_trigger_change_ui_ = new TargetViewAngleTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+        target_view_angle_trigger_change_ui_ =
+            new TargetViewAngleTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "camera")
         camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
@@ -74,17 +75,22 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "rotation")
         rotation_time_change_ui_ = new RotationTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "lane_line")
-        lane_line_time_change_ui_ = new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+        lane_line_time_change_ui_ =
+            new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "pitch")
         pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "balance_pitch")
-        balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+        balance_pitch_time_change_group_ui_ =
+            new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "engineer_joint1")
-        engineer_joint1_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_,"joint1");
+        engineer_joint1_time_change_ui =
+            new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "joint1");
       if (rpc_value[i]["name"] == "engineer_joint2")
-        engineer_joint2_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_,"joint2");
+        engineer_joint2_time_change_ui =
+            new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "joint2");
       if (rpc_value[i]["name"] == "engineer_joint3")
-        engineer_joint3_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_,"joint3");
+        engineer_joint3_time_change_ui =
+            new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "joint3");
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -103,7 +109,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   add_ui_timer_ =
       nh.createTimer(ros::Duration(1. / add_ui_frequency_), std::bind(&RefereeBase::addUi, this), false, false);
   send_serial_data_timer_ = nh.createTimer(ros::Duration(send_ui_queue_delay_),
-                                        std::bind(&RefereeBase::sendSerialDataCallback, this), false, true);
+                                           std::bind(&RefereeBase::sendSerialDataCallback, this), false, true);
 }
 void RefereeBase::addUi()
 {
@@ -163,7 +169,8 @@ void RefereeBase::addUi()
 
 void RefereeBase::sendSerialDataCallback()
 {
-  if (graph_queue_.empty() && character_queue_.empty()){
+  if (graph_queue_.empty() && character_queue_.empty())
+  {
     ROS_INFO_THROTTLE(1.0, "No UI to send");
     return;
   }
@@ -186,9 +193,9 @@ void RefereeBase::sendSerialDataCallback()
         character_queue_.pop_front();
     }
 
-    if(send_radar_receive_data_)
+    if (send_radar_receive_data_)
     {
-      if(ros::Time::now() - radar_receive_last_send < ros::Duration(0.2))
+      if (ros::Time::now() - radar_receive_last_send < ros::Duration(0.2))
         ROS_WARN_THROTTLE(2.0, "Sending radar receive data too frequently");
       interactive_data_sender_->sendRadarInteractiveData(radar_receive_data);
       radar_receive_last_send = ros::Time::now();
@@ -197,49 +204,47 @@ void RefereeBase::sendSerialDataCallback()
     }
     else if (send_map_sentry_data_)
     {
-      if(ros::Time::now() - map_sentry_last_send < ros::Duration(0.2))
-          ROS_WARN_THROTTLE(2.0, "Sending map sentry data too frequently");
+      if (ros::Time::now() - map_sentry_last_send < ros::Duration(0.2))
+        ROS_WARN_THROTTLE(2.0, "Sending map sentry data too frequently");
       interactive_data_sender_->sendMapSentryData(map_sentry_data);
       radar_receive_last_send = ros::Time::now();
       send_map_sentry_data_ = false;
       ROS_INFO_THROTTLE(1.0, " send map sentry data");
     }
-     else
+    else
       queueSend();
   }
   else
     queueSend();
 
-  if (base_.robot_id_ == 0 )
+  if (base_.robot_id_ == 0)
   {
     ROS_WARN_THROTTLE(1.0, "robot base id = 0, the serial or referee system may not be connected");
   }
-  if ( base_.client_id_ == 0)
+  if (base_.client_id_ == 0)
     ROS_WARN_THROTTLE(1.0, "client base id = 0, the serial or referee system may not be connected\"");
   send_serial_data_timer_.start();
 }
 
 void RefereeBase::queueSend()
 {
-  if(!character_queue_.empty() && graph_queue_.size() <= 14)
+  if (!character_queue_.empty() && graph_queue_.size() <= 14)
   {
     graph_queue_sender_->sendCharacter(ros::Time::now(), &character_queue_.at(0));
     character_queue_.pop_front();
   }
   else if (graph_queue_.size() >= 7)
   {
-    graph_queue_sender_->sendSevenGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1),
-                                        &graph_queue_.at(2), &graph_queue_.at(3),
-                                        &graph_queue_.at(4), &graph_queue_.at(5),
+    graph_queue_sender_->sendSevenGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1), &graph_queue_.at(2),
+                                        &graph_queue_.at(3), &graph_queue_.at(4), &graph_queue_.at(5),
                                         &graph_queue_.at(6));
     for (int i = 0; i < 7; i++)
       graph_queue_.pop_front();
   }
   else if (graph_queue_.size() >= 5)
   {
-    graph_queue_sender_->sendFiveGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1),
-                                       &graph_queue_.at(2), &graph_queue_.at(3),
-                                       &graph_queue_.at(4));
+    graph_queue_sender_->sendFiveGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1), &graph_queue_.at(2),
+                                       &graph_queue_.at(3), &graph_queue_.at(4));
     for (int i = 0; i < 5; i++)
       graph_queue_.pop_front();
   }
@@ -311,11 +316,10 @@ void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
     add_ui_flag_ = false;
     is_adding_ = true;
     if (!graph_queue_.empty())
-        graph_queue_.clear();
+      graph_queue_.clear();
     send_serial_data_timer_.setPeriod(ros::Duration(0.05));
     add_ui_timer_.start();
     add_ui_times_ = 0;
-
   }
   if (data->s_r != rm_msgs::DbusData::UP)
   {

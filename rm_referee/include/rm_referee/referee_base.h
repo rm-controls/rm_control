@@ -13,7 +13,6 @@
 #include "rm_referee/ui/time_change_ui.h"
 #include "rm_referee/ui/flash_ui.h"
 
-
 namespace rm_referee
 {
 class RefereeBase

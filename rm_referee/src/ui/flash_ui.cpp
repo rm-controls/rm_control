@@ -6,7 +6,6 @@
 
 namespace rm_referee
 {
-
 void FlashUi::updateFlashUiForQueue(const ros::Time& time, bool state, bool once)
 {
   if (once)

@@ -19,7 +19,8 @@ namespace rm_referee
 class UiBase
 {
 public:
-  explicit UiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue = nullptr, std::deque<Graph>* character_queue = nullptr )
+  explicit UiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue = nullptr,
+                  std::deque<Graph>* character_queue = nullptr)
     : base_(base), tf_listener_(tf_buffer_)
   {
     if (rpc_value.hasMember("config"))
@@ -73,7 +74,8 @@ protected:
 class GroupUiBase : public UiBase
 {
 public:
-  explicit GroupUiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph> * graph_queue = nullptr, std::deque<Graph> * character_queue = nullptr)
+  explicit GroupUiBase(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue = nullptr,
+                       std::deque<Graph>* character_queue = nullptr)
     : UiBase(rpc_value, base, graph_queue, character_queue){};
   ~GroupUiBase() = default;
   void add() override;
@@ -98,10 +100,11 @@ protected:
 class FixedUi : public GroupUiBase
 {
 public:
-  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue = nullptr, std::deque<Graph>* character_queue = nullptr)
+  explicit FixedUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue = nullptr,
+                   std::deque<Graph>* character_queue = nullptr)
     : GroupUiBase(rpc_value, base, graph_queue, character_queue)
   {
-    for(int i = 0; i < static_cast<int>(rpc_value.size()); i++)
+    for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
       graph_vector_.insert(
           std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
   };

@@ -316,7 +316,7 @@ void GroupUiBase::display(const ros::Time& time)
 
 void GroupUiBase::sendUi(const ros::Time& time)
 {
-   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
 
   for (auto it : character_vector_)
@@ -385,17 +385,17 @@ void GroupUiBase::sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* gr
 
 void FixedUi::updateForQueue()
 {
-  while(update_fixed_ui_times < 1)
+  while (update_fixed_ui_times < 1)
   {
-  for (auto it : graph_vector_)
-    it.second->updateLastConfig();
+    for (auto it : graph_vector_)
+      it.second->updateLastConfig();
 
-  if (base_.robot_id_ == 0 || base_.client_id_ == 0)
-    return;
+    if (base_.robot_id_ == 0 || base_.client_id_ == 0)
+      return;
 
-  GroupUiBase::updateForQueue();
-  ROS_INFO_THROTTLE(1.0, "update fixed ui");
-  update_fixed_ui_times++;
+    GroupUiBase::updateForQueue();
+    ROS_INFO_THROTTLE(1.0, "update fixed ui");
+    update_fixed_ui_times++;
   }
 }
 

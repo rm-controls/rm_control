@@ -26,7 +26,7 @@ void TriggerChangeUi::updateTwiceForQueue(bool check_repeat)
     if (graph_->isRepeated())
       return;
   graph_->updateLastConfig();
-  for(int i = 0; i < 2; i++)
+  for (int i = 0; i < 2; i++)
     UiBase::updateForQueue();
 }
 
@@ -77,10 +77,9 @@ void TriggerChangeGroupUi::updateTwiceForQueue(bool check_repeat)
   for (auto it : character_vector_)
     it.second->updateLastConfig();
 
-  for(int i = 0; i < 2; i++)
+  for (int i = 0; i < 2; i++)
     GroupUiBase::updateForQueue();
 }
-
 
 void ChassisTriggerChangeUi::update()
 {

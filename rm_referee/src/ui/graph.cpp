@@ -60,7 +60,7 @@ Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base
   if (config.hasMember("content"))
   {
     content_ = static_cast<std::string>(config["content"]);
-    if (!title_.empty()|| !content_.empty())
+    if (!title_.empty() || !content_.empty())
       config_.end_angle = static_cast<int>((title_ + content_).size());
   }
   config_.operate_type = rm_referee::GraphOperation::DELETE;
