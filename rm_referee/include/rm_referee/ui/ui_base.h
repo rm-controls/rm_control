@@ -31,6 +31,7 @@ public:
   ~UiBase() = default;
   virtual void add();
   virtual void update();
+  virtual void updateForQueue();
   virtual void erasure();
   virtual void addForQueue(int add_times = 1);
   virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data){};
@@ -77,6 +78,7 @@ public:
   ~GroupUiBase() = default;
   void add() override;
   void update() override;
+  void updateForQueue() override;
   void erasure() override;
   void addForQueue(int add_times = 1) override;
   void sendUi(const ros::Time& time) override;
@@ -103,7 +105,7 @@ public:
       graph_vector_.insert(
           std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
   };
-  void updateForQueue();
+  void updateForQueue() override;
   int update_fixed_ui_times = 0;
 };
 

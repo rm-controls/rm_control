@@ -35,6 +35,13 @@ void UiBase::erasure()
   displayTwice(false);
 }
 
+void UiBase::updateForQueue()
+{
+  if (graph_->isString())
+    character_queue_->push_back(*graph_);
+  else
+    graph_queue_->push_back(*graph_);
+}
 void GroupUiBase::add()
 {
   for (auto graph : graph_vector_)
@@ -73,6 +80,20 @@ void GroupUiBase::erasure()
   for (auto character : character_vector_)
     character.second->setOperation(rm_referee::GraphOperation::DELETE);
   displayTwice(false);
+}
+
+void GroupUiBase::updateForQueue()
+{
+  for (auto it : character_vector_)
+  {
+    it.second->setOperation(rm_referee::GraphOperation::UPDATE);
+    character_queue_->push_back(*it.second);
+  }
+  for (auto it : graph_vector_)
+  {
+    it.second->setOperation(rm_referee::GraphOperation::UPDATE);
+    graph_queue_->push_back(*it.second);
+  }
 }
 
 void UiBase::display(bool check_repeat)
@@ -372,13 +393,7 @@ void FixedUi::updateForQueue()
   if (base_.robot_id_ == 0 || base_.client_id_ == 0)
     return;
 
-  for (auto it : graph_vector_)
-  {
-    if (graph_->isString())
-        character_queue_->push_back(*it.second);
-    else
-        graph_queue_->push_back(*it.second);
-  }
+  GroupUiBase::updateForQueue();
   ROS_INFO_THROTTLE(1.0, "update fixed ui");
   update_fixed_ui_times++;
   }

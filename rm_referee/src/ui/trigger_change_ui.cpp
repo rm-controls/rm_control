@@ -6,35 +6,38 @@
 
 namespace rm_referee
 {
+void TriggerChangeUi::updateForQueue()
+{
+  graph_->updateLastConfig();
+  UiBase::updateForQueue();
+}
 
 void TriggerChangeUi::updateForQueue(bool check_repeat)
 {
   if (check_repeat)
     if (graph_->isRepeated())
       return;
-  graph_->updateLastConfig();
-
-  if (graph_->isString())
-    character_queue_->push_back(*graph_);
-  else
-    graph_queue_->push_back(*graph_);
+  TriggerChangeUi::updateForQueue();
 }
+
 void TriggerChangeUi::updateTwiceForQueue(bool check_repeat)
 {
   if (check_repeat)
     if (graph_->isRepeated())
       return;
   graph_->updateLastConfig();
+  for(int i = 0; i < 2; i++)
+    UiBase::updateForQueue();
+}
 
-  if (graph_->isString())
-  {
-    for(int i = 0; i < 2; i++)
-      character_queue_->push_back(*graph_);
-  }
-  else{
-    for(int i = 0; i < 2; i++)
-      graph_queue_->push_back(*graph_);
-  }
+void TriggerChangeGroupUi::updateForQueue()
+{
+  for (auto it : graph_vector_)
+    it.second->updateLastConfig();
+  for (auto it : character_vector_)
+    it.second->updateLastConfig();
+
+  GroupUiBase::updateForQueue();
 }
 
 void TriggerChangeGroupUi::updateForQueue(bool check_repeat)
@@ -51,17 +54,7 @@ void TriggerChangeGroupUi::updateForQueue(bool check_repeat)
     if (is_repeat)
       return;
   }
-
-  for (auto it : graph_vector_)
-    it.second->updateLastConfig();
-  for (auto it : character_vector_)
-    it.second->updateLastConfig();
-
-  for (auto it : character_vector_)
-    character_queue_->push_back(*it.second);
-  for (auto it : graph_vector_)
-    graph_queue_->push_back(*it.second);
-
+  TriggerChangeGroupUi::updateForQueue();
 }
 
 void TriggerChangeGroupUi::updateTwiceForQueue(bool check_repeat)
@@ -84,13 +77,8 @@ void TriggerChangeGroupUi::updateTwiceForQueue(bool check_repeat)
   for (auto it : character_vector_)
     it.second->updateLastConfig();
 
-  for (auto it : character_vector_)
-    for(int i = 0; i < 2; i++)
-      character_queue_->push_back(*it.second);
-  for (auto it : graph_vector_)
-    for(int i = 0; i < 2; i++)
-      graph_queue_->push_back(*it.second);
-
+  for(int i = 0; i < 2; i++)
+    GroupUiBase::updateForQueue();
 }
 
 
@@ -211,7 +199,7 @@ std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
     return "error";
 }
 
-void ChassisTriggerChangeUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data)
+void ChassisTriggerChangeUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr& data)
 {
   chassis_mode_ = data->mode;
   update();
@@ -222,7 +210,7 @@ void ChassisTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee:
   power_limit_state_ = data->power_limit_state;
 }
 
-void ChassisTriggerChangeUi::updateDbusData(const rm_msgs::DbusData::ConstPtr data)
+void ChassisTriggerChangeUi::updateDbusData(const rm_msgs::DbusData::ConstPtr& data)
 {
   s_l_ = data->s_l;
   s_r_ = data->s_r;
@@ -308,7 +296,7 @@ std::string GimbalTriggerChangeUi::getGimbalState(uint8_t mode)
     return "error";
 }
 
-void GimbalTriggerChangeUi::updateGimbalCmdData(const rm_msgs::GimbalCmd::ConstPtr data)
+void GimbalTriggerChangeUi::updateGimbalCmdData(const rm_msgs::GimbalCmd::ConstPtr& data)
 {
   gimbal_mode_ = data->mode;
   update();

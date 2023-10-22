@@ -18,7 +18,7 @@ public:
     graph_ = new Graph(rpc_value["config"], base_, id_++);
   }
   void update() override;
-  void updateForQueue();
+  void updateForQueue() override;
   virtual void updateConfig(){};
 };
 
@@ -32,7 +32,7 @@ public:
     graph_name_ = graph_name;
   }
   void update() override;
-  void updateForQueue();
+  void updateForQueue() override;
   virtual void updateConfig(){};
 
 protected:

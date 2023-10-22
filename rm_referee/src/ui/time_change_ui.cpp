@@ -30,10 +30,7 @@ void TimeChangeUi::updateForQueue()
 
   if (graph_queue_ && character_queue_ && ros::Time::now() - last_send_ > delay_)
   {
-    if (graph_->isString())
-      character_queue_->push_back(*graph_);
-    else
-      graph_queue_->push_back(*graph_);
+    UiBase::updateForQueue();
     last_send_ = ros::Time::now();
   }
 }
@@ -43,16 +40,7 @@ void TimeChangeGroupUi::updateForQueue()
   updateConfig();
   if (graph_queue_ && character_queue_ && ros::Time::now() - last_send_ > delay_)
   {
-    for (auto it : character_vector_)
-    {
-      it.second->setOperation(rm_referee::GraphOperation::UPDATE);
-      character_queue_->push_back(*it.second);
-    }
-    for (auto it : graph_vector_)
-    {
-      it.second->setOperation(rm_referee::GraphOperation::UPDATE);
-      graph_queue_->push_back(*it.second);
-    }
+   GroupUiBase::updateForQueue();
     last_send_ = ros::Time::now();
   }
 }

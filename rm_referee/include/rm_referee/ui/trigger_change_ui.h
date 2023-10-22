@@ -22,7 +22,8 @@ public:
       graph_ = new Graph(rpc_value["config"], base_, id_++);
   };
   virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
-  void updateForQueue(bool check_repeat = true);
+  void updateForQueue() override;
+  void updateForQueue(bool check_repeat);
   void updateTwiceForQueue(bool check_repeat = true);
 };
 
@@ -36,7 +37,8 @@ public:
     graph_name_ = graph_name;
   };
   virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){};
-  void updateForQueue(bool check_repeat = true);
+  void updateForQueue() override;
+  void updateForQueue(bool check_repeat);
   void updateTwiceForQueue(bool check_repeat = true);
 
 protected:
@@ -59,9 +61,9 @@ public:
     else
       mode_change_threshold_ = 0.7;
   }
-  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data);
+  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr& data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
-  void updateDbusData(const rm_msgs::DbusData::ConstPtr data);
+  void updateDbusData(const rm_msgs::DbusData::ConstPtr& data);
   void updateCapacityResetStatus();
   void checkModeChange();
 
@@ -100,7 +102,7 @@ public:
   {
     graph_->setContent("0");
   }
-  void updateGimbalCmdData(const rm_msgs::GimbalCmd ::ConstPtr data);
+  void updateGimbalCmdData(const rm_msgs::GimbalCmd ::ConstPtr& data);
   void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
 
 private:
