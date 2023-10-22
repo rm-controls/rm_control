@@ -7,7 +7,7 @@
 namespace rm_referee
 {
 
-void FlashUi::updateForQueue(const ros::Time& time, bool state, bool once)
+void FlashUi::updateFlashUiForQueue(const ros::Time& time, bool state, bool once)
 {
   if (once)
   {
@@ -25,24 +25,15 @@ void FlashUi::updateForQueue(const ros::Time& time, bool state, bool once)
   }
   if (graph_->isRepeated())
     return;
-
   graph_->updateLastConfig();
-
-   if(base_.robot_id_ == 0 || base_.client_id_ == 0)
-    return;
-
-  if (graph_->isString())
-    character_queue_->push_back(*graph_);
-  else
-    graph_queue_->push_back(*graph_);
-
+  UiBase::updateForQueue();
 }
 
 void CoverFlashUi::display(const ros::Time& time)
 {
   if (!cover_state_)
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  FlashUi::updateForQueue(time, cover_state_, true);
+  FlashUi::updateFlashUiForQueue(time, cover_state_, true);
 }
 
 void CoverFlashUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data,
@@ -56,7 +47,7 @@ void SpinFlashUi::display(const ros::Time& time)
 {
   if (chassis_mode_ != rm_msgs::ChassisCmd::RAW)
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  FlashUi::updateForQueue(time, chassis_mode_ != rm_msgs::ChassisCmd::RAW, true);
+  FlashUi::updateFlashUiForQueue(time, chassis_mode_ != rm_msgs::ChassisCmd::RAW, true);
 }
 
 void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data, const ros::Time& last_get_data_time)

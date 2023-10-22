@@ -19,7 +19,7 @@ public:
   }
   virtual void display(const ros::Time& time){};
   virtual void updateConfig(){};
-  void updateForQueue(const ros::Time& time, bool state, bool once);
+  void updateFlashUiForQueue(const ros::Time& time, bool state, bool once);
 };
 
 class CoverFlashUi : public FlashUi
