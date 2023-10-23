@@ -145,7 +145,7 @@ void UiBase::sendCurrentSentryData(const rm_msgs::CurrentSentryPosDataConstPtr& 
   auto current_sentry_pos_data = (CurrentSentryPosData*)tx_data;
   data_len = static_cast<int>(sizeof(rm_referee::CurrentSentryPosData));
 
-  for(int i = 0; i < 128; i++)
+  for (int i = 0; i < 128; i++)
     tx_buffer_[i] = 0;
 
   current_sentry_pos_data->header_data.data_cmd_id = DataCmdId::CURRENT_SENTRY_POSITION_CMD;

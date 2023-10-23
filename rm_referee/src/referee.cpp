@@ -425,8 +425,8 @@ int Referee::unpack(uint8_t* rx_data)
         {
           rm_referee::InteractiveData interactive_data_ref;  // local variable temporarily before moving referee data
           memcpy(&interactive_data_ref, rx_data + 7, sizeof(rm_referee::InteractiveData));
-          //TODO: case cmd_id
-          if(interactive_data_ref.header_data.data_cmd_id == rm_referee::DataCmdId::CURRENT_SENTRY_POSITION_CMD)
+          // TODO: case cmd_id
+          if (interactive_data_ref.header_data.data_cmd_id == rm_referee::DataCmdId::CURRENT_SENTRY_POSITION_CMD)
           {
             rm_referee::CurrentSentryPosData current_sentry_pos_ref;
             rm_msgs::CurrentSentryPosData current_sentry_pos_data;
