@@ -36,6 +36,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::ClientMapReceiveData>("/rm_radar", 10, &RefereeBase::radarReceiveCallback, this);
   RefereeBase::sentry_deviate_sub_ =
       nh.subscribe<rm_msgs::SentryDeviate>("/deviate", 10, &RefereeBase::sentryDeviateCallback, this);
+  RefereeBase::radar_to_sentry_sub_ =
+      nh.subscribe<rm_msgs::CurrentSentryPosData>("/radar_to_sentry", 10, &RefereeBase::sendCurrentSentryCallback, this);
+
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
   add_ui_frequency_ = getParam(nh, "add_ui_frequency", 5);
@@ -362,4 +365,10 @@ void RefereeBase::mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data)
 {
   interactive_data_sender_->sendMapSentryData(data);
 }
+
+void RefereeBase::sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data)
+{
+  interactive_data_sender_->sendCurrentSentryData(data);
+}
+
 }  // namespace rm_referee

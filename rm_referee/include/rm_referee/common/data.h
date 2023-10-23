@@ -56,7 +56,6 @@
 #include <rm_msgs/EventData.h>
 #include <rm_msgs/GimbalCmd.h>
 #include <rm_msgs/RobotHurt.h>
-#include <rm_msgs/GameRobotPos.h>
 #include <rm_msgs/ShootData.h>
 #include <rm_msgs/DartStatus.h>
 #include <rm_msgs/ChassisCmd.h>
@@ -82,6 +81,7 @@
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
 #include <rm_msgs/SentryDeviate.h>
+#include <rm_msgs/CurrentSentryPosData.h>
 #include <rm_msgs/PowerManagementSampleAndStatusData.h>
 #include <rm_msgs/PowerManagementSystemExceptionData.h>
 #include <rm_msgs/PowerManagementInitializationExceptionData.h>
