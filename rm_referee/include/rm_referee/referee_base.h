@@ -103,7 +103,7 @@ public:
 
   rm_referee::ClientMapReceiveData radar_receive_data;
   rm_referee::MapSentryData map_sentry_data;
-  ros::Time radar_receive_last_send, map_sentry_last_send;
+  ros::Time radar_receive_data_last_send, map_sentry_data_last_send;
   bool send_radar_receive_data_ = false, send_map_sentry_data_ = false;
   UiBase* interactive_data_sender_{};
 
