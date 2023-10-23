@@ -199,8 +199,6 @@ public:
     }
   }
   void update() override;
-  // virtual void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false){} void
-  // setContent(const std::string &content) override;
 };
 
 class CameraTriggerChangeUi : public TriggerChangeUi
