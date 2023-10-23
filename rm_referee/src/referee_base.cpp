@@ -195,19 +195,19 @@ void RefereeBase::sendSerialDataCallback()
 
     if (send_radar_receive_data_)
     {
-      if (ros::Time::now() - radar_receive_last_send < ros::Duration(0.2))
+      if (ros::Time::now() - interactive_data_last_send <= ros::Duration(0.2))
         ROS_WARN_THROTTLE(2.0, "Sending radar receive data too frequently");
       interactive_data_sender_->sendRadarInteractiveData(radar_receive_data);
-      radar_receive_last_send = ros::Time::now();
+      interactive_data_last_send = ros::Time::now();
       send_radar_receive_data_ = false;
       ROS_INFO_THROTTLE(1.0, " send radar receive data");
     }
     else if (send_map_sentry_data_)
     {
-      if (ros::Time::now() - map_sentry_last_send < ros::Duration(0.2))
+      if (ros::Time::now() - interactive_data_last_send <= ros::Duration(0.2))
         ROS_WARN_THROTTLE(2.0, "Sending map sentry data too frequently");
       interactive_data_sender_->sendMapSentryData(map_sentry_data);
-      radar_receive_last_send = ros::Time::now();
+      interactive_data_last_send = ros::Time::now();
       send_map_sentry_data_ = false;
       ROS_INFO_THROTTLE(1.0, " send map sentry data");
     }
@@ -218,9 +218,8 @@ void RefereeBase::sendSerialDataCallback()
     queueSend();
 
   if (base_.robot_id_ == 0)
-  {
     ROS_WARN_THROTTLE(1.0, "robot base id = 0, the serial or referee system may not be connected");
-  }
+
   if (base_.client_id_ == 0)
     ROS_WARN_THROTTLE(1.0, "client base id = 0, the serial or referee system may not be connected\"");
   send_serial_data_timer_.start();
