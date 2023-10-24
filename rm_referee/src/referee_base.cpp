@@ -195,19 +195,19 @@ void RefereeBase::sendSerialDataCallback()
 
     if (send_radar_receive_data_)
     {
-      if (ros::Time::now() - interactive_data_last_send <= ros::Duration(0.2))
+      if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
         ROS_WARN_THROTTLE(2.0, "Sending radar receive data too frequently");
-      interactive_data_sender_->sendRadarInteractiveData(radar_receive_data);
-      interactive_data_last_send = ros::Time::now();
+      interactive_data_sender_->sendRadarInteractiveData(radar_receive_data_);
+      interactive_data_last_send_ = ros::Time::now();
       send_radar_receive_data_ = false;
       ROS_INFO_THROTTLE(1.0, " send radar receive data");
     }
     else if (send_map_sentry_data_)
     {
-      if (ros::Time::now() - interactive_data_last_send <= ros::Duration(0.2))
+      if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
         ROS_WARN_THROTTLE(2.0, "Sending map sentry data too frequently");
-      interactive_data_sender_->sendMapSentryData(map_sentry_data);
-      interactive_data_last_send = ros::Time::now();
+      interactive_data_sender_->sendMapSentryData(map_sentry_data_);
+      interactive_data_last_send_ = ros::Time::now();
       send_map_sentry_data_ = false;
       ROS_INFO_THROTTLE(1.0, " send map sentry data");
     }
@@ -391,21 +391,21 @@ void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data
 }
 void RefereeBase::radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data)
 {
-  radar_receive_data.target_position_x = data->target_position_x;
-  radar_receive_data.target_position_y = data->target_position_y;
-  radar_receive_data.target_robot_ID = data->target_robot_ID;
+  radar_receive_data_.target_position_x = data->target_position_x;
+  radar_receive_data_.target_position_y = data->target_position_y;
+  radar_receive_data_.target_robot_ID = data->target_robot_ID;
 
   send_radar_receive_data_ = true;
 }
 void RefereeBase::mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data)
 {
-  map_sentry_data.intention = data->intention;
-  map_sentry_data.start_position_x = data->start_position_x;
-  map_sentry_data.start_position_y = data->start_position_y;
+  map_sentry_data_.intention = data->intention;
+  map_sentry_data_.start_position_x = data->start_position_x;
+  map_sentry_data_.start_position_y = data->start_position_y;
   for (int i = 0; i < 49; i++)
   {
-    map_sentry_data.delta_x[i] = data->delta_x[i];
-    map_sentry_data.delta_y[i] = data->delta_y[i];
+    map_sentry_data_.delta_x[i] = data->delta_x[i];
+    map_sentry_data_.delta_y[i] = data->delta_y[i];
   }
   send_map_sentry_data_ = true;
 }
