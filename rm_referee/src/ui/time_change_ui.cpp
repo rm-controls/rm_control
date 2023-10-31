@@ -4,7 +4,6 @@
 
 #include "rm_referee/ui/time_change_ui.h"
 
-class ConstPtr;
 namespace rm_referee
 {
 void TimeChangeUi::update()
