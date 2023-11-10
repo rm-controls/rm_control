@@ -76,7 +76,7 @@ typedef enum
   POWER_MANAGEMENT_INITIALIZATION_EXCEPTION_CMD = 0X8302,
   POWER_MANAGEMENT_SYSTEM_EXCEPTION_CMD = 0X8303,
   POWER_MANAGEMENT_PROCESS_STACK_OVERFLOW_CMD = 0X8304,
-  POWER_MANAGEMENT_UNKNOWN_EXCEPTION_CMD = 0X8305
+  POWER_MANAGEMENT_UNKNOWN_EXCEPTION_CMD = 0X8305,
 } RefereeCmdId;
 
 typedef enum
@@ -89,6 +89,7 @@ typedef enum
   CLIENT_GRAPH_FIVE_CMD = 0x0103,
   CLIENT_GRAPH_SEVEN_CMD = 0x0104,
   CLIENT_CHARACTER_CMD = 0x0110,
+  CURRENT_SENTRY_POSITION_CMD = 0x0200  // send radar->sentry
 } DataCmdId;
 
 typedef enum
@@ -539,6 +540,15 @@ typedef struct
   int8_t delta_x[49];
   int8_t delta_y[49];
 } __packed MapSentryData;
+
+typedef struct
+{
+  InteractiveDataHeader header_data;
+  float position_x;
+  float position_y;
+  float position_z;
+  float position_yaw;
+} __packed CurrentSentryPosData;
 
 typedef struct
 {

@@ -50,6 +50,8 @@ public:
   virtual void balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data);
   virtual void radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data);
   virtual void mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data);
+  virtual void sentryDeviateCallback(const rm_msgs::SentryDeviateConstPtr& data);
+  virtual void sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data);
 
   // send graph_type ui
   void sendGraphQueueCallback();
@@ -72,6 +74,8 @@ public:
   ros::Subscriber balance_state_sub_;
   ros::Subscriber radar_receive_sub_;
   ros::Subscriber map_sentry_sub_;
+  ros::Subscriber sentry_deviate_sub_;
+  ros::Subscriber radar_to_sentry_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};

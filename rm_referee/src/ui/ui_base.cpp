@@ -138,6 +138,28 @@ void UiBase::sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char
   sendSerial(ros::Time::now(), sizeof(InteractiveData));
 }
 
+void UiBase::sendCurrentSentryData(const rm_msgs::CurrentSentryPosDataConstPtr& data)
+{
+  int data_len;
+  uint8_t tx_data[sizeof(CurrentSentryPosData)] = { 0 };
+  auto current_sentry_pos_data = (CurrentSentryPosData*)tx_data;
+  data_len = static_cast<int>(sizeof(rm_referee::CurrentSentryPosData));
+
+  for (int i = 0; i < 128; i++)
+    tx_buffer_[i] = 0;
+
+  current_sentry_pos_data->header_data.data_cmd_id = DataCmdId::CURRENT_SENTRY_POSITION_CMD;
+  current_sentry_pos_data->header_data.sender_id = base_.robot_id_;
+  current_sentry_pos_data->header_data.receiver_id = base_.robot_id_ < 100 ? RobotId::RED_SENTRY : RobotId::BLUE_SENTRY;
+  current_sentry_pos_data->position_x = data->x;
+  current_sentry_pos_data->position_y = data->y;
+  current_sentry_pos_data->position_z = data->z;
+  current_sentry_pos_data->position_yaw = data->yaw;
+
+  pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(InteractiveData));
+  sendSerial(ros::Time::now(), data_len);
+}
+
 void UiBase::sendUi(const ros::Time& time)
 {
   if (base_.robot_id_ == 0 || base_.client_id_ == 0)

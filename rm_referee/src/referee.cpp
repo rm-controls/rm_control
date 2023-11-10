@@ -425,6 +425,19 @@ int Referee::unpack(uint8_t* rx_data)
         {
           rm_referee::InteractiveData interactive_data_ref;  // local variable temporarily before moving referee data
           memcpy(&interactive_data_ref, rx_data + 7, sizeof(rm_referee::InteractiveData));
+          // TODO: case cmd_id
+          if (interactive_data_ref.header_data.data_cmd_id == rm_referee::DataCmdId::CURRENT_SENTRY_POSITION_CMD)
+          {
+            rm_referee::CurrentSentryPosData current_sentry_pos_ref;
+            rm_msgs::CurrentSentryPosData current_sentry_pos_data;
+            memcpy(&current_sentry_pos_ref, rx_data + 7, sizeof(rm_referee::CurrentSentryPosData));
+            current_sentry_pos_data.x = current_sentry_pos_ref.position_x;
+            current_sentry_pos_data.y = current_sentry_pos_ref.position_y;
+            current_sentry_pos_data.z = current_sentry_pos_ref.position_z;
+            current_sentry_pos_data.yaw = current_sentry_pos_ref.position_yaw;
+
+            current_sentry_pos_pub_.publish(current_sentry_pos_data);
+          }
           break;
         }
         case rm_referee::CLIENT_MAP_CMD:
@@ -460,6 +473,18 @@ int Referee::unpack(uint8_t* rx_data)
           client_map_send_data_pub_.publish(client_map_send_data);
           break;
         }
+        /*
+         m_msgs::GameRobotPos game_robot_pos_data;
+  memcpy(&game_robot_pos_ref, rx_data + 7, sizeof(rm_referee::GameRobotPos));
+
+game_robot_pos_data.x = game_robot_pos_ref.x;
+game_robot_pos_data.y = game_robot_pos_ref.y;
+game_robot_pos_data.z = game_robot_pos_ref.z;
+game_robot_pos_data.yaw = game_robot_pos_ref.yaw;
+
+game_robot_pos_pub_.publish(game_robot_pos_data);
+
+         */
         case rm_referee::POWER_MANAGEMENT_SAMPLE_AND_STATUS_DATA_CMD:
         {
           rm_msgs::PowerManagementSampleAndStatusData sample_and_status_pub_data;
