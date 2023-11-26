@@ -192,7 +192,7 @@ void UiBase::sendUi(const ros::Time& time)
     sendSingleGraph(time, graph_);
 }
 
-void UiBase::sendMapSentryData(rm_referee::MapSentryData& data)
+void UiBase::sendMapSentryData(const rm_referee::MapSentryData& data)
 {
   uint8_t tx_data[sizeof(rm_referee::MapSentryData)] = { 0 };
   auto map_sentry_data = (rm_referee::MapSentryData*)tx_data;
@@ -221,7 +221,7 @@ void UiBase::sendMapSentryData(rm_referee::MapSentryData& data)
   clearTxBuffer();
 }
 
-void UiBase::sendRadarInteractiveData(rm_referee::ClientMapReceiveData& data)
+void UiBase::sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& data)
 {
   uint8_t tx_data[sizeof(rm_referee::ClientMapReceiveData)] = { 0 };
   auto radar_interactive_data = (rm_referee::ClientMapReceiveData*)tx_data;
