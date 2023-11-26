@@ -43,7 +43,8 @@ public:
   void sendSingleGraph(const ros::Time& time, Graph* graph);
   void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);
   void sendRadarInteractiveData(rm_referee::ClientMapReceiveData& data);
-  void sendMapSentryData(rm_referee::MapSentryData& data);
+  void sendMapSentryData(const rm_msgs::MapSentryDataConstPtr& data);
+  void sendCurrentSentryData(const rm_msgs::CurrentSentryPosDataConstPtr& data);
 
   void sendSerial(const ros::Time& time, int data_len);
   void clearTxBuffer();

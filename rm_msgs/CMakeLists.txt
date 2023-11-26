@@ -27,6 +27,7 @@ add_message_files(
         MultiDofCmd.msg
         TagMsg.msg
         TagMsgArray.msg
+        SentryDeviate.msg
 )
 
 add_service_files(
@@ -63,6 +64,7 @@ add_message_files(
         SupplyProjectileAction.msg
         DartRemainingTime.msg
         RobotHurt.msg
+        CurrentSentryPosData.msg
         ShootData.msg
         BulletAllowance.msg
         RfidStatus.msg

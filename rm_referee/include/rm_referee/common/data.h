@@ -80,6 +80,8 @@
 #include <rm_msgs/ClientMapReceiveData.h>
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
+#include <rm_msgs/SentryDeviate.h>
+#include <rm_msgs/CurrentSentryPosData.h>
 #include <rm_msgs/PowerManagementSampleAndStatusData.h>
 #include <rm_msgs/PowerManagementSystemExceptionData.h>
 #include <rm_msgs/PowerManagementInitializationExceptionData.h>
