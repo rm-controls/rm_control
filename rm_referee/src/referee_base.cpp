@@ -212,10 +212,10 @@ void RefereeBase::sendSerialDataCallback()
       ROS_INFO_THROTTLE(1.0, " send map sentry data");
     }
     else
-      queueSend();
+      sendQueue();
   }
   else
-    queueSend();
+    sendQueue();
 
   if (base_.robot_id_ == 0)
     ROS_WARN_THROTTLE(1.0, "robot base id = 0, the serial or referee system may not be connected");
@@ -225,7 +225,7 @@ void RefereeBase::sendSerialDataCallback()
   send_serial_data_timer_.start();
 }
 
-void RefereeBase::queueSend()
+void RefereeBase::sendQueue()
 {
   if (!character_queue_.empty() && graph_queue_.size() <= 14)
   {
