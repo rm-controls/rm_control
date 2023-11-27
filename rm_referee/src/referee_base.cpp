@@ -35,7 +35,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::radar_receive_sub_ =
       nh.subscribe<rm_msgs::ClientMapReceiveData>("/rm_radar", 10, &RefereeBase::radarReceiveCallback, this);
   RefereeBase::sentry_deviate_sub_ =
-      nh.subscribe<rm_msgs::SentryDeviate>("/deviate", 10, &RefereeBase::sentryDeviateCallback, this);
+      nh.subscribe<rm_msgs::SentryDeviate>("/odometry", 10, &RefereeBase::sentryDeviateCallback, this);
   RefereeBase::radar_to_sentry_sub_ = nh.subscribe<rm_msgs::CurrentSentryPosData>(
       "/radar_to_sentry", 10, &RefereeBase::sendCurrentSentryCallback, this);
 
@@ -202,19 +202,25 @@ void RefereeBase::sendSerialDataCallback()
     {
       if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
         ROS_WARN_THROTTLE(2.0, "Sending radar receive data too frequently");
-      interactive_data_sender_->sendRadarInteractiveData(radar_receive_data_);
-      interactive_data_last_send_ = ros::Time::now();
-      send_radar_receive_data_ = false;
-      ROS_INFO_THROTTLE(1.0, " send radar receive data");
+      else
+      {
+        interactive_data_sender_->sendRadarInteractiveData(radar_receive_data_);
+        interactive_data_last_send_ = ros::Time::now();
+        send_radar_receive_data_ = false;
+        ROS_INFO_THROTTLE(1.0, " send radar receive data");
+      }
     }
     else if (send_map_sentry_data_)
     {
       if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
         ROS_WARN_THROTTLE(2.0, "Sending map sentry data too frequently");
-      interactive_data_sender_->sendMapSentryData(map_sentry_data_);
-      interactive_data_last_send_ = ros::Time::now();
-      send_map_sentry_data_ = false;
-      ROS_INFO_THROTTLE(1.0, " send map sentry data");
+      else
+      {
+        interactive_data_sender_->sendMapSentryData(map_sentry_data_);
+        interactive_data_last_send_ = ros::Time::now();
+        send_map_sentry_data_ = false;
+        ROS_INFO_THROTTLE(1.0, " send map sentry data");
+      }
     }
     else
       sendQueue();
@@ -397,6 +403,7 @@ void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data
 void RefereeBase::sentryDeviateCallback(const rm_msgs::SentryDeviateConstPtr& data)
 {
 }
+
 void RefereeBase::radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data)
 {
   radar_receive_data_.target_position_x = data->target_position_x;
