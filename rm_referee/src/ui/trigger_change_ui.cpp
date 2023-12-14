@@ -90,7 +90,7 @@ void ChassisTriggerChangeUi::update()
                  power_limit_state_ == rm_common::PowerLimit::CHARGE);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   checkModeChange();
-  updateTwiceForQueue();
+  updateTwiceForQueue(true);
 }
 
 void ChassisTriggerChangeUi::displayInCapacity()
@@ -100,7 +100,7 @@ void ChassisTriggerChangeUi::displayInCapacity()
     updateConfig(254, 0);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 
-  updateTwiceForQueue();
+  updateTwiceForQueue(true);
 }
 
 void ChassisTriggerChangeUi::checkModeChange()
@@ -227,7 +227,7 @@ void ShooterTriggerChangeUi::update()
 {
   updateConfig(shooter_mode_, 0, shoot_frequency_, false);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  updateForQueue();
+  updateForQueue(true);
 }
 
 void ShooterTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -271,7 +271,7 @@ void GimbalTriggerChangeUi::update()
   updateConfig(gimbal_mode_, gimbal_eject_);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 
-  updateTwiceForQueue();
+  updateTwiceForQueue(true);
 }
 
 void GimbalTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -314,7 +314,7 @@ void TargetTriggerChangeUi::update()
   else
     updateConfig(gimbal_eject_, shoot_frequency_, det_armor_target_, det_color_ == rm_msgs::StatusChangeRequest::RED);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  updateForQueue();
+  updateForQueue(true);
 }
 
 void TargetTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -375,7 +375,7 @@ void TargetViewAngleTriggerChangeUi::update()
 {
   updateConfig(track_id_ == 0, false);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  updateTwiceForQueue();
+  updateTwiceForQueue(true);
 }
 
 void TargetViewAngleTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
@@ -396,7 +396,7 @@ void PolygonTriggerChangeGroupUi::update()
 {
   for (auto graph : graph_vector_)
     graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
-  updateForQueue();
+  updateForQueue(true);
 }
 
 void CameraTriggerChangeUi::updateCameraName(const std_msgs::StringConstPtr& data)
@@ -420,6 +420,6 @@ void CameraTriggerChangeUi::update()
 {
   updateConfig();
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  updateForQueue();
+  updateForQueue(true);
 }
 }  // namespace rm_referee

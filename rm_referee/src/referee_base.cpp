@@ -175,10 +175,7 @@ void RefereeBase::addUi()
 void RefereeBase::sendSerialDataCallback()
 {
   if (graph_queue_.empty() && character_queue_.empty())
-  {
-    ROS_INFO_THROTTLE(1.0, "No UI to send");
     return;
-  }
 
   if (!is_adding_)
   {
@@ -201,25 +198,23 @@ void RefereeBase::sendSerialDataCallback()
     if (send_radar_receive_data_)
     {
       if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
-        ROS_WARN_THROTTLE(2.0, "Sending radar receive data too frequently");
+        return;
       else
       {
         interactive_data_sender_->sendRadarInteractiveData(radar_receive_data_);
         interactive_data_last_send_ = ros::Time::now();
         send_radar_receive_data_ = false;
-        ROS_INFO_THROTTLE(1.0, " send radar receive data");
       }
     }
     else if (send_map_sentry_data_)
     {
       if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
-        ROS_WARN_THROTTLE(2.0, "Sending map sentry data too frequently");
+        return;
       else
       {
         interactive_data_sender_->sendMapSentryData(map_sentry_data_);
         interactive_data_last_send_ = ros::Time::now();
         send_map_sentry_data_ = false;
-        ROS_INFO_THROTTLE(1.0, " send map sentry data");
       }
     }
     else
@@ -366,8 +361,8 @@ void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 }
 void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data)
 {
-  if (progress_time_change_ui_ && !is_adding_)
-    progress_time_change_ui_->updateEngineerUiData(data, ros::Time::now());
+  /*if (progress_time_change_ui_ && !is_adding_)
+    progress_time_change_ui_->updateEngineerUiData(data, ros::Time::now());*/
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
