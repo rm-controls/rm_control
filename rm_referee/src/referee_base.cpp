@@ -35,7 +35,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::radar_receive_sub_ =
       nh.subscribe<rm_msgs::ClientMapReceiveData>("/rm_radar", 10, &RefereeBase::radarReceiveCallback, this);
   RefereeBase::sentry_deviate_sub_ =
-      nh.subscribe<rm_msgs::SentryDeviate>("/odometry", 10, &RefereeBase::sentryDeviateCallback, this);
+      nh.subscribe<rm_msgs::SentryDeviate>("/deviate", 10, &RefereeBase::sentryDeviateCallback, this);
   RefereeBase::radar_to_sentry_sub_ = nh.subscribe<rm_msgs::CurrentSentryPosData>(
       "/radar_to_sentry", 10, &RefereeBase::sendCurrentSentryCallback, this);
 
