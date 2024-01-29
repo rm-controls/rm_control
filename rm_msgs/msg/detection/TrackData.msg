@@ -3,6 +3,7 @@ uint8 id
 bool tracking
 uint8 armors_num
 geometry_msgs/Point position
+geometry_msgs/Quaternion rotation
 float64 yaw
 geometry_msgs/Vector3 velocity
 float64 v_yaw
