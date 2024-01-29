@@ -38,6 +38,8 @@ public:
   void setContent(const std::string& content)
   {
     content_ = content;
+    if (!title_.empty() || !content_.empty())
+      config_.end_angle = static_cast<int>((title_ + content_).size());
   }
   void setEndX(int end_x)
   {
@@ -69,10 +71,12 @@ public:
   {
     return config_ == last_config_ && title_ == last_title_ && content_ == last_content_;
   }
+  bool isString()
+  {
+    return config_.graphic_type == rm_referee::GraphType::STRING;
+  }
   void updateLastConfig()
   {
-    if (!title_.empty() && !content_.empty())
-      config_.end_angle = static_cast<int>((title_ + content_).size());
     last_content_ = content_;
     last_title_ = title_;
     last_config_ = config_;

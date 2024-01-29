@@ -473,18 +473,6 @@ int Referee::unpack(uint8_t* rx_data)
           client_map_send_data_pub_.publish(client_map_send_data);
           break;
         }
-        /*
-         m_msgs::GameRobotPos game_robot_pos_data;
-  memcpy(&game_robot_pos_ref, rx_data + 7, sizeof(rm_referee::GameRobotPos));
-
-game_robot_pos_data.x = game_robot_pos_ref.x;
-game_robot_pos_data.y = game_robot_pos_ref.y;
-game_robot_pos_data.z = game_robot_pos_ref.z;
-game_robot_pos_data.yaw = game_robot_pos_ref.yaw;
-
-game_robot_pos_pub_.publish(game_robot_pos_data);
-
-         */
         case rm_referee::POWER_MANAGEMENT_SAMPLE_AND_STATUS_DATA_CMD:
         {
           rm_msgs::PowerManagementSampleAndStatusData sample_and_status_pub_data;

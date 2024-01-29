@@ -28,9 +28,9 @@ void TimeChangeUi::updateForQueue()
   updateConfig();
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 
-  if (graph_queue_ && !graph_->isRepeated() && ros::Time::now() - last_send_ > delay_)
+  if (graph_queue_ && character_queue_ && ros::Time::now() - last_send_ > delay_)
   {
-    graph_queue_->push_back(*graph_);
+    UiBase::updateForQueue();
     last_send_ = ros::Time::now();
   }
 }
@@ -38,16 +38,11 @@ void TimeChangeUi::updateForQueue()
 void TimeChangeGroupUi::updateForQueue()
 {
   updateConfig();
-  if (ros::Time::now() - last_send_ > delay_)
-    for (auto graph : graph_vector_)
-    {
-      graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
-      if (graph_queue_ && !graph.second->isRepeated())
-      {
-        graph_queue_->push_back(*graph.second);
-        last_send_ = ros::Time::now();
-      }
-    }
+  if (graph_queue_ && character_queue_ && ros::Time::now() - last_send_ > delay_)
+  {
+    GroupUiBase::updateForQueue();
+    last_send_ = ros::Time::now();
+  }
 }
 
 void CapacitorTimeChangeUi::add()
@@ -109,7 +104,7 @@ void EffortTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::Con
     {
       joint_effort_ = data->effort[max_index];
       joint_name_ = data->name[max_index];
-      TimeChangeUi::update();
+      updateForQueue();
     }
   }
 }
@@ -127,9 +122,9 @@ void ProgressTimeChangeUi::updateConfig()
 void ProgressTimeChangeUi::updateEngineerUiData(const rm_msgs::EngineerUi::ConstPtr data,
                                                 const ros::Time& last_get_data_time)
 {
-  total_steps_ = data->total_steps;
-  finished_data_ = data->finished_step;
-  TimeChangeUi::update();
+  /*total_steps_ = data->total_steps;
+  finished_data_ = data->finished_step;*/
+  TimeChangeUi::updateForQueue();
 }
 
 void DartStatusTimeChangeUi::updateConfig()
@@ -157,7 +152,7 @@ void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::C
                                                  const ros::Time& last_get_data_time)
 {
   dart_launch_opening_status_ = data->dart_launch_opening_status;
-  TimeChangeUi::update();
+  TimeChangeUi::updateForQueue();
 }
 
 void RotationTimeChangeUi::updateConfig()
@@ -277,14 +272,7 @@ void PitchAngleTimeChangeUi::updateJointStateData(const sensor_msgs::JointState:
   for (unsigned int i = 0; i < data->name.size(); i++)
     if (data->name[i] == "pitch_joint")
       pitch_angle_ = data->position[i];
-  update();
-}
-
-void PitchAngleTimeChangeUi::update()
-{
-  updateConfig();
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  display(ros::Time::now());
+  updateForQueue();
 }
 
 void PitchAngleTimeChangeUi::updateConfig()

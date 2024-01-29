@@ -35,7 +35,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::radar_receive_sub_ =
       nh.subscribe<rm_msgs::ClientMapReceiveData>("/rm_radar", 10, &RefereeBase::radarReceiveCallback, this);
   RefereeBase::sentry_deviate_sub_ =
-      nh.subscribe<rm_msgs::SentryDeviate>("/deviate", 10, &RefereeBase::sentryDeviateCallback, this);
+      nh.subscribe<rm_msgs::SentryDeviate>("/odometry", 10, &RefereeBase::sentryDeviateCallback, this);
   RefereeBase::radar_to_sentry_sub_ = nh.subscribe<rm_msgs::CurrentSentryPosData>(
       "/radar_to_sentry", 10, &RefereeBase::sendCurrentSentryCallback, this);
 
@@ -52,75 +52,83 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     for (int i = 0; i < rpc_value.size(); i++)
     {
       if (rpc_value[i]["name"] == "chassis")
-        chassis_trigger_change_ui_ = new ChassisTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        chassis_trigger_change_ui_ = new ChassisTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "shooter")
-        shooter_trigger_change_ui_ = new ShooterTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        shooter_trigger_change_ui_ = new ShooterTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "gimbal")
-        gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "target")
-        target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "target_view_angle")
-        target_view_angle_trigger_change_ui_ = new TargetViewAngleTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        target_view_angle_trigger_change_ui_ =
+            new TargetViewAngleTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "camera")
-        camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_, &graph_queue_);
+        camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("time_change", rpc_value);
     for (int i = 0; i < rpc_value.size(); i++)
     {
       if (rpc_value[i]["name"] == "capacitor")
-        capacitor_time_change_ui_ = new CapacitorTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        capacitor_time_change_ui_ = new CapacitorTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "effort")
-        effort_time_change_ui_ = new EffortTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        effort_time_change_ui_ = new EffortTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "progress")
-        progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        progress_time_change_ui_ = new ProgressTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "dart_status")
-        dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        dart_status_time_change_ui_ = new DartStatusTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "rotation")
-        rotation_time_change_ui_ = new RotationTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        rotation_time_change_ui_ = new RotationTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "lane_line")
-        lane_line_time_change_ui_ = new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
+        lane_line_time_change_ui_ =
+            new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "pitch")
-        pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_);
+        pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "balance_pitch")
-        balance_pitch_time_change_group_ui_ = new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_);
+        balance_pitch_time_change_group_ui_ =
+            new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "engineer_joint1")
-        engineer_joint1_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint1");
+        engineer_joint1_time_change_ui =
+            new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "joint1");
       if (rpc_value[i]["name"] == "engineer_joint2")
-        engineer_joint2_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint2");
+        engineer_joint2_time_change_ui =
+            new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "joint2");
       if (rpc_value[i]["name"] == "engineer_joint3")
-        engineer_joint3_time_change_ui = new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, "joint3");
+        engineer_joint3_time_change_ui =
+            new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "joint3");
     }
 
     ui_nh.getParam("fixed", rpc_value);
-    fixed_ui_ = new FixedUi(rpc_value, base_, &graph_queue_);
+    fixed_ui_ = new FixedUi(rpc_value, base_, &graph_queue_, &character_queue_);
 
     ui_nh.getParam("flash", rpc_value);
     for (int i = 0; i < rpc_value.size(); i++)
     {
       if (rpc_value[i]["name"] == "cover")
-        cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_);
+        cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "spin")
-        spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_);
+        spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
   }
 
   add_ui_timer_ =
       nh.createTimer(ros::Duration(1. / add_ui_frequency_), std::bind(&RefereeBase::addUi, this), false, false);
-  send_graph_ui_timer_ = nh.createTimer(ros::Duration(send_ui_queue_delay_),
-                                        std::bind(&RefereeBase::sendGraphQueueCallback, this), false, true);
+  send_serial_data_timer_ = nh.createTimer(ros::Duration(send_ui_queue_delay_),
+                                           std::bind(&RefereeBase::sendSerialDataCallback, this), false, true);
 }
 void RefereeBase::addUi()
 {
   if (add_ui_times_ > add_ui_max_times_)
   {
-    ROS_INFO("End add");
+    ROS_INFO_THROTTLE(2.0, "End adding");
     add_ui_timer_.stop();
     if (!graph_queue_.empty())
-      while (graph_queue_.size() > 0)
-        graph_queue_.pop_back();
+    {
+      graph_queue_.clear();
+      ROS_WARN_THROTTLE(0.5, "Some UI is not add completely, now clear the queue");
+    }
     is_adding_ = false;
-    send_graph_ui_timer_.setPeriod(ros::Duration(send_ui_queue_delay_));
+    send_serial_data_timer_.setPeriod(ros::Duration(send_ui_queue_delay_));
     return;
   }
 
@@ -164,65 +172,104 @@ void RefereeBase::addUi()
   add_ui_times_++;
 }
 
-void RefereeBase::sendGraphQueueCallback()
+void RefereeBase::sendSerialDataCallback()
 {
-  if (graph_queue_.empty())
+  if (graph_queue_.empty() && character_queue_.empty())
     return;
-
-  if (graph_queue_.size() > 50)
-  {
-    ROS_WARN_THROTTLE(2.0, "Sending UI too frequently, please modify the configuration file or code to "
-                           "reduce the frequency");
-    while (graph_queue_.size() > 50)
-      graph_queue_.pop_back();
-  }
-
-  int index = graph_queue_.size() - 1;
 
   if (!is_adding_)
   {
-    if (graph_queue_.size() >= 7)
+    if (graph_queue_.size() > 50)
     {
-      graph_queue_sender_->sendSevenGraph(ros::Time::now(), &graph_queue_.at(index), &graph_queue_.at(index - 1),
-                                          &graph_queue_.at(index - 2), &graph_queue_.at(index - 3),
-                                          &graph_queue_.at(index - 4), &graph_queue_.at(index - 5),
-                                          &graph_queue_.at(index - 6));
-      for (int i = 0; i < 7; i++)
-        graph_queue_.pop_back();
+      ROS_WARN_THROTTLE(0.5, "Sending graph UI too frequently, please modify the configuration file or code to"
+                             "reduce the frequency . Now pop the queue");
+      while (graph_queue_.size() > 50)
+        graph_queue_.pop_front();
     }
-    else if (graph_queue_.size() >= 5)
+
+    if (character_queue_.size() > 8)
     {
-      graph_queue_sender_->sendFiveGraph(ros::Time::now(), &graph_queue_.at(index), &graph_queue_.at(index - 1),
-                                         &graph_queue_.at(index - 2), &graph_queue_.at(index - 3),
-                                         &graph_queue_.at(index - 4));
-      for (int i = 0; i < 5; i++)
-        graph_queue_.pop_back();
+      ROS_WARN_THROTTLE(0.5, "Sending character UI too frequently, please modify the configuration file or code to"
+                             "reduce the frequency . Now pop the queue");
+      while (character_queue_.size() > 8)
+        character_queue_.pop_front();
     }
-    else if (graph_queue_.size() >= 2)
+
+    if (send_radar_receive_data_)
     {
-      graph_queue_sender_->sendDoubleGraph(ros::Time::now(), &graph_queue_.at(index), &graph_queue_.at(index - 1));
-      for (int i = 0; i < 2; i++)
-        graph_queue_.pop_back();
+      if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
+        return;
+      else
+      {
+        interactive_data_sender_->sendRadarInteractiveData(radar_receive_data_);
+        interactive_data_last_send_ = ros::Time::now();
+        send_radar_receive_data_ = false;
+      }
     }
-    else if (graph_queue_.size() == 1)
+    else if (send_map_sentry_data_)
     {
-      graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.at(index));
-      graph_queue_.pop_back();
+      if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
+        return;
+      else
+      {
+        interactive_data_sender_->sendMapSentryData(map_sentry_data_);
+        interactive_data_last_send_ = ros::Time::now();
+        send_map_sentry_data_ = false;
+      }
     }
+    else
+      sendQueue();
   }
   else
-  {
-    graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.at(index));
-    graph_queue_.pop_back();
-  }
+    sendQueue();
 
-  send_graph_ui_timer_.start();
+  if (base_.robot_id_ == 0)
+    ROS_WARN_THROTTLE(1.0, "robot base id = 0, the serial or referee system may not be connected");
+
+  if (base_.client_id_ == 0)
+    ROS_WARN_THROTTLE(1.0, "client base id = 0, the serial or referee system may not be connected\"");
+  send_serial_data_timer_.start();
+}
+
+void RefereeBase::sendQueue()
+{
+  if (!character_queue_.empty() && graph_queue_.size() <= 14)
+  {
+    graph_queue_sender_->sendCharacter(ros::Time::now(), &character_queue_.at(0));
+    character_queue_.pop_front();
+  }
+  else if (graph_queue_.size() >= 7)
+  {
+    graph_queue_sender_->sendSevenGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1), &graph_queue_.at(2),
+                                        &graph_queue_.at(3), &graph_queue_.at(4), &graph_queue_.at(5),
+                                        &graph_queue_.at(6));
+    for (int i = 0; i < 7; i++)
+      graph_queue_.pop_front();
+  }
+  else if (graph_queue_.size() >= 5)
+  {
+    graph_queue_sender_->sendFiveGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1), &graph_queue_.at(2),
+                                       &graph_queue_.at(3), &graph_queue_.at(4));
+    for (int i = 0; i < 5; i++)
+      graph_queue_.pop_front();
+  }
+  else if (graph_queue_.size() >= 2)
+  {
+    graph_queue_sender_->sendDoubleGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1));
+    for (int i = 0; i < 2; i++)
+      graph_queue_.pop_front();
+  }
+  else if (graph_queue_.size() == 1)
+  {
+    graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.at(0));
+    graph_queue_.pop_front();
+  }
 }
 
 void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, const ros::Time& last_get_data_time)
 {
   if (fixed_ui_ && !is_adding_)
-    fixed_ui_->update();
+    fixed_ui_->updateForQueue();
 }
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {
@@ -274,9 +321,8 @@ void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
     add_ui_flag_ = false;
     is_adding_ = true;
     if (!graph_queue_.empty())
-      while (graph_queue_.size() > 0)
-        graph_queue_.pop_back();
-    send_graph_ui_timer_.setPeriod(ros::Duration(0.05));
+      graph_queue_.clear();
+    send_serial_data_timer_.setPeriod(ros::Duration(0.05));
     add_ui_timer_.start();
     add_ui_times_ = 0;
   }
@@ -315,8 +361,8 @@ void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 }
 void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data)
 {
-  if (progress_time_change_ui_ && !is_adding_)
-    progress_time_change_ui_->updateEngineerUiData(data, ros::Time::now());
+  /*if (progress_time_change_ui_ && !is_adding_)
+    progress_time_change_ui_->updateEngineerUiData(data, ros::Time::now());*/
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
@@ -352,18 +398,26 @@ void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data
 void RefereeBase::sentryDeviateCallback(const rm_msgs::SentryDeviateConstPtr& data)
 {
 }
+
 void RefereeBase::radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data)
 {
-  rm_referee::ClientMapReceiveData send_data;
-  send_data.target_position_x = data->target_position_x;
-  send_data.target_position_y = data->target_position_y;
-  send_data.target_robot_ID = data->target_robot_ID;
+  radar_receive_data_.target_position_x = data->target_position_x;
+  radar_receive_data_.target_position_y = data->target_position_y;
+  radar_receive_data_.target_robot_ID = data->target_robot_ID;
 
-  interactive_data_sender_->sendRadarInteractiveData(send_data);
+  send_radar_receive_data_ = true;
 }
 void RefereeBase::mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data)
 {
-  interactive_data_sender_->sendMapSentryData(data);
+  map_sentry_data_.intention = data->intention;
+  map_sentry_data_.start_position_x = data->start_position_x;
+  map_sentry_data_.start_position_y = data->start_position_y;
+  for (int i = 0; i < 49; i++)
+  {
+    map_sentry_data_.delta_x[i] = data->delta_x[i];
+    map_sentry_data_.delta_y[i] = data->delta_y[i];
+  }
+  send_map_sentry_data_ = true;
 }
 
 void RefereeBase::sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data)

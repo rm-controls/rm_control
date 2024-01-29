@@ -53,8 +53,9 @@ public:
   virtual void sentryDeviateCallback(const rm_msgs::SentryDeviateConstPtr& data);
   virtual void sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data);
 
-  // send graph_type ui
-  void sendGraphQueueCallback();
+  // send  ui
+  void sendSerialDataCallback();
+  void sendQueue();
 
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
@@ -101,12 +102,17 @@ public:
   SpinFlashUi* spin_flash_ui_{};
 
   GroupUiBase* graph_queue_sender_{};
-  std::vector<Graph> graph_queue_;
+  std::deque<Graph> graph_queue_;
+  std::deque<Graph> character_queue_;
 
+  rm_referee::ClientMapReceiveData radar_receive_data_;
+  rm_referee::MapSentryData map_sentry_data_;
+  ros::Time interactive_data_last_send_;
+  bool send_radar_receive_data_ = false, send_map_sentry_data_ = false;
   UiBase* interactive_data_sender_{};
 
   Base& base_;
-  ros::Timer add_ui_timer_, send_graph_ui_timer_;
+  ros::Timer add_ui_timer_, send_serial_data_timer_;
   int add_ui_times_, add_ui_max_times_, add_ui_frequency_;
   double send_ui_queue_delay_;
   bool add_ui_flag_ = false, is_adding_ = false;
