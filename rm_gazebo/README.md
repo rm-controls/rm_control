@@ -1,143 +1,133 @@
-# Package Name
+# rm_gazebo
+
 
 ## Overview
 
-This is a template: replace, remove, and add where required. Describe here what this package does and what it's meant
-for in a few sentences.
+The code is to modify the class `Gazebo_ros_control::RobotHWSim`, adding the imu sensors hardware interface for gazebo robot hardware simulation.
+The "world" folder contains the gazebo simulate world.
 
-**Keywords:** example, package, template
+**Keywords:** ros, gazebo, imu, hardware interface
 
-Or, add some keywords to the Bitbucket or GitHub repository.
 
 ### License
 
-The source code is released under a [BSD 3-Clause license](LICENSE).
+The source code is released under a [BSD 3-Clause license](https://github.com/rm-controls/rm_controllers/blob/master/LICENSE).
 
-**Author: Péter Fankhauser<br />
-Affiliation: [ANYbotics](https://www.anybotics.com/)<br />
-Maintainer: Péter Fankhauser, pfankhauser@anybotics.com**
+**Author: DynamicX<br />
+Affiliation: DynamicX<br />
+Maintainer: DynamicX**
 
-The PACKAGE NAME package has been tested under [ROS] Indigo, Melodic and Noetic on respectively Ubuntu 14.04, 18.04 and
-20.04. This is research code, expect that it changes often and any fitness for a particular purpose is disclaimed.
+The rm_gazebo package has been tested under [ROS](http://www.ros.org) Melodic and Noetic on respectively 18.04 and 20.04. This is research code, expect that it changes often and any fitness for a particular purpose is disclaimed.
 
-[![Build Status](http://rsl-ci.ethz.ch/buildStatus/icon?job=ros_best_practices)](http://rsl-ci.ethz.ch/job/ros_best_practices/)
 
-![Example image](doc/example.jpg)
+### Hardware interface type
+
++ `ImuSensorHandle` 
++ `RmImuSensorHandle` 
++ `RobotStateInterface`
 
 ## Installation
 
+### Dependencies
+
+- roscpp
+- rm_common
+- gazebo
+- gazebo_ros
+- gazebo_ros_control
+- rm_description
+- roboticsgroup_upatras_gazebo_plugins
+
 ### Installation from Packages
 
-To install all packages from the this repository as Debian packages use
+To install all packages from this repository as Debian packages use
 
-    sudo apt-get install ros-noetic-...
+```shell
+sudo apt-get install ros-noetic-rm-gazebo
+```
 
-Or better, use `rosdep`:
+or better use `rosdep`:
 
-	sudo rosdep install --from-paths src
+```shell
+sudo rosdep install --from-paths src
+```
 
-### Building from Source
+### Config files
 
-#### Dependencies
+* **imus.yaml** the orientation covariance diagonal, angular velocity covariance and linear acceleration covariance config of imu.
 
-- [Robot Operating System (ROS)](http://wiki.ros.org) (middleware for robotics),
-- [roboticsgroup_upatras_gazebo_plugins](https://github.com/roboticsgroup/roboticsgroup_upatras_gazebo_plugins)
+* **mimic_joint.yaml** the pid gains are used by the gazebo mimic joint plugin.
 
-  sudo rosdep install --from-paths src
+* ****
 
-#### Building
+### Launch files
 
-To build from source, clone the latest version from this repository into your catkin workspace and compile the package
-using
+* **big_resource.launch:** launch the simulate with the world of big resource.
 
-	cd catkin_workspace/src
-	git clone https://github.com/ethz-asl/ros_best_practices.git
-	cd ../
-	rosdep install --from-paths . --ignore-src
-	catkin_make
+* **empty_world.launch:** launch the simulate with the world of empty world.
 
-### Unit Tests
+* **exchange_station.launch:** launch the simulate with the world of exchange station.
 
-Run the unit tests with
+* **rmuc.launch.launch:** launch the simulate with the world for rmuc.
 
-	catkin_make run_tests_ros_package_template
+* **sentry_world.launch:** launch the simulate with the world for sentry.
 
-### Static code analysis
+* **small_resource.launch:** launch the simulate with the world of small_resource.
 
-Run the static code analysis with
+* **stone.launch:** launch the simulate with the world of a stone.
 
-	catkin_make roslint_ros_package_template
+* **small_resource.launch:** launch the simulate with the world of warthog race .
 
-## Usage
 
-Describe the quickest way to run this software, for example:
+### Services
 
-Run the main node with
+* **`switch_imu_status`**  control the imu status and send the imu status message
 
-	roslaunch ros_package_template ros_package_template.launch
+### Parameters
 
-## Config files
+* **imus** (`xml_rpc_value`)
 
-Config file folder/set 1
+#### default covariance param
+* **orientation_covariance_diagonal**
 
-* **config_file_1.yaml** Shortly explain the content of this config file
+$$
+ \left[
+ \begin{matrix}
+   0.0012 & 0 & 0 \\
+   0 & 0.0012 & 0 \\
+   0 & 0 & 0.0012
+  \end{matrix}
+  \right] \tag{3}
+$$
 
-Config file folder/set 2
 
-* **...**
+* **angular_velocity_covariance**
 
-## Launch files
+$$
+ \left[
+ \begin{matrix}
+   0.0004 & 0 & 0 \\
+   0 & 0.0004 & 0 \\
+   0 & 0 & 0.0004
+  \end{matrix}
+  \right] \tag{3}
+$$
 
-* **launch_file_1.launch:** shortly explain what is launched (e.g standard simulation, simulation with gdb,...)
+* **linear_acceleration_covariance**
 
-  Argument set 1
+$$
+ \left[
+ \begin{matrix}
+   0.01 & 0 & 0 \\
+   0 & 0.01 & 0 \\
+   0 & 0 & 0.01
+  \end{matrix}
+  \right] \tag{3}
+$$
 
-    - **`argument_1`** Short description (e.g. as commented in launch file). Default: `default_value`.
+### Bugs & Feature Requests
 
-  Argument set 2
-
-    - **`...`**
-
-* **...**
-
-## Nodes
-
-### ros_package_template
-
-Reads temperature measurements and computed the average.
-
-#### Subscribed Topics
-
-* **`/temperature`** ([sensor_msgs/Temperature])
-
-  The temperature measurements from which the average is computed.
-
-#### Published Topics
-
-...
-
-#### Services
-
-* **`get_average`** ([std_srvs/Trigger])
-
-  Returns information about the current average. For example, you can trigger the computation from the console with
-
-  	rosservice call /ros_package_template/get_average
-
-#### Parameters
-
-* **`subscriber_topic`** (string, default: "/temperature")
-
-  The name of the input topic.
-
-* **`cache_size`** (int, default: 200, min: 0, max: 1000)
-
-  The size of the cache.
-
-## Bugs & Feature Requests
-
-Please report bugs and request features using the [Issue Tracker](https://github.com/gdut-dynamic-x/rm_template/issues)
+Please report bugs and request features using the [Issue Tracker](https://github.com/gdut-dynamic-x/rm_gazebo/issues)
 .
 
 
-[ROS]: http://www.ros.org
