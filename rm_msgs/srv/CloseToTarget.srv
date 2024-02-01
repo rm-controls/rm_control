@@ -1,0 +1,3 @@
+geometry_msgs/PointStamped target_pos
+---
+geometry_msgs/PoseStamped move_point
