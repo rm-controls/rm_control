@@ -71,6 +71,7 @@ public:
     robots_position_pub_ = nh.advertise<rm_msgs::RobotsPositionData>("robot_position", 1);
     radar_mark_pub_ = nh.advertise<rm_msgs::RadarMarkData>("radar_mark", 1);
     client_map_send_data_pub_ = nh.advertise<rm_msgs::ClientMapSendData>("client_map_send_data", 1);
+    game_robot_pos_pub_ = nh.advertise<rm_msgs::GameRobotPosData>("game_robot_pos", 1);
 
     ros::NodeHandle power_management_nh = ros::NodeHandle(nh, "power_management");
     power_management_sample_and_status_data_pub_ =
@@ -112,6 +113,7 @@ public:
   ros::Publisher client_map_receive_pub_;
   ros::Publisher robots_position_pub_;
   ros::Publisher radar_mark_pub_;
+  ros::Publisher game_robot_pos_pub_;
   ros::Publisher client_map_send_data_pub_;
   ros::Publisher power_management_sample_and_status_data_pub_;
   ros::Publisher power_management_initialization_exception_pub_;

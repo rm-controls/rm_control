@@ -77,6 +77,7 @@ add_message_files(
         ClientMapSendData.msg
         ClientMapReceiveData.msg
         MapSentryData.msg
+        GameRobotPosData.msg
         PowerManagementSampleAndStatusData.msg
         PowerManagementInitializationExceptionData.msg
         PowerManagementProcessStackOverflowData.msg

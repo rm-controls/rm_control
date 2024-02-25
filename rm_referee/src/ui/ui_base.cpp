@@ -207,6 +207,7 @@ void UiBase::sendMapSentryData(const rm_referee::MapSentryData& data)
     map_sentry_data->delta_x[i] = data.delta_x[i];
     map_sentry_data->delta_y[i] = data.delta_y[i];
   }
+  map_sentry_data->sender_id = base_.robot_id_;
   pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::MAP_SENTRY_CMD, sizeof(rm_referee::MapSentryData));
   tx_len_ = k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::MapSentryData) + k_tail_length_);
 

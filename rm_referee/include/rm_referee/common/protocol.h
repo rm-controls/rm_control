@@ -65,6 +65,8 @@ typedef enum
   DART_CLIENT_CMD = 0x020A,
   ROBOTS_POS_CMD = 0X020B,
   RADAR_MARK_CMD = 0X020C,
+  SENTRY_INFO_CMD = 0x020D,
+  RADAR_INFO_CMD = 0x020E,
   INTERACTIVE_DATA_CMD = 0x0301,
   CUSTOM_CONTROLLER_CMD = 0x0302,  // controller
   TARGET_POS_CMD = 0x0303,         // send aerial->server
@@ -72,11 +74,12 @@ typedef enum
   CLIENT_MAP_CMD = 0x0305,
   CUSTOM_CLIENT_CMD = 0x0306,  // controller
   MAP_SENTRY_CMD = 0x0307,     // send sentry->aerial
+  CUSTOM_INFO_CMD = 0x0308,
   POWER_MANAGEMENT_SAMPLE_AND_STATUS_DATA_CMD = 0X8301,
   POWER_MANAGEMENT_INITIALIZATION_EXCEPTION_CMD = 0X8302,
   POWER_MANAGEMENT_SYSTEM_EXCEPTION_CMD = 0X8303,
   POWER_MANAGEMENT_PROCESS_STACK_OVERFLOW_CMD = 0X8304,
-  POWER_MANAGEMENT_UNKNOWN_EXCEPTION_CMD = 0X8305,
+  POWER_MANAGEMENT_UNKNOWN_EXCEPTION_CMD = 0X8305
 } RefereeCmdId;
 
 typedef enum
@@ -89,6 +92,8 @@ typedef enum
   CLIENT_GRAPH_FIVE_CMD = 0x0103,
   CLIENT_GRAPH_SEVEN_CMD = 0x0104,
   CLIENT_CHARACTER_CMD = 0x0110,
+  SENTRY_CMD = 0x0120,
+  RADAR_CMD = 0x0121,
   CURRENT_SENTRY_POSITION_CMD = 0x0200  // send radar->sentry
 } DataCmdId;
 
@@ -129,7 +134,7 @@ typedef enum
   BLUE_STANDARD_3_CLIENT = 0x0167,
   BLUE_STANDARD_4_CLIENT = 0x0168,
   BLUE_STANDARD_5_CLIENT = 0x0169,
-  BLUE_AERIAL_CLIENT = 0x016A,
+  BLUE_AERIAL_CLIENT = 0x016A
 } ClientId;
 
 typedef enum
@@ -279,7 +284,7 @@ typedef struct
 
 typedef struct
 {
-  uint8_t supply_projectile_id;
+  uint8_t reserved;
   uint8_t supply_robot_id;
   uint8_t supply_projectile_step;
   uint8_t supply_projectile_num;
@@ -289,28 +294,23 @@ typedef struct
 {
   uint8_t level;
   uint8_t foul_robot_id;
+  uint8_t count;
 } __packed RefereeWarning;
 
 typedef struct
 {
   uint8_t dart_remaining_time;
+  uint8_t dart_aim_state;
 } __packed DartRemainingTime;
 
 typedef struct
 {
   uint8_t robot_id;
-  uint8_t robot_level;
+  uint8_t robot_exp;
   uint16_t remain_hp;
   uint16_t max_hp;
-  uint16_t shooter_id_1_17_mm_cooling_rate;
-  uint16_t shooter_id_1_17_mm_cooling_limit;
-  uint16_t shooter_id_1_17_mm_speed_limit;
-  uint16_t shooter_id_2_17_mm_cooling_rate;
-  uint16_t shooter_id_2_17_mm_cooling_limit;
-  uint16_t shooter_id_2_17_mm_speed_limit;
-  uint16_t shooter_id_1_42_mm_cooling_rate;
-  uint16_t shooter_id_1_42_mm_cooling_limit;
-  uint16_t shooter_id_1_42_mm_speed_limit;
+  uint16_t shooter_cooling_rate;
+  uint16_t shooter_cooling_limit;
   uint16_t chassis_power_limit;
   uint8_t mains_power_gimbal_output : 1;
   uint8_t mains_power_chassis_output : 1;
@@ -332,7 +332,6 @@ typedef struct
 {
   float x;
   float y;
-  float z;
   float yaw;
 } __packed GameRobotPos;
 
@@ -375,7 +374,7 @@ typedef struct
 typedef struct
 {
   uint8_t dart_launch_opening_status;
-  uint8_t dart_attack_target;
+  //  uint8_t dart_attack_target;
   uint16_t target_change_time;
   uint8_t first_dart_speed;
   uint8_t second_dart_speed;
@@ -384,6 +383,16 @@ typedef struct
   uint16_t last_dart_launch_time;
   uint16_t operate_launch_cmd_time;
 } __packed DartClientCmd;
+
+typedef struct
+{
+  uint32_t sentry_info;
+} __packed SentryInfo;
+
+typedef struct
+{
+  uint8_t radar_info;
+} __packed RadarInfo;
 
 /*********************** Interactive data between robots----0x0301 ********************/
 typedef struct
@@ -512,6 +521,7 @@ typedef struct
   float target_position_z;
   uint8_t command_keyboard;
   uint16_t target_robot_ID;
+  uint8_t cmd_source;
 } __packed ClientMapSendData;
 
 typedef struct
@@ -539,6 +549,7 @@ typedef struct
   uint16_t start_position_y;
   int8_t delta_x[49];
   int8_t delta_y[49];
+  uint16_t sender_id;
 } __packed MapSentryData;
 
 typedef struct
@@ -549,6 +560,13 @@ typedef struct
   float position_z;
   float position_yaw;
 } __packed CurrentSentryPosData;
+
+typedef struct
+{
+  uint16_t sender_id;
+  uint16_t receiver_id;
+  uint16_t user_data[30];
+} __packed CustomInfo;
 
 typedef struct
 {
