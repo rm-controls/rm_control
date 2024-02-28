@@ -22,7 +22,7 @@ uint8 BLUE_OUTPUT = 110
 uint8 BLUE_BASE = 111
 
 uint8 robot_id
-uint8 robot_exp
+uint8 robot_level
 uint16 remain_hp
 uint16 max_hp
 uint16 shooter_cooling_rate
