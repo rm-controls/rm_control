@@ -242,7 +242,7 @@ int Referee::unpack(uint8_t* rx_data)
           memcpy(&game_robot_status_ref, rx_data + 7, sizeof(rm_referee::GameRobotStatus));
 
           game_robot_status_data.remain_hp = game_robot_status_ref.remain_hp;
-          game_robot_status_data.robot_exp = game_robot_status_ref.robot_exp;
+          game_robot_status_data.robot_level = game_robot_status_ref.robot_level;
           game_robot_status_data.max_hp = game_robot_status_ref.max_hp;
           game_robot_status_data.shooter_cooling_limit = game_robot_status_ref.shooter_cooling_limit;
           game_robot_status_data.shooter_cooling_rate = game_robot_status_ref.shooter_cooling_rate;

@@ -306,7 +306,7 @@ typedef struct
 typedef struct
 {
   uint8_t robot_id;
-  uint8_t robot_exp;
+  uint8_t robot_level;
   uint16_t remain_hp;
   uint16_t max_hp;
   uint16_t shooter_cooling_rate;
