@@ -194,31 +194,7 @@ void RefereeBase::sendSerialDataCallback()
       while (character_queue_.size() > 8)
         character_queue_.pop_front();
     }
-
-    if (send_radar_receive_data_)
-    {
-      if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
-        return;
-      else
-      {
-        interactive_data_sender_->sendRadarInteractiveData(radar_receive_data_);
-        interactive_data_last_send_ = ros::Time::now();
-        send_radar_receive_data_ = false;
-      }
-    }
-    else if (send_map_sentry_data_)
-    {
-      if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
-        return;
-      else
-      {
-        interactive_data_sender_->sendMapSentryData(map_sentry_data_);
-        interactive_data_last_send_ = ros::Time::now();
-        send_map_sentry_data_ = false;
-      }
-    }
-    else
-      sendQueue();
+    sendQueue();
   }
   else
     sendQueue();
@@ -401,23 +377,36 @@ void RefereeBase::sentryDeviateCallback(const rm_msgs::SentryDeviateConstPtr& da
 
 void RefereeBase::radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data)
 {
-  radar_receive_data_.target_position_x = data->target_position_x;
-  radar_receive_data_.target_position_y = data->target_position_y;
-  radar_receive_data_.target_robot_ID = data->target_robot_ID;
-
-  send_radar_receive_data_ = true;
+  rm_referee::ClientMapReceiveData radar_receive_data;
+  radar_receive_data.target_position_x = data->target_position_x;
+  radar_receive_data.target_position_y = data->target_position_y;
+  radar_receive_data.target_robot_ID = data->target_robot_ID;
+  if (ros::Time::now() - radar_interactive_data_last_send_ <= ros::Duration(0.1))
+    return;
+  else
+  {
+    interactive_data_sender_->sendRadarInteractiveData(radar_receive_data);
+    radar_interactive_data_last_send_ = ros::Time::now();
+  }
 }
 void RefereeBase::mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data)
 {
-  map_sentry_data_.intention = data->intention;
-  map_sentry_data_.start_position_x = data->start_position_x;
-  map_sentry_data_.start_position_y = data->start_position_y;
+  rm_referee::MapSentryData map_sentry_data;
+  map_sentry_data.intention = data->intention;
+  map_sentry_data.start_position_x = data->start_position_x;
+  map_sentry_data.start_position_y = data->start_position_y;
   for (int i = 0; i < 49; i++)
   {
-    map_sentry_data_.delta_x[i] = data->delta_x[i];
-    map_sentry_data_.delta_y[i] = data->delta_y[i];
+    map_sentry_data.delta_x[i] = data->delta_x[i];
+    map_sentry_data.delta_y[i] = data->delta_y[i];
   }
-  send_map_sentry_data_ = true;
+  if (ros::Time::now() - sentry_interactive_data_last_send_ <= ros::Duration(1.0))
+    return;
+  else
+  {
+    interactive_data_sender_->sendMapSentryData(map_sentry_data);
+    sentry_interactive_data_last_send_ = ros::Time::now();
+  }
 }
 
 void RefereeBase::sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data)

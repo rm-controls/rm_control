@@ -105,10 +105,8 @@ public:
   std::deque<Graph> graph_queue_;
   std::deque<Graph> character_queue_;
 
-  rm_referee::ClientMapReceiveData radar_receive_data_;
-  rm_referee::MapSentryData map_sentry_data_;
-  ros::Time interactive_data_last_send_;
-  bool send_radar_receive_data_ = false, send_map_sentry_data_ = false;
+  ros::Time radar_interactive_data_last_send_;
+  ros::Time sentry_interactive_data_last_send_;
   UiBase* interactive_data_sender_{};
 
   Base& base_;
