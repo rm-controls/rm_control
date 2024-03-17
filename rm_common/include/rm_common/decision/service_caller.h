@@ -192,6 +192,16 @@ public:
     service_.request.armor_target = rm_msgs::StatusChangeRequest::ARMOR_ALL;
     callService();
   }
+
+  explicit SwitchDetectionCaller(ros::NodeHandle& nh, std::string service_name)
+    : ServiceCallerBase<rm_msgs::StatusChange>(nh, service_name)
+  {
+    service_.request.target = rm_msgs::StatusChangeRequest::ARMOR;
+    service_.request.exposure = rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0;
+    service_.request.armor_target = rm_msgs::StatusChangeRequest::ARMOR_ALL;
+    callService();
+  }
+
   void setEnemyColor(const int& robot_id_, const std::string& robot_color_)
   {
     if (robot_id_ != 0)
@@ -261,4 +271,5 @@ public:
 private:
   bool is_set_{};
 };
+
 }  // namespace rm_common
