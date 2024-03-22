@@ -159,12 +159,14 @@ typedef enum
 
 typedef enum
 {
-  LINE = 0,
-  RECTANGLE = 1,
-  CIRCLE = 2,
-  ELLIPSE = 3,
-  ARC = 4,
-  STRING = 7
+  LINE,
+  RECTANGLE,
+  CIRCLE,
+  ELLIPSE,
+  ARC,
+  FLOAT_NUM,
+  INT_NUM,
+  STRING
 } GraphType;
 
 typedef enum
@@ -565,7 +567,7 @@ typedef struct
 {
   uint16_t sender_id;
   uint16_t receiver_id;
-  uint16_t user_data[30];
+  uint8_t user_data[30];
 } __packed CustomInfo;
 
 typedef struct

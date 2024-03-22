@@ -140,6 +140,8 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_hp_data.red_base_hp = game_robot_hp_ref.red_base_hp;
           game_robot_hp_data.stamp = last_get_data_time_;
 
+          referee_ui_.updateEnemyHeroState(game_robot_hp_data, last_get_data_time_);
+          referee_ui_.updateHeroStateDataCallBack(game_robot_hp_data, last_get_data_time_);
           game_robot_hp_pub_.publish(game_robot_hp_data);
           break;
         }
@@ -342,6 +344,7 @@ int Referee::unpack(uint8_t* rx_data)
           bullet_allowance_data.bullet_allowance_num_42_mm = bullet_allowance_ref.bullet_allowance_num_42_mm;
           bullet_allowance_data.coin_remaining_num = bullet_allowance_ref.coin_remaining_num;
           bullet_allowance_data.stamp = last_get_data_time_;
+          referee_ui_.bulletRemainDataCallBack(bullet_allowance_data, last_get_data_time_);
 
           bullet_allowance_pub_.publish(bullet_allowance_data);
           break;

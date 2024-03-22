@@ -24,11 +24,16 @@ public:
   // unpack call back
   virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data,
                                        const ros::Time& last_get_data_time);
+  virtual void updateEnemyHeroState(const rm_msgs::GameRobotHp& game_robot_hp_data, const ros::Time& last_get_data_time);
   virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data, const ros::Time& last_get_data_time);
   virtual void capacityDataCallBack(const rm_msgs::PowerManagementSampleAndStatusData& data,
                                     ros::Time& last_get_data_time);
   virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data, const ros::Time& last_get_data_time);
   virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data, const ros::Time& last_get_data_time);
+  virtual void bulletRemainDataCallBack(const rm_msgs::BulletAllowance& bullet_allowance,
+                                        const ros::Time& last_get_data_time);
+  virtual void updateHeroStateDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data,
+                                           const ros::Time& last_get_data_time);
   virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data,
                                        const ros::Time& last_get_data_time);
   virtual void eventDataCallBack(const rm_msgs::EventData& event_data, const ros::Time& last_get_data_time);
@@ -84,6 +89,7 @@ public:
   TargetTriggerChangeUi* target_trigger_change_ui_{};
   TargetViewAngleTriggerChangeUi* target_view_angle_trigger_change_ui_{};
   CameraTriggerChangeUi* camera_trigger_change_ui_{};
+  RemainBulletTimeChangeUi* remain_bullet_time_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};
@@ -100,6 +106,7 @@ public:
 
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
+  HeroStateFlashUi* hero_state_flash_ui_{};
 
   GroupUiBase* graph_queue_sender_{};
   std::deque<Graph> graph_queue_;

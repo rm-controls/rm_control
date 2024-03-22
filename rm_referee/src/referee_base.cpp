@@ -38,6 +38,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::SentryDeviate>("/deviate", 10, &RefereeBase::sentryDeviateCallback, this);
   RefereeBase::radar_to_sentry_sub_ = nh.subscribe<rm_msgs::CurrentSentryPosData>(
       "/radar_to_sentry", 10, &RefereeBase::sendCurrentSentryCallback, this);
+  //"/bullet_allowance_data"
 
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
@@ -96,6 +97,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "engineer_joint3")
         engineer_joint3_time_change_ui =
             new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "joint3");
+      if (rpc_value[i]["name"] == "remaining_bullet")
+        remain_bullet_time_change_ui_ =
+            new RemainBulletTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -108,6 +112,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "spin")
         spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "hero_state")
+        hero_state_flash_ui_ = new HeroStateFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
   }
 
@@ -134,11 +140,11 @@ void RefereeBase::addUi()
 
   ROS_INFO_THROTTLE(1.0, "Adding ui... %.1f%%", (add_ui_times_ / static_cast<double>(add_ui_max_times_)) * 100);
   if (chassis_trigger_change_ui_)
-    chassis_trigger_change_ui_->addForQueue(3);
+    chassis_trigger_change_ui_->addForQueue(2);
   if (gimbal_trigger_change_ui_)
-    gimbal_trigger_change_ui_->addForQueue(3);
+    gimbal_trigger_change_ui_->addForQueue(2);
   if (shooter_trigger_change_ui_)
-    shooter_trigger_change_ui_->addForQueue(3);
+    shooter_trigger_change_ui_->addForQueue(2);
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->addForQueue();
   if (target_view_angle_trigger_change_ui_)
@@ -169,6 +175,8 @@ void RefereeBase::addUi()
     engineer_joint2_time_change_ui->addForQueue();
   if (engineer_joint3_time_change_ui)
     engineer_joint3_time_change_ui->addForQueue();
+  if (remain_bullet_time_change_ui_)
+    remain_bullet_time_change_ui_->addForQueue();
   add_ui_times_++;
 }
 
@@ -247,6 +255,35 @@ void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, 
   if (fixed_ui_ && !is_adding_)
     fixed_ui_->updateForQueue();
 }
+void RefereeBase::updateEnemyHeroState(const rm_msgs::GameRobotHp& game_robot_hp_data,
+                                       const ros::Time& last_get_data_time)
+{
+  std::wstring data;
+  if (base_.robot_id_ < 100 && base_.robot_id_ != RED_SENTRY)
+  {
+    if (game_robot_hp_data.blue_1_robot_hp > 0)
+      data = L"敌英雄存活:" + std::to_wstring(game_robot_hp_data.blue_1_robot_hp);
+    else
+      data = L"敌英雄死亡";
+  }
+  else if (base_.robot_id_ >= 100 && base_.robot_id_ != BLUE_SENTRY)
+  {
+    if (game_robot_hp_data.red_1_robot_hp > 0)
+      data = L"敌英雄存活:" + std::to_wstring(game_robot_hp_data.red_1_robot_hp);
+    else
+      data = L"敌英雄死亡";
+  }
+  else
+    return;
+  interactive_data_sender_->sendCustomInfoData(data);
+}
+
+void RefereeBase::updateHeroStateDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data,
+                                              const ros::Time& last_get_data_time)
+{
+  if (hero_state_flash_ui_)
+    hero_state_flash_ui_->updateHeroStateData(game_robot_hp_data, last_get_data_time);
+}
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {
 }
@@ -263,6 +300,12 @@ void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, cons
 }
 void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ros::Time& last_get_data_time)
 {
+}
+void RefereeBase::bulletRemainDataCallBack(const rm_msgs::BulletAllowance& bullet_allowance,
+                                           const ros::Time& last_get_data_time)
+{
+  if (remain_bullet_time_change_ui_ && !is_adding_)
+    remain_bullet_time_change_ui_->updateBulletData(bullet_allowance, last_get_data_time);
 }
 void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
 {

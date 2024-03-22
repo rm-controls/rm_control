@@ -54,4 +54,39 @@ void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data,
   chassis_mode_ = data->mode;
   display(last_get_data_time);
 }
+
+void HeroStateFlashUi::updateHeroStateData(const rm_msgs::GameRobotHp& data, const ros::Time& last_get_data_time)
+{
+  if (base_.robot_id_ < 100)
+  {
+    if (data.blue_1_robot_hp > 0 && enemy_hero_die_)
+    {
+      FlashUi::updateFlashUiForQueue(last_get_data_time, true, true);
+      timer_.start();
+    }
+    if (data.blue_1_robot_hp == 0)
+      enemy_hero_die_ = false;
+    else
+      enemy_hero_die_ = true;
+  }
+  else if (base_.robot_id_ >= 100)
+  {
+    if (data.red_1_robot_hp > 0 && enemy_hero_die_)
+    {
+      FlashUi::updateFlashUiForQueue(last_get_data_time, true, true);
+      timer_.start();
+    }
+    if (data.red_1_robot_hp == 0)
+      enemy_hero_die_ = false;
+    else
+      enemy_hero_die_ = true;
+  }
+}
+void HeroStateFlashUi::delayDisplay()
+{
+  graph_->setOperation(rm_referee::GraphOperation::DELETE);
+  FlashUi::updateFlashUiForQueue(ros::Time::now(), false, true);
+  timer_.stop();
+}
 }  // namespace rm_referee
+// namespace rm_referee

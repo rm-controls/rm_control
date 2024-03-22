@@ -321,4 +321,39 @@ void JointPositionTimeChangeUi::updateJointStateData(const sensor_msgs::JointSta
       current_val_ = data->position[i];
   updateForQueue();
 }
+
+void RemainBulletTimeChangeUi::updateBulletData(const rm_msgs::BulletAllowance& data, const ros::Time& time)
+{
+  bullet_allowance_num_17_mm_ = data.bullet_allowance_num_17_mm;
+  bullet_allowance_num_42_mm_ = data.bullet_allowance_num_42_mm;
+  updateForQueue();
+}
+
+void RemainBulletTimeChangeUi::updateConfig()
+{
+  std::string bullet_allowance_num;
+  if (base_.robot_id_ == RED_HERO || base_.robot_id_ == BLUE_HERO)
+  {
+    graph_->setRadius(bullet_allowance_num_42_mm_);
+    if (bullet_allowance_num_42_mm_ > 5)
+      graph_->setColor(rm_referee::GraphColor::GREEN);
+    else if (bullet_allowance_num_42_mm_ < 3)
+      graph_->setColor(rm_referee::GraphColor::PINK);
+    else
+      graph_->setColor(rm_referee::GraphColor::YELLOW);
+  }
+  else
+  {
+    graph_->setRadius(bullet_allowance_num_17_mm_);  // TODO:need use uint32, now only < 1024
+    if (bullet_allowance_num_17_mm_ > 50)
+      graph_->setColor(rm_referee::GraphColor::GREEN);
+    else if (bullet_allowance_num_17_mm_ < 10)
+      graph_->setColor(rm_referee::GraphColor::PINK);
+    else
+      graph_->setColor(rm_referee::GraphColor::YELLOW);
+  }
+
+  graph_->setColor(rm_referee::GraphColor::YELLOW);
+}
+
 }  // namespace rm_referee
