@@ -15,7 +15,8 @@ Graph::Graph(const XmlRpc::XmlRpcValue& config, Base& base, int id) : base_(base
   {
     config_.graphic_type = rm_referee::GraphType::STRING;
   }
-  if (config_.graphic_type == getType("string"))
+  if (config_.graphic_type == getType("string") || config_.graphic_type == getType("int_num") ||
+      config_.graphic_type == getType("float_num"))
   {
     if (config.hasMember("size"))
       config_.start_angle = static_cast<int>(config["size"]);
@@ -127,6 +128,12 @@ rm_referee::GraphType Graph::getType(const std::string& type)
     return rm_referee::GraphType::ARC;
   else if (type == "string")
     return rm_referee::GraphType::STRING;
+  else if (type == "int_num")
+    return rm_referee::GraphType::INT_NUM;
+  else if (type == "float_num")
+    return rm_referee::GraphType::FLOAT_NUM;
+  else if (type == "line")
+    return rm_referee::GraphType::LINE;
   else
     return rm_referee::GraphType::LINE;
 }

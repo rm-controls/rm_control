@@ -45,6 +45,7 @@ public:
   void sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& data);
   void sendMapSentryData(const rm_referee::MapSentryData& data);
   void sendCurrentSentryData(const rm_msgs::CurrentSentryPosDataConstPtr& data);
+  void sendCustomInfoData(std::wstring data);
 
   void sendSerial(const ros::Time& time, int data_len);
   void clearTxBuffer();
@@ -106,8 +107,17 @@ public:
     : GroupUiBase(rpc_value, base, graph_queue, character_queue)
   {
     for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
-      graph_vector_.insert(
-          std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
+    {
+      if (rpc_value[i]["config"]["type"] == "string")
+      {
+        ROS_INFO_STREAM("string FixedUi:" << rpc_value[i]["name"]);
+        character_vector_.insert(
+            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
+      }
+      else
+        graph_vector_.insert(
+            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
+    }
   };
   void updateForQueue() override;
   int update_fixed_ui_times = 0;

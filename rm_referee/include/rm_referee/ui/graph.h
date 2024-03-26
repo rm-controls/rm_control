@@ -49,6 +49,10 @@ public:
   {
     config_.end_y = end_y;
   }
+  void setRadius(int radius)
+  {
+    config_.radius = radius;
+  }
   void setStartX(int start_x)
   {
     config_.start_x = start_x;
