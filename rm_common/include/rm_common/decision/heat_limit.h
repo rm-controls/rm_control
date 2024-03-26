@@ -129,11 +129,11 @@ public:
   {
     updateExpectShootFrequency();
     if (type_ == "ID1_17MM")
-          return rm_msgs::ShootCmd::SPEED_30M_PER_SECOND;
+      return rm_msgs::ShootCmd::SPEED_30M_PER_SECOND;
     else if (type_ == "ID2_17MM")
-          return rm_msgs::ShootCmd::SPEED_30M_PER_SECOND;
+      return rm_msgs::ShootCmd::SPEED_30M_PER_SECOND;
     else if (type_ == "ID1_42MM")
-          return rm_msgs::ShootCmd::SPEED_16M_PER_SECOND;
+      return rm_msgs::ShootCmd::SPEED_16M_PER_SECOND;
     return -1;  // TODO unsafe!
   }
 
