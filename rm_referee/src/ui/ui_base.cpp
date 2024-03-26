@@ -61,6 +61,12 @@ void GroupUiBase::addForQueue(int add_times)
       graph_queue_->push_back(*graph.second);
       last_send_ = ros::Time::now();
     }
+    for (auto graph : character_vector_)
+    {
+      graph.second->setOperation(rm_referee::GraphOperation::ADD);
+      character_queue_->push_back(*graph.second);
+      last_send_ = ros::Time::now();
+    }
   }
 }
 
@@ -440,6 +446,8 @@ void FixedUi::updateForQueue()
   while (update_fixed_ui_times < 1)
   {
     for (auto it : graph_vector_)
+      it.second->updateLastConfig();
+    for (auto it : character_vector_)
       it.second->updateLastConfig();
 
     if (base_.robot_id_ == 0 || base_.client_id_ == 0)

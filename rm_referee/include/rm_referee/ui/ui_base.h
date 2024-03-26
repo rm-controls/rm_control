@@ -108,11 +108,14 @@ public:
   {
     for (int i = 0; i < static_cast<int>(rpc_value.size()); i++)
     {
-      if (rpc_value[i]["config"].hasMember("type") || rpc_value[i]["config"]["type"] != "string")
-        graph_vector_.insert(
-            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
-      else
+      if (rpc_value[i]["config"]["type"] == "string")
+      {
+        ROS_INFO_STREAM("string FixedUi:" << rpc_value[i]["name"]);
         character_vector_.insert(
+            std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
+      }
+      else
+        graph_vector_.insert(
             std::pair<std::string, Graph*>(rpc_value[i]["name"], new Graph(rpc_value[i]["config"], base_, id_++)));
     }
   };

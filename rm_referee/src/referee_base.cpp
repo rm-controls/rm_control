@@ -97,9 +97,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "engineer_joint3")
         engineer_joint3_time_change_ui =
             new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "joint3");
-      if (rpc_value[i]["name"] == "remaining_bullet")
-        remain_bullet_time_change_ui_ =
-            new RemainBulletTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "bullet")
+        bullet_time_change_ui_ = new BulletTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -175,8 +174,11 @@ void RefereeBase::addUi()
     engineer_joint2_time_change_ui->addForQueue();
   if (engineer_joint3_time_change_ui)
     engineer_joint3_time_change_ui->addForQueue();
-  if (remain_bullet_time_change_ui_)
-    remain_bullet_time_change_ui_->addForQueue();
+  if (bullet_time_change_ui_)
+  {
+    bullet_time_change_ui_->reset();
+    bullet_time_change_ui_->addForQueue();
+  }
   add_ui_times_++;
 }
 
@@ -304,8 +306,8 @@ void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ro
 void RefereeBase::bulletRemainDataCallBack(const rm_msgs::BulletAllowance& bullet_allowance,
                                            const ros::Time& last_get_data_time)
 {
-  if (remain_bullet_time_change_ui_ && !is_adding_)
-    remain_bullet_time_change_ui_->updateBulletData(bullet_allowance, last_get_data_time);
+  if (bullet_time_change_ui_ && !is_adding_)
+    bullet_time_change_ui_->updateBulletData(bullet_allowance, last_get_data_time);
 }
 void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
 {

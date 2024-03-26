@@ -89,7 +89,7 @@ public:
   TargetTriggerChangeUi* target_trigger_change_ui_{};
   TargetViewAngleTriggerChangeUi* target_view_angle_trigger_change_ui_{};
   CameraTriggerChangeUi* camera_trigger_change_ui_{};
-  RemainBulletTimeChangeUi* remain_bullet_time_change_ui_{};
+  BulletTimeChangeUi* bullet_time_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};
