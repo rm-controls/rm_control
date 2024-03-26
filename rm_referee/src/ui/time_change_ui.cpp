@@ -220,8 +220,6 @@ void LaneLineTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointSta
   {
     double roll, pitch, yaw;
     quatToRPY(tf_buffer_.lookupTransform(reference_frame_, "yaw", ros::Time(0)).transform.rotation, roll, pitch, yaw);
-    tf2::Quaternion pitch_ori_rot;
-    pitch_ori_rot.setRPY(0, 0, yaw);
     pitch_angle_ = pitch;
   }
   catch (tf2::TransformException& ex)
