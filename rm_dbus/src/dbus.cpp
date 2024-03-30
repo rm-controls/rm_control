@@ -205,6 +205,19 @@ void DBus::getData(rm_msgs::DbusData& d_bus_data) const
     d_bus_data.key_v = (d_bus_data_.key >> 8) & 0x40 ? true : false;
     d_bus_data.key_b = (d_bus_data_.key >> 8) & 0x80 ? true : false;
     if (is_update_)
+    {
       d_bus_data.stamp = ros::Time::now();
+      if (ros::Time::now() - last_update_time_ < ros::Duration(1.0))
+      {
+        if (!d_bus_data.rc_is_open)
+          d_bus_data.rc_is_open = !d_bus_data.rc_is_open;
+      }
+      else
+      {
+        if (d_bus_data.rc_is_open)
+          d_bus_data.rc_is_open = !d_bus_data.rc_is_open;
+      }
+      last_update_time_ = ros::Time::now();
+    }
   }
 }

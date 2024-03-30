@@ -76,6 +76,7 @@ private:
   int16_t buff_[18]{};
   bool is_success{};
   bool is_update_ = false;
+  static ros::Time last_update_time_;
   void unpack();
 };
 
