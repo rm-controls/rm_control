@@ -28,9 +28,9 @@ void TimeChangeUi::updateForQueue()
   updateConfig();
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
 
-  if (graph_queue_ && !graph_->isRepeated() && ros::Time::now() - last_send_ > delay_)
+  if (graph_queue_ && character_queue_ && ros::Time::now() - last_send_ > delay_)
   {
-    graph_queue_->push_back(*graph_);
+    UiBase::updateForQueue();
     last_send_ = ros::Time::now();
   }
 }
@@ -38,16 +38,11 @@ void TimeChangeUi::updateForQueue()
 void TimeChangeGroupUi::updateForQueue()
 {
   updateConfig();
-  if (ros::Time::now() - last_send_ > delay_)
-    for (auto graph : graph_vector_)
-    {
-      graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
-      if (graph_queue_ && !graph.second->isRepeated())
-      {
-        graph_queue_->push_back(*graph.second);
-        last_send_ = ros::Time::now();
-      }
-    }
+  if (graph_queue_ && character_queue_ && ros::Time::now() - last_send_ > delay_)
+  {
+    GroupUiBase::updateForQueue();
+    last_send_ = ros::Time::now();
+  }
 }
 
 void CapacitorTimeChangeUi::add()
@@ -109,7 +104,7 @@ void EffortTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::Con
     {
       joint_effort_ = data->effort[max_index];
       joint_name_ = data->name[max_index];
-      TimeChangeUi::update();
+      updateForQueue();
     }
   }
 }
@@ -127,9 +122,9 @@ void ProgressTimeChangeUi::updateConfig()
 void ProgressTimeChangeUi::updateEngineerUiData(const rm_msgs::EngineerUi::ConstPtr data,
                                                 const ros::Time& last_get_data_time)
 {
-  total_steps_ = data->total_steps;
-  finished_data_ = data->finished_step;
-  TimeChangeUi::update();
+  /*total_steps_ = data->total_steps;
+  finished_data_ = data->finished_step;*/
+  TimeChangeUi::updateForQueue();
 }
 
 void DartStatusTimeChangeUi::updateConfig()
@@ -157,7 +152,7 @@ void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::C
                                                  const ros::Time& last_get_data_time)
 {
   dart_launch_opening_status_ = data->dart_launch_opening_status;
-  TimeChangeUi::update();
+  TimeChangeUi::updateForQueue();
 }
 
 void RotationTimeChangeUi::updateConfig()
@@ -219,12 +214,12 @@ void LaneLineTimeChangeGroupUi::updateConfig()
 
 void LaneLineTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
-  if (!tf_buffer_.canTransform(reference_frame_, "odom", ros::Time(0)))
+  if (!tf_buffer_.canTransform(reference_frame_, "yaw", ros::Time(0)))
     return;
   try
   {
     double roll, pitch, yaw;
-    quatToRPY(tf_buffer_.lookupTransform(reference_frame_, "odom", ros::Time(0)).transform.rotation, roll, pitch, yaw);
+    quatToRPY(tf_buffer_.lookupTransform(reference_frame_, "yaw", ros::Time(0)).transform.rotation, roll, pitch, yaw);
     pitch_angle_ = pitch;
   }
   catch (tf2::TransformException& ex)
@@ -277,14 +272,7 @@ void PitchAngleTimeChangeUi::updateJointStateData(const sensor_msgs::JointState:
   for (unsigned int i = 0; i < data->name.size(); i++)
     if (data->name[i] == "pitch_joint")
       pitch_angle_ = data->position[i];
-  update();
-}
-
-void PitchAngleTimeChangeUi::update()
-{
-  updateConfig();
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  display(ros::Time::now());
+  updateForQueue();
 }
 
 void PitchAngleTimeChangeUi::updateConfig()
@@ -333,4 +321,48 @@ void JointPositionTimeChangeUi::updateJointStateData(const sensor_msgs::JointSta
       current_val_ = data->position[i];
   updateForQueue();
 }
+
+void BulletTimeChangeUi::updateBulletData(const rm_msgs::BulletAllowance& data, const ros::Time& time)
+{
+  if (bullet_allowance_num_17_mm_ > data.bullet_allowance_num_17_mm && data.bullet_allowance_num_17_mm >= 0)
+    bullet_num_17_mm_ += (bullet_allowance_num_17_mm_ - data.bullet_allowance_num_17_mm);
+  if (bullet_allowance_num_42_mm_ > data.bullet_allowance_num_42_mm && data.bullet_allowance_num_42_mm >= 0)
+    bullet_num_42_mm_ += (bullet_allowance_num_42_mm_ - data.bullet_allowance_num_42_mm);
+  bullet_allowance_num_17_mm_ = data.bullet_allowance_num_17_mm;
+  bullet_allowance_num_42_mm_ = data.bullet_allowance_num_42_mm;
+  updateForQueue();
+}
+
+void BulletTimeChangeUi::reset()
+{
+  bullet_num_17_mm_ = 0;
+  bullet_num_42_mm_ = 0;
+}
+
+void BulletTimeChangeUi::updateConfig()
+{
+  std::string bullet_allowance_num;
+  if (base_.robot_id_ == RED_HERO || base_.robot_id_ == BLUE_HERO)
+  {
+    graph_->setRadius(bullet_num_42_mm_);
+    if (bullet_allowance_num_42_mm_ > 5)
+      graph_->setColor(rm_referee::GraphColor::GREEN);
+    else if (bullet_allowance_num_42_mm_ < 3)
+      graph_->setColor(rm_referee::GraphColor::PINK);
+    else
+      graph_->setColor(rm_referee::GraphColor::YELLOW);
+  }
+  else
+  {
+    graph_->setRadius(bullet_num_17_mm_);  // TODO:need use uint32, now only < 1024
+    if (bullet_allowance_num_17_mm_ > 50)
+      graph_->setColor(rm_referee::GraphColor::GREEN);
+    else if (bullet_allowance_num_17_mm_ < 10)
+      graph_->setColor(rm_referee::GraphColor::PINK);
+    else
+      graph_->setColor(rm_referee::GraphColor::YELLOW);
+  }
+  graph_->setColor(rm_referee::GraphColor::YELLOW);
+}
+
 }  // namespace rm_referee

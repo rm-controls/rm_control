@@ -24,11 +24,16 @@ public:
   // unpack call back
   virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data,
                                        const ros::Time& last_get_data_time);
+  virtual void updateEnemyHeroState(const rm_msgs::GameRobotHp& game_robot_hp_data, const ros::Time& last_get_data_time);
   virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data, const ros::Time& last_get_data_time);
   virtual void capacityDataCallBack(const rm_msgs::PowerManagementSampleAndStatusData& data,
                                     ros::Time& last_get_data_time);
   virtual void powerHeatDataCallBack(const rm_msgs::PowerHeatData& power_heat_data, const ros::Time& last_get_data_time);
   virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data, const ros::Time& last_get_data_time);
+  virtual void bulletRemainDataCallBack(const rm_msgs::BulletAllowance& bullet_allowance,
+                                        const ros::Time& last_get_data_time);
+  virtual void updateHeroStateDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data,
+                                           const ros::Time& last_get_data_time);
   virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data,
                                        const ros::Time& last_get_data_time);
   virtual void eventDataCallBack(const rm_msgs::EventData& event_data, const ros::Time& last_get_data_time);
@@ -53,8 +58,9 @@ public:
   virtual void sentryDeviateCallback(const rm_msgs::SentryDeviateConstPtr& data);
   virtual void sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data);
 
-  // send graph_type ui
-  void sendGraphQueueCallback();
+  // send  ui
+  void sendSerialDataCallback();
+  void sendQueue();
 
   ros::Subscriber joint_state_sub_;
   ros::Subscriber actuator_state_sub_;
@@ -83,6 +89,7 @@ public:
   TargetTriggerChangeUi* target_trigger_change_ui_{};
   TargetViewAngleTriggerChangeUi* target_view_angle_trigger_change_ui_{};
   CameraTriggerChangeUi* camera_trigger_change_ui_{};
+  BulletTimeChangeUi* bullet_time_change_ui_{};
 
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};
@@ -99,14 +106,18 @@ public:
 
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
+  HeroStateFlashUi* hero_state_flash_ui_{};
 
   GroupUiBase* graph_queue_sender_{};
-  std::vector<Graph> graph_queue_;
+  std::deque<Graph> graph_queue_;
+  std::deque<Graph> character_queue_;
 
+  ros::Time radar_interactive_data_last_send_;
+  ros::Time sentry_interactive_data_last_send_;
   UiBase* interactive_data_sender_{};
 
   Base& base_;
-  ros::Timer add_ui_timer_, send_graph_ui_timer_;
+  ros::Timer add_ui_timer_, send_serial_data_timer_;
   int add_ui_times_, add_ui_max_times_, add_ui_frequency_;
   double send_ui_queue_delay_;
   bool add_ui_flag_ = false, is_adding_ = false;

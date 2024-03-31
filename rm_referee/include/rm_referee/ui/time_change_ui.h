@@ -12,13 +12,13 @@ class TimeChangeUi : public UiBase
 {
 public:
   explicit TimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name,
-                        std::vector<Graph>* graph_queue)
-    : UiBase(rpc_value, base, graph_queue)
+                        std::deque<Graph>* graph_queue, std::deque<Graph>* character_queue)
+    : UiBase(rpc_value, base, graph_queue, character_queue)
   {
     graph_ = new Graph(rpc_value["config"], base_, id_++);
   }
   void update() override;
-  void updateForQueue();
+  void updateForQueue() override;
   virtual void updateConfig(){};
 };
 
@@ -26,13 +26,13 @@ class TimeChangeGroupUi : public GroupUiBase
 {
 public:
   explicit TimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name,
-                             std::vector<Graph>* graph_queue)
-    : GroupUiBase(rpc_value, base, graph_queue)
+                             std::deque<Graph>* graph_queue, std::deque<Graph>* character_queue)
+    : GroupUiBase(rpc_value, base, graph_queue, character_queue)
   {
     graph_name_ = graph_name;
   }
   void update() override;
-  void updateForQueue();
+  void updateForQueue() override;
   virtual void updateConfig(){};
 
 protected:
@@ -42,8 +42,9 @@ protected:
 class CapacitorTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit CapacitorTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
-    : TimeChangeUi(rpc_value, base, "capacitor", graph_queue){};
+  explicit CapacitorTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                 std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "capacitor", graph_queue, character_queue){};
   void add() override;
   void updateRemainCharge(const double remain_charge, const ros::Time& time);
 
@@ -55,8 +56,9 @@ private:
 class EffortTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit EffortTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
-    : TimeChangeUi(rpc_value, base, "effort", graph_queue){};
+  explicit EffortTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                              std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "effort", graph_queue, character_queue){};
   void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
 
 private:
@@ -68,8 +70,9 @@ private:
 class ProgressTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit ProgressTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
-    : TimeChangeUi(rpc_value, base, "progress", graph_queue){};
+  explicit ProgressTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "progress", graph_queue, character_queue){};
   void updateEngineerUiData(const rm_msgs::EngineerUi::ConstPtr data, const ros::Time& last_get_data_time);
 
 private:
@@ -81,8 +84,9 @@ private:
 class DartStatusTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit DartStatusTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
-    : TimeChangeUi(rpc_value, base, "dart", graph_queue){};
+  explicit DartStatusTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                  std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "dart", graph_queue, character_queue){};
   void updateDartClientCmd(const rm_msgs::DartClientCmd::ConstPtr data, const ros::Time& last_get_data_time);
 
 private:
@@ -93,8 +97,9 @@ private:
 class RotationTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit RotationTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
-    : TimeChangeUi(rpc_value, base, "rotation", graph_queue)
+  explicit RotationTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "rotation", graph_queue, character_queue)
   {
     if (rpc_value.hasMember("data"))
     {
@@ -125,8 +130,9 @@ private:
 class LaneLineTimeChangeGroupUi : public TimeChangeGroupUi
 {
 public:
-  explicit LaneLineTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
-    : TimeChangeGroupUi(rpc_value, base, "lane_line", graph_queue)
+  explicit LaneLineTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                     std::deque<Graph>* character_queue)
+    : TimeChangeGroupUi(rpc_value, base, "lane_line", graph_queue, character_queue)
   {
     if (rpc_value.hasMember("data"))
     {
@@ -171,8 +177,9 @@ private:
 class BalancePitchTimeChangeGroupUi : public TimeChangeGroupUi
 {
 public:
-  explicit BalancePitchTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
-    : TimeChangeGroupUi(rpc_value, base, "balance_pitch", graph_queue)
+  explicit BalancePitchTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                         std::deque<Graph>* character_queue)
+    : TimeChangeGroupUi(rpc_value, base, "balance_pitch", graph_queue, character_queue)
   {
     XmlRpc::XmlRpcValue config;
 
@@ -232,9 +239,9 @@ private:
 class PitchAngleTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit PitchAngleTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue)
-    : TimeChangeUi(rpc_value, base, "pitch", graph_queue){};
-  void update() override;
+  explicit PitchAngleTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                  std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "pitch", graph_queue, character_queue){};
   void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
 
 private:
@@ -245,9 +252,9 @@ private:
 class JointPositionTimeChangeUi : public TimeChangeUi
 {
 public:
-  explicit JointPositionTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::vector<Graph>* graph_queue,
-                                     std::string name)
-    : TimeChangeUi(rpc_value, base, name, graph_queue)
+  explicit JointPositionTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                     std::deque<Graph>* character_queue, std::string name)
+    : TimeChangeUi(rpc_value, base, name, graph_queue, character_queue)
   {
     if (rpc_value.hasMember("data"))
     {
@@ -265,5 +272,19 @@ private:
   void updateConfig() override;
   std::string name_, direction_;
   double max_val_, min_val_, current_val_, length_;
+};
+
+class BulletTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit BulletTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                              std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "remaining_bullet", graph_queue, character_queue){};
+  void updateBulletData(const rm_msgs::BulletAllowance& data, const ros::Time& time);
+  void reset();
+
+private:
+  void updateConfig() override;
+  int bullet_allowance_num_17_mm_, bullet_allowance_num_42_mm_, bullet_num_17_mm_{ 0 }, bullet_num_42_mm_{ 0 };
 };
 }  // namespace rm_referee

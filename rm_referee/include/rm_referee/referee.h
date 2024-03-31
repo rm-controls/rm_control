@@ -56,6 +56,7 @@ public:
     power_heat_data_pub_ = nh.advertise<rm_msgs::PowerHeatData>("power_heat_data", 1);
     game_robot_hp_pub_ = nh.advertise<rm_msgs::GameRobotHp>("game_robot_hp", 1);
     current_sentry_pos_pub_ = nh.advertise<rm_msgs::CurrentSentryPosData>("current_sentry_pos", 1);
+    buff_pub_ = nh.advertise<rm_msgs::Buff>("robot_buff", 1);
     event_data_pub_ = nh.advertise<rm_msgs::EventData>("event_data", 1);
     dart_status_pub_ = nh.advertise<rm_msgs::DartStatus>("dart_status_data", 1);
     icra_buff_debuff_zone_status_pub_ =
@@ -71,6 +72,9 @@ public:
     robots_position_pub_ = nh.advertise<rm_msgs::RobotsPositionData>("robot_position", 1);
     radar_mark_pub_ = nh.advertise<rm_msgs::RadarMarkData>("radar_mark", 1);
     client_map_send_data_pub_ = nh.advertise<rm_msgs::ClientMapSendData>("client_map_send_data", 1);
+    game_robot_pos_pub_ = nh.advertise<rm_msgs::GameRobotPosData>("game_robot_pos", 1);
+    sentry_info_pub_ = nh.advertise<rm_msgs::SentryInfo>("sentry_info", 1);
+    radar_info_pub_ = nh.advertise<rm_msgs::RadarInfo>("radar_info", 1);
 
     ros::NodeHandle power_management_nh = ros::NodeHandle(nh, "power_management");
     power_management_sample_and_status_data_pub_ =
@@ -101,6 +105,7 @@ public:
   ros::Publisher current_sentry_pos_pub_;
   ros::Publisher event_data_pub_;
   ros::Publisher dart_status_pub_;
+  ros::Publisher buff_pub_;
   ros::Publisher icra_buff_debuff_zone_status_pub_;
   ros::Publisher supply_projectile_action_pub_;
   ros::Publisher dart_remaining_time_pub_;
@@ -112,6 +117,9 @@ public:
   ros::Publisher client_map_receive_pub_;
   ros::Publisher robots_position_pub_;
   ros::Publisher radar_mark_pub_;
+  ros::Publisher game_robot_pos_pub_;
+  ros::Publisher sentry_info_pub_;
+  ros::Publisher radar_info_pub_;
   ros::Publisher client_map_send_data_pub_;
   ros::Publisher power_management_sample_and_status_data_pub_;
   ros::Publisher power_management_initialization_exception_pub_;

@@ -1,5 +1,4 @@
 uint8 dart_launch_opening_status
-uint8 dart_attack_target
 uint16 target_change_time
 uint8 first_dart_speed
 uint8 second_dart_speed
