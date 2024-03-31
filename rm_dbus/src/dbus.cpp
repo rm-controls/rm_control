@@ -168,6 +168,7 @@ void DBus::unpack()
   is_success = true;
 }
 
+static ros::Time last_update_time_;
 void DBus::getData(rm_msgs::DbusData& d_bus_data) const
 {
   if (is_success)
@@ -212,12 +213,12 @@ void DBus::getData(rm_msgs::DbusData& d_bus_data) const
         if (!d_bus_data.rc_is_open)
           d_bus_data.rc_is_open = !d_bus_data.rc_is_open;
       }
-      else
-      {
-        if (d_bus_data.rc_is_open)
-          d_bus_data.rc_is_open = !d_bus_data.rc_is_open;
-      }
       last_update_time_ = ros::Time::now();
+    }
+    else
+    {
+      if (d_bus_data.rc_is_open)
+        d_bus_data.rc_is_open = !d_bus_data.rc_is_open;
     }
   }
 }
