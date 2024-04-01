@@ -87,6 +87,12 @@ add_message_files(
         PowerManagementUnknownExceptionData.msg
 )
 
+add_message_files(
+        DIRECTORY msg/guard
+        FILES
+        PriorityArray.msg
+)
+
 add_action_files(
         FILES
         Engineer.action
