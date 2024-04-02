@@ -214,12 +214,12 @@ void LaneLineTimeChangeGroupUi::updateConfig()
 
 void LaneLineTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
-  if (!tf_buffer_.canTransform(reference_frame_, "yaw", ros::Time(0)))
+  if (!tf_buffer_.canTransform("yaw", reference_frame_, ros::Time(0)))
     return;
   try
   {
     double roll, pitch, yaw;
-    quatToRPY(tf_buffer_.lookupTransform(reference_frame_, "yaw", ros::Time(0)).transform.rotation, roll, pitch, yaw);
+    quatToRPY(tf_buffer_.lookupTransform("yaw", reference_frame_, ros::Time(0)).transform.rotation, roll, pitch, yaw);
     pitch_angle_ = pitch;
   }
   catch (tf2::TransformException& ex)
@@ -324,12 +324,18 @@ void JointPositionTimeChangeUi::updateJointStateData(const sensor_msgs::JointSta
 
 void BulletTimeChangeUi::updateBulletData(const rm_msgs::BulletAllowance& data, const ros::Time& time)
 {
-  if (bullet_allowance_num_17_mm_ > data.bullet_allowance_num_17_mm && data.bullet_allowance_num_17_mm >= 0)
-    bullet_num_17_mm_ += (bullet_allowance_num_17_mm_ - data.bullet_allowance_num_17_mm);
-  if (bullet_allowance_num_42_mm_ > data.bullet_allowance_num_42_mm && data.bullet_allowance_num_42_mm >= 0)
-    bullet_num_42_mm_ += (bullet_allowance_num_42_mm_ - data.bullet_allowance_num_42_mm);
-  bullet_allowance_num_17_mm_ = data.bullet_allowance_num_17_mm;
-  bullet_allowance_num_42_mm_ = data.bullet_allowance_num_42_mm;
+  if (data.bullet_allowance_num_17_mm >= 0 && data.bullet_allowance_num_17_mm < 1000)
+  {
+    if (bullet_allowance_num_17_mm_ > data.bullet_allowance_num_17_mm)
+      bullet_num_17_mm_ += (bullet_allowance_num_17_mm_ - data.bullet_allowance_num_17_mm);
+    bullet_allowance_num_17_mm_ = data.bullet_allowance_num_17_mm;
+  }
+  if (data.bullet_allowance_num_42_mm >= 0 && data.bullet_allowance_num_42_mm < 1000)
+  {
+    if (bullet_allowance_num_42_mm_ > data.bullet_allowance_num_42_mm)
+      bullet_num_42_mm_ += (bullet_allowance_num_42_mm_ - data.bullet_allowance_num_42_mm);
+    bullet_allowance_num_42_mm_ = data.bullet_allowance_num_42_mm;
+  }
   updateForQueue();
 }
 
