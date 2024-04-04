@@ -46,6 +46,7 @@
 #include <std_msgs/Int8MultiArray.h>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #include "rm_referee/common/protocol.h"
 
@@ -86,6 +87,7 @@
 #include "rm_msgs/SentryInfo.h"
 #include "rm_msgs/RadarInfo.h"
 #include "rm_msgs/Buff.h"
+#include "rm_msgs/TrackData.h"
 #include <rm_msgs/PowerManagementSampleAndStatusData.h>
 #include <rm_msgs/PowerManagementSystemExceptionData.h>
 #include <rm_msgs/PowerManagementInitializationExceptionData.h>

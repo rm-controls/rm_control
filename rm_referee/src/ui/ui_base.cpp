@@ -459,6 +459,14 @@ void FixedUi::updateForQueue()
   }
 }
 
+void UiBase::transferInt(const int data)
+{
+  int a = data & 1023;
+  int b = data >> 10;
+  graph_->setRadius(a);
+  graph_->setEndX(b);
+}
+
 void UiBase::pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const
 {
   memset(tx_buffer, 0, k_frame_length_);

@@ -8,11 +8,12 @@ namespace rm_referee
 {
 RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
 {
+  dbus_topic_ = getParam(nh, "dbus_topic", std::string("/rm_ecat_hw/dbus"));
   RefereeBase::joint_state_sub_ =
       nh.subscribe<sensor_msgs::JointState>("/joint_states", 10, &RefereeBase::jointStateCallback, this);
   RefereeBase::actuator_state_sub_ =
       nh.subscribe<rm_msgs::ActuatorState>("/actuator_states", 10, &RefereeBase::actuatorStateCallback, this);
-  RefereeBase::dbus_sub_ = nh.subscribe<rm_msgs::DbusData>("/dbus_data", 10, &RefereeBase::dbusDataCallback, this);
+  RefereeBase::dbus_sub_ = nh.subscribe<rm_msgs::DbusData>(dbus_topic_, 10, &RefereeBase::dbusDataCallback, this);
   RefereeBase::chassis_cmd_sub_ =
       nh.subscribe<rm_msgs::ChassisCmd>("/cmd_chassis", 10, &RefereeBase::chassisCmdDataCallback, this);
   RefereeBase::vel2D_cmd_sub_ =
@@ -99,6 +100,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
             new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "joint3");
       if (rpc_value[i]["name"] == "bullet")
         bullet_time_change_ui_ = new BulletTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "target_distance")
+        target_distance_time_change_ui_ =
+            new TargetDistanceTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -179,6 +183,8 @@ void RefereeBase::addUi()
     bullet_time_change_ui_->reset();
     bullet_time_change_ui_->addForQueue();
   }
+  if (target_distance_time_change_ui_)
+    target_distance_time_change_ui_->addForQueue();
   add_ui_times_++;
 }
 
@@ -410,6 +416,8 @@ void RefereeBase::trackCallBack(const rm_msgs::TrackDataConstPtr& data)
 {
   if (target_view_angle_trigger_change_ui_ && !is_adding_)
     target_view_angle_trigger_change_ui_->updateTrackID(data->id);
+  if (target_distance_time_change_ui_ && !is_adding_)
+    target_distance_time_change_ui_->updateTargetDistanceData(data);
 }
 void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data)
 {

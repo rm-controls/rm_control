@@ -46,6 +46,7 @@ public:
   void sendMapSentryData(const rm_referee::MapSentryData& data);
   void sendCurrentSentryData(const rm_msgs::CurrentSentryPosDataConstPtr& data);
   void sendCustomInfoData(std::wstring data);
+  void transferInt(const int data);
 
   void sendSerial(const ros::Time& time, int data_len);
   void clearTxBuffer();
