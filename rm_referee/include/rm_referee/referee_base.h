@@ -101,6 +101,7 @@ public:
   PitchAngleTimeChangeUi* pitch_angle_time_change_ui_{};
   JointPositionTimeChangeUi *engineer_joint1_time_change_ui{}, *engineer_joint2_time_change_ui{},
       *engineer_joint3_time_change_ui{};
+  TargetDistanceTimeChangeUi* target_distance_time_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
@@ -122,5 +123,6 @@ public:
   double send_ui_queue_delay_;
   bool add_ui_flag_ = false, is_adding_ = false;
   ros::NodeHandle nh_;
+  std::string dbus_topic_;
 };
 }  // namespace rm_referee

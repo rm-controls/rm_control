@@ -326,14 +326,12 @@ void BulletTimeChangeUi::updateBulletData(const rm_msgs::BulletAllowance& data, 
 {
   if (data.bullet_allowance_num_17_mm >= 0 && data.bullet_allowance_num_17_mm < 1000)
   {
-    if (bullet_allowance_num_17_mm_ > data.bullet_allowance_num_17_mm)
-      bullet_num_17_mm_ += (bullet_allowance_num_17_mm_ - data.bullet_allowance_num_17_mm);
+    bullet_num_17_mm_ += (bullet_allowance_num_17_mm_ - data.bullet_allowance_num_17_mm);
     bullet_allowance_num_17_mm_ = data.bullet_allowance_num_17_mm;
   }
   if (data.bullet_allowance_num_42_mm >= 0 && data.bullet_allowance_num_42_mm < 1000)
   {
-    if (bullet_allowance_num_42_mm_ > data.bullet_allowance_num_42_mm)
-      bullet_num_42_mm_ += (bullet_allowance_num_42_mm_ - data.bullet_allowance_num_42_mm);
+    bullet_num_42_mm_ += (bullet_allowance_num_42_mm_ - data.bullet_allowance_num_42_mm);
     bullet_allowance_num_42_mm_ = data.bullet_allowance_num_42_mm;
   }
   updateForQueue();
@@ -369,6 +367,36 @@ void BulletTimeChangeUi::updateConfig()
       graph_->setColor(rm_referee::GraphColor::YELLOW);
   }
   graph_->setColor(rm_referee::GraphColor::YELLOW);
+}
+
+void TargetDistanceTimeChangeUi::updateTargetDistanceData(const rm_msgs::TrackData::ConstPtr& data)
+{
+  if(data->id == 0)
+    return;
+  geometry_msgs::PointStamped output;
+  geometry_msgs::PointStamped input;
+  input.point.x = data->position.x;
+  input.point.y = data->position.y;
+  input.point.z = data->position.z;
+  //  tf_buffer_.transform(input, output, "base_link");
+  try
+  {
+    geometry_msgs::TransformStamped transform_stamped =
+        tf_buffer_.lookupTransform("base_link", "odom", ros::Time(0));
+    tf2::doTransform(input, output, transform_stamped);
+  }
+  catch (tf2::TransformException& ex)
+  {
+    ROS_ERROR("Failed to transform point: %s", ex.what());
+  }
+  target_distance_ = std::sqrt((output.point.x) * (output.point.x) + (output.point.y) * (output.point.y) +
+                               (output.point.z) * (output.point.z));
+  updateForQueue();
+}
+
+void TargetDistanceTimeChangeUi::updateConfig()
+{
+  UiBase::transferInt(std::floor(target_distance_ * 1000));
 }
 
 }  // namespace rm_referee
