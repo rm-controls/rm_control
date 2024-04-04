@@ -371,7 +371,7 @@ void BulletTimeChangeUi::updateConfig()
 
 void TargetDistanceTimeChangeUi::updateTargetDistanceData(const rm_msgs::TrackData::ConstPtr& data)
 {
-  if(data->id == 0)
+  if (data->id == 0)
     return;
   geometry_msgs::PointStamped output;
   geometry_msgs::PointStamped input;
@@ -381,8 +381,7 @@ void TargetDistanceTimeChangeUi::updateTargetDistanceData(const rm_msgs::TrackDa
   //  tf_buffer_.transform(input, output, "base_link");
   try
   {
-    geometry_msgs::TransformStamped transform_stamped =
-        tf_buffer_.lookupTransform("base_link", "odom", ros::Time(0));
+    geometry_msgs::TransformStamped transform_stamped = tf_buffer_.lookupTransform("base_link", "odom", ros::Time(0));
     tf2::doTransform(input, output, transform_stamped);
   }
   catch (tf2::TransformException& ex)
