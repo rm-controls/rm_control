@@ -43,6 +43,7 @@ add_service_files(
 add_message_files(
         DIRECTORY msg/detection
         FILES
+        PriorityArray.msg
         TargetDetection.msg
         TargetDetectionArray.msg
         TrackData.msg
