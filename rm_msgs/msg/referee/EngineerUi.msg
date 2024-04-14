@@ -1,6 +1,7 @@
-string current_step_name
-uint32 finished_step
-uint32 total_steps
+string control_mode
+string gripper_state
+string ex_arm_state
+uint32 stone_num
 
 string step_queue_name
 bool symbol
