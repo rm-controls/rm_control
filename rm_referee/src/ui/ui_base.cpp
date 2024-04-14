@@ -61,6 +61,12 @@ void GroupUiBase::addForQueue(int add_times)
       graph_queue_->push_back(*graph.second);
       last_send_ = ros::Time::now();
     }
+    for (auto graph : character_vector_)
+    {
+      graph.second->setOperation(rm_referee::GraphOperation::ADD);
+      character_queue_->push_back(*graph.second);
+      last_send_ = ros::Time::now();
+    }
   }
 }
 
@@ -207,6 +213,7 @@ void UiBase::sendMapSentryData(const rm_referee::MapSentryData& data)
     map_sentry_data->delta_x[i] = data.delta_x[i];
     map_sentry_data->delta_y[i] = data.delta_y[i];
   }
+  map_sentry_data->sender_id = base_.robot_id_;
   pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::MAP_SENTRY_CMD, sizeof(rm_referee::MapSentryData));
   tx_len_ = k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::MapSentryData) + k_tail_length_);
 
@@ -218,6 +225,37 @@ void UiBase::sendMapSentryData(const rm_referee::MapSentryData& data)
   {
   }
 
+  clearTxBuffer();
+}
+
+void UiBase::sendCustomInfoData(std::wstring data)
+{
+  uint8_t tx_data[sizeof(rm_referee::CustomInfo)] = { 0 };
+  auto custom_info = (rm_referee::CustomInfo*)tx_data;
+  uint16_t characters[15];
+  for (int i = 0; i < 15; i++)
+  {
+    if (i < static_cast<int>(data.size()))
+      characters[i] = static_cast<uint16_t>(data[i]);
+  }
+  for (int i = 0; i < 15; i++)
+  {
+    custom_info->user_data[2 * i] = characters[i] & 0xFF;
+    custom_info->user_data[2 * i + 1] = (characters[i] >> 8) & 0xFF;
+  }
+  custom_info->sender_id = base_.robot_id_;
+  custom_info->receiver_id = base_.client_id_;
+  pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::CUSTOM_INFO_CMD, sizeof(rm_referee::CustomInfo));
+  tx_len_ =
+      k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::ClientMapReceiveData) + k_tail_length_);
+
+  try
+  {
+    base_.serial_.write(tx_buffer_, tx_len_);
+  }
+  catch (serial::PortNotOpenedException& e)
+  {
+  }
   clearTxBuffer();
 }
 
@@ -234,7 +272,6 @@ void UiBase::sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& da
   pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::CLIENT_MAP_CMD, sizeof(rm_referee::ClientMapReceiveData));
   tx_len_ =
       k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::ClientMapReceiveData) + k_tail_length_);
-
   try
   {
     base_.serial_.write(tx_buffer_, tx_len_);
@@ -242,7 +279,6 @@ void UiBase::sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& da
   catch (serial::PortNotOpenedException& e)
   {
   }
-
   clearTxBuffer();
 }
 
@@ -411,6 +447,8 @@ void FixedUi::updateForQueue()
   {
     for (auto it : graph_vector_)
       it.second->updateLastConfig();
+    for (auto it : character_vector_)
+      it.second->updateLastConfig();
 
     if (base_.robot_id_ == 0 || base_.client_id_ == 0)
       return;
@@ -419,6 +457,14 @@ void FixedUi::updateForQueue()
     ROS_INFO_THROTTLE(1.0, "update fixed ui");
     update_fixed_ui_times++;
   }
+}
+
+void UiBase::transferInt(const int data)
+{
+  int a = data & 1023;
+  int b = data >> 10;
+  graph_->setRadius(a);
+  graph_->setEndX(b);
 }
 
 void UiBase::pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const

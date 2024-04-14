@@ -64,7 +64,7 @@ public:
       ROS_ERROR("Heat coeff no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("type", type_))
       ROS_ERROR("Shooter type no defined (namespace: %s)", nh.getNamespace().c_str());
-    nh.param("safe_speed_limit", shooter_speed_limit_, 15);
+    //    nh.param("safe_speed_limit", shooter_speed_limit_, 15);
     if (type_ == "ID1_42MM")
       bullet_heat_ = 100.;
     else
@@ -81,24 +81,8 @@ public:
 
   void setStatusOfShooter(const rm_msgs::GameRobotStatus data)
   {
-    if (type_ == "ID1_17MM")
-    {
-      shooter_cooling_limit_ = data.shooter_id_1_17_mm_cooling_limit;
-      shooter_cooling_rate_ = data.shooter_id_1_17_mm_cooling_rate;
-      shooter_speed_limit_ = data.shooter_id_1_17_mm_speed_limit;
-    }
-    else if (type_ == "ID2_17MM")
-    {
-      shooter_cooling_limit_ = data.shooter_id_2_17_mm_cooling_limit;
-      shooter_cooling_rate_ = data.shooter_id_2_17_mm_cooling_rate;
-      shooter_speed_limit_ = data.shooter_id_2_17_mm_speed_limit;
-    }
-    else if (type_ == "ID1_42MM")
-    {
-      shooter_cooling_limit_ = data.shooter_id_1_42_mm_cooling_limit;
-      shooter_cooling_rate_ = data.shooter_id_1_42_mm_cooling_rate;
-      shooter_speed_limit_ = data.shooter_id_1_42_mm_speed_limit;
-    }
+    shooter_cooling_limit_ = data.shooter_cooling_limit;
+    shooter_cooling_rate_ = data.shooter_cooling_rate;
   }
 
   void setCoolingHeatOfShooter(const rm_msgs::PowerHeatData data)
@@ -145,39 +129,11 @@ public:
   {
     updateExpectShootFrequency();
     if (type_ == "ID1_17MM")
-      switch (shooter_speed_limit_)
-      {
-        case 15:
-          return rm_msgs::ShootCmd::SPEED_15M_PER_SECOND;
-        case 18:
-          return rm_msgs::ShootCmd::SPEED_18M_PER_SECOND;
-        case 30:
-          return rm_msgs::ShootCmd::SPEED_30M_PER_SECOND;
-        default:
-          return rm_msgs::ShootCmd::SPEED_15M_PER_SECOND;  // Safety speed
-      }
+      return rm_msgs::ShootCmd::SPEED_30M_PER_SECOND;
     else if (type_ == "ID2_17MM")
-      switch (shooter_speed_limit_)
-      {
-        case 15:
-          return rm_msgs::ShootCmd::SPEED_15M_PER_SECOND;
-        case 18:
-          return rm_msgs::ShootCmd::SPEED_18M_PER_SECOND;
-        case 30:
-          return rm_msgs::ShootCmd::SPEED_30M_PER_SECOND;
-        default:
-          return rm_msgs::ShootCmd::SPEED_15M_PER_SECOND;  // Safety speed
-      }
+      return rm_msgs::ShootCmd::SPEED_30M_PER_SECOND;
     else if (type_ == "ID1_42MM")
-      switch (shooter_speed_limit_)
-      {
-        case 10:
-          return rm_msgs::ShootCmd::SPEED_10M_PER_SECOND;
-        case 16:
-          return rm_msgs::ShootCmd::SPEED_16M_PER_SECOND;
-        default:
-          return rm_msgs::ShootCmd::SPEED_10M_PER_SECOND;  // Safety speed
-      }
+      return rm_msgs::ShootCmd::SPEED_16M_PER_SECOND;
     return -1;  // TODO unsafe!
   }
 
@@ -238,7 +194,7 @@ private:
       high_shoot_frequency_{}, burst_shoot_frequency_{}, minimal_shoot_frequency_{};
 
   bool referee_is_online_;
-  int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_, shooter_speed_limit_;
+  int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_;
 };
 
 }  // namespace rm_common

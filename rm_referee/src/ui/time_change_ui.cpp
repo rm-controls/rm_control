@@ -214,12 +214,12 @@ void LaneLineTimeChangeGroupUi::updateConfig()
 
 void LaneLineTimeChangeGroupUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
-  if (!tf_buffer_.canTransform(reference_frame_, "odom", ros::Time(0)))
+  if (!tf_buffer_.canTransform("yaw", reference_frame_, ros::Time(0)))
     return;
   try
   {
     double roll, pitch, yaw;
-    quatToRPY(tf_buffer_.lookupTransform(reference_frame_, "odom", ros::Time(0)).transform.rotation, roll, pitch, yaw);
+    quatToRPY(tf_buffer_.lookupTransform("yaw", reference_frame_, ros::Time(0)).transform.rotation, roll, pitch, yaw);
     pitch_angle_ = pitch;
   }
   catch (tf2::TransformException& ex)
@@ -321,4 +321,81 @@ void JointPositionTimeChangeUi::updateJointStateData(const sensor_msgs::JointSta
       current_val_ = data->position[i];
   updateForQueue();
 }
+
+void BulletTimeChangeUi::updateBulletData(const rm_msgs::BulletAllowance& data, const ros::Time& time)
+{
+  if (data.bullet_allowance_num_17_mm >= 0 && data.bullet_allowance_num_17_mm < 1000)
+  {
+    bullet_num_17_mm_ += (bullet_allowance_num_17_mm_ - data.bullet_allowance_num_17_mm);
+    bullet_allowance_num_17_mm_ = data.bullet_allowance_num_17_mm;
+  }
+  if (data.bullet_allowance_num_42_mm >= 0 && data.bullet_allowance_num_42_mm < 1000)
+  {
+    bullet_num_42_mm_ += (bullet_allowance_num_42_mm_ - data.bullet_allowance_num_42_mm);
+    bullet_allowance_num_42_mm_ = data.bullet_allowance_num_42_mm;
+  }
+  updateForQueue();
+}
+
+void BulletTimeChangeUi::reset()
+{
+  bullet_num_17_mm_ = 0;
+  bullet_num_42_mm_ = 0;
+}
+
+void BulletTimeChangeUi::updateConfig()
+{
+  std::string bullet_allowance_num;
+  if (base_.robot_id_ == RED_HERO || base_.robot_id_ == BLUE_HERO)
+  {
+    graph_->setRadius(bullet_num_42_mm_);
+    if (bullet_allowance_num_42_mm_ > 5)
+      graph_->setColor(rm_referee::GraphColor::GREEN);
+    else if (bullet_allowance_num_42_mm_ < 3)
+      graph_->setColor(rm_referee::GraphColor::PINK);
+    else
+      graph_->setColor(rm_referee::GraphColor::YELLOW);
+  }
+  else
+  {
+    graph_->setRadius(bullet_num_17_mm_);  // TODO:need use uint32, now only < 1024
+    if (bullet_allowance_num_17_mm_ > 50)
+      graph_->setColor(rm_referee::GraphColor::GREEN);
+    else if (bullet_allowance_num_17_mm_ < 10)
+      graph_->setColor(rm_referee::GraphColor::PINK);
+    else
+      graph_->setColor(rm_referee::GraphColor::YELLOW);
+  }
+  graph_->setColor(rm_referee::GraphColor::YELLOW);
+}
+
+void TargetDistanceTimeChangeUi::updateTargetDistanceData(const rm_msgs::TrackData::ConstPtr& data)
+{
+  if (data->id == 0)
+    return;
+  geometry_msgs::PointStamped output;
+  geometry_msgs::PointStamped input;
+  input.point.x = data->position.x;
+  input.point.y = data->position.y;
+  input.point.z = data->position.z;
+  //  tf_buffer_.transform(input, output, "base_link");
+  try
+  {
+    geometry_msgs::TransformStamped transform_stamped = tf_buffer_.lookupTransform("base_link", "odom", ros::Time(0));
+    tf2::doTransform(input, output, transform_stamped);
+  }
+  catch (tf2::TransformException& ex)
+  {
+    ROS_ERROR("Failed to transform point: %s", ex.what());
+  }
+  target_distance_ = std::sqrt((output.point.x) * (output.point.x) + (output.point.y) * (output.point.y) +
+                               (output.point.z) * (output.point.z));
+  updateForQueue();
+}
+
+void TargetDistanceTimeChangeUi::updateConfig()
+{
+  UiBase::transferInt(std::floor(target_distance_ * 1000));
+}
+
 }  // namespace rm_referee

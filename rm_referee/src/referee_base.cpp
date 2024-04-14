@@ -8,11 +8,12 @@ namespace rm_referee
 {
 RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
 {
+  dbus_topic_ = getParam(nh, "dbus_topic", std::string("/rm_ecat_hw/dbus"));
   RefereeBase::joint_state_sub_ =
       nh.subscribe<sensor_msgs::JointState>("/joint_states", 10, &RefereeBase::jointStateCallback, this);
   RefereeBase::actuator_state_sub_ =
       nh.subscribe<rm_msgs::ActuatorState>("/actuator_states", 10, &RefereeBase::actuatorStateCallback, this);
-  RefereeBase::dbus_sub_ = nh.subscribe<rm_msgs::DbusData>("/dbus_data", 10, &RefereeBase::dbusDataCallback, this);
+  RefereeBase::dbus_sub_ = nh.subscribe<rm_msgs::DbusData>(dbus_topic_, 10, &RefereeBase::dbusDataCallback, this);
   RefereeBase::chassis_cmd_sub_ =
       nh.subscribe<rm_msgs::ChassisCmd>("/cmd_chassis", 10, &RefereeBase::chassisCmdDataCallback, this);
   RefereeBase::vel2D_cmd_sub_ =
@@ -35,9 +36,10 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::radar_receive_sub_ =
       nh.subscribe<rm_msgs::ClientMapReceiveData>("/rm_radar", 10, &RefereeBase::radarReceiveCallback, this);
   RefereeBase::sentry_deviate_sub_ =
-      nh.subscribe<rm_msgs::SentryDeviate>("/odometry", 10, &RefereeBase::sentryDeviateCallback, this);
+      nh.subscribe<rm_msgs::SentryDeviate>("/deviate", 10, &RefereeBase::sentryDeviateCallback, this);
   RefereeBase::radar_to_sentry_sub_ = nh.subscribe<rm_msgs::CurrentSentryPosData>(
       "/radar_to_sentry", 10, &RefereeBase::sendCurrentSentryCallback, this);
+  //"/bullet_allowance_data"
 
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
@@ -96,6 +98,11 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "engineer_joint3")
         engineer_joint3_time_change_ui =
             new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "joint3");
+      if (rpc_value[i]["name"] == "bullet")
+        bullet_time_change_ui_ = new BulletTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "target_distance")
+        target_distance_time_change_ui_ =
+            new TargetDistanceTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -108,6 +115,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "spin")
         spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "hero_state")
+        hero_state_flash_ui_ = new HeroStateFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
   }
 
@@ -134,11 +143,11 @@ void RefereeBase::addUi()
 
   ROS_INFO_THROTTLE(1.0, "Adding ui... %.1f%%", (add_ui_times_ / static_cast<double>(add_ui_max_times_)) * 100);
   if (chassis_trigger_change_ui_)
-    chassis_trigger_change_ui_->addForQueue(3);
+    chassis_trigger_change_ui_->addForQueue(2);
   if (gimbal_trigger_change_ui_)
-    gimbal_trigger_change_ui_->addForQueue(3);
+    gimbal_trigger_change_ui_->addForQueue(2);
   if (shooter_trigger_change_ui_)
-    shooter_trigger_change_ui_->addForQueue(3);
+    shooter_trigger_change_ui_->addForQueue(2);
   if (target_trigger_change_ui_)
     target_trigger_change_ui_->addForQueue();
   if (target_view_angle_trigger_change_ui_)
@@ -169,6 +178,13 @@ void RefereeBase::addUi()
     engineer_joint2_time_change_ui->addForQueue();
   if (engineer_joint3_time_change_ui)
     engineer_joint3_time_change_ui->addForQueue();
+  if (bullet_time_change_ui_)
+  {
+    bullet_time_change_ui_->reset();
+    bullet_time_change_ui_->addForQueue();
+  }
+  if (target_distance_time_change_ui_)
+    target_distance_time_change_ui_->addForQueue();
   add_ui_times_++;
 }
 
@@ -194,31 +210,7 @@ void RefereeBase::sendSerialDataCallback()
       while (character_queue_.size() > 8)
         character_queue_.pop_front();
     }
-
-    if (send_radar_receive_data_)
-    {
-      if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
-        return;
-      else
-      {
-        interactive_data_sender_->sendRadarInteractiveData(radar_receive_data_);
-        interactive_data_last_send_ = ros::Time::now();
-        send_radar_receive_data_ = false;
-      }
-    }
-    else if (send_map_sentry_data_)
-    {
-      if (ros::Time::now() - interactive_data_last_send_ <= ros::Duration(0.2))
-        return;
-      else
-      {
-        interactive_data_sender_->sendMapSentryData(map_sentry_data_);
-        interactive_data_last_send_ = ros::Time::now();
-        send_map_sentry_data_ = false;
-      }
-    }
-    else
-      sendQueue();
+    sendQueue();
   }
   else
     sendQueue();
@@ -271,6 +263,35 @@ void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, 
   if (fixed_ui_ && !is_adding_)
     fixed_ui_->updateForQueue();
 }
+void RefereeBase::updateEnemyHeroState(const rm_msgs::GameRobotHp& game_robot_hp_data,
+                                       const ros::Time& last_get_data_time)
+{
+  std::wstring data;
+  if (base_.robot_id_ < 100 && base_.robot_id_ != RED_SENTRY)
+  {
+    if (game_robot_hp_data.blue_1_robot_hp > 0)
+      data = L"敌英雄存活:" + std::to_wstring(game_robot_hp_data.blue_1_robot_hp);
+    else
+      data = L"敌英雄死亡";
+  }
+  else if (base_.robot_id_ >= 100 && base_.robot_id_ != BLUE_SENTRY)
+  {
+    if (game_robot_hp_data.red_1_robot_hp > 0)
+      data = L"敌英雄存活:" + std::to_wstring(game_robot_hp_data.red_1_robot_hp);
+    else
+      data = L"敌英雄死亡";
+  }
+  else
+    return;
+  interactive_data_sender_->sendCustomInfoData(data);
+}
+
+void RefereeBase::updateHeroStateDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data,
+                                              const ros::Time& last_get_data_time)
+{
+  if (hero_state_flash_ui_)
+    hero_state_flash_ui_->updateHeroStateData(game_robot_hp_data, last_get_data_time);
+}
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {
 }
@@ -287,6 +308,12 @@ void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, cons
 }
 void RefereeBase::robotHurtDataCallBack(const rm_msgs::RobotHurt& data, const ros::Time& last_get_data_time)
 {
+}
+void RefereeBase::bulletRemainDataCallBack(const rm_msgs::BulletAllowance& bullet_allowance,
+                                           const ros::Time& last_get_data_time)
+{
+  if (bullet_time_change_ui_ && !is_adding_)
+    bullet_time_change_ui_->updateBulletData(bullet_allowance, last_get_data_time);
 }
 void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
 {
@@ -389,6 +416,8 @@ void RefereeBase::trackCallBack(const rm_msgs::TrackDataConstPtr& data)
 {
   if (target_view_angle_trigger_change_ui_ && !is_adding_)
     target_view_angle_trigger_change_ui_->updateTrackID(data->id);
+  if (target_distance_time_change_ui_ && !is_adding_)
+    target_distance_time_change_ui_->updateTargetDistanceData(data);
 }
 void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data)
 {
@@ -401,23 +430,36 @@ void RefereeBase::sentryDeviateCallback(const rm_msgs::SentryDeviateConstPtr& da
 
 void RefereeBase::radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data)
 {
-  radar_receive_data_.target_position_x = data->target_position_x;
-  radar_receive_data_.target_position_y = data->target_position_y;
-  radar_receive_data_.target_robot_ID = data->target_robot_ID;
-
-  send_radar_receive_data_ = true;
+  rm_referee::ClientMapReceiveData radar_receive_data;
+  radar_receive_data.target_position_x = data->target_position_x;
+  radar_receive_data.target_position_y = data->target_position_y;
+  radar_receive_data.target_robot_ID = data->target_robot_ID;
+  if (ros::Time::now() - radar_interactive_data_last_send_ <= ros::Duration(0.1))
+    return;
+  else
+  {
+    interactive_data_sender_->sendRadarInteractiveData(radar_receive_data);
+    radar_interactive_data_last_send_ = ros::Time::now();
+  }
 }
 void RefereeBase::mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data)
 {
-  map_sentry_data_.intention = data->intention;
-  map_sentry_data_.start_position_x = data->start_position_x;
-  map_sentry_data_.start_position_y = data->start_position_y;
+  rm_referee::MapSentryData map_sentry_data;
+  map_sentry_data.intention = data->intention;
+  map_sentry_data.start_position_x = data->start_position_x;
+  map_sentry_data.start_position_y = data->start_position_y;
   for (int i = 0; i < 49; i++)
   {
-    map_sentry_data_.delta_x[i] = data->delta_x[i];
-    map_sentry_data_.delta_y[i] = data->delta_y[i];
+    map_sentry_data.delta_x[i] = data->delta_x[i];
+    map_sentry_data.delta_y[i] = data->delta_y[i];
   }
-  send_map_sentry_data_ = true;
+  if (ros::Time::now() - sentry_interactive_data_last_send_ <= ros::Duration(1.0))
+    return;
+  else
+  {
+    interactive_data_sender_->sendMapSentryData(map_sentry_data);
+    sentry_interactive_data_last_send_ = ros::Time::now();
+  }
 }
 
 void RefereeBase::sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data)

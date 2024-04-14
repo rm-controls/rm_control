@@ -48,4 +48,22 @@ private:
   void display(const ros::Time& time) override;
   uint8_t chassis_mode_;
 };
+
+class HeroStateFlashUi : public FlashUi
+{
+public:
+  explicit HeroStateFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                            std::deque<Graph>* character_queue)
+    : FlashUi(rpc_value, base, "hero_state", graph_queue, character_queue)
+  {
+    ros::NodeHandle nh;
+    timer_ = nh.createTimer(ros::Duration(delay_), std::bind(&HeroStateFlashUi::delayDisplay, this), false, false);
+  };
+  void updateHeroStateData(const rm_msgs::GameRobotHp& data, const ros::Time& last_get_data_time);
+
+private:
+  void delayDisplay();
+  ros::Timer timer_;
+  bool enemy_hero_die_{ false };
+};
 }  // namespace rm_referee

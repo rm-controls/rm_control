@@ -273,4 +273,31 @@ private:
   std::string name_, direction_;
   double max_val_, min_val_, current_val_, length_;
 };
+
+class BulletTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit BulletTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                              std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "remaining_bullet", graph_queue, character_queue){};
+  void updateBulletData(const rm_msgs::BulletAllowance& data, const ros::Time& time);
+  void reset();
+
+private:
+  void updateConfig() override;
+  int bullet_allowance_num_17_mm_, bullet_allowance_num_42_mm_, bullet_num_17_mm_{ 0 }, bullet_num_42_mm_{ 0 };
+};
+
+class TargetDistanceTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit TargetDistanceTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                      std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "target_distance", graph_queue, character_queue){};
+  void updateTargetDistanceData(const rm_msgs::TrackData::ConstPtr& data);
+
+private:
+  void updateConfig() override;
+  double target_distance_;
+};
 }  // namespace rm_referee

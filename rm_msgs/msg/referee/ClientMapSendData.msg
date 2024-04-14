@@ -11,5 +11,6 @@ float32 target_position_y
 float32 target_position_z
 uint8 command_keyboard
 uint16 target_robot_ID
+uint8 cmd_source
 
 time stamp
