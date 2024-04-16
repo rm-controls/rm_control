@@ -39,7 +39,10 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::SentryDeviate>("/deviate", 10, &RefereeBase::sentryDeviateCallback, this);
   RefereeBase::radar_to_sentry_sub_ = nh.subscribe<rm_msgs::CurrentSentryPosData>(
       "/radar_to_sentry", 10, &RefereeBase::sendCurrentSentryCallback, this);
-  //"/bullet_allowance_data"
+  RefereeBase::sentry_cmd_sub_ =
+      nh.subscribe<rm_msgs::SentryInfo>("/sentry_cmd", 1, &RefereeBase::sendSentryCmdCallback, this);
+  RefereeBase::radar_cmd_sub_ =
+      nh.subscribe<rm_msgs::RadarInfo>("/radar_cmd", 1, &RefereeBase::sendRadarCmdCallback, this);
 
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
@@ -66,6 +69,22 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
             new TargetViewAngleTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "camera")
         camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      //      if (rpc_value[i]["name"] == "drag")
+      //        drag_state_trigger_change_ui_ =
+      //            new StringTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "drag");
+      if (rpc_value[i]["name"] == "gripper")
+        gripper_state_trigger_change_ui_ =
+            new StringTriggerChangeUi(rpc_value[i], base_, "gripper", &graph_queue_, &character_queue_);
+      //      if (rpc_value[i]["name"] == "step")
+      //        step_name_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "step");
+      //      if (rpc_value[i]["name"] == "reversal")
+      //        reversal_state_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "reversal");
+      //      if (rpc_value[i]["name"] == "stone")
+      //        stone_num_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "stone");
+      //      if (rpc_value[i]["name"] == "temperature")
+      //        joint_temperature_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "temperature");
+      //      if (rpc_value[i]["name"] == "servo_mode")
+      //        servo_mode_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "mode");
     }
 
     ui_nh.getParam("time_change", rpc_value);
@@ -178,6 +197,10 @@ void RefereeBase::addUi()
     engineer_joint2_time_change_ui->addForQueue();
   if (engineer_joint3_time_change_ui)
     engineer_joint3_time_change_ui->addForQueue();
+  //  if (drag_state_trigger_change_ui_)
+  //    drag_state_trigger_change_ui_->addForQueue();
+  if (gripper_state_trigger_change_ui_)
+    gripper_state_trigger_change_ui_->addForQueue();
   if (bullet_time_change_ui_)
   {
     bullet_time_change_ui_->reset();
@@ -390,6 +413,10 @@ void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& da
 {
   /*if (progress_time_change_ui_ && !is_adding_)
     progress_time_change_ui_->updateEngineerUiData(data, ros::Time::now());*/
+  /*  if (drag_state_trigger_change_ui_ && !is_adding_)
+      drag_state_trigger_change_ui_->updateStringUiData(data->drag_state);*/
+  if (gripper_state_trigger_change_ui_ && !is_adding_)
+    gripper_state_trigger_change_ui_->updateStringUiData(data->gripper_state);
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
@@ -465,6 +492,26 @@ void RefereeBase::mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data)
 void RefereeBase::sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data)
 {
   interactive_data_sender_->sendCurrentSentryData(data);
+}
+void RefereeBase::sendSentryCmdCallback(const rm_msgs::SentryInfoConstPtr& data)
+{
+  if (ros::Time::now() - sentry_cmd_data_last_send_ <= ros::Duration(0.15))
+    return;
+  else
+  {
+    interactive_data_sender_->sendSentryCmdData(data);
+    sentry_cmd_data_last_send_ = ros::Time::now();
+  }
+}
+void RefereeBase::sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data)
+{
+  if (ros::Time::now() - radar_cmd_data_last_send_ <= ros::Duration(0.15))
+    return;
+  else
+  {
+    interactive_data_sender_->sendRadarCmdData(data);
+    radar_cmd_data_last_send_ = ros::Time::now();
+  }
 }
 
 }  // namespace rm_referee

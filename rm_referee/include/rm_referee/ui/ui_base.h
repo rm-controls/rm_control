@@ -47,6 +47,8 @@ public:
   void sendCurrentSentryData(const rm_msgs::CurrentSentryPosDataConstPtr& data);
   void sendCustomInfoData(std::wstring data);
   void transferInt(const int data);
+  void sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& data);
+  void sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data);
 
   void sendSerial(const ros::Time& time, int data_len);
   void clearTxBuffer();

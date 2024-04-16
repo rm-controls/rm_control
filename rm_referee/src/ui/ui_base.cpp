@@ -320,6 +320,36 @@ void UiBase::sendSingleGraph(const ros::Time& time, Graph* graph)
   sendSerial(time, data_len);
 }
 
+void UiBase::sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& data)
+{
+  int data_len;
+  rm_referee::SentryInfo tx_data;
+  data_len = static_cast<int>(sizeof(rm_referee::SentryInfo));
+
+  tx_data.header.sender_id = base_.robot_id_;
+  tx_data.header.receiver_id = REFEREE_SERVER;
+  tx_data.sentry_info = data->sentry_info;
+
+  tx_data.header.data_cmd_id = rm_referee::DataCmdId::SENTRY_CMD;
+  pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
+  sendSerial(ros::Time::now(), data_len);
+}
+
+void UiBase::sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data)
+{
+  int data_len;
+  rm_referee::RadarInfo tx_data;
+  data_len = static_cast<int>(sizeof(rm_referee::RadarInfo));
+
+  tx_data.header.sender_id = base_.robot_id_;
+  tx_data.header.receiver_id = REFEREE_SERVER;
+  tx_data.radar_info = data->radar_info;
+
+  tx_data.header.data_cmd_id = rm_referee::DataCmdId::RADAR_CMD;
+  pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
+  sendSerial(ros::Time::now(), data_len);
+}
+
 void GroupUiBase::display(bool check_repeat)
 {
   if (check_repeat)
@@ -434,7 +464,7 @@ void GroupUiBase::sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* gr
   tx_data.config[3] = graph3->getConfig();
   tx_data.config[4] = graph4->getConfig();
   tx_data.config[5] = graph5->getConfig();
-  tx_data.config[6] = graph5->getConfig();
+  tx_data.config[6] = graph6->getConfig();
 
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_SEVEN_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);

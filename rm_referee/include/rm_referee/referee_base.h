@@ -57,6 +57,8 @@ public:
   virtual void mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data);
   virtual void sentryDeviateCallback(const rm_msgs::SentryDeviateConstPtr& data);
   virtual void sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data);
+  virtual void sendSentryCmdCallback(const rm_msgs::SentryInfoConstPtr& data);
+  virtual void sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data);
 
   // send  ui
   void sendSerialDataCallback();
@@ -82,6 +84,8 @@ public:
   ros::Subscriber map_sentry_sub_;
   ros::Subscriber sentry_deviate_sub_;
   ros::Subscriber radar_to_sentry_sub_;
+  ros::Subscriber sentry_cmd_sub_;
+  ros::Subscriber radar_cmd_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
@@ -102,6 +106,9 @@ public:
   JointPositionTimeChangeUi *engineer_joint1_time_change_ui{}, *engineer_joint2_time_change_ui{},
       *engineer_joint3_time_change_ui{};
   TargetDistanceTimeChangeUi* target_distance_time_change_ui_{};
+  StringTriggerChangeUi *step_name_trigger_change_ui_{}, *servo_mode_trigger_change_ui_{},
+      *reversal_state_trigger_change_ui_{}, *stone_num_trigger_change_ui_{}, *joint_temperature_trigger_change_ui_{},
+      *drag_state_trigger_change_ui_{}, *gripper_state_trigger_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
@@ -115,6 +122,7 @@ public:
 
   ros::Time radar_interactive_data_last_send_;
   ros::Time sentry_interactive_data_last_send_;
+  ros::Time sentry_cmd_data_last_send_, radar_cmd_data_last_send_;
   UiBase* interactive_data_sender_{};
 
   Base& base_;
