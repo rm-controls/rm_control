@@ -230,33 +230,28 @@ void UiBase::sendMapSentryData(const rm_referee::MapSentryData& data)
 
 void UiBase::sendCustomInfoData(std::wstring data)
 {
-  uint8_t tx_data[sizeof(rm_referee::CustomInfo)] = { 0 };
-  auto custom_info = (rm_referee::CustomInfo*)tx_data;
+  int data_len;
+  rm_referee::CustomInfo tx_data;
+  data_len = static_cast<int>(sizeof(rm_referee::CustomInfo));
+
+  tx_data.sender_id = base_.robot_id_;
+  tx_data.receiver_id = base_.client_id_;
+
   uint16_t characters[15];
   for (int i = 0; i < 15; i++)
   {
     if (i < static_cast<int>(data.size()))
       characters[i] = static_cast<uint16_t>(data[i]);
+    else
+      characters[i] = static_cast<uint16_t>(L' ');
   }
   for (int i = 0; i < 15; i++)
   {
-    custom_info->user_data[2 * i] = characters[i] & 0xFF;
-    custom_info->user_data[2 * i + 1] = (characters[i] >> 8) & 0xFF;
+    tx_data.user_data[2 * i] = characters[i] & 0xFF;
+    tx_data.user_data[2 * i + 1] = (characters[i] >> 8) & 0xFF;
   }
-  custom_info->sender_id = base_.robot_id_;
-  custom_info->receiver_id = base_.client_id_;
-  pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::CUSTOM_INFO_CMD, sizeof(rm_referee::CustomInfo));
-  tx_len_ =
-      k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::ClientMapReceiveData) + k_tail_length_);
-
-  try
-  {
-    base_.serial_.write(tx_buffer_, tx_len_);
-  }
-  catch (serial::PortNotOpenedException& e)
-  {
-  }
-  clearTxBuffer();
+  pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::CUSTOM_INFO_CMD, data_len);
+  sendSerial(ros::Time::now(), data_len);
 }
 
 void UiBase::sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& data)

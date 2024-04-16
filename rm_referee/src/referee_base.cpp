@@ -293,16 +293,16 @@ void RefereeBase::updateEnemyHeroState(const rm_msgs::GameRobotHp& game_robot_hp
   if (base_.robot_id_ < 100 && base_.robot_id_ != RED_SENTRY)
   {
     if (game_robot_hp_data.blue_1_robot_hp > 0)
-      data = L"敌英雄存活:" + std::to_wstring(game_robot_hp_data.blue_1_robot_hp);
+      data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.blue_1_robot_hp);
     else
-      data = L"敌英雄死亡";
+      data = L"敌方英雄死亡";
   }
   else if (base_.robot_id_ >= 100 && base_.robot_id_ != BLUE_SENTRY)
   {
     if (game_robot_hp_data.red_1_robot_hp > 0)
-      data = L"敌英雄存活:" + std::to_wstring(game_robot_hp_data.red_1_robot_hp);
+      data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.red_1_robot_hp);
     else
-      data = L"敌英雄死亡";
+      data = L"敌方英雄死亡";
   }
   else
     return;
