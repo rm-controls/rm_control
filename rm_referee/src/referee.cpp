@@ -141,7 +141,7 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_hp_data.stamp = last_get_data_time_;
 
           referee_ui_.updateEnemyHeroState(game_robot_hp_data, last_get_data_time_);
-          referee_ui_.updateHeroStateDataCallBack(game_robot_hp_data, last_get_data_time_);
+          referee_ui_.updateHeroHitDataCallBack(game_robot_hp_data);
           game_robot_hp_pub_.publish(game_robot_hp_data);
           break;
         }
@@ -590,47 +590,50 @@ int Referee::unpack(uint8_t* rx_data)
 void Referee::getRobotInfo()
 {
   base_.robot_color_ = base_.robot_id_ >= 100 ? "blue" : "red";
-  if (base_.robot_id_ != rm_referee::RobotId::BLUE_SENTRY && base_.robot_id_ != rm_referee::RobotId::RED_SENTRY)
+  switch (base_.robot_id_)
   {
-    switch (base_.robot_id_)
-    {
-      case rm_referee::RobotId::BLUE_HERO:
-        base_.client_id_ = rm_referee::ClientId::BLUE_HERO_CLIENT;
-        break;
-      case rm_referee::RobotId::BLUE_ENGINEER:
-        base_.client_id_ = rm_referee::ClientId::BLUE_ENGINEER_CLIENT;
-        break;
-      case rm_referee::RobotId::BLUE_STANDARD_3:
-        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_3_CLIENT;
-        break;
-      case rm_referee::RobotId::BLUE_STANDARD_4:
-        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_4_CLIENT;
-        break;
-      case rm_referee::RobotId::BLUE_STANDARD_5:
-        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_5_CLIENT;
-        break;
-      case rm_referee::RobotId::BLUE_AERIAL:
-        base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_HERO:
-        base_.client_id_ = rm_referee::ClientId::RED_HERO_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_ENGINEER:
-        base_.client_id_ = rm_referee::ClientId::RED_ENGINEER_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_STANDARD_3:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_3_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_STANDARD_4:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_4_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_STANDARD_5:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_5_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_AERIAL:
-        base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
-        break;
-    }
+    case rm_referee::RobotId::BLUE_HERO:
+      base_.client_id_ = rm_referee::ClientId::BLUE_HERO_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_ENGINEER:
+      base_.client_id_ = rm_referee::ClientId::BLUE_ENGINEER_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_STANDARD_3:
+      base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_3_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_STANDARD_4:
+      base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_4_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_STANDARD_5:
+      base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_5_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_AERIAL:
+      base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_HERO:
+      base_.client_id_ = rm_referee::ClientId::RED_HERO_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_ENGINEER:
+      base_.client_id_ = rm_referee::ClientId::RED_ENGINEER_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_STANDARD_3:
+      base_.client_id_ = rm_referee::ClientId::RED_STANDARD_3_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_STANDARD_4:
+      base_.client_id_ = rm_referee::ClientId::RED_STANDARD_4_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_STANDARD_5:
+      base_.client_id_ = rm_referee::ClientId::RED_STANDARD_5_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_AERIAL:
+      base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_SENTRY:
+      base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_SENTRY:
+      base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
+      break;
   }
 }
 }  // namespace rm_referee

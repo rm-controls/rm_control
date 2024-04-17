@@ -148,7 +148,7 @@ void UiBase::display(const ros::Time& time, bool state, bool once)
   displayTwice();
 }
 
-void UiBase::sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data)
+void InteractiveSender::sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data)
 {
   uint8_t tx_data[sizeof(InteractiveData)] = { 0 };
   auto student_interactive_data = (InteractiveData*)tx_data;
@@ -165,7 +165,7 @@ void UiBase::sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char
   sendSerial(ros::Time::now(), sizeof(InteractiveData));
 }
 
-void UiBase::sendCurrentSentryData(const rm_msgs::CurrentSentryPosDataConstPtr& data)
+void InteractiveSender::sendCurrentSentryData(const rm_msgs::CurrentSentryPosDataConstPtr& data)
 {
   int data_len;
   uint8_t tx_data[sizeof(CurrentSentryPosData)] = { 0 };
@@ -198,7 +198,7 @@ void UiBase::sendUi(const ros::Time& time)
     sendSingleGraph(time, graph_);
 }
 
-void UiBase::sendMapSentryData(const rm_referee::MapSentryData& data)
+void InteractiveSender::sendMapSentryData(const rm_referee::MapSentryData& data)
 {
   uint8_t tx_data[sizeof(rm_referee::MapSentryData)] = { 0 };
   auto map_sentry_data = (rm_referee::MapSentryData*)tx_data;
@@ -228,38 +228,39 @@ void UiBase::sendMapSentryData(const rm_referee::MapSentryData& data)
   clearTxBuffer();
 }
 
-void UiBase::sendCustomInfoData(std::wstring data)
+void InteractiveSender::sendCustomInfoData(std::wstring data)
 {
-  uint8_t tx_data[sizeof(rm_referee::CustomInfo)] = { 0 };
-  auto custom_info = (rm_referee::CustomInfo*)tx_data;
+  if (data == last_custom_info_ || ros::Time::now() - last_send_ < ros::Duration(0.35))
+    return;
+  else
+    last_custom_info_ = data;
+
+  int data_len;
+  rm_referee::CustomInfo tx_data;
+  data_len = static_cast<int>(sizeof(rm_referee::CustomInfo));
+
+  tx_data.sender_id = base_.robot_id_;
+  tx_data.receiver_id = base_.client_id_;
+
   uint16_t characters[15];
   for (int i = 0; i < 15; i++)
   {
     if (i < static_cast<int>(data.size()))
       characters[i] = static_cast<uint16_t>(data[i]);
+    else
+      characters[i] = static_cast<uint16_t>(L' ');
   }
   for (int i = 0; i < 15; i++)
   {
-    custom_info->user_data[2 * i] = characters[i] & 0xFF;
-    custom_info->user_data[2 * i + 1] = (characters[i] >> 8) & 0xFF;
+    tx_data.user_data[2 * i] = characters[i] & 0xFF;
+    tx_data.user_data[2 * i + 1] = (characters[i] >> 8) & 0xFF;
   }
-  custom_info->sender_id = base_.robot_id_;
-  custom_info->receiver_id = base_.client_id_;
-  pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::CUSTOM_INFO_CMD, sizeof(rm_referee::CustomInfo));
-  tx_len_ =
-      k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::ClientMapReceiveData) + k_tail_length_);
-
-  try
-  {
-    base_.serial_.write(tx_buffer_, tx_len_);
-  }
-  catch (serial::PortNotOpenedException& e)
-  {
-  }
-  clearTxBuffer();
+  pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::CUSTOM_INFO_CMD, data_len);
+  last_send_ = ros::Time::now();
+  sendSerial(ros::Time::now(), data_len);
 }
 
-void UiBase::sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& data)
+void InteractiveSender::sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& data)
 {
   uint8_t tx_data[sizeof(rm_referee::ClientMapReceiveData)] = { 0 };
   auto radar_interactive_data = (rm_referee::ClientMapReceiveData*)tx_data;
@@ -318,6 +319,36 @@ void UiBase::sendSingleGraph(const ros::Time& time, Graph* graph)
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_SINGLE_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(time, data_len);
+}
+
+void InteractiveSender::sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& data)
+{
+  int data_len;
+  rm_referee::SentryInfo tx_data;
+  data_len = static_cast<int>(sizeof(rm_referee::SentryInfo));
+
+  tx_data.header.sender_id = base_.robot_id_;
+  tx_data.header.receiver_id = REFEREE_SERVER;
+  tx_data.sentry_info = data->sentry_info;
+
+  tx_data.header.data_cmd_id = rm_referee::DataCmdId::SENTRY_CMD;
+  pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
+  sendSerial(ros::Time::now(), data_len);
+}
+
+void InteractiveSender::sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data)
+{
+  int data_len;
+  rm_referee::RadarInfo tx_data;
+  data_len = static_cast<int>(sizeof(rm_referee::RadarInfo));
+
+  tx_data.header.sender_id = base_.robot_id_;
+  tx_data.header.receiver_id = REFEREE_SERVER;
+  tx_data.radar_info = data->radar_info;
+
+  tx_data.header.data_cmd_id = rm_referee::DataCmdId::RADAR_CMD;
+  pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
+  sendSerial(ros::Time::now(), data_len);
 }
 
 void GroupUiBase::display(bool check_repeat)
@@ -434,7 +465,7 @@ void GroupUiBase::sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* gr
   tx_data.config[3] = graph3->getConfig();
   tx_data.config[4] = graph4->getConfig();
   tx_data.config[5] = graph5->getConfig();
-  tx_data.config[6] = graph5->getConfig();
+  tx_data.config[6] = graph6->getConfig();
 
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_SEVEN_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
