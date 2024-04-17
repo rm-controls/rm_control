@@ -614,26 +614,26 @@ void Referee::getRobotInfo()
       base_.client_id_ = rm_referee::ClientId::RED_HERO_CLIENT;
       break;
     case rm_referee::RobotId::RED_ENGINEER:
-        base_.client_id_ = rm_referee::ClientId::RED_ENGINEER_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_STANDARD_3:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_3_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_STANDARD_4:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_4_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_STANDARD_5:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_5_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_AERIAL:
-        base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
-        break;
-      case rm_referee::RobotId::BLUE_SENTRY:
-        base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_SENTRY:
-        base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
-        break;
+      base_.client_id_ = rm_referee::ClientId::RED_ENGINEER_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_STANDARD_3:
+      base_.client_id_ = rm_referee::ClientId::RED_STANDARD_3_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_STANDARD_4:
+      base_.client_id_ = rm_referee::ClientId::RED_STANDARD_4_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_STANDARD_5:
+      base_.client_id_ = rm_referee::ClientId::RED_STANDARD_5_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_AERIAL:
+      base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_SENTRY:
+      base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_SENTRY:
+      base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
+      break;
   }
 }
 }  // namespace rm_referee
