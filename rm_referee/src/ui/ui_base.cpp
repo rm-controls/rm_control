@@ -148,7 +148,7 @@ void UiBase::display(const ros::Time& time, bool state, bool once)
   displayTwice();
 }
 
-void UiBase::sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data)
+void InteractiveSender::sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data)
 {
   uint8_t tx_data[sizeof(InteractiveData)] = { 0 };
   auto student_interactive_data = (InteractiveData*)tx_data;
@@ -165,7 +165,7 @@ void UiBase::sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char
   sendSerial(ros::Time::now(), sizeof(InteractiveData));
 }
 
-void UiBase::sendCurrentSentryData(const rm_msgs::CurrentSentryPosDataConstPtr& data)
+void InteractiveSender::sendCurrentSentryData(const rm_msgs::CurrentSentryPosDataConstPtr& data)
 {
   int data_len;
   uint8_t tx_data[sizeof(CurrentSentryPosData)] = { 0 };
@@ -198,7 +198,7 @@ void UiBase::sendUi(const ros::Time& time)
     sendSingleGraph(time, graph_);
 }
 
-void UiBase::sendMapSentryData(const rm_referee::MapSentryData& data)
+void InteractiveSender::sendMapSentryData(const rm_referee::MapSentryData& data)
 {
   uint8_t tx_data[sizeof(rm_referee::MapSentryData)] = { 0 };
   auto map_sentry_data = (rm_referee::MapSentryData*)tx_data;
@@ -228,8 +228,13 @@ void UiBase::sendMapSentryData(const rm_referee::MapSentryData& data)
   clearTxBuffer();
 }
 
-void UiBase::sendCustomInfoData(std::wstring data)
+void InteractiveSender::sendCustomInfoData(std::wstring data)
 {
+  if (data == last_custom_info_ || ros::Time::now() - last_send_ < ros::Duration(0.35))
+    return;
+  else
+    last_custom_info_ = data;
+
   int data_len;
   rm_referee::CustomInfo tx_data;
   data_len = static_cast<int>(sizeof(rm_referee::CustomInfo));
@@ -251,10 +256,11 @@ void UiBase::sendCustomInfoData(std::wstring data)
     tx_data.user_data[2 * i + 1] = (characters[i] >> 8) & 0xFF;
   }
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::CUSTOM_INFO_CMD, data_len);
+  last_send_ = ros::Time::now();
   sendSerial(ros::Time::now(), data_len);
 }
 
-void UiBase::sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& data)
+void InteractiveSender::sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& data)
 {
   uint8_t tx_data[sizeof(rm_referee::ClientMapReceiveData)] = { 0 };
   auto radar_interactive_data = (rm_referee::ClientMapReceiveData*)tx_data;
@@ -315,7 +321,7 @@ void UiBase::sendSingleGraph(const ros::Time& time, Graph* graph)
   sendSerial(time, data_len);
 }
 
-void UiBase::sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& data)
+void InteractiveSender::sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& data)
 {
   int data_len;
   rm_referee::SentryInfo tx_data;
@@ -330,7 +336,7 @@ void UiBase::sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& data)
   sendSerial(ros::Time::now(), data_len);
 }
 
-void UiBase::sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data)
+void InteractiveSender::sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data)
 {
   int data_len;
   rm_referee::RadarInfo tx_data;

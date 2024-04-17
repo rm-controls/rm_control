@@ -32,11 +32,10 @@ public:
   virtual void robotHurtDataCallBack(const rm_msgs::RobotHurt& robot_hurt_data, const ros::Time& last_get_data_time);
   virtual void bulletRemainDataCallBack(const rm_msgs::BulletAllowance& bullet_allowance,
                                         const ros::Time& last_get_data_time);
-  virtual void updateHeroStateDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data,
-                                           const ros::Time& last_get_data_time);
   virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data,
                                        const ros::Time& last_get_data_time);
   virtual void eventDataCallBack(const rm_msgs::EventData& event_data, const ros::Time& last_get_data_time);
+  virtual void updateHeroHitDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data);
 
   // sub call back
   virtual void jointStateCallback(const sensor_msgs::JointState::ConstPtr& joint_state);
@@ -59,6 +58,7 @@ public:
   virtual void sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data);
   virtual void sendSentryCmdCallback(const rm_msgs::SentryInfoConstPtr& data);
   virtual void sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data);
+  virtual void sendSentryStateCallback(const std_msgs::StringConstPtr& data);
 
   // send  ui
   void sendSerialDataCallback();
@@ -82,10 +82,10 @@ public:
   ros::Subscriber balance_state_sub_;
   ros::Subscriber radar_receive_sub_;
   ros::Subscriber map_sentry_sub_;
-  ros::Subscriber sentry_deviate_sub_;
   ros::Subscriber radar_to_sentry_sub_;
   ros::Subscriber sentry_cmd_sub_;
   ros::Subscriber radar_cmd_sub_;
+  ros::Subscriber sentry_state_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
@@ -114,7 +114,11 @@ public:
 
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
-  HeroStateFlashUi* hero_state_flash_ui_{};
+  HeroHitFlashUi* hero_hit_flash_ui_{};
+
+  InteractiveSender* interactive_data_sender_{};
+  InteractiveSender* enemy_hero_state_sender_{};
+  InteractiveSender* sentry_state_sender_{};
 
   GroupUiBase* graph_queue_sender_{};
   std::deque<Graph> graph_queue_;
@@ -123,7 +127,6 @@ public:
   ros::Time radar_interactive_data_last_send_;
   ros::Time sentry_interactive_data_last_send_;
   ros::Time sentry_cmd_data_last_send_, radar_cmd_data_last_send_;
-  UiBase* interactive_data_sender_{};
 
   Base& base_;
   ros::Timer add_ui_timer_, send_serial_data_timer_;

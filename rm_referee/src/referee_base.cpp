@@ -3,6 +3,7 @@
 //
 
 #include "rm_referee/referee_base.h"
+#include <codecvt>
 
 namespace rm_referee
 {
@@ -35,20 +36,20 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::MapSentryData>("/map_sentry_data", 10, &RefereeBase::mapSentryCallback, this);
   RefereeBase::radar_receive_sub_ =
       nh.subscribe<rm_msgs::ClientMapReceiveData>("/rm_radar", 10, &RefereeBase::radarReceiveCallback, this);
-  RefereeBase::sentry_deviate_sub_ =
-      nh.subscribe<rm_msgs::SentryDeviate>("/deviate", 10, &RefereeBase::sentryDeviateCallback, this);
   RefereeBase::radar_to_sentry_sub_ = nh.subscribe<rm_msgs::CurrentSentryPosData>(
       "/radar_to_sentry", 10, &RefereeBase::sendCurrentSentryCallback, this);
   RefereeBase::sentry_cmd_sub_ =
       nh.subscribe<rm_msgs::SentryInfo>("/sentry_cmd", 1, &RefereeBase::sendSentryCmdCallback, this);
   RefereeBase::radar_cmd_sub_ =
       nh.subscribe<rm_msgs::RadarInfo>("/radar_cmd", 1, &RefereeBase::sendRadarCmdCallback, this);
+  RefereeBase::sentry_state_sub_ =
+      nh.subscribe<std_msgs::String>("/sentry_state", 1, &RefereeBase::sendSentryStateCallback, this);
 
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
   add_ui_frequency_ = getParam(nh, "add_ui_frequency", 5);
   add_ui_max_times_ = getParam(nh, "add_ui_max_times", 10);
-  interactive_data_sender_ = new UiBase(rpc_value, base_);
+  interactive_data_sender_ = new InteractiveSender(rpc_value, base_);
   if (nh.hasParam("ui"))
   {
     ros::NodeHandle ui_nh(nh, "ui");
@@ -134,8 +135,19 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "spin")
         spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
-      if (rpc_value[i]["name"] == "hero_state")
-        hero_state_flash_ui_ = new HeroStateFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "hero_hit")
+        hero_hit_flash_ui_ = new HeroHitFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+    }
+  }
+  if (nh.hasParam("interactive_data"))
+  {
+    nh.getParam("interactive_data", rpc_value);
+    for (int i = 0; i < rpc_value.size(); i++)
+    {
+      if (rpc_value[i]["name"] == "enemy_hero_state")
+        enemy_hero_state_sender_ = new InteractiveSender(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "sentry_state")
+        sentry_state_sender_ = new InteractiveSender(rpc_value[i], base_);
     }
   }
 
@@ -289,31 +301,31 @@ void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, 
 void RefereeBase::updateEnemyHeroState(const rm_msgs::GameRobotHp& game_robot_hp_data,
                                        const ros::Time& last_get_data_time)
 {
-  std::wstring data;
-  if (base_.robot_id_ < 100 && base_.robot_id_ != RED_SENTRY)
+  if (enemy_hero_state_sender_)
   {
-    if (game_robot_hp_data.blue_1_robot_hp > 0)
-      data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.blue_1_robot_hp);
-    else
-      data = L"敌方英雄死亡";
+    std::wstring data;
+    if (base_.robot_id_ < 100)
+    {
+      if (game_robot_hp_data.blue_1_robot_hp > 0)
+        data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.blue_1_robot_hp);
+      else
+        data = L"敌方英雄死亡";
+    }
+    else if (base_.robot_id_ >= 100)
+    {
+      if (game_robot_hp_data.red_1_robot_hp > 0)
+        data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.red_1_robot_hp);
+      else
+        data = L"敌方英雄死亡";
+    }
+    enemy_hero_state_sender_->sendCustomInfoData(data);
   }
-  else if (base_.robot_id_ >= 100 && base_.robot_id_ != BLUE_SENTRY)
-  {
-    if (game_robot_hp_data.red_1_robot_hp > 0)
-      data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.red_1_robot_hp);
-    else
-      data = L"敌方英雄死亡";
-  }
-  else
-    return;
-  interactive_data_sender_->sendCustomInfoData(data);
 }
 
-void RefereeBase::updateHeroStateDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data,
-                                              const ros::Time& last_get_data_time)
+void RefereeBase::updateHeroHitDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data)
 {
-  if (hero_state_flash_ui_)
-    hero_state_flash_ui_->updateHeroStateData(game_robot_hp_data, last_get_data_time);
+  if (hero_hit_flash_ui_)
+    hero_hit_flash_ui_->updateHittingConfig(game_robot_hp_data);
 }
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {
@@ -512,6 +524,13 @@ void RefereeBase::sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data)
     interactive_data_sender_->sendRadarCmdData(data);
     radar_cmd_data_last_send_ = ros::Time::now();
   }
+}
+
+void RefereeBase::sendSentryStateCallback(const std_msgs::StringConstPtr& data)
+{
+  std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+  if (sentry_state_sender_)
+    sentry_state_sender_->sendCustomInfoData(converter.from_bytes(data->data));
 }
 
 }  // namespace rm_referee
