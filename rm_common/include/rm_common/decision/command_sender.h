@@ -360,9 +360,9 @@ public:
   {
     gimbal_des_error_ = error;
   }
-  void updateAllowShoot(const rm_msgs::ShootBeforehandCmd& data)
+  void updateShootBeforehandCmd(const rm_msgs::ShootBeforehandCmd& data)
   {
-    allow_shoot_ = data;
+    shoot_beforehand_cmd_ = data;
   }
   void updateTrackData(const rm_msgs::TrackData& data)
   {
@@ -374,11 +374,11 @@ public:
   }
   void checkError(const ros::Time& time)
   {
-    if (msg_.mode == rm_msgs::ShootCmd::PUSH && time - allow_shoot_.stamp < ros::Duration(0.1))
+    if (msg_.mode == rm_msgs::ShootCmd::PUSH && time - shoot_beforehand_cmd_.stamp < ros::Duration(0.1))
     {
-      if (allow_shoot_.cmd == rm_msgs::ShootBeforehandCmd::ALLOW_SHOOT)
+      if (shoot_beforehand_cmd_.cmd == rm_msgs::ShootBeforehandCmd::ALLOW_SHOOT)
         return;
-      if (allow_shoot_.cmd == rm_msgs::ShootBeforehandCmd::BAN_SHOOT)
+      if (shoot_beforehand_cmd_.cmd == rm_msgs::ShootBeforehandCmd::BAN_SHOOT)
       {
         setMode(rm_msgs::ShootCmd::READY);
         return;
@@ -387,8 +387,8 @@ public:
     if ((((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
           (track_data_.accel > target_acceleration_tolerance_)) ||
          (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE)) ||
-        (allow_shoot_.cmd == rm_msgs::ShootBeforehandCmd::JUDGE_BY_ERROR &&
-         time - allow_shoot_.stamp < ros::Duration(0.1)))
+        (shoot_beforehand_cmd_.cmd == rm_msgs::ShootBeforehandCmd::JUDGE_BY_ERROR &&
+         time - shoot_beforehand_cmd_.stamp < ros::Duration(0.1)))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
         setMode(rm_msgs::ShootCmd::READY);
   }
@@ -477,7 +477,7 @@ private:
   double total_extra_wheel_speed_{};
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
-  rm_msgs::ShootBeforehandCmd allow_shoot_;
+  rm_msgs::ShootBeforehandCmd shoot_beforehand_cmd_;
   std_msgs::Bool suggest_fire_;
   uint8_t armor_type_{};
 };
