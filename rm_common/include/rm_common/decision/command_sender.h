@@ -384,11 +384,9 @@ public:
         return;
       }
     }
-    if ((((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
-          (track_data_.accel > target_acceleration_tolerance_)) ||
-         (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE)) ||
-        (shoot_beforehand_cmd_.cmd == rm_msgs::ShootBeforehandCmd::JUDGE_BY_ERROR &&
-         time - shoot_beforehand_cmd_.stamp < ros::Duration(0.1)))
+    if (((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
+         (track_data_.accel > target_acceleration_tolerance_)) ||
+        (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
         setMode(rm_msgs::ShootCmd::READY);
   }
