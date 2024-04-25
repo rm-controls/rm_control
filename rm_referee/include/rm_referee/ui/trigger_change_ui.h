@@ -238,4 +238,17 @@ private:
   void update() override;
   std::string data_;
 };
+
+class EnemySupplyBulletTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit EnemySupplyBulletTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                            std::deque<Graph>* character_queue)
+    : TriggerChangeUi(rpc_value, base, "enemy_supply_bullet", graph_queue, character_queue){};
+  void updateSupplyInfo(const rm_msgs::SupplyProjectileAction& data);
+
+private:
+  void update() override;
+  int supply_bullet_num_;
+};
 }  // namespace rm_referee

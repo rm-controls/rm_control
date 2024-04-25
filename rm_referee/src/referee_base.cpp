@@ -70,6 +70,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
             new TargetViewAngleTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "camera")
         camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "enemy_supply_bullet")
+        enemy_supply_bullet_trigger_change_ui_ =
+            new EnemySupplyBulletTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       //      if (rpc_value[i]["name"] == "drag")
       //        drag_state_trigger_change_ui_ =
       //            new StringTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "drag");
@@ -209,6 +212,8 @@ void RefereeBase::addUi()
     engineer_joint2_time_change_ui->addForQueue();
   if (engineer_joint3_time_change_ui)
     engineer_joint3_time_change_ui->addForQueue();
+  if (enemy_supply_bullet_trigger_change_ui_)
+    enemy_supply_bullet_trigger_change_ui_->addForQueue();
   //  if (drag_state_trigger_change_ui_)
   //    drag_state_trigger_change_ui_->addForQueue();
   if (gripper_state_trigger_change_ui_)
@@ -531,6 +536,12 @@ void RefereeBase::sendSentryStateCallback(const std_msgs::StringConstPtr& data)
   std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
   if (sentry_state_sender_)
     sentry_state_sender_->sendCustomInfoData(converter.from_bytes(data->data));
+}
+
+void RefereeBase::supplyBulletDataCallBack(const rm_msgs::SupplyProjectileAction& data)
+{
+  if (enemy_supply_bullet_trigger_change_ui_ && !is_adding_)
+    enemy_supply_bullet_trigger_change_ui_->updateSupplyInfo(data);
 }
 
 }  // namespace rm_referee

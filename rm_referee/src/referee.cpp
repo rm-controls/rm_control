@@ -215,6 +215,7 @@ int Referee::unpack(uint8_t* rx_data)
           supply_projectile_action_data.supply_robot_id = supply_projectile_action_ref.supply_robot_id;
           supply_projectile_action_data.stamp = last_get_data_time_;
 
+          referee_ui_.supplyBulletDataCallBack(supply_projectile_action_data);
           supply_projectile_action_pub_.publish(supply_projectile_action_data);
           break;
         }
