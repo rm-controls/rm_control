@@ -153,7 +153,6 @@ private:
   void charge(rm_msgs::ChassisCmd& chassis_cmd)
   {
     chassis_cmd.power_limit = chassis_power_limit_ * 0.70;
-    ROS_INFO("error");
   }
   void normal(rm_msgs::ChassisCmd& chassis_cmd)
   {
