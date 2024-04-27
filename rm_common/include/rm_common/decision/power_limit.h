@@ -153,6 +153,7 @@ private:
   void charge(rm_msgs::ChassisCmd& chassis_cmd)
   {
     chassis_cmd.power_limit = chassis_power_limit_ * 0.70;
+    ROS_INFO("error");
   }
   void normal(rm_msgs::ChassisCmd& chassis_cmd)
   {
@@ -188,7 +189,7 @@ private:
   double power_gain_{};
   uint8_t expect_state_{}, cap_state_{};
 
-  bool referee_is_online_;
-  bool capacity_is_online_;
+  bool referee_is_online_{ false };
+  bool capacity_is_online_{ false };
 };
 }  // namespace rm_common
