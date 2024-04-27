@@ -14,6 +14,7 @@ add_message_files(
         ActuatorState.msg
         BalanceState.msg
         DbusData.msg
+        ExchangerMsg.msg
         ChassisCmd.msg
         ShootCmd.msg
         ShootState.msg
