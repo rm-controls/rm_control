@@ -41,6 +41,8 @@
 #include <rm_msgs/GameRobotStatus.h>
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/ShootCmd.h>
+#include <rm_msgs/ShootState.h>
+#include <rm_msgs/TrackData.h>
 
 namespace rm_common
 {
@@ -64,11 +66,14 @@ public:
       ROS_ERROR("Heat coeff no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("type", type_))
       ROS_ERROR("Shooter type no defined (namespace: %s)", nh.getNamespace().c_str());
-    //    nh.param("safe_speed_limit", shooter_speed_limit_, 15);
+    nh.param("is_local", is_local_, true);
     if (type_ == "ID1_42MM")
       bullet_heat_ = 100.;
     else
       bullet_heat_ = 10.;
+    heat_pub_ = nh.advertise<rm_msgs::TrackData>("/heat", 1);
+    heat_sub_ =
+        nh.subscribe<rm_msgs::ShootState>("/controllers/shooter_controller/state", 50, &HeatLimit::heatCB, this);
   }
 
   typedef enum
@@ -78,6 +83,36 @@ public:
     BURST = 2,
     MINIMAL = 3
   } ShootHz;
+
+  void heatCB(const rm_msgs::ShootState msg)
+  {
+    rm_msgs::TrackData ms;
+    if (msg.has_shoot == true)
+    {
+      shooter_local_cooling_heat_ += bullet_heat_;
+      ms.v_yaw = 1;
+    }
+    if (shooter_local_cooling_heat_ >= shooter_cooling_limit_)
+    {
+      local_frequency_ = 0.0;
+      ms.dz = 1;
+    }
+    else
+    {
+      local_frequency_ = shoot_frequency_;
+      ms.dz = 2;
+    }
+    if ((ros::Time::now() - last_time_).toSec() > 1. && shooter_local_cooling_heat_ > 0)
+    {
+      last_time_ = ros::Time::now();
+      shooter_local_cooling_heat_ -= shooter_cooling_rate_;
+      if (shooter_local_cooling_heat_ < 0)
+        shooter_local_cooling_heat_ = 0;
+    }
+    ms.radius_1 = shooter_local_cooling_heat_;
+    ms.radius_2 = local_frequency_;
+    heat_pub_.publish(ms);
+  }
 
   void setStatusOfShooter(const rm_msgs::GameRobotStatus data)
   {
@@ -110,19 +145,26 @@ public:
   {
     if (state_ == BURST)
       return shoot_frequency_;
-    if (!referee_is_online_)
-      return safe_shoot_frequency_;
 
-    if (shooter_cooling_limit_ - shooter_cooling_heat_ < bullet_heat_)
-      return 0.0;
-    else if (shooter_cooling_limit_ - shooter_cooling_heat_ == bullet_heat_)
-      return shooter_cooling_rate_ / bullet_heat_;
-    else if (shooter_cooling_limit_ - shooter_cooling_heat_ <= bullet_heat_ * heat_coeff_)
-      return (shooter_cooling_limit_ - shooter_cooling_heat_) / (bullet_heat_ * heat_coeff_) *
-                 (shoot_frequency_ - shooter_cooling_rate_ / bullet_heat_) +
-             shooter_cooling_rate_ / bullet_heat_;
+    if (!is_local_)
+    {
+      if (!referee_is_online_)
+        return safe_shoot_frequency_;
+      if (shooter_cooling_limit_ - shooter_cooling_heat_ < bullet_heat_)
+        return 0.0;
+      else if (shooter_cooling_limit_ - shooter_cooling_heat_ == bullet_heat_)
+        return shooter_cooling_rate_ / bullet_heat_;
+      else if (shooter_cooling_limit_ - shooter_cooling_heat_ <= bullet_heat_ * heat_coeff_)
+        return (shooter_cooling_limit_ - shooter_cooling_heat_) / (bullet_heat_ * heat_coeff_) *
+                   (shoot_frequency_ - shooter_cooling_rate_ / bullet_heat_) +
+               shooter_cooling_rate_ / bullet_heat_;
+      else
+        return shoot_frequency_;
+    }
     else
-      return shoot_frequency_;
+    {
+      return local_frequency_;
+    }
   }
 
   int getSpeedLimit()
@@ -191,10 +233,14 @@ private:
   std::string type_{};
   bool burst_flag_ = false;
   double bullet_heat_, safe_shoot_frequency_{}, heat_coeff_{}, shoot_frequency_{}, low_shoot_frequency_{},
-      high_shoot_frequency_{}, burst_shoot_frequency_{}, minimal_shoot_frequency_{};
+      high_shoot_frequency_{}, burst_shoot_frequency_{}, minimal_shoot_frequency_{}, local_frequency_{};
 
-  bool referee_is_online_;
-  int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_;
+  bool referee_is_online_, is_local_;
+  int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_, shooter_local_cooling_heat_{};
+
+  ros::Publisher heat_pub_;
+  ros::Subscriber heat_sub_;
+  ros::Time last_time_{};
 };
 
 }  // namespace rm_common
