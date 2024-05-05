@@ -42,7 +42,6 @@
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/ShootState.h>
-#include <rm_msgs/TrackData.h>
 
 namespace rm_common
 {
@@ -90,28 +89,22 @@ public:
     if (msg.has_shoot == true)
     {
       shooter_local_cooling_heat_ += bullet_heat_;
-      ms.v_yaw = 1;
     }
     if (shooter_local_cooling_heat_ >= shooter_cooling_limit_)
     {
       local_frequency_ = 0.0;
-      ms.dz = 1;
     }
     else
     {
       local_frequency_ = shoot_frequency_;
-      ms.dz = 2;
     }
-    if ((ros::Time::now() - last_time_).toSec() > 1. && shooter_local_cooling_heat_ > 0)
+    if ((ros::Time::now() - last_time_).toSec() > 0.1 && shooter_local_cooling_heat_ > 0)
     {
       last_time_ = ros::Time::now();
-      shooter_local_cooling_heat_ -= shooter_cooling_rate_;
+      shooter_local_cooling_heat_ -= shooter_cooling_rate_ / 10;
       if (shooter_local_cooling_heat_ < 0)
         shooter_local_cooling_heat_ = 0;
     }
-    ms.radius_1 = shooter_local_cooling_heat_;
-    ms.radius_2 = local_frequency_;
-    heat_pub_.publish(ms);
   }
 
   void setStatusOfShooter(const rm_msgs::GameRobotStatus data)
