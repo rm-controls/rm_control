@@ -188,7 +188,7 @@ private:
   double power_gain_{};
   uint8_t expect_state_{}, cap_state_{};
 
-  bool referee_is_online_;
-  bool capacity_is_online_;
+  bool referee_is_online_{ false };
+  bool capacity_is_online_{ false };
 };
 }  // namespace rm_common
