@@ -79,7 +79,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "stone")
         stone_num_trigger_change_ui_ =
             new StringTriggerChangeUi(rpc_value[i], base_, "stone_num", &graph_queue_, &character_queue_);
-
     }
 
     ui_nh.getParam("time_change", rpc_value);
@@ -209,7 +208,7 @@ void RefereeBase::addUi()
     gripper_state_trigger_change_ui_->addForQueue();
   if (stone_num_trigger_change_ui_)
     stone_num_trigger_change_ui_->addForQueue();
-  if(servo_mode_trigger_change_ui_)
+  if (servo_mode_trigger_change_ui_)
     servo_mode_trigger_change_ui_->addForQueue();
   if (bullet_time_change_ui_)
   {
@@ -429,7 +428,7 @@ void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& da
     gripper_state_trigger_change_ui_->updateStringUiData(data->gripper_state);
   if (stone_num_trigger_change_ui_ && !is_adding_)
     stone_num_trigger_change_ui_->updateStringUiData(std::to_string(data->stone_num));
-  if(servo_mode_trigger_change_ui_ && !is_adding_)
+  if (servo_mode_trigger_change_ui_ && !is_adding_)
     servo_mode_trigger_change_ui_->updateStringUiData(data->control_mode);
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
