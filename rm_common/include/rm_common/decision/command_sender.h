@@ -375,13 +375,13 @@ public:
   void checkError(const ros::Time& time)
   {
     if (msg_.mode == rm_msgs::ShootCmd::PUSH && time - 
-  shoot_beforehand_cmd_.stamp < ros::Duration(0.1))
+shoot_beforehand_cmd_.stamp < ros::Duration(0.1))
     {
       if (shoot_beforehand_cmd_.cmd == 
-  rm_msgs::ShootBeforehandCmd::ALLOW_SHOOT)
+rm_msgs::ShootBeforehandCmd::ALLOW_SHOOT)
         return;
       if (shoot_beforehand_cmd_.cmd == 
-  rm_msgs::ShootBeforehandCmd::BAN_SHOOT)
+rm_msgs::ShootBeforehandCmd::BAN_SHOOT)
       {
         setMode(rm_msgs::ShootCmd::READY);
         return;
