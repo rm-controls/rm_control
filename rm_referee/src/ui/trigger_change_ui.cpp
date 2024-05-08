@@ -437,33 +437,4 @@ void StringTriggerChangeUi::update()
   updateForQueue(true);
 }
 
-void EnemySupplyBulletTriggerChangeUi::updateSupplyInfo(const rm_msgs::SupplyProjectileAction& data)
-{
-  if (base_.robot_id_ > 100)
-  {
-    if (data.supply_robot_id == rm_referee::RobotId::RED_HERO)
-    {
-      supply_bullet_num_ = data.supply_projectile_num;
-      update();
-    }
-  }
-  else
-  {
-    if (data.supply_robot_id == rm_referee::RobotId::BLUE_HERO)
-    {
-      supply_bullet_num_ = data.supply_projectile_num;
-      update();
-    }
-  }
-}
-
-void EnemySupplyBulletTriggerChangeUi::update()
-{
-  graph_->setRadius(supply_bullet_num_);
-  graph_->setColor(graph_->getConfig().color == rm_referee::GraphColor::YELLOW ? rm_referee::GraphColor::PINK :
-                                                                                 rm_referee::GraphColor::YELLOW);
-  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  updateForQueue(true);
-}
-
 }  // namespace rm_referee
