@@ -311,8 +311,8 @@ public:
     if (rpc_value.hasMember("data"))
     {
       XmlRpc::XmlRpcValue& data = rpc_value["data"];
-      ori_x_ = data["ori_x"];
-      ori_y_ = data["ori_y"];
+      ori_x_ = static_cast<int>(data["ori_x"]);
+      ori_y_ = static_cast<int>(data["ori_y"]);
     }
     else
       ROS_WARN("DroneTowardsTimeChangeUi config 's member 'data' not defined.");
@@ -324,11 +324,12 @@ public:
     graph_vector_.insert(
         std::pair<std::string, Graph*>(graph_name_ + "_right", new Graph(rpc_value["config"], base_, id_++)));
   };
-  void updateTowardsData(const rm_msgs::TrackData::ConstPtr& data);
+  void updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data);
 
 private:
   void updateConfig() override;
-  double ori_x_, ori_y_, angle_;
+  int ori_x_, ori_y_;
+  double angle_;
   int mid_line_x1_, mid_line_y1_, mid_line_x2_, mid_line_y2_, left_line_x2_, left_line_y2_, right_line_x2_,
       right_line_y2_;
 };

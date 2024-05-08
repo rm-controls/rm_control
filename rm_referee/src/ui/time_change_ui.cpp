@@ -398,16 +398,17 @@ void TargetDistanceTimeChangeUi::updateConfig()
   UiBase::transferInt(std::floor(target_distance_ * 1000));
 }
 
-void DroneTowardsTimeChangeUi::updateTowardsData(const rm_msgs::TrackData::ConstPtr& data)
+void DroneTowardsTimeChangeUi::updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data)
 {
-  mid_line_x2_ = ori_x_ + 30 * cos(angle_ - M_PI / 2);
-  mid_line_y2_ = ori_y_ + 30 * sin(angle_ - M_PI / 2);
-  mid_line_x1_ = ori_x_ + 30 * cos(angle_ + M_PI / 2);
-  mid_line_y1_ = ori_y_ + 30 * sin(angle_ + M_PI / 2);
-  left_line_x2_ = ori_x_ + 20 * cos(angle_ + (7 * M_PI) / 6);
-  left_line_y2_ = ori_y_ + 20 * sin(angle_ + (7 * M_PI) / 6);
-  right_line_x2_ = ori_x_ + 20 * cos(angle_ + M_PI / 3);
-  right_line_y2_ = ori_y_ + 20 * sin(angle_ + M_PI / 3);
+  angle_ = yawFromQuat(data->pose.orientation) - M_PI / 2;
+  mid_line_x2_ = ori_x_ + 60 * cos(angle_ - M_PI / 2);
+  mid_line_y2_ = ori_y_ + 60 * sin(angle_ - M_PI / 2);
+  mid_line_x1_ = ori_x_ + 60 * cos(angle_ + M_PI / 2);
+  mid_line_y1_ = ori_y_ + 60 * sin(angle_ + M_PI / 2);
+  left_line_x2_ = ori_x_ + 40 * cos(angle_ + (5 * M_PI) / 6);
+  left_line_y2_ = ori_y_ + 40 * sin(angle_ + (5 * M_PI) / 6);
+  right_line_x2_ = ori_x_ + 40 * cos(angle_ + M_PI / 6);
+  right_line_y2_ = ori_y_ + 40 * sin(angle_ + M_PI / 6);
   updateForQueue();
 }
 
