@@ -17,9 +17,12 @@ add_message_files(
         ChassisCmd.msg
         ShootCmd.msg
         ShootState.msg
+        ShootBeforehandCmd.msg
         GimbalCmd.msg
         GimbalDesError.msg
+        GimbalPosState.msg
         LpData.msg
+        LocalHeatState.msg
         KalmanData.msg
         MovingAverageData.msg
         GpioData.msg

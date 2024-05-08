@@ -41,7 +41,7 @@
 #include <rm_msgs/GameRobotStatus.h>
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/ShootCmd.h>
-#include <rm_msgs/ShootState.h>
+#include <rm_msgs/LocalHeatState.h>
 
 namespace rm_common
 {
@@ -70,9 +70,7 @@ public:
       bullet_heat_ = 100.;
     else
       bullet_heat_ = 10.;
-    heat_pub_ = nh.advertise<rm_msgs::TrackData>("/heat", 1);
-    heat_sub_ =
-        nh.subscribe<rm_msgs::ShootState>("/controllers/shooter_controller/state", 50, &HeatLimit::heatCB, this);
+    heat_sub_ = nh.subscribe<rm_msgs::LocalHeatState>("/local_heat_state", 50, &HeatLimit::heatCB, this);
   }
 
   typedef enum
@@ -83,16 +81,21 @@ public:
     MINIMAL = 3
   } ShootHz;
 
-  void heatCB(const rm_msgs::ShootState msg)
+  void heatCB(const rm_msgs::LocalHeatState msg)
   {
-    rm_msgs::TrackData ms;
     if (msg.has_shoot == true)
     {
       shooter_local_cooling_heat_ += bullet_heat_;
     }
-    if (shooter_local_cooling_heat_ >= shooter_cooling_limit_)
+    if (shooter_cooling_limit_ - shooter_local_cooling_heat_ <= 2 * bullet_heat_)
     {
       local_frequency_ = 0.0;
+    }
+    if (shooter_cooling_limit_ - shooter_local_cooling_heat_ <= bullet_heat_ * (heat_coeff_ + 2))
+    {
+      local_frequency_ = (shooter_cooling_limit_ - shooter_local_cooling_heat_) / (bullet_heat_ * heat_coeff_) *
+                             (shoot_frequency_ - shooter_cooling_rate_ / bullet_heat_) +
+                         shooter_cooling_rate_ / bullet_heat_;
     }
     else
     {
@@ -231,7 +234,6 @@ private:
   bool referee_is_online_, is_local_;
   int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_, shooter_local_cooling_heat_{};
 
-  ros::Publisher heat_pub_;
   ros::Subscriber heat_sub_;
   ros::Time last_time_{};
 };
