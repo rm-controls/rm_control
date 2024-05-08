@@ -134,7 +134,8 @@ typedef enum
   BLUE_STANDARD_3_CLIENT = 0x0167,
   BLUE_STANDARD_4_CLIENT = 0x0168,
   BLUE_STANDARD_5_CLIENT = 0x0169,
-  BLUE_AERIAL_CLIENT = 0x016A
+  BLUE_AERIAL_CLIENT = 0x016A,
+  REFEREE_SERVER = 0x8080
 } ClientId;
 
 typedef enum
@@ -386,16 +387,6 @@ typedef struct
   uint16_t operate_launch_cmd_time;
 } __packed DartClientCmd;
 
-typedef struct
-{
-  uint32_t sentry_info;
-} __packed SentryInfo;
-
-typedef struct
-{
-  uint8_t radar_info;
-} __packed RadarInfo;
-
 /*********************** Interactive data between robots----0x0301 ********************/
 typedef struct
 {
@@ -513,6 +504,18 @@ typedef struct
 
 typedef struct
 {
+  InteractiveDataHeader header;
+  uint32_t sentry_info;
+} __packed SentryInfo;
+
+typedef struct
+{
+  InteractiveDataHeader header;
+  uint8_t radar_info;
+} __packed RadarInfo;
+
+typedef struct
+{
   uint8_t data[30];
 } __packed CustomControllerData;
 
@@ -520,7 +523,6 @@ typedef struct
 {
   float target_position_x;
   float target_position_y;
-  float target_position_z;
   uint8_t command_keyboard;
   uint16_t target_robot_ID;
   uint8_t cmd_source;

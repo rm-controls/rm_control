@@ -44,6 +44,7 @@
 #include <rm_msgs/ChassisCmd.h>
 #include <rm_msgs/GimbalCmd.h>
 #include <rm_msgs/ShootCmd.h>
+#include <rm_msgs/ShootBeforehandCmd.h>
 #include <rm_msgs/GimbalDesError.h>
 #include <rm_msgs/StateCmd.h>
 #include <rm_msgs/TrackData.h>
@@ -359,6 +360,7 @@ public:
   {
     gimbal_des_error_ = error;
   }
+
   void updateTrackData(const rm_msgs::TrackData& data)
   {
     track_data_ = data;

@@ -141,7 +141,7 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_hp_data.stamp = last_get_data_time_;
 
           referee_ui_.updateEnemyHeroState(game_robot_hp_data, last_get_data_time_);
-          referee_ui_.updateHeroStateDataCallBack(game_robot_hp_data, last_get_data_time_);
+          referee_ui_.updateHeroHitDataCallBack(game_robot_hp_data);
           game_robot_hp_pub_.publish(game_robot_hp_data);
           break;
         }
@@ -468,7 +468,6 @@ int Referee::unpack(uint8_t* rx_data)
 
           client_map_send_data.target_position_x = client_map_send_data_ref.target_position_x;
           client_map_send_data.target_position_y = client_map_send_data_ref.target_position_y;
-          client_map_send_data.target_position_z = client_map_send_data_ref.target_position_z;
           client_map_send_data.command_keyboard = client_map_send_data_ref.command_keyboard;
           client_map_send_data.target_robot_ID = client_map_send_data_ref.target_robot_ID;
           client_map_send_data.cmd_source = client_map_send_data_ref.cmd_source;
@@ -479,14 +478,16 @@ int Referee::unpack(uint8_t* rx_data)
         }
         case rm_referee::SENTRY_INFO_CMD:
         {
-          rm_referee::SentryInfo sentry_info;
-          memcpy(&sentry_info, rx_data + 7, sizeof(rm_referee::SentryInfo));
+          rm_msgs::SentryInfo sentry_info;
+          memcpy(&sentry_info, rx_data + 7, sizeof(rm_msgs::SentryInfo));
+          sentry_info_pub_.publish(sentry_info);
           break;
         }
         case rm_referee::RADAR_INFO_CMD:
         {
-          rm_referee::RadarInfo radar_info;
-          memcpy(&radar_info, rx_data + 7, sizeof(rm_referee::RadarInfo));
+          rm_msgs::RadarInfo radar_info;
+          memcpy(&radar_info, rx_data + 7, sizeof(rm_msgs::RadarInfo));
+          radar_info_pub_.publish(radar_info);
           break;
         }
         case rm_referee::POWER_MANAGEMENT_SAMPLE_AND_STATUS_DATA_CMD:
@@ -590,47 +591,50 @@ int Referee::unpack(uint8_t* rx_data)
 void Referee::getRobotInfo()
 {
   base_.robot_color_ = base_.robot_id_ >= 100 ? "blue" : "red";
-  if (base_.robot_id_ != rm_referee::RobotId::BLUE_SENTRY && base_.robot_id_ != rm_referee::RobotId::RED_SENTRY)
+  switch (base_.robot_id_)
   {
-    switch (base_.robot_id_)
-    {
-      case rm_referee::RobotId::BLUE_HERO:
-        base_.client_id_ = rm_referee::ClientId::BLUE_HERO_CLIENT;
-        break;
-      case rm_referee::RobotId::BLUE_ENGINEER:
-        base_.client_id_ = rm_referee::ClientId::BLUE_ENGINEER_CLIENT;
-        break;
-      case rm_referee::RobotId::BLUE_STANDARD_3:
-        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_3_CLIENT;
-        break;
-      case rm_referee::RobotId::BLUE_STANDARD_4:
-        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_4_CLIENT;
-        break;
-      case rm_referee::RobotId::BLUE_STANDARD_5:
-        base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_5_CLIENT;
-        break;
-      case rm_referee::RobotId::BLUE_AERIAL:
-        base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_HERO:
-        base_.client_id_ = rm_referee::ClientId::RED_HERO_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_ENGINEER:
-        base_.client_id_ = rm_referee::ClientId::RED_ENGINEER_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_STANDARD_3:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_3_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_STANDARD_4:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_4_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_STANDARD_5:
-        base_.client_id_ = rm_referee::ClientId::RED_STANDARD_5_CLIENT;
-        break;
-      case rm_referee::RobotId::RED_AERIAL:
-        base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
-        break;
-    }
+    case rm_referee::RobotId::BLUE_HERO:
+      base_.client_id_ = rm_referee::ClientId::BLUE_HERO_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_ENGINEER:
+      base_.client_id_ = rm_referee::ClientId::BLUE_ENGINEER_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_STANDARD_3:
+      base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_3_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_STANDARD_4:
+      base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_4_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_STANDARD_5:
+      base_.client_id_ = rm_referee::ClientId::BLUE_STANDARD_5_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_AERIAL:
+      base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_HERO:
+      base_.client_id_ = rm_referee::ClientId::RED_HERO_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_ENGINEER:
+      base_.client_id_ = rm_referee::ClientId::RED_ENGINEER_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_STANDARD_3:
+      base_.client_id_ = rm_referee::ClientId::RED_STANDARD_3_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_STANDARD_4:
+      base_.client_id_ = rm_referee::ClientId::RED_STANDARD_4_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_STANDARD_5:
+      base_.client_id_ = rm_referee::ClientId::RED_STANDARD_5_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_AERIAL:
+      base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_SENTRY:
+      base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_SENTRY:
+      base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
+      break;
   }
 }
 }  // namespace rm_referee

@@ -7,7 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
         geometry_msgs
         actionlib
         actionlib_msgs
-        )
+)
 
 add_message_files(
         FILES
