@@ -301,10 +301,10 @@ private:
   double target_distance_;
 };
 
-class DroneTowardsTimeChangeUi : public TimeChangeGroupUi
+class DroneTowardsTimeChangeGroupUi : public TimeChangeGroupUi
 {
 public:
-  explicit DroneTowardsTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+  explicit DroneTowardsTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
                                     std::deque<Graph>* character_queue)
     : TimeChangeGroupUi(rpc_value, base, "drone_towards", graph_queue, character_queue)
   {
@@ -315,7 +315,7 @@ public:
       ori_y_ = static_cast<int>(data["ori_y"]);
     }
     else
-      ROS_WARN("DroneTowardsTimeChangeUi config 's member 'data' not defined.");
+      ROS_WARN("DroneTowardsTimeChangeGroupUi config 's member 'data' not defined.");
 
     graph_vector_.insert(
         std::pair<std::string, Graph*>(graph_name_ + "_mid", new Graph(rpc_value["config"], base_, id_++)));

@@ -398,7 +398,7 @@ void TargetDistanceTimeChangeUi::updateConfig()
   UiBase::transferInt(std::floor(target_distance_ * 1000));
 }
 
-void DroneTowardsTimeChangeUi::updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data)
+void DroneTowardsTimeChangeGroupUi::updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data)
 {
   angle_ = yawFromQuat(data->pose.orientation) - M_PI / 2;
   mid_line_x2_ = ori_x_ + 60 * cos(angle_ - M_PI / 2);
@@ -412,7 +412,7 @@ void DroneTowardsTimeChangeUi::updateTowardsData(const geometry_msgs::PoseStampe
   updateForQueue();
 }
 
-void DroneTowardsTimeChangeUi::updateConfig()
+void DroneTowardsTimeChangeGroupUi::updateConfig()
 {
   for (auto it : graph_vector_)
   {

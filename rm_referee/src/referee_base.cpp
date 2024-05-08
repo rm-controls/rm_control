@@ -126,8 +126,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         target_distance_time_change_ui_ =
             new TargetDistanceTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "drone_towards")
-        drone_towards_time_change_ui_ =
-            new DroneTowardsTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+        drone_towards_time_change_group_ui_ =
+            new DroneTowardsTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -217,8 +217,8 @@ void RefereeBase::addUi()
     engineer_joint2_time_change_ui->addForQueue();
   if (engineer_joint3_time_change_ui)
     engineer_joint3_time_change_ui->addForQueue();
-  if (drone_towards_time_change_ui_)
-    drone_towards_time_change_ui_->addForQueue();
+  if (drone_towards_time_change_group_ui_)
+    drone_towards_time_change_group_ui_->addForQueue();
   //  if (drag_state_trigger_change_ui_)
   //    drag_state_trigger_change_ui_->addForQueue();
   if (gripper_state_trigger_change_ui_)
@@ -549,8 +549,8 @@ void RefereeBase::supplyBulletDataCallBack(const rm_msgs::SupplyProjectileAction
 
 void RefereeBase::dronePoseCallBack(const geometry_msgs::PoseStampedConstPtr& data)
 {
-  if (drone_towards_time_change_ui_ && !is_adding_)
-    drone_towards_time_change_ui_->updateTowardsData(data);
+  if (drone_towards_time_change_group_ui_ && !is_adding_)
+    drone_towards_time_change_group_ui_->updateTowardsData(data);
 }
 
 void RefereeBase::updateShootDataDataCallBack(const rm_msgs::ShootData& msg)
