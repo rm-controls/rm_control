@@ -86,5 +86,17 @@ void HeroHitFlashUi::display(const ros::Time& time)
     FlashUi::updateFlashUiForQueue(time, hitted_, false);
 }
 
+void ExceedBulletSpeedFlashUi::display(const ros::Time& time)
+{
+  if (shoot_data_.bullet_speed <= 30)
+    graph_->setOperation(rm_referee::GraphOperation::DELETE);
+  FlashUi::updateFlashUiForQueue(time, shoot_data_.bullet_speed > 30, true);
+}
+
+void ExceedBulletSpeedFlashUi::updateShootData(const rm_msgs::ShootData& msg)
+{
+  shoot_data_ = msg;
+}
+
 }  // namespace rm_referee
 // namespace rm_referee

@@ -300,4 +300,38 @@ private:
   void updateConfig() override;
   double target_distance_;
 };
+
+class DroneTowardsTimeChangeGroupUi : public TimeChangeGroupUi
+{
+public:
+  explicit DroneTowardsTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                         std::deque<Graph>* character_queue)
+    : TimeChangeGroupUi(rpc_value, base, "drone_towards", graph_queue, character_queue)
+  {
+    if (rpc_value.hasMember("data"))
+    {
+      XmlRpc::XmlRpcValue& data = rpc_value["data"];
+      ori_x_ = static_cast<int>(data["ori_x"]);
+      ori_y_ = static_cast<int>(data["ori_y"]);
+    }
+    else
+      ROS_WARN("DroneTowardsTimeChangeGroupUi config 's member 'data' not defined.");
+
+    graph_vector_.insert(
+        std::pair<std::string, Graph*>(graph_name_ + "_mid", new Graph(rpc_value["config"], base_, id_++)));
+    graph_vector_.insert(
+        std::pair<std::string, Graph*>(graph_name_ + "_left", new Graph(rpc_value["config"], base_, id_++)));
+    graph_vector_.insert(
+        std::pair<std::string, Graph*>(graph_name_ + "_right", new Graph(rpc_value["config"], base_, id_++)));
+  };
+  void updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data);
+
+private:
+  void updateConfig() override;
+  int ori_x_, ori_y_;
+  double angle_;
+  int mid_line_x1_, mid_line_y1_, mid_line_x2_, mid_line_y2_, left_line_x2_, left_line_y2_, right_line_x2_,
+      right_line_y2_;
+};
+
 }  // namespace rm_referee

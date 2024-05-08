@@ -44,6 +44,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::RadarInfo>("/radar_cmd", 1, &RefereeBase::sendRadarCmdCallback, this);
   RefereeBase::sentry_state_sub_ =
       nh.subscribe<std_msgs::String>("/sentry_state", 1, &RefereeBase::sendSentryStateCallback, this);
+  RefereeBase::drone_pose_sub_ =
+      nh.subscribe<geometry_msgs::PoseStamped>("/mavros/vision_pose/pose", 1, &RefereeBase::dronePoseCallBack, this);
 
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
@@ -123,6 +125,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "target_distance")
         target_distance_time_change_ui_ =
             new TargetDistanceTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "drone_towards")
+        drone_towards_time_change_group_ui_ =
+            new DroneTowardsTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -137,6 +142,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "hero_hit")
         hero_hit_flash_ui_ = new HeroHitFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "exceed_bullet_speed")
+        exceed_bullet_speed_flash_ui_ =
+            new ExceedBulletSpeedFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
   }
   if (nh.hasParam("interactive_data"))
@@ -209,6 +217,8 @@ void RefereeBase::addUi()
     engineer_joint2_time_change_ui->addForQueue();
   if (engineer_joint3_time_change_ui)
     engineer_joint3_time_change_ui->addForQueue();
+  if (drone_towards_time_change_group_ui_)
+    drone_towards_time_change_group_ui_->addForQueue();
   //  if (drag_state_trigger_change_ui_)
   //    drag_state_trigger_change_ui_->addForQueue();
   if (gripper_state_trigger_change_ui_)
@@ -531,6 +541,22 @@ void RefereeBase::sendSentryStateCallback(const std_msgs::StringConstPtr& data)
   std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
   if (sentry_state_sender_)
     sentry_state_sender_->sendCustomInfoData(converter.from_bytes(data->data));
+}
+
+void RefereeBase::supplyBulletDataCallBack(const rm_msgs::SupplyProjectileAction& data)
+{
+}
+
+void RefereeBase::dronePoseCallBack(const geometry_msgs::PoseStampedConstPtr& data)
+{
+  if (drone_towards_time_change_group_ui_ && !is_adding_)
+    drone_towards_time_change_group_ui_->updateTowardsData(data);
+}
+
+void RefereeBase::updateShootDataDataCallBack(const rm_msgs::ShootData& msg)
+{
+  if (exceed_bullet_speed_flash_ui_ && !is_adding_)
+    exceed_bullet_speed_flash_ui_->updateShootData(msg);
 }
 
 }  // namespace rm_referee

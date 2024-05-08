@@ -36,6 +36,8 @@ public:
                                        const ros::Time& last_get_data_time);
   virtual void eventDataCallBack(const rm_msgs::EventData& event_data, const ros::Time& last_get_data_time);
   virtual void updateHeroHitDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data);
+  virtual void supplyBulletDataCallBack(const rm_msgs::SupplyProjectileAction& data);
+  virtual void updateShootDataDataCallBack(const rm_msgs::ShootData& msg);
 
   // sub call back
   virtual void jointStateCallback(const sensor_msgs::JointState::ConstPtr& joint_state);
@@ -59,6 +61,7 @@ public:
   virtual void sendSentryCmdCallback(const rm_msgs::SentryInfoConstPtr& data);
   virtual void sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data);
   virtual void sendSentryStateCallback(const std_msgs::StringConstPtr& data);
+  virtual void dronePoseCallBack(const geometry_msgs::PoseStampedConstPtr& data);
 
   // send  ui
   void sendSerialDataCallback();
@@ -86,6 +89,7 @@ public:
   ros::Subscriber sentry_cmd_sub_;
   ros::Subscriber radar_cmd_sub_;
   ros::Subscriber sentry_state_sub_;
+  ros::Subscriber drone_pose_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
@@ -93,8 +97,8 @@ public:
   TargetTriggerChangeUi* target_trigger_change_ui_{};
   TargetViewAngleTriggerChangeUi* target_view_angle_trigger_change_ui_{};
   CameraTriggerChangeUi* camera_trigger_change_ui_{};
-  BulletTimeChangeUi* bullet_time_change_ui_{};
 
+  BulletTimeChangeUi* bullet_time_change_ui_{};
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};
   ProgressTimeChangeUi* progress_time_change_ui_{};
@@ -106,6 +110,7 @@ public:
   JointPositionTimeChangeUi *engineer_joint1_time_change_ui{}, *engineer_joint2_time_change_ui{},
       *engineer_joint3_time_change_ui{};
   TargetDistanceTimeChangeUi* target_distance_time_change_ui_{};
+  DroneTowardsTimeChangeGroupUi* drone_towards_time_change_group_ui_{};
   StringTriggerChangeUi *step_name_trigger_change_ui_{}, *servo_mode_trigger_change_ui_{},
       *reversal_state_trigger_change_ui_{}, *stone_num_trigger_change_ui_{}, *joint_temperature_trigger_change_ui_{},
       *drag_state_trigger_change_ui_{}, *gripper_state_trigger_change_ui_{};
@@ -115,6 +120,7 @@ public:
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
   HeroHitFlashUi* hero_hit_flash_ui_{};
+  ExceedBulletSpeedFlashUi* exceed_bullet_speed_flash_ui_{};
 
   InteractiveSender* interactive_data_sender_{};
   InteractiveSender* enemy_hero_state_sender_{};

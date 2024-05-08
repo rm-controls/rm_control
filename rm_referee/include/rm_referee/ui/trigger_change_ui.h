@@ -238,4 +238,5 @@ private:
   void update() override;
   std::string data_;
 };
+
 }  // namespace rm_referee

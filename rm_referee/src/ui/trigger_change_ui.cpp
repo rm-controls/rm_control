@@ -436,4 +436,5 @@ void StringTriggerChangeUi::update()
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   updateForQueue(true);
 }
+
 }  // namespace rm_referee
