@@ -305,7 +305,7 @@ class DroneTowardsTimeChangeGroupUi : public TimeChangeGroupUi
 {
 public:
   explicit DroneTowardsTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
-                                    std::deque<Graph>* character_queue)
+                                         std::deque<Graph>* character_queue)
     : TimeChangeGroupUi(rpc_value, base, "drone_towards", graph_queue, character_queue)
   {
     if (rpc_value.hasMember("data"))
