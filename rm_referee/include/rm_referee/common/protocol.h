@@ -524,7 +524,7 @@ typedef struct
   float target_position_x;
   float target_position_y;
   uint8_t command_keyboard;
-  uint16_t target_robot_ID;
+  uint8_t target_robot_ID;
   uint8_t cmd_source;
 } __packed ClientMapSendData;
 

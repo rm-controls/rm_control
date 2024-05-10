@@ -10,10 +10,11 @@ uint8 KEY_R = 82
 uint8 KEY_W = 87
 uint8 KEY_U = 85
 
+
 float32 target_position_x
 float32 target_position_y
 uint8 command_keyboard
-uint16 target_robot_ID
+uint8 target_robot_ID
 uint8 cmd_source
 
 time stamp
