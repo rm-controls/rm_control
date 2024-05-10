@@ -161,10 +161,15 @@ public:
       max_angular_z_.init(xml_rpc_value);
     std::string topic;
     nh.getParam("power_limit_topic", topic);
+    target_vel_yaw_threshold_ = getParam(nh, "target_vel_yaw_threshold", 4.);
     chassis_power_limit_subscriber_ =
         nh.subscribe<rm_msgs::ChassisCmd>(topic, 1, &Vel2DCommandSender::chassisCmdCallback, this);
   }
 
+  void updateTrackData(const rm_msgs::TrackData& data)
+  {
+    track_data_ = data;
+  }
   void setLinearXVel(double scale)
   {
     msg_.linear.x = scale * max_linear_x_.output(power_limit_);
@@ -175,7 +180,11 @@ public:
   };
   void setAngularZVel(double scale)
   {
-    msg_.angular.z = scale * max_angular_z_.output(power_limit_);
+    if (track_data_.v_yaw > target_vel_yaw_threshold_)
+      vel_direction_ = -1.;
+    if (track_data_.v_yaw < -target_vel_yaw_threshold_)
+      vel_direction_ = 1.;
+    msg_.angular.z = scale * max_angular_z_.output(power_limit_) * vel_direction_;
   };
   void set2DVel(double scale_x, double scale_y, double scale_z)
   {
@@ -197,8 +206,11 @@ protected:
   }
 
   LinearInterp max_linear_x_, max_linear_y_, max_angular_z_;
-  double power_limit_ = 0;
+  double power_limit_ = 0.;
+  double target_vel_yaw_threshold_{};
+  double vel_direction_ = 1.;
   ros::Subscriber chassis_power_limit_subscriber_;
+  rm_msgs::TrackData track_data_;
 };
 
 class ChassisCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisCmd>

@@ -20,6 +20,7 @@ add_message_files(
         ShootBeforehandCmd.msg
         GimbalCmd.msg
         GimbalDesError.msg
+        GimbalPosState.msg
         LpData.msg
         KalmanData.msg
         MovingAverageData.msg
