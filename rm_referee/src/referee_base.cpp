@@ -72,22 +72,15 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
             new TargetViewAngleTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "camera")
         camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
-      //      if (rpc_value[i]["name"] == "drag")
-      //        drag_state_trigger_change_ui_ =
-      //            new StringTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "drag");
       if (rpc_value[i]["name"] == "gripper")
         gripper_state_trigger_change_ui_ =
             new StringTriggerChangeUi(rpc_value[i], base_, "gripper", &graph_queue_, &character_queue_);
-      //      if (rpc_value[i]["name"] == "step")
-      //        step_name_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "step");
-      //      if (rpc_value[i]["name"] == "reversal")
-      //        reversal_state_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "reversal");
-      //      if (rpc_value[i]["name"] == "stone")
-      //        stone_num_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "stone");
-      //      if (rpc_value[i]["name"] == "temperature")
-      //        joint_temperature_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "temperature");
-      //      if (rpc_value[i]["name"] == "servo_mode")
-      //        servo_mode_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "mode");
+      if (rpc_value[i]["name"] == "servo_mode")
+        servo_mode_trigger_change_ui_ =
+            new StringTriggerChangeUi(rpc_value[i], base_, "servo_mode", &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "stone")
+        stone_num_trigger_change_ui_ =
+            new StringTriggerChangeUi(rpc_value[i], base_, "stone_num", &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("time_change", rpc_value);
@@ -223,6 +216,10 @@ void RefereeBase::addUi()
   //    drag_state_trigger_change_ui_->addForQueue();
   if (gripper_state_trigger_change_ui_)
     gripper_state_trigger_change_ui_->addForQueue();
+  if (stone_num_trigger_change_ui_)
+    stone_num_trigger_change_ui_->addForQueue();
+  if (servo_mode_trigger_change_ui_)
+    servo_mode_trigger_change_ui_->addForQueue();
   if (bullet_time_change_ui_)
   {
     bullet_time_change_ui_->reset();
@@ -439,6 +436,10 @@ void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& da
       drag_state_trigger_change_ui_->updateStringUiData(data->drag_state);*/
   if (gripper_state_trigger_change_ui_ && !is_adding_)
     gripper_state_trigger_change_ui_->updateStringUiData(data->gripper_state);
+  if (stone_num_trigger_change_ui_ && !is_adding_)
+    stone_num_trigger_change_ui_->updateStringUiData(std::to_string(data->stone_num));
+  if (servo_mode_trigger_change_ui_ && !is_adding_)
+    servo_mode_trigger_change_ui_->updateStringUiData(data->control_mode);
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
