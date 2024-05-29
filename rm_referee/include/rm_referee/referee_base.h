@@ -113,10 +113,11 @@ public:
   JointPositionTimeChangeUi *engineer_joint1_time_change_ui{}, *engineer_joint2_time_change_ui{},
       *engineer_joint3_time_change_ui{};
   TargetDistanceTimeChangeUi* target_distance_time_change_ui_{};
+
   DroneTowardsTimeChangeGroupUi* drone_towards_time_change_group_ui_{};
-  StringTriggerChangeUi *step_name_trigger_change_ui_{}, *servo_mode_trigger_change_ui_{},
-      *reversal_state_trigger_change_ui_{}, *stone_num_trigger_change_ui_{}, *joint_temperature_trigger_change_ui_{},
-      *drag_state_trigger_change_ui_{}, *gripper_state_trigger_change_ui_{};
+  StringTriggerChangeUi *servo_mode_trigger_change_ui_{}, *stone_num_trigger_change_ui_{},
+      *joint_temperature_trigger_change_ui_{}, *gripper_state_trigger_change_ui_{};
+
 
   FixedUi* fixed_ui_{};
 
