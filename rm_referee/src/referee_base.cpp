@@ -223,6 +223,8 @@ void RefereeBase::addUi()
     stone_num_trigger_change_ui_->addForQueue();
   if (servo_mode_trigger_change_ui_)
     servo_mode_trigger_change_ui_->addForQueue();
+  if (friction_speed_trigger_change_ui_)
+    friction_speed_trigger_change_ui_->addForQueue();
   if (bullet_time_change_ui_)
   {
     bullet_time_change_ui_->reset();
