@@ -46,6 +46,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<std_msgs::String>("/sentry_state", 1, &RefereeBase::sendSentryStateCallback, this);
   RefereeBase::drone_pose_sub_ =
       nh.subscribe<geometry_msgs::PoseStamped>("/mavros/vision_pose/pose", 1, &RefereeBase::dronePoseCallBack, this);
+  RefereeBase::shoot_cmd_sub_ = nh.subscribe<rm_msgs::ShootCmd>("/controllers/shooter_controller/command", 1,
+                                                                &RefereeBase::shootCmdCallBack, this);
 
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
@@ -72,22 +74,12 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
             new TargetViewAngleTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "camera")
         camera_trigger_change_ui_ = new CameraTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
-      //      if (rpc_value[i]["name"] == "drag")
-      //        drag_state_trigger_change_ui_ =
-      //            new StringTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "drag");
+      if (rpc_value[i]["name"] == "friction_speed")
+        friction_speed_trigger_change_ui_ =
+            new FrictionSpeedTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "gripper")
         gripper_state_trigger_change_ui_ =
             new StringTriggerChangeUi(rpc_value[i], base_, "gripper", &graph_queue_, &character_queue_);
-      //      if (rpc_value[i]["name"] == "step")
-      //        step_name_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "step");
-      //      if (rpc_value[i]["name"] == "reversal")
-      //        reversal_state_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "reversal");
-      //      if (rpc_value[i]["name"] == "stone")
-      //        stone_num_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "stone");
-      //      if (rpc_value[i]["name"] == "temperature")
-      //        joint_temperature_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "temperature");
-      //      if (rpc_value[i]["name"] == "servo_mode")
-      //        servo_mode_trigger_change_ui_ = new StringTriggerChangeUi(rpc_value[i], base_, "mode");
     }
 
     ui_nh.getParam("time_change", rpc_value);
@@ -557,6 +549,12 @@ void RefereeBase::updateShootDataDataCallBack(const rm_msgs::ShootData& msg)
 {
   if (exceed_bullet_speed_flash_ui_ && !is_adding_)
     exceed_bullet_speed_flash_ui_->updateShootData(msg);
+}
+
+void RefereeBase::shootCmdCallBack(const rm_msgs::ShootCmdConstPtr& data)
+{
+  if (friction_speed_trigger_change_ui_ && !is_adding_)
+    friction_speed_trigger_change_ui_->updateFrictionSpeedUiData(data);
 }
 
 }  // namespace rm_referee

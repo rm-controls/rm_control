@@ -326,12 +326,14 @@ void BulletTimeChangeUi::updateBulletData(const rm_msgs::BulletAllowance& data, 
 {
   if (data.bullet_allowance_num_17_mm >= 0 && data.bullet_allowance_num_17_mm < 1000)
   {
-    bullet_num_17_mm_ += (bullet_allowance_num_17_mm_ - data.bullet_allowance_num_17_mm);
+    if (bullet_allowance_num_17_mm_ > data.bullet_allowance_num_17_mm)
+      bullet_num_17_mm_ += (bullet_allowance_num_17_mm_ - data.bullet_allowance_num_17_mm);
     bullet_allowance_num_17_mm_ = data.bullet_allowance_num_17_mm;
   }
   if (data.bullet_allowance_num_42_mm >= 0 && data.bullet_allowance_num_42_mm < 1000)
   {
-    bullet_num_42_mm_ += (bullet_allowance_num_42_mm_ - data.bullet_allowance_num_42_mm);
+    if (bullet_allowance_num_42_mm_ > data.bullet_allowance_num_42_mm)
+      bullet_num_42_mm_ += (bullet_allowance_num_42_mm_ - data.bullet_allowance_num_42_mm);
     bullet_allowance_num_42_mm_ = data.bullet_allowance_num_42_mm;
   }
   updateForQueue();
