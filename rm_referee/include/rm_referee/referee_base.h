@@ -115,7 +115,6 @@ public:
   StringTriggerChangeUi *servo_mode_trigger_change_ui_{}, *stone_num_trigger_change_ui_{},
       *joint_temperature_trigger_change_ui_{}, *gripper_state_trigger_change_ui_{};
 
-
   FixedUi* fixed_ui_{};
 
   CoverFlashUi* cover_flash_ui_{};

@@ -161,7 +161,7 @@ public:
       max_angular_z_.init(xml_rpc_value);
     std::string topic;
     nh.getParam("power_limit_topic", topic);
-    target_vel_yaw_threshold_ = getParam(nh, "target_vel_yaw_threshold", 4.);
+    target_vel_yaw_threshold_ = getParam(nh, "target_vel_yaw_threshold", 3.);
     chassis_power_limit_subscriber_ =
         nh.subscribe<rm_msgs::ChassisCmd>(topic, 1, &Vel2DCommandSender::chassisCmdCallback, this);
   }
@@ -185,6 +185,15 @@ public:
     if (track_data_.v_yaw < -target_vel_yaw_threshold_)
       vel_direction_ = 1.;
     msg_.angular.z = scale * max_angular_z_.output(power_limit_) * vel_direction_;
+  };
+  void setAngularZVel(double scale, double limit)
+  {
+    if (track_data_.v_yaw > target_vel_yaw_threshold_)
+      vel_direction_ = -1.;
+    if (track_data_.v_yaw < -target_vel_yaw_threshold_)
+      vel_direction_ = 1.;
+    double angular_z = max_angular_z_.output(power_limit_) > limit ? limit : max_angular_z_.output(power_limit_);
+    msg_.angular.z = scale * angular_z * vel_direction_;
   };
   void set2DVel(double scale_x, double scale_y, double scale_z)
   {
