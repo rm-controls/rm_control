@@ -68,7 +68,7 @@ add_message_files(
         SupplyProjectileAction.msg
         DartRemainingTime.msg
         RobotHurt.msg
-        CurrentSentryPosData.msg
+        BulletNumShare.msg
         ShootData.msg
         BulletAllowance.msg
         RfidStatus.msg

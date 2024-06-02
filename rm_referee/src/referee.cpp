@@ -425,17 +425,11 @@ int Referee::unpack(uint8_t* rx_data)
           rm_referee::InteractiveData interactive_data_ref;  // local variable temporarily before moving referee data
           memcpy(&interactive_data_ref, rx_data + 7, sizeof(rm_referee::InteractiveData));
           // TODO: case cmd_id
-          if (interactive_data_ref.header_data.data_cmd_id == rm_referee::DataCmdId::CURRENT_SENTRY_POSITION_CMD)
+          if (interactive_data_ref.header_data.data_cmd_id == rm_referee::DataCmdId::BULLET_NUM_SHARE_CMD)
           {
-            rm_referee::CurrentSentryPosData current_sentry_pos_ref;
-            rm_msgs::CurrentSentryPosData current_sentry_pos_data;
-            memcpy(&current_sentry_pos_ref, rx_data + 7, sizeof(rm_referee::CurrentSentryPosData));
-            current_sentry_pos_data.x = current_sentry_pos_ref.position_x;
-            current_sentry_pos_data.y = current_sentry_pos_ref.position_y;
-            current_sentry_pos_data.z = current_sentry_pos_ref.position_z;
-            current_sentry_pos_data.yaw = current_sentry_pos_ref.position_yaw;
-
-            current_sentry_pos_pub_.publish(current_sentry_pos_data);
+            rm_referee::BulletNumData bullet_num_data_ref;
+            memcpy(&bullet_num_data_ref, rx_data + 7, sizeof(rm_referee::BulletNumData));
+            referee_ui_.updateBulletRemainData(bullet_num_data_ref);
           }
           break;
         }
