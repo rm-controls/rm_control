@@ -64,4 +64,20 @@ private:
   bool hitted_;
   rm_msgs::GameRobotHp last_hp_msg_;
 };
+
+class ExceedBulletSpeedFlashUi : public FlashUi
+{
+public:
+  explicit ExceedBulletSpeedFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                    std::deque<Graph>* character_queue)
+    : FlashUi(rpc_value, base, "exceed_bullet_speed", graph_queue, character_queue)
+  {
+  }
+  void updateShootData(const rm_msgs::ShootData& msg);
+
+private:
+  void display(const ros::Time& time) override;
+  rm_msgs::ShootData shoot_data_;
+};
+
 }  // namespace rm_referee

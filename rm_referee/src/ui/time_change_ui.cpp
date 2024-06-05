@@ -398,4 +398,46 @@ void TargetDistanceTimeChangeUi::updateConfig()
   UiBase::transferInt(std::floor(target_distance_ * 1000));
 }
 
+void DroneTowardsTimeChangeGroupUi::updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data)
+{
+  angle_ = yawFromQuat(data->pose.orientation) - M_PI / 2;
+  mid_line_x2_ = ori_x_ + 60 * cos(angle_ - M_PI / 2);
+  mid_line_y2_ = ori_y_ + 60 * sin(angle_ - M_PI / 2);
+  mid_line_x1_ = ori_x_ + 60 * cos(angle_ + M_PI / 2);
+  mid_line_y1_ = ori_y_ + 60 * sin(angle_ + M_PI / 2);
+  left_line_x2_ = ori_x_ + 40 * cos(angle_ + (5 * M_PI) / 6);
+  left_line_y2_ = ori_y_ + 40 * sin(angle_ + (5 * M_PI) / 6);
+  right_line_x2_ = ori_x_ + 40 * cos(angle_ + M_PI / 6);
+  right_line_y2_ = ori_y_ + 40 * sin(angle_ + M_PI / 6);
+  updateForQueue();
+}
+
+void DroneTowardsTimeChangeGroupUi::updateConfig()
+{
+  for (auto it : graph_vector_)
+  {
+    if (it.first == "drone_towards_mid")
+    {
+      it.second->setStartX(mid_line_x2_);
+      it.second->setStartY(mid_line_y2_);
+      it.second->setEndX(mid_line_x1_);
+      it.second->setEndY(mid_line_y1_);
+    }
+    else if (it.first == "drone_towards_left")
+    {
+      it.second->setStartX(left_line_x2_);
+      it.second->setStartY(left_line_y2_);
+      it.second->setEndX(mid_line_x1_);
+      it.second->setEndY(mid_line_y1_);
+    }
+    else if (it.first == "drone_towards_right")
+    {
+      it.second->setStartX(right_line_x2_);
+      it.second->setStartY(right_line_y2_);
+      it.second->setEndX(mid_line_x1_);
+      it.second->setEndY(mid_line_y1_);
+    }
+  }
+}
+
 }  // namespace rm_referee
