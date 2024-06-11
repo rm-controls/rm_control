@@ -41,6 +41,7 @@
 #include <rm_msgs/GameRobotStatus.h>
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/ShootCmd.h>
+#include <std_msgs/Float64.h>
 #include <rm_msgs/LocalHeatState.h>
 
 namespace rm_common
