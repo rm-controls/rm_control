@@ -18,7 +18,7 @@ void FlashUi::updateFlashUiForQueue(const ros::Time& time, bool state, bool once
   }
   else if (time - last_send_ > delay_)
   {
-    ROS_INFO("%f  %.3f", last_send_.toSec(), delay_.toSec());
+    //    ROS_INFO("%f  %.3f", last_send_.toSec(), delay_.toSec());
     if (state)
       graph_->setOperation(rm_referee::GraphOperation::ADD);
     else
@@ -81,12 +81,9 @@ void HeroHitFlashUi::updateHittingConfig(const rm_msgs::GameRobotHp& msg)
 void HeroHitFlashUi::display(const ros::Time& time)
 {
   if (hitted_)
-  {
-    graph_->setOperation(rm_referee::GraphOperation::ADD);
     FlashUi::updateFlashUiForQueue(time, true, true);
-  }
   else
-    FlashUi::updateFlashUiForQueue(time, hitted_, false);
+    FlashUi::updateFlashUiForQueue(time, false, false);
 }
 
 void ExceedBulletSpeedFlashUi::display(const ros::Time& time)
