@@ -69,25 +69,6 @@ protected:
   const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
 };
 
-class InteractiveSender : public UiBase
-{
-public:
-  explicit InteractiveSender(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue = nullptr,
-                             std::deque<Graph>* character_queue = nullptr)
-    : UiBase(rpc_value, base, graph_queue, character_queue){};
-
-  void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);
-  void sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& data);
-  void sendMapSentryData(const rm_referee::MapSentryData& data);
-  void sendCurrentSentryData(const rm_msgs::CurrentSentryPosDataConstPtr& data);
-  void sendCustomInfoData(std::wstring data);
-  void sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& data);
-  void sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data);
-
-protected:
-  std::wstring last_custom_info_;
-};
-
 class GroupUiBase : public UiBase
 {
 public:

@@ -442,4 +442,20 @@ void DroneTowardsTimeChangeGroupUi::updateConfig()
   }
 }
 
+void FriendBulletsTimeChangeGroupUi::updateBulletsData(const rm_referee::BulletNumData& data)
+{
+  if (data.header_data.sender_id == rm_referee::RobotId::RED_HERO ||
+      data.header_data.sender_id == rm_referee::RobotId::BLUE_HERO)
+    hero_bullets_ = data.bullet_42_mm_num;
+  else if (data.header_data.sender_id == rm_referee::RobotId::RED_STANDARD_3 ||
+           data.header_data.sender_id == rm_referee::RobotId::BLUE_STANDARD_3)
+    standard3_bullets_ = data.bullet_17_mm_num;
+  else if (data.header_data.sender_id == rm_referee::RobotId::RED_STANDARD_4 ||
+           data.header_data.sender_id == rm_referee::RobotId::BLUE_STANDARD_4)
+    standard4_bullets_ = data.bullet_17_mm_num;
+  else if (data.header_data.sender_id == rm_referee::RobotId::RED_STANDARD_5 ||
+           data.header_data.sender_id == rm_referee::RobotId::BLUE_STANDARD_5)
+    standard5_bullets_ = data.bullet_17_mm_num;
+}
+
 }  // namespace rm_referee

@@ -55,7 +55,6 @@ public:
     game_status_pub_ = nh.advertise<rm_msgs::GameStatus>("game_status", 1);
     power_heat_data_pub_ = nh.advertise<rm_msgs::PowerHeatData>("power_heat_data", 1);
     game_robot_hp_pub_ = nh.advertise<rm_msgs::GameRobotHp>("game_robot_hp", 1);
-    current_sentry_pos_pub_ = nh.advertise<rm_msgs::CurrentSentryPosData>("current_sentry_pos", 1);
     buff_pub_ = nh.advertise<rm_msgs::Buff>("robot_buff", 1);
     event_data_pub_ = nh.advertise<rm_msgs::EventData>("event_data", 1);
     dart_status_pub_ = nh.advertise<rm_msgs::DartStatus>("dart_status_data", 1);
@@ -102,7 +101,7 @@ public:
   ros::Publisher game_status_pub_;
   ros::Publisher power_heat_data_pub_;
   ros::Publisher game_robot_hp_pub_;
-  ros::Publisher current_sentry_pos_pub_;
+  ros::Publisher bullet_num_pub_;
   ros::Publisher event_data_pub_;
   ros::Publisher dart_status_pub_;
   ros::Publisher buff_pub_;

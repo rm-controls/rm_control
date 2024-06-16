@@ -94,7 +94,8 @@ typedef enum
   CLIENT_CHARACTER_CMD = 0x0110,
   SENTRY_CMD = 0x0120,
   RADAR_CMD = 0x0121,
-  CURRENT_SENTRY_POSITION_CMD = 0x0200  // send radar->sentry
+  BULLET_NUM_SHARE_CMD = 0x0200,  // send robot->aerial
+  // send radar->sentry
 } DataCmdId;
 
 typedef enum
@@ -559,11 +560,9 @@ typedef struct
 typedef struct
 {
   InteractiveDataHeader header_data;
-  float position_x;
-  float position_y;
-  float position_z;
-  float position_yaw;
-} __packed CurrentSentryPosData;
+  int8_t bullet_42_mm_num;
+  int8_t bullet_17_mm_num;
+} __packed BulletNumData;
 
 typedef struct
 {

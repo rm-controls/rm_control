@@ -334,4 +334,33 @@ private:
       right_line_y2_;
 };
 
+class FriendBulletsTimeChangeGroupUi : public TimeChangeGroupUi
+{
+public:
+  explicit FriendBulletsTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                          std::deque<Graph>* character_queue)
+    : TimeChangeGroupUi(rpc_value, base, "friend_bullets", graph_queue, character_queue)
+  {
+    if (rpc_value.hasMember("data"))
+    {
+      XmlRpc::XmlRpcValue& data = rpc_value["data"];
+      ori_x_ = static_cast<int>(data["ori_x"]);
+      ori_y_ = static_cast<int>(data["ori_y"]);
+    }
+    else
+      ROS_WARN("DroneTowardsTimeChangeGroupUi config 's member 'data' not defined.");
+
+    graph_vector_.insert(std::pair<std::string, Graph*>("hero", new Graph(rpc_value["config"], base_, id_++)));
+    graph_vector_.insert(std::pair<std::string, Graph*>("strand3", new Graph(rpc_value["config"], base_, id_++)));
+    graph_vector_.insert(std::pair<std::string, Graph*>("strand4", new Graph(rpc_value["config"], base_, id_++)));
+    graph_vector_.insert(std::pair<std::string, Graph*>("strand5", new Graph(rpc_value["config"], base_, id_++)));
+  };
+  void updateBulletsData(const rm_referee::BulletNumData& data);
+
+private:
+  void updateConfig() override;
+  int ori_x_, ori_y_;
+  int hero_bullets_, standard3_bullets_, standard4_bullets_, standard5_bullets_;
+};
+
 }  // namespace rm_referee

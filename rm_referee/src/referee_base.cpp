@@ -36,8 +36,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::MapSentryData>("/map_sentry_data", 10, &RefereeBase::mapSentryCallback, this);
   RefereeBase::radar_receive_sub_ =
       nh.subscribe<rm_msgs::ClientMapReceiveData>("/rm_radar", 10, &RefereeBase::radarReceiveCallback, this);
-  RefereeBase::radar_to_sentry_sub_ = nh.subscribe<rm_msgs::CurrentSentryPosData>(
-      "/radar_to_sentry", 10, &RefereeBase::sendCurrentSentryCallback, this);
   RefereeBase::sentry_cmd_sub_ =
       nh.subscribe<rm_msgs::SentryInfo>("/sentry_cmd", 1, &RefereeBase::sendSentryCmdCallback, this);
   RefereeBase::radar_cmd_sub_ =
@@ -126,6 +124,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "drone_towards")
         drone_towards_time_change_group_ui_ =
             new DroneTowardsTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "friend_bullets")
+        friend_bullets_time_change_group_ui_ =
+            new FriendBulletsTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -151,9 +152,11 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     for (int i = 0; i < rpc_value.size(); i++)
     {
       if (rpc_value[i]["name"] == "enemy_hero_state")
-        enemy_hero_state_sender_ = new InteractiveSender(rpc_value[i], base_);
+        enemy_hero_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "sentry_state")
-        sentry_state_sender_ = new InteractiveSender(rpc_value[i], base_);
+        sentry_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == " bullet_num_share")
+        bullet_num_share_ = new BulletNumShare(rpc_value[i], base_);
     }
   }
 
@@ -232,6 +235,8 @@ void RefereeBase::addUi()
   }
   if (target_distance_time_change_ui_)
     target_distance_time_change_ui_->addForQueue();
+  if (friend_bullets_time_change_group_ui_)
+    friend_bullets_time_change_group_ui_->addForQueue();
   add_ui_times_++;
 }
 
@@ -257,7 +262,10 @@ void RefereeBase::sendSerialDataCallback()
       while (character_queue_.size() > 8)
         character_queue_.pop_front();
     }
-    sendQueue();
+    if (bullet_num_share_)
+      bullet_num_share_->sendBulletData();
+    else
+      sendQueue();
   }
   else
     sendQueue();
@@ -313,25 +321,25 @@ void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, 
 void RefereeBase::updateEnemyHeroState(const rm_msgs::GameRobotHp& game_robot_hp_data,
                                        const ros::Time& last_get_data_time)
 {
-  if (enemy_hero_state_sender_)
-  {
-    std::wstring data;
-    if (base_.robot_id_ < 100)
-    {
-      if (game_robot_hp_data.blue_1_robot_hp > 0)
-        data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.blue_1_robot_hp);
-      else
-        data = L"敌方英雄死亡";
-    }
-    else if (base_.robot_id_ >= 100)
-    {
-      if (game_robot_hp_data.red_1_robot_hp > 0)
-        data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.red_1_robot_hp);
-      else
-        data = L"敌方英雄死亡";
-    }
-    enemy_hero_state_sender_->sendCustomInfoData(data);
-  }
+  //  if (enemy_hero_state_sender_)
+  //  {
+  //    std::wstring data;
+  //    if (base_.robot_id_ < 100)
+  //    {
+  //      if (game_robot_hp_data.blue_1_robot_hp > 0)
+  //        data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.blue_1_robot_hp);
+  //      else
+  //        data = L"敌方英雄死亡";
+  //    }
+  //    else if (base_.robot_id_ >= 100)
+  //    {
+  //      if (game_robot_hp_data.red_1_robot_hp > 0)
+  //        data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.red_1_robot_hp);
+  //      else
+  //        data = L"敌方英雄死亡";
+  //    }
+  //    enemy_hero_state_sender_->sendCustomInfoData(data);
+  //  }
 }
 
 void RefereeBase::updateHeroHitDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data)
@@ -361,6 +369,8 @@ void RefereeBase::bulletRemainDataCallBack(const rm_msgs::BulletAllowance& bulle
 {
   if (bullet_time_change_ui_ && !is_adding_)
     bullet_time_change_ui_->updateBulletData(bullet_allowance, last_get_data_time);
+  if (bullet_num_share_ && !is_adding_)
+    bullet_num_share_->updateBulletRemainData(bullet_allowance);
 }
 void RefereeBase::interactiveDataCallBack(const rm_referee::InteractiveData& data, const ros::Time& last_get_data_time)
 {
@@ -516,11 +526,6 @@ void RefereeBase::mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data)
     sentry_interactive_data_last_send_ = ros::Time::now();
   }
 }
-
-void RefereeBase::sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data)
-{
-  interactive_data_sender_->sendCurrentSentryData(data);
-}
 void RefereeBase::sendSentryCmdCallback(const rm_msgs::SentryInfoConstPtr& data)
 {
   if (ros::Time::now() - sentry_cmd_data_last_send_ <= ros::Duration(0.15))
@@ -569,6 +574,12 @@ void RefereeBase::shootCmdCallBack(const rm_msgs::ShootCmdConstPtr& data)
 {
   if (friction_speed_trigger_change_ui_ && !is_adding_)
     friction_speed_trigger_change_ui_->updateFrictionSpeedUiData(data);
+}
+
+void RefereeBase::updateBulletRemainData(const rm_referee::BulletNumData& data)
+{
+  if (friend_bullets_time_change_group_ui_ && !is_adding_)
+    friend_bullets_time_change_group_ui_->updateBulletsData(data);
 }
 
 }  // namespace rm_referee
