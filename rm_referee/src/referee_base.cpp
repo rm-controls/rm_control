@@ -262,7 +262,7 @@ void RefereeBase::sendSerialDataCallback()
       while (character_queue_.size() > 8)
         character_queue_.pop_front();
     }
-    if (bullet_num_share_)
+    if (bullet_num_share_ && ros::Time::now() - bullet_num_share_->last_send_time_ > bullet_num_share_->getDelayTime())
       bullet_num_share_->sendBulletData();
     else
       sendQueue();

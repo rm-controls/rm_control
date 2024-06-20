@@ -11,7 +11,7 @@ void InteractiveSender::sendInteractiveData(int data_cmd_id, int receiver_id, un
   uint8_t tx_data[sizeof(InteractiveData)] = { 0 };
   auto student_interactive_data = (InteractiveData*)tx_data;
 
-  for (int i = 0; i < 128; i++)
+  for (int i = 0; i < 127; i++)
     tx_buffer_[i] = 0;
   student_interactive_data->header_data.data_cmd_id = data_cmd_id;
   student_interactive_data->header_data.sender_id = base_.robot_id_;
@@ -28,7 +28,7 @@ void InteractiveSender::sendMapSentryData(const rm_referee::MapSentryData& data)
   uint8_t tx_data[sizeof(rm_referee::MapSentryData)] = { 0 };
   auto map_sentry_data = (rm_referee::MapSentryData*)tx_data;
 
-  for (int i = 0; i < 128; i++)
+  for (int i = 0; i < 127; i++)
     tx_buffer_[i] = 0;
   map_sentry_data->intention = data.intention;
   map_sentry_data->start_position_x = data.start_position_x;
@@ -90,7 +90,7 @@ void InteractiveSender::sendRadarInteractiveData(const rm_referee::ClientMapRece
   uint8_t tx_data[sizeof(rm_referee::ClientMapReceiveData)] = { 0 };
   auto radar_interactive_data = (rm_referee::ClientMapReceiveData*)tx_data;
 
-  for (int i = 0; i < 128; i++)
+  for (int i = 0; i < 127; i++)
     tx_buffer_[i] = 0;
   radar_interactive_data->target_robot_ID = data.target_robot_ID;
   radar_interactive_data->target_position_x = data.target_position_x;
@@ -138,14 +138,17 @@ void InteractiveSender::sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data)
   sendSerial(ros::Time::now(), data_len);
 }
 
+ros::Duration InteractiveSender::getDelayTime()
+{
+  return delay_;
+}
+
 void BulletNumShare::sendBulletData()
 {
-  if (ros::Time::now() - last_send_time_ < ros::Duration(delay_))
-    return;
   uint8_t tx_data[sizeof(BulletNumData)] = { 0 };
   auto bullet_num_data = (BulletNumData*)tx_data;
 
-  for (int i = 0; i < 128; i++)
+  for (int i = 0; i < 127; i++)
     tx_buffer_[i] = 0;
   bullet_num_data->header_data.data_cmd_id = rm_referee::DataCmdId::BULLET_NUM_SHARE_CMD;
   bullet_num_data->header_data.sender_id = base_.robot_id_;

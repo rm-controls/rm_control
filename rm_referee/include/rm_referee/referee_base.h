@@ -135,6 +135,7 @@ public:
   GroupUiBase* graph_queue_sender_{};
   std::deque<Graph> graph_queue_;
   std::deque<Graph> character_queue_;
+  //  std::deque<std::tuple<>> interactive_data_queue_;
 
   ros::Time radar_interactive_data_last_send_;
   ros::Time sentry_interactive_data_last_send_;

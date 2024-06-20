@@ -336,14 +336,6 @@ void FixedUi::updateForQueue()
   }
 }
 
-void UiBase::transferInt(const int data)
-{
-  int a = data & 1023;
-  int b = data >> 10;
-  graph_->setRadius(a);
-  graph_->setEndX(b);
-}
-
 void UiBase::pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const
 {
   memset(tx_buffer, 0, k_frame_length_);
@@ -373,7 +365,7 @@ void UiBase::sendSerial(const ros::Time& time, int data_len)
 
 void UiBase::clearTxBuffer()
 {
-  for (int i = 0; i < 128; i++)
+  for (int i = 0; i < 127; i++)
     tx_buffer_[i] = 0;
   tx_len_ = 0;
 }

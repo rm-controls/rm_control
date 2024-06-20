@@ -41,7 +41,6 @@ public:
 
   void sendCharacter(const ros::Time& time, Graph* graph);
   void sendSingleGraph(const ros::Time& time, Graph* graph);
-  void transferInt(const int data);
 
   void sendSerial(const ros::Time& time, int data_len);
   void clearTxBuffer();
@@ -52,7 +51,7 @@ public:
   void display(const ros::Time& time, bool state, bool once = false);
   void pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const;
 
-  uint8_t tx_buffer_[128];
+  uint8_t tx_buffer_[127];
   int tx_len_;
 
 protected:

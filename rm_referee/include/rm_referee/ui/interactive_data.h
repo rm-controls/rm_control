@@ -20,6 +20,7 @@ public:
   void sendMapSentryData(const rm_referee::MapSentryData& data);
   void sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& data);
   void sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data);
+  ros::Duration getDelayTime();
 };
 
 class CustomInfoSender : public InteractiveSender
@@ -42,7 +43,6 @@ public:
     : InteractiveSender(rpc_value, base, graph_queue, character_queue){};
   void sendBulletData();
   void updateBulletRemainData(const rm_msgs::BulletAllowance& data);
-
   ros::Time last_send_time_;
   int bullet_42_mm_num_, bullet_17_mm_num_;
 };

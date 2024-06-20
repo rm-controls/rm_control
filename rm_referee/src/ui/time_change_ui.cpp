@@ -350,7 +350,7 @@ void BulletTimeChangeUi::updateConfig()
   std::string bullet_allowance_num;
   if (base_.robot_id_ == RED_HERO || base_.robot_id_ == BLUE_HERO)
   {
-    graph_->setRadius(bullet_num_42_mm_);
+    graph_->setIntNum(bullet_num_42_mm_);
     if (bullet_allowance_num_42_mm_ > 5)
       graph_->setColor(rm_referee::GraphColor::GREEN);
     else if (bullet_allowance_num_42_mm_ < 3)
@@ -360,7 +360,7 @@ void BulletTimeChangeUi::updateConfig()
   }
   else
   {
-    graph_->setRadius(bullet_num_17_mm_);  // TODO:need use uint32, now only < 1024
+    graph_->setIntNum(bullet_num_17_mm_);
     if (bullet_allowance_num_17_mm_ > 50)
       graph_->setColor(rm_referee::GraphColor::GREEN);
     else if (bullet_allowance_num_17_mm_ < 10)
@@ -397,7 +397,7 @@ void TargetDistanceTimeChangeUi::updateTargetDistanceData(const rm_msgs::TrackDa
 
 void TargetDistanceTimeChangeUi::updateConfig()
 {
-  UiBase::transferInt(std::floor(target_distance_ * 1000));
+  graph_->setFloatNum(target_distance_);
 }
 
 void DroneTowardsTimeChangeGroupUi::updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data)
@@ -456,6 +456,21 @@ void FriendBulletsTimeChangeGroupUi::updateBulletsData(const rm_referee::BulletN
   else if (data.header_data.sender_id == rm_referee::RobotId::RED_STANDARD_5 ||
            data.header_data.sender_id == rm_referee::RobotId::BLUE_STANDARD_5)
     standard5_bullets_ = data.bullet_17_mm_num;
+  updateForQueue();
 }
 
+void FriendBulletsTimeChangeGroupUi::updateConfig()
+{
+  for (auto it : graph_vector_)
+  {
+    if (it.first == "hero")
+      it.second->setIntNum(hero_bullets_);
+    else if (it.first == "standard3")
+      it.second->setIntNum(standard3_bullets_);
+    else if (it.first == "standard4")
+      it.second->setIntNum(standard4_bullets_);
+    else if (it.first == "standard5")
+      it.second->setIntNum(standard5_bullets_);
+  }
+}
 }  // namespace rm_referee
