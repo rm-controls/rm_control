@@ -62,6 +62,7 @@ public:
   virtual void sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data);
   virtual void sendSentryStateCallback(const std_msgs::StringConstPtr& data);
   virtual void dronePoseCallBack(const geometry_msgs::PoseStampedConstPtr& data);
+  virtual void shootCmdCallBack(const rm_msgs::ShootCmdConstPtr& data);
 
   // send  ui
   void sendSerialDataCallback();
@@ -90,6 +91,7 @@ public:
   ros::Subscriber radar_cmd_sub_;
   ros::Subscriber sentry_state_sub_;
   ros::Subscriber drone_pose_sub_;
+  ros::Subscriber shoot_cmd_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
@@ -97,6 +99,7 @@ public:
   TargetTriggerChangeUi* target_trigger_change_ui_{};
   TargetViewAngleTriggerChangeUi* target_view_angle_trigger_change_ui_{};
   CameraTriggerChangeUi* camera_trigger_change_ui_{};
+  FrictionSpeedTriggerChangeUi* friction_speed_trigger_change_ui_{};
 
   BulletTimeChangeUi* bullet_time_change_ui_{};
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
