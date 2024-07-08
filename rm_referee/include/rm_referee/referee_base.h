@@ -126,6 +126,7 @@ public:
   SpinFlashUi* spin_flash_ui_{};
   HeroHitFlashUi* hero_hit_flash_ui_{};
   ExceedBulletSpeedFlashUi* exceed_bullet_speed_flash_ui_{};
+  EngineerActionFlashUi* engineer_action_flash_ui_{};
 
   InteractiveSender* interactive_data_sender_{};
   CustomInfoSender* enemy_hero_state_sender_{};

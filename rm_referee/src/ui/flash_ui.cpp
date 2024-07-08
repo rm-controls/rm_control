@@ -35,6 +35,50 @@ void FlashUi::updateFlashUiForQueue(const ros::Time& time, bool state, bool once
   UiBase::updateForQueue();
 }
 
+void FlashGroupUi::updateFlashUiForQueue(const ros::Time& time, bool state, bool once, Graph* graph)
+{
+    if (once)
+    {
+        if (state)
+            graph->setOperation(rm_referee::GraphOperation::ADD);
+        else
+            graph->setOperation(rm_referee::GraphOperation::DELETE);
+    }
+    else if (time - last_send_ > delay_)
+    {
+        ROS_INFO("%f  %.3f", last_send_.toSec(), delay_.toSec());
+        if (state)
+            graph->setOperation(rm_referee::GraphOperation::ADD);
+        else
+            graph->setOperation(rm_referee::GraphOperation::DELETE);
+    }
+    if (graph->isRepeated())
+        return;
+    graph->updateLastConfig();
+    last_send_ = time;
+    if (graph->isString())
+        character_queue_->push_back(*graph);
+    else
+        graph_queue_->push_back(*graph);
+}
+
+void EngineerActionFlashUi::updateEngineerUiCmdData(const rm_msgs::EngineerUi::ConstPtr data, const ros::Time &last_get_data_time)
+{
+    symbol_ = data->symbol;
+    display(last_get_data_time);
+}
+
+void EngineerActionFlashUi::display(const ros::Time &time)
+{
+    for (auto graph : graph_vector_)
+    {
+        bool state = false;
+        if (std::to_string(static_cast<int>(symbol_)) == graph.first)
+            state = true;
+        FlashGroupUi::updateFlashUiForQueue(time, state, true, graph.second);
+    }
+}
+
 void CoverFlashUi::display(const ros::Time& time)
 {
   if (!cover_state_)

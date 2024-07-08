@@ -144,6 +144,10 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "exceed_bullet_speed")
         exceed_bullet_speed_flash_ui_ =
             new ExceedBulletSpeedFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "engineer_action")
+          engineer_action_flash_ui_ =
+                    new EngineerActionFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+
     }
   }
   if (nh.hasParam("interactive_data"))
@@ -457,6 +461,8 @@ void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& da
     stone_num_trigger_change_ui_->updateStringUiData(std::to_string(data->stone_num));
   if (servo_mode_trigger_change_ui_ && !is_adding_)
     servo_mode_trigger_change_ui_->updateStringUiData(data->control_mode);
+  if(engineer_action_flash_ui_ && !is_adding_)
+      engineer_action_flash_ui_->updateEngineerUiCmdData(data,ros::Time::now());
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
