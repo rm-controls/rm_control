@@ -48,8 +48,8 @@ void InteractiveSender::sendMapSentryData(const rm_referee::MapSentryData& data)
   }
   catch (serial::PortNotOpenedException& e)
   {
+    ROS_ERROR_STREAM(e.what());
   }
-
   clearTxBuffer();
 }
 
@@ -104,6 +104,7 @@ void InteractiveSender::sendRadarInteractiveData(const rm_referee::ClientMapRece
   }
   catch (serial::PortNotOpenedException& e)
   {
+    ROS_ERROR_STREAM(e.what());
   }
   clearTxBuffer();
 }
@@ -145,6 +146,13 @@ ros::Duration InteractiveSender::getDelayTime()
 
 void BulletNumShare::sendBulletData()
 {
+  uint16_t receiver_id;
+  if (base_.robot_color_ == "red")
+    receiver_id = RED_HERO;
+  else
+    receiver_id = BLUE_HERO;
+  receiver_id += (4 - (count_receive_time_ % 3));
+
   uint8_t tx_data[sizeof(BulletNumData)] = { 0 };
   auto bullet_num_data = (BulletNumData*)tx_data;
 
@@ -152,17 +160,14 @@ void BulletNumShare::sendBulletData()
     tx_buffer_[i] = 0;
   bullet_num_data->header_data.data_cmd_id = rm_referee::DataCmdId::BULLET_NUM_SHARE_CMD;
   bullet_num_data->header_data.sender_id = base_.robot_id_;
-  if (base_.robot_color_ == "red")
-    bullet_num_data->header_data.receiver_id = RED_AERIAL;
-  else
-    bullet_num_data->header_data.receiver_id = BLUE_AERIAL;
-
+  bullet_num_data->header_data.receiver_id = receiver_id;
   bullet_num_data->bullet_42_mm_num = bullet_42_mm_num_;
   bullet_num_data->bullet_17_mm_num = bullet_17_mm_num_;
-  pack(tx_buffer_, tx_data, RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(InteractiveData));
-  tx_len_ = k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(InteractiveData) + k_tail_length_);
-  sendSerial(ros::Time::now(), sizeof(InteractiveData));
+  pack(tx_buffer_, tx_data, RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(BulletNumData));
+  tx_len_ = k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(BulletNumData) + k_tail_length_);
+  sendSerial(ros::Time::now(), sizeof(BulletNumData));
   last_send_time_ = ros::Time::now();
+  count_receive_time_++;
 }
 
 void BulletNumShare::updateBulletRemainData(const rm_msgs::BulletAllowance& data)

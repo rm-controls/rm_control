@@ -157,6 +157,10 @@ void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::C
 
 void RotationTimeChangeUi::updateConfig()
 {
+  if (chassis_mode_ != rm_msgs::ChassisCmd::RAW)
+    graph_->setColor(rm_referee::GraphColor::PINK);
+  else
+    graph_->setColor(rm_referee::GraphColor::GREEN);
   if (!tf_buffer_.canTransform(gimbal_reference_frame_, chassis_reference_frame_, ros::Time(0)))
     return;
   try
@@ -177,6 +181,11 @@ void RotationTimeChangeUi::updateConfig()
   {
     ROS_WARN("%s", ex.what());
   }
+}
+
+void RotationTimeChangeUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data)
+{
+  chassis_mode_ = data->mode;
 }
 
 void LaneLineTimeChangeGroupUi::updateConfig()

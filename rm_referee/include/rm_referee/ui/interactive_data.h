@@ -44,7 +44,7 @@ public:
   void sendBulletData();
   void updateBulletRemainData(const rm_msgs::BulletAllowance& data);
   ros::Time last_send_time_;
-  int bullet_42_mm_num_, bullet_17_mm_num_;
+  int bullet_42_mm_num_, bullet_17_mm_num_, count_receive_time_;
 };
 
 }  // namespace rm_referee

@@ -155,7 +155,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         enemy_hero_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "sentry_state")
         sentry_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
-      if (rpc_value[i]["name"] == " bullet_num_share")
+      if (rpc_value[i]["name"] == "bullet_num_share")
         bullet_num_share_ = new BulletNumShare(rpc_value[i], base_);
     }
   }
@@ -424,6 +424,8 @@ void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& da
     chassis_trigger_change_ui_->updateChassisCmdData(data);
   if (spin_flash_ui_ && !is_adding_)
     spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
+  if (rotation_time_change_ui_ && !is_adding_)
+    rotation_time_change_ui_->updateChassisCmdData(data);
 }
 void RefereeBase::vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data)
 {

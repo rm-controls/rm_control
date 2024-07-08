@@ -560,8 +560,8 @@ typedef struct
 typedef struct
 {
   InteractiveDataHeader header_data;
-  int8_t bullet_42_mm_num;
-  int8_t bullet_17_mm_num;
+  uint8_t bullet_42_mm_num;
+  uint8_t bullet_17_mm_num;
 } __packed BulletNumData;
 
 typedef struct
