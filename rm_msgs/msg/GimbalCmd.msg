@@ -1,6 +1,7 @@
 uint8 RATE = 0
 uint8 TRACK = 1
 uint8 DIRECT = 2
+uint8 TRAJ = 3
 
 time stamp
 uint8 mode
@@ -14,3 +15,7 @@ float64 accel_pitch
 # TRACK/DIRECT
 float64 bullet_speed
 geometry_msgs/PointStamped target_pos
+
+#TRAJ
+float64 yaw_des
+float64 pitch_des
