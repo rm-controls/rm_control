@@ -82,7 +82,6 @@
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
 #include <rm_msgs/SentryDeviate.h>
-#include <rm_msgs/BulletNumShare.h>
 #include <rm_msgs/GameRobotPosData.h>
 #include "rm_msgs/SentryInfo.h"
 #include "rm_msgs/RadarInfo.h"
