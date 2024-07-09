@@ -23,6 +23,11 @@ void InteractiveSender::sendInteractiveData(int data_cmd_id, int receiver_id, un
   sendSerial(ros::Time::now(), sizeof(InteractiveData));
 }
 
+bool InteractiveSender::needSendInteractiveData()
+{
+  return ros::Time::now() - last_send_time_ > delay_;
+}
+
 void InteractiveSender::sendMapSentryData(const rm_referee::MapSentryData& data)
 {
   uint8_t tx_data[sizeof(rm_referee::MapSentryData)] = { 0 };
@@ -139,11 +144,6 @@ void InteractiveSender::sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data)
   sendSerial(ros::Time::now(), data_len);
 }
 
-ros::Duration InteractiveSender::getDelayTime()
-{
-  return delay_;
-}
-
 void BulletNumShare::sendBulletData()
 {
   uint16_t receiver_id;
@@ -176,6 +176,37 @@ void BulletNumShare::updateBulletRemainData(const rm_msgs::BulletAllowance& data
     return;
   bullet_17_mm_num_ = data.bullet_allowance_num_17_mm;
   bullet_42_mm_num_ = data.bullet_allowance_num_42_mm;
+}
+
+void SentryToRadar::updateSentryAttackingTargetData(const rm_msgs::SentryAttackingTargetConstPtr& data)
+{
+  target_position_x_ = data->target_position_x;
+  target_position_y_ = data->target_position_y;
+  last_get_data_time_ = ros::Time::now();
+}
+
+void SentryToRadar::sendSentryToRadarData()
+{
+  uint8_t tx_data[sizeof(SentryAttackingTargetData)] = { 0 };
+  auto sentry_attacking_target_data = (SentryAttackingTargetData*)tx_data;
+
+  for (int i = 0; i < 127; i++)
+    tx_buffer_[i] = 0;
+  sentry_attacking_target_data->header_data.data_cmd_id = rm_referee::DataCmdId::SENTRY_TO_RADAR_CMD;
+  sentry_attacking_target_data->header_data.sender_id = base_.robot_id_;
+  if (base_.robot_color_ == "red")
+    sentry_attacking_target_data->header_data.receiver_id = RED_RADAR;
+  else
+    sentry_attacking_target_data->header_data.receiver_id = BLUE_RADAR;
+  pack(tx_buffer_, tx_data, RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(SentryAttackingTargetData));
+  tx_len_ = k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(SentryAttackingTargetData) + k_tail_length_);
+  sendSerial(ros::Time::now(), sizeof(SentryAttackingTargetData));
+  last_send_time_ = ros::Time::now();
+}
+
+bool SentryToRadar::needSendInteractiveData()
+{
+  return InteractiveSender::needSendInteractiveData() && ros::Time::now() - last_get_data_time_ < ros::Duration(0.5);
 }
 
 }  // namespace rm_referee

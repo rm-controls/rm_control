@@ -95,6 +95,7 @@ typedef enum
   SENTRY_CMD = 0x0120,
   RADAR_CMD = 0x0121,
   BULLET_NUM_SHARE_CMD = 0x0200,  // send robot->aerial
+  SENTRY_TO_RADAR_CMD = 0x0201    // send sentry->radar
   // send radar->sentry
 } DataCmdId;
 
@@ -283,7 +284,19 @@ typedef struct
 
 typedef struct
 {
-  uint32_t event_type;
+  uint8_t forward_supply_station_state : 1;
+  uint8_t inside_supply_station_state : 1;
+  uint8_t supplier_zone_state : 1;
+  uint8_t power_rune_activation_point_state : 1;
+  uint8_t small_power_rune_state : 1;
+  uint8_t large_power_rune_state : 1;
+  uint8_t ring_elevated_ground_state : 2;
+  uint8_t r3_state : 2;
+  uint8_t r4_state : 2;
+  uint8_t base_shield_value : 7;
+  uint16_t be_hit_time : 9;
+  uint8_t be_hit_target : 2;
+  uint8_t central_point_state : 2;
 } __packed EventData;
 
 typedef struct
@@ -372,7 +385,27 @@ typedef struct
 
 typedef struct
 {
-  uint32_t rfid_status;
+  uint8_t base_buff_point_state : 1;
+  uint8_t own_ring_elevated_ground_state : 1;
+  uint8_t enemy_ring_elevated_ground_state : 1;
+  uint8_t own_r3_state : 1;
+  uint8_t enemy_r3_state : 1;
+  uint8_t own_r4_state : 1;
+  uint8_t enemy_r4_state : 1;
+  uint8_t power_rune_activation_point_state : 1;
+  uint8_t forward_own_launch_ramp_buff_point_state : 1;
+  uint8_t behind_own_launch_ramp_buff_point_state : 1;
+  uint8_t forward_enemy_launch_ramp_buff_point_state : 1;
+  uint8_t behind_enemy_launch_ramp_buff_point_state : 1;
+  uint8_t own_outpost_buff_point : 1;
+  uint8_t own_side_restoration_zone : 1;
+  uint8_t own_sentry_patrol_zones : 1;
+  uint8_t enemy_sentry_patrol_zones : 1;
+  uint8_t own_large_resource_island_point : 1;
+  uint8_t enemy_large_resource_island_point : 1;
+  uint8_t own_exchange_zone : 1;
+  uint8_t central_buff_point : 1;
+  uint32_t reverse : 12;
 } __packed RfidStatus;
 
 typedef struct
@@ -535,6 +568,14 @@ typedef struct
   float target_position_x;
   float target_position_y;
 } __packed ClientMapReceiveData;
+
+typedef struct
+{
+  InteractiveDataHeader header_data;
+  uint8_t target_robot_ID;
+  float target_position_x;
+  float target_position_y;
+} __packed SentryAttackingTargetData;
 
 typedef struct
 {

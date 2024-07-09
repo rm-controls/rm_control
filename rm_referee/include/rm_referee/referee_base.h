@@ -58,7 +58,7 @@ public:
   virtual void balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data);
   virtual void radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data);
   virtual void mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data);
-  virtual void sentryDeviateCallback(const rm_msgs::SentryDeviateConstPtr& data);
+  virtual void sentryAttackingTargetCallback(const rm_msgs::SentryAttackingTargetConstPtr& data);
   virtual void sendSentryCmdCallback(const rm_msgs::SentryInfoConstPtr& data);
   virtual void sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data);
   virtual void sendSentryStateCallback(const std_msgs::StringConstPtr& data);
@@ -87,6 +87,7 @@ public:
   ros::Subscriber balance_state_sub_;
   ros::Subscriber radar_receive_sub_;
   ros::Subscriber map_sentry_sub_;
+  ros::Subscriber sentry_to_radar_sub_;
   ros::Subscriber radar_to_sentry_sub_;
   ros::Subscriber sentry_cmd_sub_;
   ros::Subscriber radar_cmd_sub_;
@@ -132,6 +133,7 @@ public:
   CustomInfoSender* enemy_hero_state_sender_{};
   CustomInfoSender* sentry_state_sender_{};
   BulletNumShare* bullet_num_share_{};
+  SentryToRadar* sentry_to_radar_{};
 
   GroupUiBase* graph_queue_sender_{};
   std::deque<Graph> graph_queue_;

@@ -20,7 +20,8 @@ public:
   void sendMapSentryData(const rm_referee::MapSentryData& data);
   void sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& data);
   void sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data);
-  ros::Duration getDelayTime();
+  virtual bool needSendInteractiveData();
+  ros::Time last_send_time_;
 };
 
 class CustomInfoSender : public InteractiveSender
@@ -43,8 +44,20 @@ public:
     : InteractiveSender(rpc_value, base, graph_queue, character_queue){};
   void sendBulletData();
   void updateBulletRemainData(const rm_msgs::BulletAllowance& data);
-  ros::Time last_send_time_;
   int bullet_42_mm_num_, bullet_17_mm_num_, count_receive_time_;
+};
+
+class SentryToRadar : public InteractiveSender
+{
+public:
+  explicit SentryToRadar(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue = nullptr,
+                         std::deque<Graph>* character_queue = nullptr)
+    : InteractiveSender(rpc_value, base, graph_queue, character_queue){};
+  void updateSentryAttackingTargetData(const rm_msgs::SentryAttackingTargetConstPtr& data);
+  bool needSendInteractiveData() override;
+  void sendSentryToRadarData();
+  ros::Time last_get_data_time_;
+  float target_position_x_, target_position_y_;
 };
 
 }  // namespace rm_referee
