@@ -147,9 +147,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         exceed_bullet_speed_flash_ui_ =
             new ExceedBulletSpeedFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "engineer_action")
-          engineer_action_flash_ui_ =
-                    new EngineerActionFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
-
+        engineer_action_flash_ui_ = new EngineerActionFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
   }
   if (nh.hasParam("interactive_data"))
@@ -158,13 +156,13 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     for (int i = 0; i < rpc_value.size(); i++)
     {
       if (rpc_value[i]["name"] == "enemy_hero_state")
-          enemy_hero_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
+        enemy_hero_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "sentry_state")
-          sentry_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
+        sentry_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "bullet_num_share")
-          bullet_num_share_ = new BulletNumShare(rpc_value[i], base_);
+        bullet_num_share_ = new BulletNumShare(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "sentry_to_radar")
-          sentry_to_radar_ = new SentryToRadar(rpc_value[i], base_);
+        sentry_to_radar_ = new SentryToRadar(rpc_value[i], base_);
     }
   }
 
@@ -467,8 +465,8 @@ void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& da
     stone_num_trigger_change_ui_->updateStringUiData(std::to_string(data->stone_num));
   if (servo_mode_trigger_change_ui_ && !is_adding_)
     servo_mode_trigger_change_ui_->updateStringUiData(data->control_mode);
-  if(engineer_action_flash_ui_ && !is_adding_)
-      engineer_action_flash_ui_->updateEngineerUiCmdData(data,ros::Time::now());
+  if (engineer_action_flash_ui_ && !is_adding_)
+    engineer_action_flash_ui_->updateEngineerUiCmdData(data, ros::Time::now());
 }
 void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& data)
 {
