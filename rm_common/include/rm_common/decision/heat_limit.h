@@ -42,6 +42,7 @@
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/LocalHeatState.h>
+#include <std_msgs/Float64.h>
 
 namespace rm_common
 {
@@ -105,10 +106,10 @@ public:
     }
     if ((ros::Time::now() - last_time_).toSec() > 0.1 && shooter_local_cooling_heat_ > 0.0)
     {
-      last_time_ = ros::Time::now();
       shooter_local_cooling_heat_ -= shooter_cooling_rate_ / 10.0;
       if (shooter_local_cooling_heat_ < 0.0)
         shooter_local_cooling_heat_ = 0.0;
+      last_time_ = ros::Time::now();
     }
     local_heat_.data = shooter_local_cooling_heat_;
     heat_pub_.publish(local_heat_);
