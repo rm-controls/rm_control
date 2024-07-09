@@ -208,5 +208,4 @@ bool SentryToRadar::needSendInteractiveData()
 {
   return InteractiveSender::needSendInteractiveData() && ros::Time::now() - last_get_data_time_ < ros::Duration(0.5);
 }
-
 }  // namespace rm_referee
