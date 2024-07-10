@@ -12,6 +12,7 @@
 #include "rm_referee/ui/trigger_change_ui.h"
 #include "rm_referee/ui/time_change_ui.h"
 #include "rm_referee/ui/flash_ui.h"
+#include "rm_referee/ui/interactive_data.h"
 
 namespace rm_referee
 {
@@ -38,6 +39,7 @@ public:
   virtual void updateHeroHitDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data);
   virtual void supplyBulletDataCallBack(const rm_msgs::SupplyProjectileAction& data);
   virtual void updateShootDataDataCallBack(const rm_msgs::ShootData& msg);
+  virtual void updateBulletRemainData(const rm_referee::BulletNumData& data);
 
   // sub call back
   virtual void jointStateCallback(const sensor_msgs::JointState::ConstPtr& joint_state);
@@ -56,8 +58,7 @@ public:
   virtual void balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data);
   virtual void radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data);
   virtual void mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data);
-  virtual void sentryDeviateCallback(const rm_msgs::SentryDeviateConstPtr& data);
-  virtual void sendCurrentSentryCallback(const rm_msgs::CurrentSentryPosDataConstPtr& data);
+  virtual void sentryAttackingTargetCallback(const rm_msgs::SentryAttackingTargetConstPtr& data);
   virtual void sendSentryCmdCallback(const rm_msgs::SentryInfoConstPtr& data);
   virtual void sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data);
   virtual void sendSentryStateCallback(const std_msgs::StringConstPtr& data);
@@ -86,6 +87,7 @@ public:
   ros::Subscriber balance_state_sub_;
   ros::Subscriber radar_receive_sub_;
   ros::Subscriber map_sentry_sub_;
+  ros::Subscriber sentry_to_radar_sub_;
   ros::Subscriber radar_to_sentry_sub_;
   ros::Subscriber sentry_cmd_sub_;
   ros::Subscriber radar_cmd_sub_;
@@ -113,6 +115,7 @@ public:
   JointPositionTimeChangeUi *engineer_joint1_time_change_ui{}, *engineer_joint2_time_change_ui{},
       *engineer_joint3_time_change_ui{};
   TargetDistanceTimeChangeUi* target_distance_time_change_ui_{};
+  FriendBulletsTimeChangeGroupUi* friend_bullets_time_change_group_ui_{};
 
   DroneTowardsTimeChangeGroupUi* drone_towards_time_change_group_ui_{};
   StringTriggerChangeUi *servo_mode_trigger_change_ui_{}, *stone_num_trigger_change_ui_{},
@@ -127,12 +130,15 @@ public:
   EngineerActionFlashUi* engineer_action_flash_ui_{};
 
   InteractiveSender* interactive_data_sender_{};
-  InteractiveSender* enemy_hero_state_sender_{};
-  InteractiveSender* sentry_state_sender_{};
+  CustomInfoSender* enemy_hero_state_sender_{};
+  CustomInfoSender* sentry_state_sender_{};
+  BulletNumShare* bullet_num_share_{};
+  SentryToRadar* sentry_to_radar_{};
 
   GroupUiBase* graph_queue_sender_{};
   std::deque<Graph> graph_queue_;
   std::deque<Graph> character_queue_;
+  //  std::deque<std::tuple<>> interactive_data_queue_;
 
   ros::Time radar_interactive_data_last_send_;
   ros::Time sentry_interactive_data_last_send_;
