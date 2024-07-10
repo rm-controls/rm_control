@@ -354,8 +354,7 @@ public:
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
     if (!nh.getParam("gimbal_armor_error_tolerance", gimbal_armor_error_tolerance_))
       ROS_ERROR("gimbal armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("gimbal_buff_error_tolerance", gimbal_buff_error_tolerance_))
-      ROS_ERROR("gimbal buff error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
+    nh.param("gimbal_buff_error_tolerance", gimbal_buff_error_tolerance_, gimbal_armor_error_tolerance_);
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
     {
       target_acceleration_tolerance_ = 0.;
