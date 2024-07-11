@@ -307,14 +307,13 @@ public:
       msg_.rate_pitch *= eject_sensitivity_;
     }
   }
-  void setYawTraj(double scale, int cycle, int count)
+  void yawTraj(double yaw_des)
   {
-    msg_.yaw_des = scale * M_PI * count / cycle;
+    msg_.yaw_des = yaw_des;
   }
-  void setPitchTraj(double scale, int cycle, int count, double offset)
+  void pitchTraj(double pitch_des)
   {
-    msg_.pitch_des = scale * sin(2 * M_PI * count / cycle) + offset;
-    count = (count + 1) % cycle;
+    msg_.pitch_des = pitch_des;
   }
   void setZero() override
   {
