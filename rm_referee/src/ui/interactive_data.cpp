@@ -180,6 +180,7 @@ void BulletNumShare::updateBulletRemainData(const rm_msgs::BulletAllowance& data
 
 void SentryToRadar::updateSentryAttackingTargetData(const rm_msgs::SentryAttackingTargetConstPtr& data)
 {
+  robot_id_ = data->target_robot_ID;
   target_position_x_ = data->target_position_x;
   target_position_y_ = data->target_position_y;
   last_get_data_time_ = ros::Time::now();
@@ -198,6 +199,9 @@ void SentryToRadar::sendSentryToRadarData()
     sentry_attacking_target_data->header_data.receiver_id = RED_RADAR;
   else
     sentry_attacking_target_data->header_data.receiver_id = BLUE_RADAR;
+  sentry_attacking_target_data->target_robot_ID = robot_id_;
+  sentry_attacking_target_data->target_position_x = target_position_x_;
+  sentry_attacking_target_data->target_position_y = target_position_y_;
   pack(tx_buffer_, tx_data, RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(SentryAttackingTargetData));
   tx_len_ = k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(SentryAttackingTargetData) + k_tail_length_);
   sendSerial(ros::Time::now(), sizeof(SentryAttackingTargetData));
