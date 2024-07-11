@@ -352,9 +352,9 @@ public:
     nh.getParam("wheel_speed_18", wheel_speed_18_);
     nh.getParam("wheel_speed_30", wheel_speed_30_);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
-    if (!nh.getParam("gimbal_armor_error_tolerance", gimbal_armor_error_tolerance_))
-      ROS_ERROR("gimbal armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
-    nh.param("gimbal_buff_error_tolerance", gimbal_buff_error_tolerance_, gimbal_armor_error_tolerance_);
+    if (!nh.getParam("track_armor_error", track_armor_error_))
+      ROS_ERROR("track armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
+    nh.param("track_buff_error", track_buff_error_, track_armor_error_);
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
     {
       target_acceleration_tolerance_ = 0.;
@@ -406,11 +406,9 @@ public:
         return;
       }
     }
-    if (track_data_.id == 7)
-      gimbal_error_tolerance_ = gimbal_buff_error_tolerance_;
-    else
-      gimbal_error_tolerance_ = gimbal_armor_error_tolerance_;
-    if (((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
+    double gimbal_error_tolerance;
+    gimbal_error_tolerance = track_data_.id == 7 ? track_buff_error_ : track_armor_error_;
+    if (((gimbal_des_error_.error > gimbal_error_tolerance && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
          (track_data_.accel > target_acceleration_tolerance_)) ||
         (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
@@ -495,9 +493,8 @@ private:
   double speed_10_{}, speed_15_{}, speed_16_{}, speed_18_{}, speed_30_{}, speed_des_{};
   double wheel_speed_10_{}, wheel_speed_15_{}, wheel_speed_16_{}, wheel_speed_18_{}, wheel_speed_30_{},
       wheel_speed_des_{};
-  double gimbal_error_tolerance_{};
-  double gimbal_armor_error_tolerance_{};
-  double gimbal_buff_error_tolerance_{};
+  double track_armor_error_{};
+  double track_buff_error_{};
   double target_acceleration_tolerance_{};
   double extra_wheel_speed_once_{};
   double total_extra_wheel_speed_{};
