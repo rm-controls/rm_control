@@ -307,7 +307,7 @@ public:
       msg_.rate_pitch *= eject_sensitivity_;
     }
   }
-  void yawAndPitchTraj(double yaw_des, double pitch_des)
+  void setYawAndPitchTraj(double yaw_des, double pitch_des)
   {
     msg_.yaw_des = yaw_des;
     msg_.pitch_des = pitch_des;
