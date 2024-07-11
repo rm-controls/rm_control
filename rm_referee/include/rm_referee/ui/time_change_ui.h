@@ -120,11 +120,13 @@ public:
     else
       ROS_WARN("RotationTimeChangeUi config 's member 'data' not defined.");
   };
+  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data);
 
 private:
   void updateConfig() override;
   int arc_scale_;
   std::string gimbal_reference_frame_, chassis_reference_frame_;
+  uint8_t chassis_mode_;
 };
 
 class LaneLineTimeChangeGroupUi : public TimeChangeGroupUi
@@ -332,6 +334,36 @@ private:
   double angle_;
   int mid_line_x1_, mid_line_y1_, mid_line_x2_, mid_line_y2_, left_line_x2_, left_line_y2_, right_line_x2_,
       right_line_y2_;
+};
+
+class FriendBulletsTimeChangeGroupUi : public TimeChangeGroupUi
+{
+public:
+  explicit FriendBulletsTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                          std::deque<Graph>* character_queue)
+    : TimeChangeGroupUi(rpc_value, base, "friend_bullets", graph_queue, character_queue)
+  {
+    graph_vector_.insert(std::pair<std::string, Graph*>("hero", new Graph(rpc_value["config"], base_, id_++)));
+    graph_vector_.insert(std::pair<std::string, Graph*>("standard3", new Graph(rpc_value["config"], base_, id_++)));
+    graph_vector_.insert(std::pair<std::string, Graph*>("standard4", new Graph(rpc_value["config"], base_, id_++)));
+    graph_vector_.insert(std::pair<std::string, Graph*>("standard5", new Graph(rpc_value["config"], base_, id_++)));
+    int ui_start_y;
+    for (auto it = graph_vector_.begin(); it != graph_vector_.end(); ++it)
+    {
+      if (it == graph_vector_.begin())
+        ui_start_y = it->second->getConfig().start_y;
+      else
+      {
+        ui_start_y += 40;
+        it->second->setStartY(ui_start_y);
+      }
+    }
+  };
+  void updateBulletsData(const rm_referee::BulletNumData& data);
+
+private:
+  void updateConfig() override;
+  int hero_bullets_, standard3_bullets_, standard4_bullets_, standard5_bullets_;
 };
 
 }  // namespace rm_referee

@@ -445,7 +445,7 @@ void FrictionSpeedTriggerChangeUi::updateFrictionSpeedUiData(const rm_msgs::Shoo
 
 void FrictionSpeedTriggerChangeUi::update()
 {
-  graph_->setRadius(std::floor(wheel_speed_));
+  graph_->setIntNum(std::floor(wheel_speed_));
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   updateForQueue(true);
 }

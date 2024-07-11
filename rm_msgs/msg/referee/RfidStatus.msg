@@ -1,3 +1,23 @@
-uint32 rfid_status
+bool base_buff_point_state
+bool own_ring_elevated_ground_state
+bool enemy_ring_elevated_ground_state
+bool own_r3_state
+bool enemy_r3_state
+bool own_r4_state
+bool enemy_r4_state
+bool power_rune_activation_point_state
+bool forward_own_launch_ramp_buff_point_state
+bool behind_own_launch_ramp_buff_point_state
+bool forward_enemy_launch_ramp_buff_point_state
+bool behind_enemy_launch_ramp_buff_point_state
+bool own_outpost_buff_point
+bool own_side_restoration_zone
+bool own_sentry_patrol_zones
+bool enemy_sentry_patrol_zones
+bool own_large_resource_island_point
+bool enemy_large_resource_island_point
+bool own_exchange_zone
+bool central_buff_point
+uint32 reverse
 
 time stamp
