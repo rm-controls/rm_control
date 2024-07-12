@@ -842,6 +842,10 @@ public:
   {
     getBarrel()->checkError(time);
   }
+  void updateShootBeforehandCmd(const rm_msgs::ShootBeforehandCmd& data)
+  {
+    getBarrel()->updateShootBeforehandCmd(data);
+  }
   void sendCommand(const ros::Time& time)
   {
     if (checkSwitch())
