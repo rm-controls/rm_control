@@ -407,7 +407,7 @@ public:
       }
     }
     double gimbal_error_tolerance;
-    gimbal_error_tolerance = track_data_.id == 7 ? track_buff_error_ : track_armor_error_;
+    gimbal_error_tolerance = track_data_.id == 12 ? track_buff_error_ : track_armor_error_;
     if (((gimbal_des_error_.error > gimbal_error_tolerance && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
          (track_data_.accel > target_acceleration_tolerance_)) ||
         (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE))
