@@ -829,6 +829,11 @@ public:
     shooter_ID1_cmd_sender_->updateSuggestFireData(data);
     shooter_ID2_cmd_sender_->updateSuggestFireData(data);
   }
+  void updateShootBeforehandCmd(const rm_msgs::ShootBeforehandCmd& data)
+  {
+    shooter_ID1_cmd_sender_->updateShootBeforehandCmd(data);
+    shooter_ID2_cmd_sender_->updateShootBeforehandCmd(data);
+  }
 
   void setMode(int mode)
   {
