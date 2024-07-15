@@ -81,13 +81,12 @@
 #include <rm_msgs/ClientMapReceiveData.h>
 #include <rm_msgs/SupplyProjectileAction.h>
 #include <rm_msgs/IcraBuffDebuffZoneStatus.h>
-#include <rm_msgs/SentryDeviate.h>
-#include <rm_msgs/CurrentSentryPosData.h>
 #include <rm_msgs/GameRobotPosData.h>
 #include "rm_msgs/SentryInfo.h"
 #include "rm_msgs/RadarInfo.h"
 #include "rm_msgs/Buff.h"
 #include "rm_msgs/TrackData.h"
+#include "rm_msgs/SentryAttackingTarget.h"
 #include <rm_msgs/PowerManagementSampleAndStatusData.h>
 #include <rm_msgs/PowerManagementSystemExceptionData.h>
 #include <rm_msgs/PowerManagementInitializationExceptionData.h>

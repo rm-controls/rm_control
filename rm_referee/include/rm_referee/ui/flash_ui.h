@@ -22,6 +22,47 @@ public:
   void updateFlashUiForQueue(const ros::Time& time, bool state, bool once);
 };
 
+class FlashGroupUi : public GroupUiBase
+{
+public:
+  explicit FlashGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& graph_name,
+                        std::deque<Graph>* graph_queue, std::deque<Graph>* character_queue)
+    : GroupUiBase(rpc_value, base, graph_queue, character_queue)
+  {
+    graph_name_ = graph_name;
+  }
+  virtual void display(const ros::Time& time){};
+  virtual void updateConfig(){};
+  void updateFlashUiForQueue(const ros::Time& time, bool state, bool once, Graph* graph);
+
+protected:
+  std::string graph_name_;
+};
+
+class EngineerActionFlashUi : public FlashGroupUi
+{
+public:
+  explicit EngineerActionFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                 std::deque<Graph>* character_queue)
+    : FlashGroupUi(rpc_value, base, "engineer_action", graph_queue, character_queue)
+  {
+    if (rpc_value.hasMember("data"))
+    {
+      XmlRpc::XmlRpcValue& data = rpc_value["data"];
+      for (int i = 0; i < static_cast<int>(rpc_value["data"].size()); i++)
+      {
+        graph_vector_.insert(std::pair<std::string, Graph*>(std::to_string(static_cast<int>(data[i]["flag"])),
+                                                            new Graph(data[i]["config"], base_, id_++)));
+      }
+    }
+  }
+  void updateEngineerUiCmdData(const rm_msgs::EngineerUi::ConstPtr data, const ros::Time& last_get_data_time);
+
+private:
+  void display(const ros::Time& time) override;
+  uint32_t symbol_;
+};
+
 class CoverFlashUi : public FlashUi
 {
 public:

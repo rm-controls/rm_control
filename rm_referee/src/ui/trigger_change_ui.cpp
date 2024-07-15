@@ -437,4 +437,17 @@ void StringTriggerChangeUi::update()
   updateForQueue(true);
 }
 
+void FrictionSpeedTriggerChangeUi::updateFrictionSpeedUiData(const rm_msgs::ShootCmdConstPtr& data)
+{
+  wheel_speed_ = data->wheel_speed;
+  update();
+}
+
+void FrictionSpeedTriggerChangeUi::update()
+{
+  graph_->setIntNum(std::floor(wheel_speed_));
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  updateForQueue(true);
+}
+
 }  // namespace rm_referee

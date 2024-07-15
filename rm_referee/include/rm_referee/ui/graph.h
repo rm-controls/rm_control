@@ -53,6 +53,25 @@ public:
   {
     config_.radius = radius;
   }
+  void setIntNum(int num)
+  {
+    int a = num & 1023;
+    int b = (num >> 10) & 2047;
+    int c = num >> 21;
+    config_.radius = a;
+    config_.end_x = b;
+    config_.end_y = c;
+  }
+  void setFloatNum(float data)
+  {
+    int num = static_cast<int>(data * 1000);
+    int a = num & 1023;
+    int b = (num >> 10) & 2047;
+    int c = num >> 21;
+    config_.radius = a;
+    config_.end_x = b;
+    config_.end_y = c;
+  }
   void setStartX(int start_x)
   {
     config_.start_x = start_x;

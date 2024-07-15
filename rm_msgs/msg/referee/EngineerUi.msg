@@ -4,5 +4,5 @@ string ex_arm_state
 uint32 stone_num
 
 string step_queue_name
-bool symbol
+uint32 symbol
 time stamp

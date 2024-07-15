@@ -197,7 +197,19 @@ int Referee::unpack(uint8_t* rx_data)
           rm_msgs::EventData event_data;
           memcpy(&event_ref, rx_data + 7, sizeof(rm_referee::EventData));
 
-          event_data.event_data = event_ref.event_type;
+          event_data.forward_supply_station_state = event_ref.forward_supply_station_state;
+          event_data.inside_supply_station_state = event_ref.inside_supply_station_state;
+          event_data.supplier_zone_state = event_ref.supplier_zone_state;
+          event_data.power_rune_activation_point_state = event_ref.power_rune_activation_point_state;
+          event_data.small_power_rune_state = event_ref.small_power_rune_state;
+          event_data.large_power_rune_state = event_ref.small_power_rune_state;
+          event_data.ring_elevated_ground_state = event_ref.ring_elevated_ground_state;
+          event_data.r3_state = event_ref.r3_state;
+          event_data.r4_state = event_ref.r4_state;
+          event_data.base_shield_value = event_ref.base_shield_value;
+          event_data.be_hit_time = event_ref.be_hit_time;
+          event_data.be_hit_target = event_ref.be_hit_target;
+          event_data.central_point_state = event_ref.central_point_state;
           event_data.stamp = last_get_data_time_;
 
           event_data_pub_.publish(event_data);
@@ -357,7 +369,31 @@ int Referee::unpack(uint8_t* rx_data)
           rm_msgs::RfidStatus rfid_status_data;
           memcpy(&rfid_status_ref, rx_data + 7, sizeof(rm_referee::RfidStatus));
 
-          rfid_status_data.rfid_status = rfid_status_ref.rfid_status;
+          rfid_status_data.base_buff_point_state = rfid_status_ref.base_buff_point_state;
+          rfid_status_data.own_ring_elevated_ground_state = rfid_status_ref.own_ring_elevated_ground_state;
+          rfid_status_data.enemy_ring_elevated_ground_state = rfid_status_ref.enemy_ring_elevated_ground_state;
+          rfid_status_data.own_r3_state = rfid_status_ref.own_r3_state;
+          rfid_status_data.enemy_r3_state = rfid_status_ref.enemy_r3_state;
+          rfid_status_data.own_r4_state = rfid_status_ref.own_r4_state;
+          rfid_status_data.enemy_r4_state = rfid_status_ref.enemy_r4_state;
+          rfid_status_data.power_rune_activation_point_state = rfid_status_ref.power_rune_activation_point_state;
+          rfid_status_data.forward_own_launch_ramp_buff_point_state =
+              rfid_status_ref.forward_own_launch_ramp_buff_point_state;
+          rfid_status_data.behind_own_launch_ramp_buff_point_state =
+              rfid_status_ref.behind_own_launch_ramp_buff_point_state;
+          rfid_status_data.forward_enemy_launch_ramp_buff_point_state =
+              rfid_status_ref.forward_enemy_launch_ramp_buff_point_state;
+          rfid_status_data.behind_enemy_launch_ramp_buff_point_state =
+              rfid_status_ref.behind_enemy_launch_ramp_buff_point_state;
+          rfid_status_data.own_outpost_buff_point = rfid_status_ref.own_outpost_buff_point;
+          rfid_status_data.own_side_restoration_zone = rfid_status_ref.own_side_restoration_zone;
+          rfid_status_data.own_sentry_patrol_zones = rfid_status_ref.own_sentry_patrol_zones;
+          rfid_status_data.enemy_sentry_patrol_zones = rfid_status_ref.enemy_sentry_patrol_zones;
+          rfid_status_data.own_large_resource_island_point = rfid_status_ref.own_large_resource_island_point;
+          rfid_status_data.enemy_large_resource_island_point = rfid_status_ref.enemy_large_resource_island_point;
+          rfid_status_data.own_exchange_zone = rfid_status_ref.own_exchange_zone;
+          rfid_status_data.central_buff_point = rfid_status_ref.central_buff_point;
+          rfid_status_data.reverse = rfid_status_ref.reverse;
           rfid_status_data.stamp = last_get_data_time_;
 
           rfid_status_pub_.publish(rfid_status_data);
@@ -425,17 +461,21 @@ int Referee::unpack(uint8_t* rx_data)
           rm_referee::InteractiveData interactive_data_ref;  // local variable temporarily before moving referee data
           memcpy(&interactive_data_ref, rx_data + 7, sizeof(rm_referee::InteractiveData));
           // TODO: case cmd_id
-          if (interactive_data_ref.header_data.data_cmd_id == rm_referee::DataCmdId::CURRENT_SENTRY_POSITION_CMD)
+          if (interactive_data_ref.header_data.data_cmd_id == rm_referee::DataCmdId::BULLET_NUM_SHARE_CMD)
           {
-            rm_referee::CurrentSentryPosData current_sentry_pos_ref;
-            rm_msgs::CurrentSentryPosData current_sentry_pos_data;
-            memcpy(&current_sentry_pos_ref, rx_data + 7, sizeof(rm_referee::CurrentSentryPosData));
-            current_sentry_pos_data.x = current_sentry_pos_ref.position_x;
-            current_sentry_pos_data.y = current_sentry_pos_ref.position_y;
-            current_sentry_pos_data.z = current_sentry_pos_ref.position_z;
-            current_sentry_pos_data.yaw = current_sentry_pos_ref.position_yaw;
-
-            current_sentry_pos_pub_.publish(current_sentry_pos_data);
+            rm_referee::BulletNumData bullet_num_data_ref;
+            memcpy(&bullet_num_data_ref, rx_data + 7, sizeof(rm_referee::BulletNumData));
+            referee_ui_.updateBulletRemainData(bullet_num_data_ref);
+          }
+          else if (interactive_data_ref.header_data.data_cmd_id == rm_referee::DataCmdId::SENTRY_TO_RADAR_CMD)
+          {
+            rm_referee::SentryAttackingTargetData sentry_attacking_target_data_ref;
+            rm_msgs::SentryAttackingTarget sentry_attacking_target_data_data;
+            memcpy(&sentry_attacking_target_data_ref, rx_data + 7, sizeof(rm_referee::SentryAttackingTargetData));
+            sentry_attacking_target_data_data.target_robot_ID = sentry_attacking_target_data_ref.target_robot_ID;
+            sentry_attacking_target_data_data.target_position_x = sentry_attacking_target_data_ref.target_position_x;
+            sentry_attacking_target_data_data.target_position_y = sentry_attacking_target_data_ref.target_position_y;
+            sentry_to_radar_pub_.publish(sentry_attacking_target_data_data);
           }
           break;
         }
