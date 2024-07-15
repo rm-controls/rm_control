@@ -183,7 +183,6 @@ void SentryToRadar::updateSentryAttackingTargetData(const rm_msgs::SentryAttacki
   robot_id_ = data->target_robot_ID;
   target_position_x_ = data->target_position_x;
   target_position_y_ = data->target_position_y;
-  last_get_data_time_ = ros::Time::now();
 }
 
 void SentryToRadar::sendSentryToRadarData()
@@ -210,6 +209,6 @@ void SentryToRadar::sendSentryToRadarData()
 
 bool SentryToRadar::needSendInteractiveData()
 {
-  return InteractiveSender::needSendInteractiveData() && ros::Time::now() - last_get_data_time_ < ros::Duration(0.5);
+  return InteractiveSender::needSendInteractiveData() && (robot_id_ != 0);
 }
 }  // namespace rm_referee

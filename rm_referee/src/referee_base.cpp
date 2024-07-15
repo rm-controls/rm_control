@@ -248,6 +248,17 @@ void RefereeBase::addUi()
 
 void RefereeBase::sendSerialDataCallback()
 {
+  if (bullet_num_share_ && bullet_num_share_->needSendInteractiveData())
+  {
+    bullet_num_share_->sendBulletData();
+    return;
+  }
+  else if (sentry_to_radar_ && sentry_to_radar_->needSendInteractiveData())
+  {
+    sentry_to_radar_->sendSentryToRadarData();
+    return;
+  }
+
   if (graph_queue_.empty() && character_queue_.empty())
     return;
 
@@ -268,11 +279,6 @@ void RefereeBase::sendSerialDataCallback()
       while (character_queue_.size() > 8)
         character_queue_.pop_front();
     }
-    if (bullet_num_share_ && bullet_num_share_->needSendInteractiveData())
-      bullet_num_share_->sendBulletData();
-    else if (sentry_to_radar_ && sentry_to_radar_->needSendInteractiveData())
-      sentry_to_radar_->sendSentryToRadarData();
-    else
       sendQueue();
   }
   else

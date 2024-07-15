@@ -56,7 +56,6 @@ public:
   void updateSentryAttackingTargetData(const rm_msgs::SentryAttackingTargetConstPtr& data);
   bool needSendInteractiveData() override;
   void sendSentryToRadarData();
-  ros::Time last_get_data_time_;
   float target_position_x_, target_position_y_, robot_id_;
 };
 
