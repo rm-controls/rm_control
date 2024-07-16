@@ -157,6 +157,10 @@ void DartStatusTimeChangeUi::updateDartClientCmd(const rm_msgs::DartClientCmd::C
 
 void RotationTimeChangeUi::updateConfig()
 {
+  if (chassis_mode_ != rm_msgs::ChassisCmd::RAW)
+    graph_->setColor(rm_referee::GraphColor::PINK);
+  else
+    graph_->setColor(rm_referee::GraphColor::GREEN);
   if (!tf_buffer_.canTransform(gimbal_reference_frame_, chassis_reference_frame_, ros::Time(0)))
     return;
   try
@@ -177,6 +181,11 @@ void RotationTimeChangeUi::updateConfig()
   {
     ROS_WARN("%s", ex.what());
   }
+}
+
+void RotationTimeChangeUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data)
+{
+  chassis_mode_ = data->mode;
 }
 
 void LaneLineTimeChangeGroupUi::updateConfig()
@@ -326,12 +335,14 @@ void BulletTimeChangeUi::updateBulletData(const rm_msgs::BulletAllowance& data, 
 {
   if (data.bullet_allowance_num_17_mm >= 0 && data.bullet_allowance_num_17_mm < 1000)
   {
-    bullet_num_17_mm_ += (bullet_allowance_num_17_mm_ - data.bullet_allowance_num_17_mm);
+    if (bullet_allowance_num_17_mm_ > data.bullet_allowance_num_17_mm)
+      bullet_num_17_mm_ += (bullet_allowance_num_17_mm_ - data.bullet_allowance_num_17_mm);
     bullet_allowance_num_17_mm_ = data.bullet_allowance_num_17_mm;
   }
   if (data.bullet_allowance_num_42_mm >= 0 && data.bullet_allowance_num_42_mm < 1000)
   {
-    bullet_num_42_mm_ += (bullet_allowance_num_42_mm_ - data.bullet_allowance_num_42_mm);
+    if (bullet_allowance_num_42_mm_ > data.bullet_allowance_num_42_mm)
+      bullet_num_42_mm_ += (bullet_allowance_num_42_mm_ - data.bullet_allowance_num_42_mm);
     bullet_allowance_num_42_mm_ = data.bullet_allowance_num_42_mm;
   }
   updateForQueue();
@@ -348,7 +359,7 @@ void BulletTimeChangeUi::updateConfig()
   std::string bullet_allowance_num;
   if (base_.robot_id_ == RED_HERO || base_.robot_id_ == BLUE_HERO)
   {
-    graph_->setRadius(bullet_num_42_mm_);
+    graph_->setIntNum(bullet_num_42_mm_);
     if (bullet_allowance_num_42_mm_ > 5)
       graph_->setColor(rm_referee::GraphColor::GREEN);
     else if (bullet_allowance_num_42_mm_ < 3)
@@ -358,7 +369,7 @@ void BulletTimeChangeUi::updateConfig()
   }
   else
   {
-    graph_->setRadius(bullet_num_17_mm_);  // TODO:need use uint32, now only < 1024
+    graph_->setIntNum(bullet_num_17_mm_);
     if (bullet_allowance_num_17_mm_ > 50)
       graph_->setColor(rm_referee::GraphColor::GREEN);
     else if (bullet_allowance_num_17_mm_ < 10)
@@ -395,7 +406,7 @@ void TargetDistanceTimeChangeUi::updateTargetDistanceData(const rm_msgs::TrackDa
 
 void TargetDistanceTimeChangeUi::updateConfig()
 {
-  UiBase::transferInt(std::floor(target_distance_ * 1000));
+  graph_->setFloatNum(target_distance_);
 }
 
 void DroneTowardsTimeChangeGroupUi::updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data)
@@ -440,4 +451,35 @@ void DroneTowardsTimeChangeGroupUi::updateConfig()
   }
 }
 
+void FriendBulletsTimeChangeGroupUi::updateBulletsData(const rm_referee::BulletNumData& data)
+{
+  if (data.header_data.sender_id == rm_referee::RobotId::RED_HERO ||
+      data.header_data.sender_id == rm_referee::RobotId::BLUE_HERO)
+    hero_bullets_ = data.bullet_42_mm_num;
+  else if (data.header_data.sender_id == rm_referee::RobotId::RED_STANDARD_3 ||
+           data.header_data.sender_id == rm_referee::RobotId::BLUE_STANDARD_3)
+    standard3_bullets_ = data.bullet_17_mm_num;
+  else if (data.header_data.sender_id == rm_referee::RobotId::RED_STANDARD_4 ||
+           data.header_data.sender_id == rm_referee::RobotId::BLUE_STANDARD_4)
+    standard4_bullets_ = data.bullet_17_mm_num;
+  else if (data.header_data.sender_id == rm_referee::RobotId::RED_STANDARD_5 ||
+           data.header_data.sender_id == rm_referee::RobotId::BLUE_STANDARD_5)
+    standard5_bullets_ = data.bullet_17_mm_num;
+  updateForQueue();
+}
+
+void FriendBulletsTimeChangeGroupUi::updateConfig()
+{
+  for (auto it : graph_vector_)
+  {
+    if (it.first == "hero")
+      it.second->setIntNum(hero_bullets_);
+    else if (it.first == "standard3")
+      it.second->setIntNum(standard3_bullets_);
+    else if (it.first == "standard4")
+      it.second->setIntNum(standard4_bullets_);
+    else if (it.first == "standard5")
+      it.second->setIntNum(standard5_bullets_);
+  }
+}
 }  // namespace rm_referee
