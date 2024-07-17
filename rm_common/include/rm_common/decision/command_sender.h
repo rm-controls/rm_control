@@ -352,9 +352,9 @@ public:
     nh.getParam("wheel_speed_18", wheel_speed_18_);
     nh.getParam("wheel_speed_30", wheel_speed_30_);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
-    if (!nh.getParam("track_armor_error", track_armor_error_))
+    if (!nh.getParam("track_armor_error_tolerance", track_armor_error_tolerance_))
       ROS_ERROR("track armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
-    nh.param("track_buff_error", track_buff_error_, track_armor_error_);
+    nh.param("track_buff_error_tolerance", track_buff_error_tolerance_, track_armor_error_tolerance_);
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
     {
       target_acceleration_tolerance_ = 0.;
@@ -406,8 +406,7 @@ public:
         return;
       }
     }
-    double gimbal_error_tolerance;
-    gimbal_error_tolerance = track_data_.id == 12 ? track_buff_error_ : track_armor_error_;
+    double gimbal_error_tolerance = track_data_.id == 12 ? track_buff_error_tolerance_ : track_armor_error_tolerance_;
     if (((gimbal_des_error_.error > gimbal_error_tolerance && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
          (track_data_.accel > target_acceleration_tolerance_)) ||
         (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE))
@@ -493,8 +492,8 @@ private:
   double speed_10_{}, speed_15_{}, speed_16_{}, speed_18_{}, speed_30_{}, speed_des_{};
   double wheel_speed_10_{}, wheel_speed_15_{}, wheel_speed_16_{}, wheel_speed_18_{}, wheel_speed_30_{},
       wheel_speed_des_{};
-  double track_armor_error_{};
-  double track_buff_error_{};
+  double track_armor_error_tolerance_{};
+  double track_buff_error_tolerance_{};
   double target_acceleration_tolerance_{};
   double extra_wheel_speed_once_{};
   double total_extra_wheel_speed_{};
