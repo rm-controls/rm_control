@@ -131,7 +131,7 @@ public:
   EngineerActionFlashUi* engineer_action_flash_ui_{};
 
   InteractiveSender* interactive_data_sender_{};
-  CustomInfoSender* enemy_hero_state_sender_{};
+  //  CustomInfoSender* enemy_hero_state_sender_{};
   CustomInfoSender* sentry_state_sender_{};
   BulletNumShare* bullet_num_share_{};
   SentryToRadar* sentry_to_radar_{};
