@@ -263,6 +263,10 @@ public:
   {
     power_limit_->setRefereeStatus(status);
   }
+  void setFollowVelDes(double follow_vel_des)
+  {
+    msg_.follow_vel_des = follow_vel_des;
+  }
   void sendChassisCommand(const ros::Time& time, bool is_gyro)
   {
     power_limit_->setLimitPower(msg_, is_gyro);
