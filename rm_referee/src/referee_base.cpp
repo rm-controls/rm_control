@@ -157,8 +157,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     nh.getParam("interactive_data", rpc_value);
     for (int i = 0; i < rpc_value.size(); i++)
     {
-      if (rpc_value[i]["name"] == "enemy_hero_state")
-        enemy_hero_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
+      //      if (rpc_value[i]["name"] == "enemy_hero_state")
+      //        enemy_hero_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "sentry_state")
         sentry_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "bullet_num_share")
