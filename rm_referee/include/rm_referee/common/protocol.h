@@ -544,6 +544,7 @@ typedef struct
 {
   InteractiveDataHeader header;
   uint32_t sentry_info;
+  uint16_t sentry_info_2;
 } __packed SentryInfo;
 
 typedef struct

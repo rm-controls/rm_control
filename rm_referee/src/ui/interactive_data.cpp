@@ -132,7 +132,7 @@ void InteractiveSender::sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& dat
   tx_data.header.sender_id = base_.robot_id_;
   tx_data.header.receiver_id = REFEREE_SERVER;
   tx_data.sentry_info = data->sentry_info;
-
+  tx_data.sentry_info_2 = data->sentry_info_2;
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::SENTRY_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(ros::Time::now(), data_len);
