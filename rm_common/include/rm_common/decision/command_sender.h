@@ -352,6 +352,7 @@ public:
     nh.getParam("wheel_speed_16", wheel_speed_16_);
     nh.getParam("wheel_speed_18", wheel_speed_18_);
     nh.getParam("wheel_speed_30", wheel_speed_30_);
+    nh.param("speed_oscillation", speed_oscillation_, 1.0);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
     if (!nh.getParam("gimbal_error_tolerance", gimbal_error_tolerance_))
       ROS_ERROR("gimbal error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
@@ -405,11 +406,11 @@ public:
         last_bullet_speed_ = speed_des_;
       if (shoot_data_.bullet_speed != last_bullet_speed_)
       {
-        if (last_bullet_speed_ - speed_des_ > 1.0 || shoot_data_.bullet_speed > speed_limit_)
+        if (last_bullet_speed_ - speed_des_ >= speed_oscillation_ || shoot_data_.bullet_speed > speed_limit_)
         {
           total_extra_wheel_speed_ -= 5.0;
         }
-        else if (speed_des_ - last_bullet_speed_ > 1.0)
+        else if (speed_des_ - last_bullet_speed_ > speed_oscillation_)
         {
           total_extra_wheel_speed_ += 5.0;
         }
@@ -519,7 +520,7 @@ public:
 private:
   double speed_10_{}, speed_15_{}, speed_16_{}, speed_18_{}, speed_30_{}, speed_des_{}, speed_limit_{};
   double wheel_speed_10_{}, wheel_speed_15_{}, wheel_speed_16_{}, wheel_speed_18_{}, wheel_speed_30_{},
-      wheel_speed_des_{}, last_bullet_speed_{};
+      wheel_speed_des_{}, last_bullet_speed_{}, speed_oscillation_{};
   double gimbal_error_tolerance_{};
   double target_acceleration_tolerance_{};
   double extra_wheel_speed_once_{};
