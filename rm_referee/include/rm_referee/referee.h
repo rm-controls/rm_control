@@ -75,6 +75,7 @@ public:
     sentry_info_pub_ = nh.advertise<rm_msgs::SentryInfo>("sentry_info", 1);
     radar_info_pub_ = nh.advertise<rm_msgs::RadarInfo>("radar_info", 1);
     sentry_to_radar_pub_ = nh.advertise<rm_msgs::SentryAttackingTarget>("sentry_target_to_radar", 1);
+    radar_to_sentry_pub_ = nh.advertise<rm_msgs::RadarToSentry>("radar_to_sentry", 1);
 
     ros::NodeHandle power_management_nh = ros::NodeHandle(nh, "power_management");
     power_management_sample_and_status_data_pub_ =
@@ -121,6 +122,7 @@ public:
   ros::Publisher sentry_info_pub_;
   ros::Publisher radar_info_pub_;
   ros::Publisher client_map_send_data_pub_;
+  ros::Publisher radar_to_sentry_pub_;
   ros::Publisher power_management_sample_and_status_data_pub_;
   ros::Publisher power_management_initialization_exception_pub_;
   ros::Publisher power_management_system_exception_data_;

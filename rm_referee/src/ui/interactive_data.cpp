@@ -90,16 +90,25 @@ void CustomInfoSender::sendCustomInfoData(std::wstring data)
   sendSerial(ros::Time::now(), data_len);
 }
 
-void InteractiveSender::sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& data)
+void InteractiveSender::sendRadarInteractiveData(const rm_msgs::ClientMapReceiveData::ConstPtr& data)
 {
   uint8_t tx_data[sizeof(rm_referee::ClientMapReceiveData)] = { 0 };
   auto radar_interactive_data = (rm_referee::ClientMapReceiveData*)tx_data;
 
   for (int i = 0; i < 127; i++)
     tx_buffer_[i] = 0;
-  radar_interactive_data->target_robot_ID = data.target_robot_ID;
-  radar_interactive_data->target_position_x = data.target_position_x;
-  radar_interactive_data->target_position_y = data.target_position_y;
+  radar_interactive_data->hero_position_x = data->hero_position_x;
+  radar_interactive_data->hero_position_y = data->hero_position_y;
+  radar_interactive_data->engineer_position_x = data->engineer_position_x;
+  radar_interactive_data->engineer_position_y = data->engineer_position_y;
+  radar_interactive_data->infantry_3_position_x = data->infantry_3_position_x;
+  radar_interactive_data->infantry_3_position_y = data->infantry_3_position_y;
+  radar_interactive_data->infantry_4_position_x = data->infantry_4_position_x;
+  radar_interactive_data->infantry_4_position_y = data->infantry_4_position_y;
+  radar_interactive_data->infantry_5_position_x = data->infantry_5_position_x;
+  radar_interactive_data->infantry_5_position_y = data->infantry_5_position_y;
+  radar_interactive_data->sentry_position_x = data->sentry_position_x;
+  radar_interactive_data->sentry_position_y = data->sentry_position_y;
   pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::CLIENT_MAP_CMD, sizeof(rm_referee::ClientMapReceiveData));
   tx_len_ =
       k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::ClientMapReceiveData) + k_tail_length_);
@@ -211,4 +220,43 @@ bool SentryToRadar::needSendInteractiveData()
 {
   return InteractiveSender::needSendInteractiveData() && (robot_id_ != 0);
 }
+
+void RadarToSentry::updateRadarToSentryData(const rm_msgs::RadarToSentryConstPtr& data)
+{
+  robot_id_ = data->robot_ID;
+  position_x_ = data->position_x;
+  position_y_ = data->position_y;
+  engineer_marked_ = data->engineer_marked;
+  has_new_data_ = true;
+}
+
+void RadarToSentry::sendRadarToSentryData()
+{
+  uint8_t tx_data[sizeof(RadarToSentryData)] = { 0 };
+  auto radar_to_sentry_data = (RadarToSentryData*)tx_data;
+
+  for (int i = 0; i < 127; i++)
+    tx_buffer_[i] = 0;
+  radar_to_sentry_data->header_data.data_cmd_id = rm_referee::DataCmdId::RADAR_TO_SENTRY_CMD;
+  radar_to_sentry_data->header_data.sender_id = base_.robot_id_;
+  if (base_.robot_color_ == "red")
+    radar_to_sentry_data->header_data.receiver_id = RED_SENTRY;
+  else
+    radar_to_sentry_data->header_data.receiver_id = BLUE_SENTRY;
+  radar_to_sentry_data->robot_ID = robot_id_;
+  radar_to_sentry_data->position_x = position_x_;
+  radar_to_sentry_data->position_y = position_y_;
+  radar_to_sentry_data->engineer_marked = engineer_marked_;
+  pack(tx_buffer_, tx_data, RefereeCmdId::INTERACTIVE_DATA_CMD, sizeof(RadarToSentryData));
+  tx_len_ = k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(RadarToSentryData) + k_tail_length_);
+  sendSerial(ros::Time::now(), sizeof(RadarToSentryData));
+  last_send_time_ = ros::Time::now();
+  has_new_data_ = false;
+}
+
+bool RadarToSentry::needSendInteractiveData()
+{
+  return (InteractiveSender::needSendInteractiveData() && has_new_data_);
+}
+
 }  // namespace rm_referee
