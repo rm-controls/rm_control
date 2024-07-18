@@ -263,6 +263,10 @@ public:
   {
     power_limit_->setRefereeStatus(status);
   }
+  void setFollowVelDes(double follow_vel_des)
+  {
+    msg_.follow_vel_des = follow_vel_des;
+  }
   void sendChassisCommand(const ros::Time& time, bool is_gyro)
   {
     power_limit_->setLimitPower(msg_, is_gyro);
@@ -831,6 +835,11 @@ public:
   {
     shooter_ID1_cmd_sender_->updateSuggestFireData(data);
     shooter_ID2_cmd_sender_->updateSuggestFireData(data);
+  }
+  void updateShootBeforehandCmd(const rm_msgs::ShootBeforehandCmd& data)
+  {
+    shooter_ID1_cmd_sender_->updateShootBeforehandCmd(data);
+    shooter_ID2_cmd_sender_->updateShootBeforehandCmd(data);
   }
 
   void setMode(int mode)
