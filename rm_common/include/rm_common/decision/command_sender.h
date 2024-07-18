@@ -356,14 +356,14 @@ public:
     nh.getParam("wheel_speed_18", wheel_speed_18_);
     nh.getParam("wheel_speed_30", wheel_speed_30_);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
-    if (!nh.getParam("track_armor_error_tolerance", track_armor_error_tolerance_))
-      ROS_ERROR("track armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
-    nh.param("track_buff_error_tolerance", track_buff_error_tolerance_, track_armor_error_tolerance_);
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
     {
       target_acceleration_tolerance_ = 0.;
       ROS_INFO("target_acceleration_tolerance no defined(namespace: %s), set to zero.", nh.getNamespace().c_str());
     }
+    if (!nh.getParam("track_armor_error_tolerance", track_armor_error_tolerance_))
+      ROS_ERROR("track armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
+    nh.param("track_buff_error_tolerance", track_buff_error_tolerance_, track_armor_error_tolerance_);
   }
   ~ShooterCommandSender()
   {
