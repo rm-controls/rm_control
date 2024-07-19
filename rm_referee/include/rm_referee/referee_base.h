@@ -64,6 +64,7 @@ public:
   virtual void sendSentryStateCallback(const std_msgs::StringConstPtr& data);
   virtual void dronePoseCallBack(const geometry_msgs::PoseStampedConstPtr& data);
   virtual void shootCmdCallBack(const rm_msgs::ShootCmdConstPtr& data);
+  virtual void radarToRefereeCallBack(const rm_msgs::RadarToSentryConstPtr& data);
 
   // send  ui
   void sendSerialDataCallback();
@@ -87,8 +88,8 @@ public:
   ros::Subscriber balance_state_sub_;
   ros::Subscriber radar_receive_sub_;
   ros::Subscriber map_sentry_sub_;
-  ros::Subscriber sentry_to_radar_sub_;
-  ros::Subscriber radar_to_sentry_sub_;
+  ros::Subscriber sentry_to_referee_sub_;
+  ros::Subscriber radar_to_referee_sub_;
   ros::Subscriber sentry_cmd_sub_;
   ros::Subscriber radar_cmd_sub_;
   ros::Subscriber sentry_state_sub_;
@@ -130,10 +131,11 @@ public:
   EngineerActionFlashUi* engineer_action_flash_ui_{};
 
   InteractiveSender* interactive_data_sender_{};
-  CustomInfoSender* enemy_hero_state_sender_{};
+  //  CustomInfoSender* enemy_hero_state_sender_{};
   CustomInfoSender* sentry_state_sender_{};
   BulletNumShare* bullet_num_share_{};
   SentryToRadar* sentry_to_radar_{};
+  RadarToSentry* radar_to_sentry_{};
 
   GroupUiBase* graph_queue_sender_{};
   std::deque<Graph> graph_queue_;
