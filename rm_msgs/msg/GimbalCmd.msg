@@ -17,5 +17,5 @@ float64 bullet_speed
 geometry_msgs/PointStamped target_pos
 
 #TRAJ
-float64 yaw_des
-float64 pitch_des
+float64 traj_yaw
+float64 traj_pitch
