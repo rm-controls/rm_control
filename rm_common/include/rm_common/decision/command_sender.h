@@ -263,6 +263,10 @@ public:
   {
     power_limit_->setRefereeStatus(status);
   }
+  void setFollowVelDes(double follow_vel_des)
+  {
+    msg_.follow_vel_des = follow_vel_des;
+  }
   void sendChassisCommand(const ros::Time& time, bool is_gyro)
   {
     power_limit_->setLimitPower(msg_, is_gyro);
@@ -357,13 +361,14 @@ public:
     nh.getParam("wheel_speed_18", wheel_speed_18_);
     nh.getParam("wheel_speed_30", wheel_speed_30_);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
-    if (!nh.getParam("gimbal_error_tolerance", gimbal_error_tolerance_))
-      ROS_ERROR("gimbal error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
     {
       target_acceleration_tolerance_ = 0.;
       ROS_INFO("target_acceleration_tolerance no defined(namespace: %s), set to zero.", nh.getNamespace().c_str());
     }
+    if (!nh.getParam("track_armor_error_tolerance", track_armor_error_tolerance_))
+      ROS_ERROR("track armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
+    nh.param("track_buff_error_tolerance", track_buff_error_tolerance_, track_armor_error_tolerance_);
   }
   ~ShooterCommandSender()
   {
@@ -410,7 +415,8 @@ public:
         return;
       }
     }
-    if (((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
+    double gimbal_error_tolerance = track_data_.id == 12 ? track_buff_error_tolerance_ : track_armor_error_tolerance_;
+    if (((gimbal_des_error_.error > gimbal_error_tolerance && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
          (track_data_.accel > target_acceleration_tolerance_)) ||
         (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
@@ -495,7 +501,8 @@ private:
   double speed_10_{}, speed_15_{}, speed_16_{}, speed_18_{}, speed_30_{}, speed_des_{};
   double wheel_speed_10_{}, wheel_speed_15_{}, wheel_speed_16_{}, wheel_speed_18_{}, wheel_speed_30_{},
       wheel_speed_des_{};
-  double gimbal_error_tolerance_{};
+  double track_armor_error_tolerance_{};
+  double track_buff_error_tolerance_{};
   double target_acceleration_tolerance_{};
   double extra_wheel_speed_once_{};
   double total_extra_wheel_speed_{};
@@ -833,6 +840,11 @@ public:
   {
     shooter_ID1_cmd_sender_->updateSuggestFireData(data);
     shooter_ID2_cmd_sender_->updateSuggestFireData(data);
+  }
+  void updateShootBeforehandCmd(const rm_msgs::ShootBeforehandCmd& data)
+  {
+    shooter_ID1_cmd_sender_->updateShootBeforehandCmd(data);
+    shooter_ID2_cmd_sender_->updateShootBeforehandCmd(data);
   }
 
   void setMode(int mode)
