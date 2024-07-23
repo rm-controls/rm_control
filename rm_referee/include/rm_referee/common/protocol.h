@@ -544,8 +544,7 @@ typedef struct
 {
   InteractiveDataHeader header;
   uint32_t sentry_info;
-  uint16_t sentry_info_2;
-} __packed SentryInfo;
+} __packed SentryCmd;
 
 typedef struct
 {
@@ -557,6 +556,14 @@ typedef struct
 {
   uint8_t data[30];
 } __packed CustomControllerData;
+
+typedef struct
+{
+  uint32_t sentry_info;
+  uint16_t is_out_of_war : 1;
+  uint16_t remaining_bullets_can_supply : 11;
+  uint16_t reverse: 4;
+} __packed SentryInfo;
 
 typedef struct
 {

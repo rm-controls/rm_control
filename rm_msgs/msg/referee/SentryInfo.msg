@@ -1,2 +1,3 @@
 uint32 sentry_info
-uint16 sentry_info_2
+bool is_out_of_war
+uint16 remaining_bullets_can_supply

@@ -527,8 +527,12 @@ int Referee::unpack(uint8_t* rx_data)
         }
         case rm_referee::SENTRY_INFO_CMD:
         {
+          rm_referee::SentryInfo sentry_info_ref;
           rm_msgs::SentryInfo sentry_info;
-          memcpy(&sentry_info, rx_data + 7, sizeof(rm_msgs::SentryInfo));
+          memcpy(&sentry_info_ref, rx_data + 7, sizeof(rm_referee::SentryInfo));
+          sentry_info.sentry_info = sentry_info_ref.sentry_info;
+          sentry_info.is_out_of_war = sentry_info_ref.is_out_of_war;
+          sentry_info.remaining_bullets_can_supply = sentry_info_ref.remaining_bullets_can_supply;
           sentry_info_pub_.publish(sentry_info);
           break;
         }
