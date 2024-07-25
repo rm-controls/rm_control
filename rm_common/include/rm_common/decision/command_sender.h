@@ -358,6 +358,8 @@ public:
     nh.getParam("wheel_speed_30", wheel_speed_30_);
     nh.param("speed_oscillation", speed_oscillation_, 1.0);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
+    if (!nh.getParam("auto_wheel_speed", auto_wheel_speed_))
+      ROS_INFO("auto_wheel_speed no defined (namespace: %s), set to false.", nh.getNamespace().c_str());
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
     {
       target_acceleration_tolerance_ = 0.;
