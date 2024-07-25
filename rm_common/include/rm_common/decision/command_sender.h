@@ -358,15 +358,14 @@ public:
     nh.getParam("wheel_speed_30", wheel_speed_30_);
     nh.param("speed_oscillation", speed_oscillation_, 1.0);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
-    if (!nh.getParam("gimbal_error_tolerance", gimbal_error_tolerance_))
-      ROS_ERROR("gimbal error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("auto_wheel_speed", auto_wheel_speed_))
-      ROS_INFO("auto_wheel_speed no defined (namespace: %s), set to false.", nh.getNamespace().c_str());
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
     {
       target_acceleration_tolerance_ = 0.;
       ROS_INFO("target_acceleration_tolerance no defined(namespace: %s), set to zero.", nh.getNamespace().c_str());
     }
+    if (!nh.getParam("track_armor_error_tolerance", track_armor_error_tolerance_))
+      ROS_ERROR("track armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
+    nh.param("track_buff_error_tolerance", track_buff_error_tolerance_, track_armor_error_tolerance_);
   }
   ~ShooterCommandSender()
   {
@@ -435,7 +434,8 @@ public:
         return;
       }
     }
-    if (((gimbal_des_error_.error > gimbal_error_tolerance_ && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
+    double gimbal_error_tolerance = track_data_.id == 12 ? track_buff_error_tolerance_ : track_armor_error_tolerance_;
+    if (((gimbal_des_error_.error > gimbal_error_tolerance && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
          (track_data_.accel > target_acceleration_tolerance_)) ||
         (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
@@ -525,7 +525,8 @@ private:
   double speed_10_{}, speed_15_{}, speed_16_{}, speed_18_{}, speed_30_{}, speed_des_{}, speed_limit_{};
   double wheel_speed_10_{}, wheel_speed_15_{}, wheel_speed_16_{}, wheel_speed_18_{}, wheel_speed_30_{},
       wheel_speed_des_{}, last_bullet_speed_{}, speed_oscillation_{};
-  double gimbal_error_tolerance_{};
+  double track_armor_error_tolerance_{};
+  double track_buff_error_tolerance_{};
   double target_acceleration_tolerance_{};
   double extra_wheel_speed_once_{};
   double total_extra_wheel_speed_{};

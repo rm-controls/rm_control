@@ -16,7 +16,7 @@ public:
     : UiBase(rpc_value, base, graph_queue, character_queue){};
 
   void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);
-  void sendRadarInteractiveData(const rm_referee::ClientMapReceiveData& data);
+  void sendRadarInteractiveData(const rm_msgs::ClientMapReceiveData::ConstPtr& data);
   void sendMapSentryData(const rm_referee::MapSentryData& data);
   void sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& data);
   void sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data);
@@ -56,8 +56,22 @@ public:
   void updateSentryAttackingTargetData(const rm_msgs::SentryAttackingTargetConstPtr& data);
   bool needSendInteractiveData() override;
   void sendSentryToRadarData();
-  ros::Time last_get_data_time_;
-  float target_position_x_, target_position_y_, robot_id_;
+  int robot_id_;
+  float target_position_x_, target_position_y_;
+};
+
+class RadarToSentry : public InteractiveSender
+{
+public:
+  explicit RadarToSentry(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue = nullptr,
+                         std::deque<Graph>* character_queue = nullptr)
+    : InteractiveSender(rpc_value, base, graph_queue, character_queue){};
+  void updateRadarToSentryData(const rm_msgs::RadarToSentryConstPtr& data);
+  bool needSendInteractiveData() override;
+  void sendRadarToSentryData();
+  int robot_id_;
+  float position_x_, position_y_;
+  bool engineer_marked_{ false }, has_new_data_{ false };
 };
 
 }  // namespace rm_referee
