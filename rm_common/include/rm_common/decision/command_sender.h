@@ -312,7 +312,7 @@ public:
       msg_.rate_pitch *= eject_sensitivity_;
     }
   }
-  void setYawAndPitchTraj(double traj_yaw, double traj_pitch)
+  void setGimbalTraj(double traj_yaw, double traj_pitch)
   {
     msg_.traj_yaw = traj_yaw;
     msg_.traj_pitch = traj_pitch;
