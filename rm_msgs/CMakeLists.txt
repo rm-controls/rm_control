@@ -23,6 +23,7 @@ add_message_files(
         GimbalDesError.msg
         GimbalPosState.msg
         LpData.msg
+        LocalHeatState.msg
         KalmanData.msg
         MovingAverageData.msg
         GpioData.msg
@@ -84,6 +85,7 @@ add_message_files(
         SentryInfo.msg
         RadarInfo.msg
         Buff.msg
+        RadarToSentry.msg
         PowerManagementSampleAndStatusData.msg
         PowerManagementInitializationExceptionData.msg
         PowerManagementProcessStackOverflowData.msg

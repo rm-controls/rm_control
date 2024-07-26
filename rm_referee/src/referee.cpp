@@ -307,7 +307,14 @@ int Referee::unpack(uint8_t* rx_data)
         case rm_referee::RefereeCmdId::BUFF_CMD:
         {
           rm_referee::Buff referee_buff;
+          rm_msgs::Buff robot_buff;
           memcpy(&referee_buff, rx_data + 7, sizeof(rm_referee::Buff));
+          robot_buff.attack_buff = referee_buff.attack_buff;
+          robot_buff.defence_buff = referee_buff.defence_buff;
+          robot_buff.vulnerability_buff = referee_buff.vulnerability_buff;
+          robot_buff.cooling_buff = referee_buff.cooling_buff;
+          robot_buff.recovery_buff = referee_buff.recovery_buff;
+          buff_pub_.publish(robot_buff);
           break;
         }
         case rm_referee::RefereeCmdId::AERIAL_ROBOT_ENERGY_CMD:
@@ -460,7 +467,6 @@ int Referee::unpack(uint8_t* rx_data)
         {
           rm_referee::InteractiveData interactive_data_ref;  // local variable temporarily before moving referee data
           memcpy(&interactive_data_ref, rx_data + 7, sizeof(rm_referee::InteractiveData));
-          // TODO: case cmd_id
           if (interactive_data_ref.header_data.data_cmd_id == rm_referee::DataCmdId::BULLET_NUM_SHARE_CMD)
           {
             rm_referee::BulletNumData bullet_num_data_ref;
@@ -477,6 +483,17 @@ int Referee::unpack(uint8_t* rx_data)
             sentry_attacking_target_data_data.target_position_y = sentry_attacking_target_data_ref.target_position_y;
             sentry_to_radar_pub_.publish(sentry_attacking_target_data_data);
           }
+          else if (interactive_data_ref.header_data.data_cmd_id == rm_referee::DataCmdId::RADAR_TO_SENTRY_CMD)
+          {
+            rm_referee::RadarToSentryData radar_to_sentry_data_ref;
+            rm_msgs::RadarToSentry radar_to_sentry_data;
+            memcpy(&radar_to_sentry_data_ref, rx_data + 7, sizeof(rm_referee::RadarToSentryData));
+            radar_to_sentry_data.robot_ID = radar_to_sentry_data_ref.robot_ID;
+            radar_to_sentry_data.position_x = radar_to_sentry_data_ref.position_x;
+            radar_to_sentry_data.position_y = radar_to_sentry_data_ref.position_y;
+            radar_to_sentry_data.engineer_marked = radar_to_sentry_data_ref.engineer_marked;
+            radar_to_sentry_pub_.publish(radar_to_sentry_data);
+          }
           break;
         }
         case rm_referee::CLIENT_MAP_CMD:
@@ -484,16 +501,6 @@ int Referee::unpack(uint8_t* rx_data)
           rm_referee::ClientMapReceiveData client_map_receive_ref;
           rm_msgs::ClientMapReceiveData client_map_receive_data;
           memcpy(&client_map_receive_ref, rx_data + 7, sizeof(rm_referee::ClientMapReceiveData));
-
-          if (client_map_receive_ref.target_robot_ID == base_.robot_id_)
-          {
-            client_map_receive_data.target_robot_ID = client_map_receive_ref.target_robot_ID;
-            client_map_receive_data.target_position_x = client_map_receive_ref.target_position_x;
-            client_map_receive_data.target_position_y = client_map_receive_ref.target_position_y;
-            client_map_receive_data.stamp = last_get_data_time_;
-
-            client_map_receive_pub_.publish(client_map_receive_data);
-          }
           break;
         }
         case rm_referee::CUSTOM_INFO_CMD:

@@ -46,8 +46,10 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<geometry_msgs::PoseStamped>("/mavros/vision_pose/pose", 1, &RefereeBase::dronePoseCallBack, this);
   RefereeBase::shoot_cmd_sub_ = nh.subscribe<rm_msgs::ShootCmd>("/controllers/shooter_controller/command", 1,
                                                                 &RefereeBase::shootCmdCallBack, this);
-  RefereeBase::sentry_to_radar_sub_ = nh.subscribe<rm_msgs::SentryAttackingTarget>(
+  RefereeBase::sentry_to_referee_sub_ = nh.subscribe<rm_msgs::SentryAttackingTarget>(
       "/sentry_target_to_referee", 1, &RefereeBase::sentryAttackingTargetCallback, this);
+  RefereeBase::radar_to_referee_sub_ =
+      nh.subscribe<rm_msgs::RadarToSentry>("/radar_to_referee", 1, &RefereeBase::radarToRefereeCallBack, this);
 
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
@@ -155,14 +157,16 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     nh.getParam("interactive_data", rpc_value);
     for (int i = 0; i < rpc_value.size(); i++)
     {
-      if (rpc_value[i]["name"] == "enemy_hero_state")
-        enemy_hero_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
+      //      if (rpc_value[i]["name"] == "enemy_hero_state")
+      //        enemy_hero_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "sentry_state")
         sentry_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "bullet_num_share")
         bullet_num_share_ = new BulletNumShare(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "sentry_to_radar")
         sentry_to_radar_ = new SentryToRadar(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "radar_to_sentry")
+        radar_to_sentry_ = new RadarToSentry(rpc_value[i], base_);
     }
   }
 
@@ -248,6 +252,22 @@ void RefereeBase::addUi()
 
 void RefereeBase::sendSerialDataCallback()
 {
+  if (bullet_num_share_ && bullet_num_share_->needSendInteractiveData())
+  {
+    bullet_num_share_->sendBulletData();
+    return;
+  }
+  if (sentry_to_radar_ && sentry_to_radar_->needSendInteractiveData())
+  {
+    sentry_to_radar_->sendSentryToRadarData();
+    return;
+  }
+  if (radar_to_sentry_ && radar_to_sentry_->needSendInteractiveData())
+  {
+    radar_to_sentry_->sendRadarToSentryData();
+    return;
+  }
+
   if (graph_queue_.empty() && character_queue_.empty())
     return;
 
@@ -268,12 +288,7 @@ void RefereeBase::sendSerialDataCallback()
       while (character_queue_.size() > 8)
         character_queue_.pop_front();
     }
-    if (bullet_num_share_ && bullet_num_share_->needSendInteractiveData())
-      bullet_num_share_->sendBulletData();
-    else if (sentry_to_radar_ && sentry_to_radar_->needSendInteractiveData())
-      sentry_to_radar_->sendSentryToRadarData();
-    else
-      sendQueue();
+    sendQueue();
   }
   else
     sendQueue();
@@ -508,15 +523,11 @@ void RefereeBase::sentryAttackingTargetCallback(const rm_msgs::SentryAttackingTa
 }
 void RefereeBase::radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data)
 {
-  rm_referee::ClientMapReceiveData radar_receive_data;
-  radar_receive_data.target_position_x = data->target_position_x;
-  radar_receive_data.target_position_y = data->target_position_y;
-  radar_receive_data.target_robot_ID = data->target_robot_ID;
-  if (ros::Time::now() - radar_interactive_data_last_send_ <= ros::Duration(0.1))
+  if (ros::Time::now() - radar_interactive_data_last_send_ <= ros::Duration(0.2))
     return;
   else
   {
-    interactive_data_sender_->sendRadarInteractiveData(radar_receive_data);
+    interactive_data_sender_->sendRadarInteractiveData(data);
     radar_interactive_data_last_send_ = ros::Time::now();
   }
 }
@@ -593,6 +604,12 @@ void RefereeBase::updateBulletRemainData(const rm_referee::BulletNumData& data)
 {
   if (friend_bullets_time_change_group_ui_ && !is_adding_)
     friend_bullets_time_change_group_ui_->updateBulletsData(data);
+}
+
+void RefereeBase::radarToRefereeCallBack(const rm_msgs::RadarToSentryConstPtr& data)
+{
+  if (radar_to_sentry_)
+    radar_to_sentry_->updateRadarToSentryData(data);
 }
 
 }  // namespace rm_referee

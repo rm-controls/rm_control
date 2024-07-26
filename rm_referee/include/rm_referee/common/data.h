@@ -87,6 +87,7 @@
 #include "rm_msgs/Buff.h"
 #include "rm_msgs/TrackData.h"
 #include "rm_msgs/SentryAttackingTarget.h"
+#include "rm_msgs/RadarToSentry.h"
 #include <rm_msgs/PowerManagementSampleAndStatusData.h>
 #include <rm_msgs/PowerManagementSystemExceptionData.h>
 #include <rm_msgs/PowerManagementInitializationExceptionData.h>

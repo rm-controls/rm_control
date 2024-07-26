@@ -95,8 +95,8 @@ typedef enum
   SENTRY_CMD = 0x0120,
   RADAR_CMD = 0x0121,
   BULLET_NUM_SHARE_CMD = 0x0200,  // send robot->aerial
-  SENTRY_TO_RADAR_CMD = 0x0201    // send sentry->radar
-  // send radar->sentry
+  SENTRY_TO_RADAR_CMD = 0x0201,   // send sentry->radar
+  RADAR_TO_SENTRY_CMD = 0x0202    // send radar->sentry
 } DataCmdId;
 
 typedef enum
@@ -354,7 +354,11 @@ typedef struct
 
 typedef struct
 {
-  uint8_t power_rune_buff;
+  uint8_t recovery_buff;
+  uint8_t cooling_buff;
+  uint8_t defence_buff;
+  uint8_t vulnerability_buff;
+  uint16_t attack_buff;
 } __packed Buff;
 
 typedef struct
@@ -540,6 +544,7 @@ typedef struct
 {
   InteractiveDataHeader header;
   uint32_t sentry_info;
+  uint16_t sentry_info_2;
 } __packed SentryInfo;
 
 typedef struct
@@ -564,9 +569,18 @@ typedef struct
 
 typedef struct
 {
-  uint16_t target_robot_ID;
-  float target_position_x;
-  float target_position_y;
+  uint16_t hero_position_x;
+  uint16_t hero_position_y;
+  uint16_t engineer_position_x;
+  uint16_t engineer_position_y;
+  uint16_t infantry_3_position_x;
+  uint16_t infantry_3_position_y;
+  uint16_t infantry_4_position_x;
+  uint16_t infantry_4_position_y;
+  uint16_t infantry_5_position_x;
+  uint16_t infantry_5_position_y;
+  uint16_t sentry_position_x;
+  uint16_t sentry_position_y;
 } __packed ClientMapReceiveData;
 
 typedef struct
@@ -576,6 +590,15 @@ typedef struct
   float target_position_x;
   float target_position_y;
 } __packed SentryAttackingTargetData;
+
+typedef struct
+{
+  InteractiveDataHeader header_data;
+  uint8_t robot_ID;
+  float position_x;
+  float position_y;
+  bool engineer_marked;
+} __packed RadarToSentryData;
 
 typedef struct
 {
