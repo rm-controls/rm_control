@@ -28,5 +28,3 @@ float32 target_position_y
 uint8 command_keyboard
 uint8 target_robot_ID
 uint8 cmd_source
-
-time stamp
