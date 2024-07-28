@@ -41,6 +41,8 @@
 #include <rm_msgs/GameRobotStatus.h>
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/ShootCmd.h>
+#include <rm_msgs/LocalHeatState.h>
+#include <std_msgs/Float64.h>
 
 namespace rm_common
 {
@@ -64,11 +66,15 @@ public:
       ROS_ERROR("Heat coeff no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("type", type_))
       ROS_ERROR("Shooter type no defined (namespace: %s)", nh.getNamespace().c_str());
-    //    nh.param("safe_speed_limit", shooter_speed_limit_, 15);
+    nh.param("use_local_heat", use_local_heat_, true);
     if (type_ == "ID1_42MM")
       bullet_heat_ = 100.;
     else
       bullet_heat_ = 10.;
+    local_heat_pub_ = nh.advertise<std_msgs::Float64>("/local_heat_state/local_cooling_heat", 10);
+    shoot_state_sub_ =
+        nh.subscribe<rm_msgs::LocalHeatState>("/local_heat_state/shooter_state", 50, &HeatLimit::heatCB, this);
+    timer_ = nh.createTimer(ros::Duration(0.1), std::bind(&HeatLimit::timerCB, this));
   }
 
   typedef enum
@@ -78,6 +84,23 @@ public:
     BURST = 2,
     MINIMAL = 3
   } ShootHz;
+
+  void heatCB(const rm_msgs::LocalHeatStateConstPtr& msg)
+  {
+    if (msg->has_shoot)
+      local_shooter_cooling_heat_ += bullet_heat_;
+  }
+
+  void timerCB()
+  {
+    if (local_shooter_cooling_heat_ > 0.0)
+      local_shooter_cooling_heat_ -= shooter_cooling_rate_ / 10.0;
+    if (local_shooter_cooling_heat_ < 0.0)
+      local_shooter_cooling_heat_ = 0.0;
+    std_msgs::Float64 msg;
+    msg.data = local_shooter_cooling_heat_;
+    local_heat_pub_.publish(msg);
+  }
 
   void setStatusOfShooter(const rm_msgs::GameRobotStatus data)
   {
@@ -110,15 +133,14 @@ public:
   {
     if (state_ == BURST)
       return shoot_frequency_;
-    if (!referee_is_online_)
-      return safe_shoot_frequency_;
-
-    if (shooter_cooling_limit_ - shooter_cooling_heat_ < bullet_heat_)
+    double shooter_cooling_heat =
+        (use_local_heat_ || !referee_is_online_) ? local_shooter_cooling_heat_ : shooter_cooling_heat_;
+    if (shooter_cooling_limit_ - shooter_cooling_heat < bullet_heat_)
       return 0.0;
-    else if (shooter_cooling_limit_ - shooter_cooling_heat_ == bullet_heat_)
+    else if (shooter_cooling_limit_ - shooter_cooling_heat == bullet_heat_)
       return shooter_cooling_rate_ / bullet_heat_;
-    else if (shooter_cooling_limit_ - shooter_cooling_heat_ <= bullet_heat_ * heat_coeff_)
-      return (shooter_cooling_limit_ - shooter_cooling_heat_) / (bullet_heat_ * heat_coeff_) *
+    else if (shooter_cooling_limit_ - shooter_cooling_heat <= bullet_heat_ * heat_coeff_)
+      return (shooter_cooling_limit_ - shooter_cooling_heat) / (bullet_heat_ * heat_coeff_) *
                  (shoot_frequency_ - shooter_cooling_rate_ / bullet_heat_) +
              shooter_cooling_rate_ / bullet_heat_;
     else
@@ -193,8 +215,13 @@ private:
   double bullet_heat_, safe_shoot_frequency_{}, heat_coeff_{}, shoot_frequency_{}, low_shoot_frequency_{},
       high_shoot_frequency_{}, burst_shoot_frequency_{}, minimal_shoot_frequency_{};
 
-  bool referee_is_online_;
+  bool referee_is_online_, use_local_heat_;
   int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_;
+  double local_shooter_cooling_heat_{};
+
+  ros::Publisher local_heat_pub_;
+  ros::Subscriber shoot_state_sub_;
+  ros::Timer timer_;
 };
 
 }  // namespace rm_common

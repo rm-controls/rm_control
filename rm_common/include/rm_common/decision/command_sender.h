@@ -50,6 +50,7 @@
 #include <rm_msgs/TrackData.h>
 #include <rm_msgs/GameRobotHp.h>
 #include <rm_msgs/StatusChangeRequest.h>
+#include <rm_msgs/ShootData.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
@@ -311,6 +312,11 @@ public:
       msg_.rate_pitch *= eject_sensitivity_;
     }
   }
+  void setGimbalTraj(double traj_yaw, double traj_pitch)
+  {
+    msg_.traj_yaw = traj_yaw;
+    msg_.traj_pitch = traj_pitch;
+  }
   void setZero() override
   {
     msg_.rate_yaw = 0.;
@@ -355,7 +361,10 @@ public:
     nh.getParam("wheel_speed_16", wheel_speed_16_);
     nh.getParam("wheel_speed_18", wheel_speed_18_);
     nh.getParam("wheel_speed_30", wheel_speed_30_);
+    nh.param("speed_oscillation", speed_oscillation_, 1.0);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
+    if (!nh.getParam("auto_wheel_speed", auto_wheel_speed_))
+      ROS_INFO("auto_wheel_speed no defined (namespace: %s), set to false.", nh.getNamespace().c_str());
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
     {
       target_acceleration_tolerance_ = 0.;
@@ -398,6 +407,28 @@ public:
   {
     suggest_fire_ = data;
   }
+  void updateShootData(const rm_msgs::ShootData& data)
+  {
+    shoot_data_ = data;
+    if (auto_wheel_speed_)
+    {
+      if (last_bullet_speed_ == 0.0)
+        last_bullet_speed_ = speed_des_;
+      if (shoot_data_.bullet_speed != last_bullet_speed_)
+      {
+        if (last_bullet_speed_ - speed_des_ >= speed_oscillation_ || shoot_data_.bullet_speed > speed_limit_)
+        {
+          total_extra_wheel_speed_ -= 5.0;
+        }
+        else if (speed_des_ - last_bullet_speed_ > speed_oscillation_)
+        {
+          total_extra_wheel_speed_ += 5.0;
+        }
+      }
+      if (shoot_data_.bullet_speed != 0.0)
+        last_bullet_speed_ = shoot_data_.bullet_speed;
+    }
+  }
   void checkError(const ros::Time& time)
   {
     if (msg_.mode == rm_msgs::ShootCmd::PUSH && time - shoot_beforehand_cmd_.stamp < ros::Duration(0.1))
@@ -439,30 +470,35 @@ public:
     {
       case rm_msgs::ShootCmd::SPEED_10M_PER_SECOND:
       {
+        speed_limit_ = 10.0;
         speed_des_ = speed_10_;
         wheel_speed_des_ = wheel_speed_10_;
         break;
       }
       case rm_msgs::ShootCmd::SPEED_15M_PER_SECOND:
       {
+        speed_limit_ = 15.0;
         speed_des_ = speed_15_;
         wheel_speed_des_ = wheel_speed_15_;
         break;
       }
       case rm_msgs::ShootCmd::SPEED_16M_PER_SECOND:
       {
+        speed_limit_ = 16.0;
         speed_des_ = speed_16_;
         wheel_speed_des_ = wheel_speed_16_;
         break;
       }
       case rm_msgs::ShootCmd::SPEED_18M_PER_SECOND:
       {
+        speed_limit_ = 18.0;
         speed_des_ = speed_18_;
         wheel_speed_des_ = wheel_speed_18_;
         break;
       }
       case rm_msgs::ShootCmd::SPEED_30M_PER_SECOND:
       {
+        speed_limit_ = 30.0;
         speed_des_ = speed_30_;
         wheel_speed_des_ = wheel_speed_30_;
         break;
@@ -493,17 +529,19 @@ public:
   HeatLimit* heat_limit_{};
 
 private:
-  double speed_10_{}, speed_15_{}, speed_16_{}, speed_18_{}, speed_30_{}, speed_des_{};
+  double speed_10_{}, speed_15_{}, speed_16_{}, speed_18_{}, speed_30_{}, speed_des_{}, speed_limit_{};
   double wheel_speed_10_{}, wheel_speed_15_{}, wheel_speed_16_{}, wheel_speed_18_{}, wheel_speed_30_{},
-      wheel_speed_des_{};
+      wheel_speed_des_{}, last_bullet_speed_{}, speed_oscillation_{};
   double track_armor_error_tolerance_{};
   double track_buff_error_tolerance_{};
   double target_acceleration_tolerance_{};
   double extra_wheel_speed_once_{};
   double total_extra_wheel_speed_{};
+  bool auto_wheel_speed_ = false;
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
   rm_msgs::ShootBeforehandCmd shoot_beforehand_cmd_;
+  rm_msgs::ShootData shoot_data_;
   std_msgs::Bool suggest_fire_;
   uint8_t armor_type_{};
 };
