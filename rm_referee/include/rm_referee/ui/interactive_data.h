@@ -44,7 +44,7 @@ public:
     : InteractiveSender(rpc_value, base, graph_queue, character_queue){};
   void sendBulletData();
   void updateBulletRemainData(const rm_msgs::BulletAllowance& data);
-  int bullet_42_mm_num_, bullet_17_mm_num_, count_receive_time_;
+  int bullet_42_mm_num_, bullet_17_mm_num_, count_receive_time_{ 0 };
 };
 
 class SentryToRadar : public InteractiveSender

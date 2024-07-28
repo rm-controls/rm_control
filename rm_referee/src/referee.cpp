@@ -520,8 +520,6 @@ int Referee::unpack(uint8_t* rx_data)
           client_map_send_data.command_keyboard = client_map_send_data_ref.command_keyboard;
           client_map_send_data.target_robot_ID = client_map_send_data_ref.target_robot_ID;
           client_map_send_data.cmd_source = client_map_send_data_ref.cmd_source;
-          client_map_send_data.stamp = last_get_data_time_;
-
           client_map_send_data_pub_.publish(client_map_send_data);
           break;
         }

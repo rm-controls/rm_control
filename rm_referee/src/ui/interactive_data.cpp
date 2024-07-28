@@ -159,7 +159,9 @@ void BulletNumShare::sendBulletData()
     receiver_id = RED_HERO;
   else
     receiver_id = BLUE_HERO;
-  receiver_id += (4 - (count_receive_time_ % 3));
+  if (count_receive_time_ % 5 == 1)
+    count_receive_time_++;
+  receiver_id += count_receive_time_ % 5;
 
   uint8_t tx_data[sizeof(BulletNumData)] = { 0 };
   auto bullet_num_data = (BulletNumData*)tx_data;
