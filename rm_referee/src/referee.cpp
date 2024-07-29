@@ -140,7 +140,6 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_hp_data.red_base_hp = game_robot_hp_ref.red_base_hp;
           game_robot_hp_data.stamp = last_get_data_time_;
 
-          referee_ui_.updateEnemyHeroState(game_robot_hp_data, last_get_data_time_);
           referee_ui_.updateHeroHitDataCallBack(game_robot_hp_data);
           game_robot_hp_pub_.publish(game_robot_hp_data);
           break;
@@ -685,6 +684,12 @@ void Referee::getRobotInfo()
       break;
     case rm_referee::RobotId::RED_SENTRY:
       base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_RADAR:
+      base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_RADAR:
+      base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
       break;
   }
 }

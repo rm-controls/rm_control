@@ -347,14 +347,14 @@ public:
     graph_vector_.insert(std::pair<std::string, Graph*>("standard3", new Graph(rpc_value["config"], base_, id_++)));
     graph_vector_.insert(std::pair<std::string, Graph*>("standard4", new Graph(rpc_value["config"], base_, id_++)));
     graph_vector_.insert(std::pair<std::string, Graph*>("standard5", new Graph(rpc_value["config"], base_, id_++)));
-    int ui_start_y;
+    int ui_start_y = 0;
     for (auto it = graph_vector_.begin(); it != graph_vector_.end(); ++it)
     {
       if (it == graph_vector_.begin())
         ui_start_y = it->second->getConfig().start_y;
       else
       {
-        ui_start_y += 40;
+        ui_start_y -= 40;
         it->second->setStartY(ui_start_y);
       }
     }
@@ -363,7 +363,7 @@ public:
 
 private:
   void updateConfig() override;
-  int hero_bullets_, standard3_bullets_, standard4_bullets_, standard5_bullets_;
+  int hero_bullets_{ 1 }, standard3_bullets_{ 3 }, standard4_bullets_{ 4 }, standard5_bullets_{ 5 };
 };
 
 }  // namespace rm_referee

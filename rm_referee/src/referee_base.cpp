@@ -41,7 +41,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::radar_cmd_sub_ =
       nh.subscribe<rm_msgs::RadarInfo>("/radar_cmd", 1, &RefereeBase::sendRadarCmdCallback, this);
   RefereeBase::sentry_state_sub_ =
-      nh.subscribe<std_msgs::String>("/sentry_state", 1, &RefereeBase::sendSentryStateCallback, this);
+      nh.subscribe<std_msgs::String>("/custom_info", 1, &RefereeBase::sendCustomInfoCallback, this);
   RefereeBase::drone_pose_sub_ =
       nh.subscribe<geometry_msgs::PoseStamped>("/mavros/vision_pose/pose", 1, &RefereeBase::dronePoseCallBack, this);
   RefereeBase::shoot_cmd_sub_ = nh.subscribe<rm_msgs::ShootCmd>("/controllers/shooter_controller/command", 1,
@@ -159,8 +159,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     {
       //      if (rpc_value[i]["name"] == "enemy_hero_state")
       //        enemy_hero_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
-      if (rpc_value[i]["name"] == "sentry_state")
-        sentry_state_sender_ = new CustomInfoSender(rpc_value[i], base_);
+      if (rpc_value[i]["name"] == "custom_info")
+        custom_info_sender = new CustomInfoSender(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "bullet_num_share")
         bullet_num_share_ = new BulletNumShare(rpc_value[i], base_);
       if (rpc_value[i]["name"] == "sentry_to_radar")
@@ -341,29 +341,6 @@ void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, 
   if (fixed_ui_ && !is_adding_)
     fixed_ui_->updateForQueue();
 }
-void RefereeBase::updateEnemyHeroState(const rm_msgs::GameRobotHp& game_robot_hp_data,
-                                       const ros::Time& last_get_data_time)
-{
-  //  if (enemy_hero_state_sender_)
-  //  {
-  //    std::wstring data;
-  //    if (base_.robot_id_ < 100)
-  //    {
-  //      if (game_robot_hp_data.blue_1_robot_hp > 0)
-  //        data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.blue_1_robot_hp);
-  //      else
-  //        data = L"敌方英雄死亡";
-  //    }
-  //    else if (base_.robot_id_ >= 100)
-  //    {
-  //      if (game_robot_hp_data.red_1_robot_hp > 0)
-  //        data = L"敌方英雄存活:" + std::to_wstring(game_robot_hp_data.red_1_robot_hp);
-  //      else
-  //        data = L"敌方英雄死亡";
-  //    }
-  //    enemy_hero_state_sender_->sendCustomInfoData(data);
-  //  }
-}
 
 void RefereeBase::updateHeroHitDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data)
 {
@@ -470,10 +447,6 @@ void RefereeBase::cardCmdDataCallback(const rm_msgs::StateCmd::ConstPtr& data)
 }
 void RefereeBase::engineerUiDataCallback(const rm_msgs::EngineerUi::ConstPtr& data)
 {
-  /*if (progress_time_change_ui_ && !is_adding_)
-    progress_time_change_ui_->updateEngineerUiData(data, ros::Time::now());*/
-  /*  if (drag_state_trigger_change_ui_ && !is_adding_)
-      drag_state_trigger_change_ui_->updateStringUiData(data->drag_state);*/
   if (gripper_state_trigger_change_ui_ && !is_adding_)
     gripper_state_trigger_change_ui_->updateStringUiData(data->gripper_state);
   if (stone_num_trigger_change_ui_ && !is_adding_)
@@ -571,11 +544,11 @@ void RefereeBase::sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data)
   }
 }
 
-void RefereeBase::sendSentryStateCallback(const std_msgs::StringConstPtr& data)
+void RefereeBase::sendCustomInfoCallback(const std_msgs::StringConstPtr& data)
 {
   std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-  if (sentry_state_sender_)
-    sentry_state_sender_->sendCustomInfoData(converter.from_bytes(data->data));
+  if (custom_info_sender)
+    custom_info_sender->sendCustomInfoData(converter.from_bytes(data->data));
 }
 
 void RefereeBase::supplyBulletDataCallBack(const rm_msgs::SupplyProjectileAction& data)

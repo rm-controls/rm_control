@@ -482,4 +482,5 @@ void FriendBulletsTimeChangeGroupUi::updateConfig()
       it.second->setIntNum(standard5_bullets_);
   }
 }
+
 }  // namespace rm_referee
