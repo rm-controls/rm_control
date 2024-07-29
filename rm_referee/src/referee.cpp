@@ -140,7 +140,6 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_hp_data.red_base_hp = game_robot_hp_ref.red_base_hp;
           game_robot_hp_data.stamp = last_get_data_time_;
 
-          referee_ui_.updateEnemyHeroState(game_robot_hp_data, last_get_data_time_);
           referee_ui_.updateHeroHitDataCallBack(game_robot_hp_data);
           game_robot_hp_pub_.publish(game_robot_hp_data);
           break;
@@ -520,15 +519,17 @@ int Referee::unpack(uint8_t* rx_data)
           client_map_send_data.command_keyboard = client_map_send_data_ref.command_keyboard;
           client_map_send_data.target_robot_ID = client_map_send_data_ref.target_robot_ID;
           client_map_send_data.cmd_source = client_map_send_data_ref.cmd_source;
-          client_map_send_data.stamp = last_get_data_time_;
-
           client_map_send_data_pub_.publish(client_map_send_data);
           break;
         }
         case rm_referee::SENTRY_INFO_CMD:
         {
+          rm_referee::SentryInfo sentry_info_ref;
           rm_msgs::SentryInfo sentry_info;
-          memcpy(&sentry_info, rx_data + 7, sizeof(rm_msgs::SentryInfo));
+          memcpy(&sentry_info_ref, rx_data + 7, sizeof(rm_referee::SentryInfo));
+          sentry_info.sentry_info = sentry_info_ref.sentry_info;
+          sentry_info.is_out_of_war = sentry_info_ref.is_out_of_war;
+          sentry_info.remaining_bullets_can_supply = sentry_info_ref.remaining_bullets_can_supply;
           sentry_info_pub_.publish(sentry_info);
           break;
         }
@@ -683,6 +684,12 @@ void Referee::getRobotInfo()
       break;
     case rm_referee::RobotId::RED_SENTRY:
       base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::RED_RADAR:
+      base_.client_id_ = rm_referee::ClientId::RED_AERIAL_CLIENT;
+      break;
+    case rm_referee::RobotId::BLUE_RADAR:
+      base_.client_id_ = rm_referee::ClientId::BLUE_AERIAL_CLIENT;
       break;
   }
 }

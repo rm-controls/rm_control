@@ -69,8 +69,8 @@ typedef enum
   RADAR_INFO_CMD = 0x020E,
   INTERACTIVE_DATA_CMD = 0x0301,
   CUSTOM_CONTROLLER_CMD = 0x0302,  // controller
-  TARGET_POS_CMD = 0x0303,         // send aerial->server
-  ROBOT_COMMAND_CMD = 0x0304,      // controller
+  TARGET_POS_CMD = 0x0303,
+  ROBOT_COMMAND_CMD = 0x0304,  // controller
   CLIENT_MAP_CMD = 0x0305,
   CUSTOM_CLIENT_CMD = 0x0306,  // controller
   MAP_SENTRY_CMD = 0x0307,     // send sentry->aerial
@@ -293,7 +293,7 @@ typedef struct
   uint8_t ring_elevated_ground_state : 2;
   uint8_t r3_state : 2;
   uint8_t r4_state : 2;
-  uint8_t base_shield_value : 7;
+  uint16_t base_shield_value : 7;
   uint16_t be_hit_time : 9;
   uint8_t be_hit_target : 2;
   uint8_t central_point_state : 2;
@@ -544,8 +544,7 @@ typedef struct
 {
   InteractiveDataHeader header;
   uint32_t sentry_info;
-  uint16_t sentry_info_2;
-} __packed SentryInfo;
+} __packed SentryCmd;
 
 typedef struct
 {
@@ -557,6 +556,14 @@ typedef struct
 {
   uint8_t data[30];
 } __packed CustomControllerData;
+
+typedef struct
+{
+  uint32_t sentry_info;
+  uint16_t is_out_of_war : 1;
+  uint16_t remaining_bullets_can_supply : 11;
+  uint16_t reverse : 4;
+} __packed SentryInfo;
 
 typedef struct
 {

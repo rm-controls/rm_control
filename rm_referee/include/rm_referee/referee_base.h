@@ -25,7 +25,6 @@ public:
   // unpack call back
   virtual void robotStatusDataCallBack(const rm_msgs::GameRobotStatus& game_robot_status_data,
                                        const ros::Time& last_get_data_time);
-  virtual void updateEnemyHeroState(const rm_msgs::GameRobotHp& game_robot_hp_data, const ros::Time& last_get_data_time);
   virtual void gameStatusDataCallBack(const rm_msgs::GameStatus& game_status_data, const ros::Time& last_get_data_time);
   virtual void capacityDataCallBack(const rm_msgs::PowerManagementSampleAndStatusData& data,
                                     ros::Time& last_get_data_time);
@@ -59,9 +58,9 @@ public:
   virtual void radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data);
   virtual void mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data);
   virtual void sentryAttackingTargetCallback(const rm_msgs::SentryAttackingTargetConstPtr& data);
-  virtual void sendSentryCmdCallback(const rm_msgs::SentryInfoConstPtr& data);
+  virtual void sendSentryCmdCallback(const rm_msgs::SentryCmdConstPtr& data);
   virtual void sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data);
-  virtual void sendSentryStateCallback(const std_msgs::StringConstPtr& data);
+  virtual void sendCustomInfoCallback(const std_msgs::StringConstPtr& data);
   virtual void dronePoseCallBack(const geometry_msgs::PoseStampedConstPtr& data);
   virtual void shootCmdCallBack(const rm_msgs::ShootCmdConstPtr& data);
   virtual void radarToRefereeCallBack(const rm_msgs::RadarToSentryConstPtr& data);
@@ -131,8 +130,7 @@ public:
   EngineerActionFlashUi* engineer_action_flash_ui_{};
 
   InteractiveSender* interactive_data_sender_{};
-  //  CustomInfoSender* enemy_hero_state_sender_{};
-  CustomInfoSender* sentry_state_sender_{};
+  CustomInfoSender* custom_info_sender{};
   BulletNumShare* bullet_num_share_{};
   SentryToRadar* sentry_to_radar_{};
   RadarToSentry* radar_to_sentry_{};

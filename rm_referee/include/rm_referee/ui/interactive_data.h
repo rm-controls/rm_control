@@ -18,7 +18,7 @@ public:
   void sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data);
   void sendRadarInteractiveData(const rm_msgs::ClientMapReceiveData::ConstPtr& data);
   void sendMapSentryData(const rm_referee::MapSentryData& data);
-  void sendSentryCmdData(const rm_msgs::SentryInfoConstPtr& data);
+  void sendSentryCmdData(const rm_msgs::SentryCmdConstPtr& data);
   void sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data);
   virtual bool needSendInteractiveData();
   ros::Time last_send_time_;
@@ -44,7 +44,7 @@ public:
     : InteractiveSender(rpc_value, base, graph_queue, character_queue){};
   void sendBulletData();
   void updateBulletRemainData(const rm_msgs::BulletAllowance& data);
-  int bullet_42_mm_num_, bullet_17_mm_num_, count_receive_time_;
+  int bullet_42_mm_num_, bullet_17_mm_num_, count_receive_time_{ 0 };
 };
 
 class SentryToRadar : public InteractiveSender
