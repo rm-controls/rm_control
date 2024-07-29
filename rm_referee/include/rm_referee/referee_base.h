@@ -120,6 +120,7 @@ public:
   DroneTowardsTimeChangeGroupUi* drone_towards_time_change_group_ui_{};
   StringTriggerChangeUi *servo_mode_trigger_change_ui_{}, *stone_num_trigger_change_ui_{},
       *joint_temperature_trigger_change_ui_{}, *gripper_state_trigger_change_ui_{};
+  ColorTriggerChangeUi* color_trigger_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
