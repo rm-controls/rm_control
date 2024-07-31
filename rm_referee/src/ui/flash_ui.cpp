@@ -122,14 +122,13 @@ void FlashGroupUi::updateFlashUiForQueue(const ros::Time& time, bool state, bool
     graph_queue_->push_back(*graph);
 }
 
-void EngineerActionFlashUi::updateEngineerUiCmdData(const rm_msgs::EngineerUi::ConstPtr data,
-                                                    const ros::Time& last_get_data_time)
+void CustomizeDisplayFlashUi::updateCmdData(const uint32_t& data)
 {
-  symbol_ = data->symbol;
-  display(last_get_data_time);
+  symbol_ = data;
+  display(ros::Time::now());
 }
 
-void EngineerActionFlashUi::display(const ros::Time& time)
+void CustomizeDisplayFlashUi::display(const ros::Time& time)
 {
   for (auto graph : graph_vector_)
   {

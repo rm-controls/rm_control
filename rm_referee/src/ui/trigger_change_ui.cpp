@@ -450,4 +450,21 @@ void FrictionSpeedTriggerChangeUi::update()
   updateForQueue(true);
 }
 
+void VisualizeStateTriggerChangeUi::updateUiColor(const std::vector<bool>& data)
+{
+  for (int i = 0; i < static_cast<int>(data.size()); i++)
+  {
+    graph_vector_.find(std::to_string(i))
+        ->second->setColor(data[i] ? rm_referee::GraphColor::GREEN : rm_referee::GraphColor::PINK);
+  }
+  update();
+}
+
+void VisualizeStateTriggerChangeUi::update()
+{
+  for (auto graph : graph_vector_)
+    graph.second->setOperation(rm_referee::GraphOperation::UPDATE);
+  updateForQueue(true);
+}
+
 }  // namespace rm_referee

@@ -87,6 +87,7 @@ add_message_files(
         Buff.msg
         RadarToSentry.msg
         SentryCmd.msg
+        VisualizeStateData.msg
         PowerManagementSampleAndStatusData.msg
         PowerManagementInitializationExceptionData.msg
         PowerManagementProcessStackOverflowData.msg

@@ -47,6 +47,8 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include "std_msgs/UInt32.h"
+#include "rm_msgs/VisualizeStateData.h"
 
 #include "rm_referee/common/protocol.h"
 

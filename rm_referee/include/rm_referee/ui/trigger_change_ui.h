@@ -252,4 +252,27 @@ private:
   double wheel_speed_;
 };
 
+class VisualizeStateTriggerChangeUi : public TriggerChangeGroupUi
+{
+public:
+  explicit VisualizeStateTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, const std::string& name,
+                                         std::deque<Graph>* graph_queue, std::deque<Graph>* character_queue)
+    : TriggerChangeGroupUi(rpc_value, base, name, graph_queue, character_queue)
+  {
+    if (rpc_value.hasMember("data"))
+    {
+      XmlRpc::XmlRpcValue& data = rpc_value["data"];
+      for (int i = 0; i < static_cast<int>(rpc_value["data"].size()); i++)
+      {
+        graph_vector_.insert(
+            std::pair<std::string, Graph*>(std::to_string(i), new Graph(data[i]["config"], base_, id_++)));
+      }
+    }
+  };
+  void updateUiColor(const std::vector<bool>& data);
+
+private:
+  void update() override;
+};
+
 }  // namespace rm_referee

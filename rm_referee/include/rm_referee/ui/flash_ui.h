@@ -40,12 +40,12 @@ protected:
   std::string graph_name_;
 };
 
-class EngineerActionFlashUi : public FlashGroupUi
+class CustomizeDisplayFlashUi : public FlashGroupUi
 {
 public:
-  explicit EngineerActionFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
-                                 std::deque<Graph>* character_queue)
-    : FlashGroupUi(rpc_value, base, "engineer_action", graph_queue, character_queue)
+  explicit CustomizeDisplayFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                   std::deque<Graph>* character_queue)
+    : FlashGroupUi(rpc_value, base, "customize_display", graph_queue, character_queue)
   {
     if (rpc_value.hasMember("data"))
     {
@@ -57,7 +57,7 @@ public:
       }
     }
   }
-  void updateEngineerUiCmdData(const rm_msgs::EngineerUi::ConstPtr data, const ros::Time& last_get_data_time);
+  void updateCmdData(const uint32_t& data);
 
 private:
   void display(const ros::Time& time) override;
