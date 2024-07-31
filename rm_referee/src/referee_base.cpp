@@ -477,7 +477,7 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
   if (cover_flash_ui_ && !is_adding_)
     cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
   if (customize_display_flash_ui_ && !is_adding_)
-    customize_display_flash_ui_->updateCmdData(data->ui_symbol);
+    customize_display_flash_ui_->updateCmdData(data->ui_display_symbol);
 }
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {
