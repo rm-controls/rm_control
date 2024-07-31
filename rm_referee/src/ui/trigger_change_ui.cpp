@@ -450,7 +450,7 @@ void FrictionSpeedTriggerChangeUi::update()
   updateForQueue(true);
 }
 
-void ColorTriggerChangeUi::updateUiColor(const std::vector<bool>& data)
+void VisualizeStateTriggerChangeUi::updateUiColor(const std::vector<bool>& data)
 {
   for (int i = 0; i < static_cast<int>(data.size()); i++)
   {
@@ -460,7 +460,7 @@ void ColorTriggerChangeUi::updateUiColor(const std::vector<bool>& data)
   update();
 }
 
-void ColorTriggerChangeUi::update()
+void VisualizeStateTriggerChangeUi::update()
 {
   for (auto graph : graph_vector_)
     graph.second->setOperation(rm_referee::GraphOperation::UPDATE);

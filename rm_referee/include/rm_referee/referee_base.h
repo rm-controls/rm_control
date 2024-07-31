@@ -64,6 +64,8 @@ public:
   virtual void dronePoseCallBack(const geometry_msgs::PoseStampedConstPtr& data);
   virtual void shootCmdCallBack(const rm_msgs::ShootCmdConstPtr& data);
   virtual void radarToRefereeCallBack(const rm_msgs::RadarToSentryConstPtr& data);
+  virtual void customizeDisplayCmdCallBack(const std_msgs::UInt32ConstPtr& data);
+  virtual void visualizeStateDataCallBack(const rm_msgs::VisualizeStateDataConstPtr& data);
 
   // send  ui
   void sendSerialDataCallback();
@@ -94,6 +96,8 @@ public:
   ros::Subscriber sentry_state_sub_;
   ros::Subscriber drone_pose_sub_;
   ros::Subscriber shoot_cmd_sub_;
+  ros::Subscriber customize_display_cmd_sub_;
+  ros::Subscriber visualize_state_data_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
@@ -120,7 +124,7 @@ public:
   DroneTowardsTimeChangeGroupUi* drone_towards_time_change_group_ui_{};
   StringTriggerChangeUi *servo_mode_trigger_change_ui_{}, *stone_num_trigger_change_ui_{},
       *joint_temperature_trigger_change_ui_{}, *gripper_state_trigger_change_ui_{};
-  ColorTriggerChangeUi* color_trigger_change_ui_{};
+  VisualizeStateTriggerChangeUi* visualize_state_trigger_change_ui_{};
 
   FixedUi* fixed_ui_{};
 
@@ -128,7 +132,7 @@ public:
   SpinFlashUi* spin_flash_ui_{};
   HeroHitFlashUi* hero_hit_flash_ui_{};
   ExceedBulletSpeedFlashUi* exceed_bullet_speed_flash_ui_{};
-  EngineerActionFlashUi* engineer_action_flash_ui_{};
+  CustomizeDisplayFlashUi* customize_display_flash_ui_{};
 
   InteractiveSender* interactive_data_sender_{};
   CustomInfoSender* custom_info_sender{};
