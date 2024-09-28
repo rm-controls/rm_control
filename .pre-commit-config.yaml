@@ -14,7 +14,7 @@
 
 repos:
   # Standard hooks
-  - repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: git@github.com:pre-commit/pre-commit-hooks.git
     rev: v4.0.1
     hooks:
       - id: check-added-large-files
@@ -28,12 +28,12 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
 
-  - repo: https://github.com/psf/black
+  - repo: git@github.com:psf/black
     rev: 20.8b1
     hooks:
       - id: black
 
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-markup
+  - repo: git@github.com:Lucas-C/pre-commit-hooks-markup
     rev: v1.0.1
     hooks:
       - id: rst-linter
