@@ -66,6 +66,8 @@ public:
       ROS_ERROR("power gain no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("buffer_threshold", buffer_threshold_))
       ROS_ERROR("buffer threshold no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("is_new_capacitor", is_new_capacitor_))
+      ROS_ERROR("is_new_capacitor no defined (namespace: %s)", nh.getNamespace().c_str());
   }
   typedef enum
   {
@@ -124,7 +126,7 @@ public:
             chassis_cmd.power_limit = burst_power_;
           else
           {
-            switch (cap_state_)
+            switch (is_new_capacitor_ ? expect_state_ : cap_state_)
             {
               case NORMAL:
                 normal(chassis_cmd);
@@ -186,6 +188,7 @@ private:
   double charge_power_{}, extra_power_{}, burst_power_{};
   double buffer_threshold_{};
   double power_gain_{};
+  bool is_new_capacitor_{};
   uint8_t expect_state_{}, cap_state_{};
 
   bool referee_is_online_{ false };
