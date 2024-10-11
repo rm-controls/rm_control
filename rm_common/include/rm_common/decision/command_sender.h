@@ -51,6 +51,7 @@
 #include <rm_msgs/GameRobotHp.h>
 #include <rm_msgs/StatusChangeRequest.h>
 #include <rm_msgs/ShootData.h>
+#include <rm_msgs/LegCmd.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Odometry.h>
@@ -560,6 +561,32 @@ public:
   int getBalanceMode()
   {
     return msg_.data;
+  }
+  void setZero() override{};
+};
+
+class LegCommandSender : public CommandSenderBase<rm_msgs::LegCmd>
+{
+public:
+  explicit LegCommandSender(ros::NodeHandle& nh) : CommandSenderBase<rm_msgs::LegCmd>(nh)
+  {
+  }
+
+  void setJump(bool jump)
+  {
+    msg_.jump = jump;
+  }
+  void setLgeLength(double length)
+  {
+    msg_.leg_length = length;
+  }
+  bool getJump()
+  {
+    return msg_.jump;
+  }
+  double getLgeLength()
+  {
+    return msg_.leg_length;
   }
   void setZero() override{};
 };
