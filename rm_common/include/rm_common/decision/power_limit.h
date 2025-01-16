@@ -86,7 +86,14 @@ public:
   }
   void updateState(uint8_t state)
   {
-    expect_state_ = state;
+    if (!capacitor_is_on_)
+      expect_state_ = ALLOFF;
+    else
+      expect_state_ = state;
+  }
+  void updateCapSwitchState(bool state)
+  {
+    capacitor_is_on_ = state;
   }
   void setGameRobotData(const rm_msgs::GameRobotStatus data)
   {
@@ -122,24 +129,29 @@ public:
       {
         if (capacity_is_online_)
         {
-          if (chassis_power_limit_ > burst_power_)
-            chassis_cmd.power_limit = burst_power_;
+          if (expect_state_ == ALLOFF)
+            normal(chassis_cmd);
           else
           {
-            switch (is_new_capacitor_ ? expect_state_ : cap_state_)
+            if (chassis_power_limit_ > burst_power_)
+              chassis_cmd.power_limit = burst_power_;
+            else
             {
-              case NORMAL:
-                normal(chassis_cmd);
+              switch (is_new_capacitor_ ? expect_state_ : cap_state_)
+              {
+                case NORMAL:
+                  normal(chassis_cmd);
                 break;
-              case BURST:
-                burst(chassis_cmd, is_gyro);
+                case BURST:
+                  burst(chassis_cmd, is_gyro);
                 break;
-              case CHARGE:
-                charge(chassis_cmd);
+                case CHARGE:
+                  charge(chassis_cmd);
                 break;
-              default:
-                zero(chassis_cmd);
+                default:
+                  zero(chassis_cmd);
                 break;
+              }
             }
           }
         }
@@ -169,15 +181,18 @@ private:
   }
   void burst(rm_msgs::ChassisCmd& chassis_cmd, bool is_gyro)
   {
-    if (cap_energy_ > capacitor_threshold_)
+    if (cap_state_ != ALLOFF)
     {
-      if (is_gyro)
-        chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
+      if (cap_energy_ > capacitor_threshold_)
+      {
+        if (is_gyro)
+          chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
+        else
+          chassis_cmd.power_limit = burst_power_;
+      }
       else
-        chassis_cmd.power_limit = burst_power_;
+        expect_state_ = NORMAL;
     }
-    else
-      expect_state_ = NORMAL;
   }
 
   int chassis_power_buffer_;
@@ -188,8 +203,9 @@ private:
   double charge_power_{}, extra_power_{}, burst_power_{};
   double buffer_threshold_{};
   double power_gain_{};
-  bool is_new_capacitor_{};
+  bool is_new_capacitor_{ false };
   uint8_t expect_state_{}, cap_state_{};
+  bool capacitor_is_on_{ true };
 
   bool referee_is_online_{ false };
   bool capacity_is_online_{ false };
