@@ -87,7 +87,8 @@ void ChassisTriggerChangeUi::update()
     updateConfig(chassis_mode_, false, 1, false);
   else
     updateConfig(chassis_mode_, power_limit_state_ == rm_common::PowerLimit::BURST, 0,
-                 power_limit_state_ == rm_common::PowerLimit::CHARGE, power_limit_state_==rm_common::PowerLimit::NORMAL);
+                 power_limit_state_ == rm_common::PowerLimit::CHARGE,
+                 power_limit_state_ == rm_common::PowerLimit::NORMAL);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   checkModeChange();
   updateTwiceForQueue(true);
@@ -128,7 +129,8 @@ void ChassisTriggerChangeUi::checkModeChange()
   }
 }
 
-void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag, bool extra_flag)
+void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag,
+                                          bool extra_flag)
 {
   static ros::Time trigger_time;
   static int expect;
