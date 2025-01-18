@@ -87,7 +87,8 @@ void ChassisTriggerChangeUi::update()
     updateConfig(chassis_mode_, false, 1, false);
   else
     updateConfig(chassis_mode_, power_limit_state_ == rm_common::PowerLimit::BURST, 0,
-                 power_limit_state_ == rm_common::PowerLimit::CHARGE);
+                 power_limit_state_ == rm_common::PowerLimit::CHARGE,
+                 power_limit_state_ == rm_common::PowerLimit::NORMAL);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
   checkModeChange();
   updateTwiceForQueue(true);
@@ -128,7 +129,8 @@ void ChassisTriggerChangeUi::checkModeChange()
   }
 }
 
-void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
+void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag,
+                                          bool extra_flag)
 {
   static ros::Time trigger_time;
   static int expect;
@@ -144,9 +146,7 @@ void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uin
     graph_->setColor(rm_referee::GraphColor::PINK);
   else
   {
-    if ((base_.capacity_recent_mode_ == rm_common::PowerLimit::NORMAL ||
-         power_limit_state_ == rm_common::PowerLimit::NORMAL) &&
-        !delay)
+    if (base_.capacity_recent_mode_ == rm_common::PowerLimit::ALLOFF && !delay)
     {
       trigger_time = ros::Time::now();
       expect = power_limit_state_;
@@ -165,8 +165,10 @@ void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uin
           graph_->setColor(rm_referee::GraphColor::ORANGE);
         else if (sub_flag)
           graph_->setColor(rm_referee::GraphColor::GREEN);
-        else
+        else if (extra_flag)
           graph_->setColor(rm_referee::GraphColor::WHITE);
+        else
+          graph_->setColor(rm_referee::GraphColor::BLACK);
         delay = false;
       }
     }
@@ -176,8 +178,10 @@ void ChassisTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uin
         graph_->setColor(rm_referee::GraphColor::ORANGE);
       else if (sub_flag)
         graph_->setColor(rm_referee::GraphColor::GREEN);
-      else
+      else if (extra_flag)
         graph_->setColor(rm_referee::GraphColor::WHITE);
+      else
+        graph_->setColor(rm_referee::GraphColor::BLACK);
     }
   }
 }
