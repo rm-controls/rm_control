@@ -68,7 +68,7 @@ add_message_files(
         DartStatus.msg
         IcraBuffDebuffZoneStatus.msg
         SupplyProjectileAction.msg
-        DartRemainingTime.msg
+        DartInfo.msg
         RobotHurt.msg
         SentryAttackingTarget.msg
         ShootData.msg

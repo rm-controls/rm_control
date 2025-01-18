@@ -3,3 +3,4 @@ uint8 cooling_buff
 uint8 defence_buff
 uint8 vulnerability_buff
 uint16 attack_buff
+uint8 remaining_energy
