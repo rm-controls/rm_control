@@ -141,16 +141,16 @@ public:
               {
                 case NORMAL:
                   normal(chassis_cmd);
-                break;
+                  break;
                 case BURST:
                   burst(chassis_cmd, is_gyro);
-                break;
+                  break;
                 case CHARGE:
                   charge(chassis_cmd);
-                break;
+                  break;
                 default:
                   zero(chassis_cmd);
-                break;
+                  break;
               }
             }
           }
@@ -181,18 +181,15 @@ private:
   }
   void burst(rm_msgs::ChassisCmd& chassis_cmd, bool is_gyro)
   {
-    if (cap_state_ != ALLOFF)
+    if (cap_state_ != ALLOFF && cap_energy_ > capacitor_threshold_)
     {
-      if (cap_energy_ > capacitor_threshold_)
-      {
-        if (is_gyro)
-          chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
-        else
-          chassis_cmd.power_limit = burst_power_;
-      }
+      if (is_gyro)
+        chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
       else
-        expect_state_ = NORMAL;
+        chassis_cmd.power_limit = burst_power_;
     }
+    else
+      expect_state_ = NORMAL;
   }
 
   int chassis_power_buffer_;
