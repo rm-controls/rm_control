@@ -670,7 +670,7 @@ public:
 
 private:
   bool state{};
-  double on_pos_{}, off_pos_{}, current_position_{}, change_position_{}, per_change_position_{0.05};
+  double on_pos_{}, off_pos_{}, current_position_{}, change_position_{}, per_change_position_{ 0.05 };
 };
 
 class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
