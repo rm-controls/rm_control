@@ -1,0 +1,6 @@
+<launch>
+    <arg name="robot_type" default="$(env ROBOT_TYPE)" doc="Robot type [standard, hero, engineer]"/>
+
+    <node name="rm_vt" pkg="rm_vt" type="rm_vt" respawn="false"/>
+
+</launch>
