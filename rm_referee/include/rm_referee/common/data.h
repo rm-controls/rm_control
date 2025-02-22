@@ -78,7 +78,7 @@
 #include <rm_msgs/ManualToReferee.h>
 #include <rm_msgs/ClientMapSendData.h>
 #include <rm_msgs/RobotsPositionData.h>
-#include <rm_msgs/DartRemainingTime.h>
+#include <rm_msgs/DartInfo.h>
 #include <rm_msgs/StatusChangeRequest.h>
 #include <rm_msgs/ClientMapReceiveData.h>
 #include <rm_msgs/SupplyProjectileAction.h>

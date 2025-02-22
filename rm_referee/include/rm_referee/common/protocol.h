@@ -52,7 +52,7 @@ typedef enum
   FIELD_EVENTS_CMD = 0x0101,
   SUPPLY_PROJECTILE_ACTION_CMD = 0x0102,
   REFEREE_WARNING_CMD = 0x0104,
-  DART_REMAINING_CMD = 0x0105,
+  DART_INFO_CMD = 0x0105,
   ROBOT_STATUS_CMD = 0x0201,
   POWER_HEAT_DATA_CMD = 0x0202,
   ROBOT_POS_CMD = 0x0203,
@@ -74,7 +74,8 @@ typedef enum
   CLIENT_MAP_CMD = 0x0305,
   CUSTOM_CLIENT_CMD = 0x0306,  // controller
   MAP_SENTRY_CMD = 0x0307,     // send sentry->aerial
-  CUSTOM_INFO_CMD = 0x0308,
+  CUSTOM_TO_ROBOT_CMD = 0x0308,
+  ROBOT_TO_CUSTOM_CMD = 0x0309,
   POWER_MANAGEMENT_SAMPLE_AND_STATUS_DATA_CMD = 0X8301,
   POWER_MANAGEMENT_INITIALIZATION_EXCEPTION_CMD = 0X8302,
   POWER_MANAGEMENT_SYSTEM_EXCEPTION_CMD = 0X8303,
@@ -242,7 +243,7 @@ typedef struct
   uint16_t red_2_robot_hp;
   uint16_t red_3_robot_hp;
   uint16_t red_4_robot_hp;
-  uint16_t red_5_robot_hp;
+  uint16_t reserved_1;
   uint16_t red_7_robot_hp;
   uint16_t red_outpost_hp;
   uint16_t red_base_hp;
@@ -250,7 +251,7 @@ typedef struct
   uint16_t blue_2_robot_hp;
   uint16_t blue_3_robot_hp;
   uint16_t blue_4_robot_hp;
-  uint16_t blue_5_robot_hp;
+  uint16_t reserved_2;
   uint16_t blue_7_robot_hp;
   uint16_t blue_outpost_hp;
   uint16_t blue_base_hp;
@@ -284,19 +285,17 @@ typedef struct
 
 typedef struct
 {
-  uint8_t forward_supply_station_state : 1;
-  uint8_t inside_supply_station_state : 1;
+  uint8_t overlapping_supply_station_state : 1;
+  uint8_t nan_overlapping_supply_station_state : 1;
   uint8_t supplier_zone_state : 1;
-  uint8_t power_rune_activation_point_state : 1;
   uint8_t small_power_rune_state : 1;
   uint8_t large_power_rune_state : 1;
-  uint8_t ring_elevated_ground_state : 2;
-  uint8_t r3_state : 2;
-  uint8_t r4_state : 2;
-  uint16_t base_shield_value : 7;
+  uint8_t central_elevated_ground_state : 2;
+  uint8_t trapezoidal_elevated_ground_state : 2;
   uint16_t be_hit_time : 9;
   uint8_t be_hit_target : 2;
   uint8_t central_point_state : 2;
+  uint16_t reserved : 9;
 } __packed EventData;
 
 typedef struct
@@ -317,8 +316,11 @@ typedef struct
 typedef struct
 {
   uint8_t dart_remaining_time;
-  uint8_t dart_aim_state;
-} __packed DartRemainingTime;
+  uint8_t dart_last_aim_state : 3;
+  uint8_t enemy_total_hit_received : 3;
+  uint8_t dart_current_target : 3;
+  uint8_t reserved;
+} __packed DartInfo;
 
 typedef struct
 {
@@ -336,9 +338,9 @@ typedef struct
 
 typedef struct
 {
-  uint16_t chassis_volt;
-  uint16_t chassis_current;
-  float chassis_power;
+  uint16_t reserved_1;
+  uint16_t reserved_2;
+  float reserved_3;
   uint16_t chassis_power_buffer;
   uint16_t shooter_id_1_17_mm_cooling_heat;
   uint16_t shooter_id_2_17_mm_cooling_heat;
@@ -359,6 +361,7 @@ typedef struct
   uint8_t defence_buff;
   uint8_t vulnerability_buff;
   uint16_t attack_buff;
+  uint8_t remaining_energy;
 } __packed Buff;
 
 typedef struct
@@ -390,26 +393,31 @@ typedef struct
 typedef struct
 {
   uint8_t base_buff_point_state : 1;
-  uint8_t own_ring_elevated_ground_state : 1;
-  uint8_t enemy_ring_elevated_ground_state : 1;
-  uint8_t own_r3_state : 1;
-  uint8_t enemy_r3_state : 1;
-  uint8_t own_r4_state : 1;
-  uint8_t enemy_r4_state : 1;
-  uint8_t power_rune_activation_point_state : 1;
-  uint8_t forward_own_launch_ramp_buff_point_state : 1;
-  uint8_t behind_own_launch_ramp_buff_point_state : 1;
-  uint8_t forward_enemy_launch_ramp_buff_point_state : 1;
-  uint8_t behind_enemy_launch_ramp_buff_point_state : 1;
+  uint8_t own_central_elevated_ground_state : 1;
+  uint8_t enemy_central_elevated_ground_state : 1;
+  uint8_t own_trapezoidal_elevated_ground_state : 1;
+  uint8_t enemy_trapezoidal_elevated_ground_state : 1;
+  uint8_t forward_own_terrain_span_buff_point_state : 1;
+  uint8_t behind_own_terrain_span_buff_point_state : 1;
+  uint8_t forward_enemy_terrain_span_buff_point_state : 1;
+  uint8_t behind_enemy_terrain_span_buff_point_state : 1;
+  uint8_t below_central_own_terrain_span_buff_point_state : 1;
+  uint8_t upper_central_own_terrain_span_buff_point_state : 1;
+  uint8_t below_central_enemy_terrain_span_buff_point_state : 1;
+  uint8_t upper_central_enemy_terrain_span_buff_point_state : 1;
+  uint8_t below_road_own_terrain_span_buff_point_state : 1;
+  uint8_t upper_road_own_terrain_span_buff_point_state : 1;
+  uint8_t below_road_enemy_terrain_span_buff_point_state : 1;
+  uint8_t upper_road_enemy_terrain_span_buff_point_state : 1;
+  uint8_t own_fort_buff_point : 1;
   uint8_t own_outpost_buff_point : 1;
-  uint8_t own_side_restoration_zone : 1;
-  uint8_t own_sentry_patrol_zones : 1;
-  uint8_t enemy_sentry_patrol_zones : 1;
+  uint8_t nan_overlapping_supplier_zone : 1;
+  uint8_t overlapping_supplier_zone : 1;
   uint8_t own_large_resource_island_point : 1;
   uint8_t enemy_large_resource_island_point : 1;
   uint8_t own_exchange_zone : 1;
   uint8_t central_buff_point : 1;
-  uint32_t reverse : 12;
+  uint32_t reversed : 8;
 } __packed RfidStatus;
 
 typedef struct
@@ -489,18 +497,17 @@ typedef struct
   float standard_3_y;
   float standard_4_x;
   float standard_4_y;
-  float standard_5_x;
-  float standard_5_y;
+  float reserved_1;
+  float reserved_2;
 } __packed RobotsPositionData;
 
 typedef struct
 {
-  uint8_t mark_hero_progress;
-  uint8_t mark_engineer_progress;
-  uint8_t mark_standard_3_progress;
-  uint8_t mark_standard_4_progress;
-  uint8_t mark_standard_5_progress;
-  uint8_t mark_sentry_progress;
+  uint8_t mark_hero_progress : 1;
+  uint8_t mark_engineer_progress : 1;
+  uint8_t mark_standard_3_progress : 1;
+  uint8_t mark_standard_4_progress : 1;
+  uint8_t mark_sentry_progress : 1;
 } __packed RadarMarkData;
 
 typedef struct
