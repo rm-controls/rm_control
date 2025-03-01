@@ -38,6 +38,7 @@ void VideoTran::read()
   }
   clearRxBuffer();
 }
+
 int VideoTran::unpack(uint8_t* rx_data)
 {
   uint16_t cmd_id;
@@ -69,7 +70,7 @@ int VideoTran::unpack(uint8_t* rx_data)
                                                                  (uint16_t)(custom_controller_data.data[2 * i + 1]))) /
                                                          18000.0 * 3.14);
           }
-          custom_controller_cmd_pub.publish(custom_controller_joint_state);
+          custom_controller_cmd_pub_.publish(custom_controller_joint_state);
           break;
         }
         case rm_vt::ROBOT_COMMAND_CMD:
