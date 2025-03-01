@@ -12,25 +12,26 @@ namespace rm_vt
 {
 class VideoTran
 {
-  public:
-    VideoTran(ros::NodeHandle& nh) : last_get_data_time_(ros::Time::now())
-    {
-      ROS_INFO("Video transmission load.");
-      custom_controller_cmd_pub = nh.advertise<std_msgs::Float64MultiArray>("custom_controller_data",1);
-      base_.initSerial();
-    }
-    void read();
-    void clearRxBuffer()
-    {
-       rx_buffer_.clear();
-       rx_len_=0;
-    }
+public:
+  VideoTran(ros::NodeHandle& nh) : last_get_data_time_(ros::Time::now())
+  {
+    ROS_INFO("Video transmission load.");
+    custom_controller_cmd_pub = nh.advertise<std_msgs::Float64MultiArray>("custom_controller_data", 1);
+    base_.initSerial();
+  }
+  void read();
+  void clearRxBuffer()
+  {
+    rx_buffer_.clear();
+    rx_len_ = 0;
+  }
 
   ros::Publisher custom_controller_cmd_pub;
 
   Base base_;
   std::vector<uint8_t> rx_buffer_;
   int rx_len_;
+
 private:
   int unpack(uint8_t* rx_data);
   ros::Time last_get_data_time_;
@@ -38,5 +39,4 @@ private:
   const int k_unpack_buffer_length_ = 256;
   uint8_t unpack_buffer_[256]{};
 };
-}  //namespace rm_vt
-
+}  // namespace rm_vt

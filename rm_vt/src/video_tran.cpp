@@ -63,18 +63,20 @@ int VideoTran::unpack(uint8_t* rx_data)
           rm_vt::CustomControllerData custom_controller_data;
           std_msgs::Float64MultiArray custom_controller_joint_state;
           memcpy(&custom_controller_data, rx_data + 7, sizeof(rm_vt::CustomControllerData));
-          for( int i = 0; i < 5; i++ )
+          for (int i = 0; i < 5; i++)
           {
-            custom_controller_joint_state.data.push_back(( 1.0*( (uint16_t)( custom_controller_data.data[2*i]<<8 ) | (uint16_t)( custom_controller_data.data[2*i+1] )) ) / 18000.0 * 3.14 );
+            custom_controller_joint_state.data.push_back((1.0 * ((uint16_t)(custom_controller_data.data[2 * i] << 8) |
+                                                                 (uint16_t)(custom_controller_data.data[2 * i + 1]))) /
+                                                         18000.0 * 3.14);
           }
-          custom_controller_cmd_pub.publish( custom_controller_joint_state );
+          custom_controller_cmd_pub.publish(custom_controller_joint_state);
           break;
         }
         case rm_vt::ROBOT_COMMAND_CMD:
           break;
         default:
           ROS_WARN("Referee command ID %d not found.", cmd_id);
-        break;
+          break;
       }
       base_.video_tran_is_online_ = true;
       last_get_data_time_ = ros::Time::now();
@@ -83,4 +85,4 @@ int VideoTran::unpack(uint8_t* rx_data)
   }
   return -1;
 }
-}  //namespace rm_vt
+}  // namespace rm_vt

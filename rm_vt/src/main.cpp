@@ -3,7 +3,7 @@
 //
 #include "rm_vt/video_tran.h"
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   ros::init(argc, argv, "rm_vt");
   ros::NodeHandle nh("~");
