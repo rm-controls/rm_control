@@ -61,7 +61,7 @@ public:
     icra_buff_debuff_zone_status_pub_ =
         nh.advertise<rm_msgs::IcraBuffDebuffZoneStatus>("icra_buff_debuff_zone_status_data", 1);
     supply_projectile_action_pub_ = nh.advertise<rm_msgs::SupplyProjectileAction>("supply_projectile_action_data", 1);
-    dart_remaining_time_pub_ = nh.advertise<rm_msgs::DartRemainingTime>("dart_remaining_time_data", 1);
+    dart_info_pub_ = nh.advertise<rm_msgs::DartInfo>("dart_info_data", 1);
     robot_hurt_pub_ = nh.advertise<rm_msgs::RobotHurt>("robot_hurt_data", 1);
     shoot_data_pub_ = nh.advertise<rm_msgs::ShootData>("shoot_data", 1);
     bullet_allowance_pub_ = nh.advertise<rm_msgs::BulletAllowance>("bullet_allowance_data", 1);
@@ -109,7 +109,7 @@ public:
   ros::Publisher buff_pub_;
   ros::Publisher icra_buff_debuff_zone_status_pub_;
   ros::Publisher supply_projectile_action_pub_;
-  ros::Publisher dart_remaining_time_pub_;
+  ros::Publisher dart_info_pub_;
   ros::Publisher robot_hurt_pub_;
   ros::Publisher shoot_data_pub_;
   ros::Publisher bullet_allowance_pub_;

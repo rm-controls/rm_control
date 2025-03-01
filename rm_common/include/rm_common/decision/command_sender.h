@@ -652,6 +652,12 @@ public:
     msg_.data = off_pos_;
     state = false;
   }
+  void changePosition(double scale)
+  {
+    current_position_ = msg_.data;
+    change_position_ = current_position_ + scale * per_change_position_;
+    msg_.data = change_position_;
+  }
   bool getState() const
   {
     return state;
@@ -664,7 +670,7 @@ public:
 
 private:
   bool state{};
-  double on_pos_{}, off_pos_{};
+  double on_pos_{}, off_pos_{}, current_position_{}, change_position_{}, per_change_position_{ 0.05 };
 };
 
 class CardCommandSender : public CommandSenderBase<std_msgs::Float64>

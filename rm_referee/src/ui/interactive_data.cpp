@@ -85,7 +85,7 @@ void CustomInfoSender::sendCustomInfoData(std::wstring data)
     tx_data.user_data[2 * i] = characters[i] & 0xFF;
     tx_data.user_data[2 * i + 1] = (characters[i] >> 8) & 0xFF;
   }
-  pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::CUSTOM_INFO_CMD, data_len);
+  pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::CUSTOM_TO_ROBOT_CMD, data_len);
   last_send_ = ros::Time::now();
   sendSerial(ros::Time::now(), data_len);
 }
