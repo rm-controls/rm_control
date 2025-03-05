@@ -13,6 +13,7 @@ add_message_files(
         FILES
         ActuatorState.msg
         BalanceState.msg
+        BusState.msg
         DbusData.msg
         ExchangerMsg.msg
         ChassisCmd.msg
