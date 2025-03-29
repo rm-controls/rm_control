@@ -166,6 +166,20 @@ void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data,
   display(last_get_data_time);
 }
 
+void DeployFlashUi::display(const ros::Time &time) {
+  if (!(chassis_mode_ == rm_msgs::ChassisCmd::RAW && angular_z_ == 0.0))
+    graph_->setOperation(rm_referee::GraphOperation::DELETE);
+  FlashUi::updateFlashUiForQueue(time, (chassis_mode_ == rm_msgs::ChassisCmd::RAW && angular_z_ == 0.0), true);
+}
+
+void DeployFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data,
+                                         const rm_msgs::MultiDofCmd::ConstPtr vector,
+                                         const ros::Time &last_get_data_time) {
+  chassis_mode_ = data->mode;
+  angular_z_ = vector->angular.z;
+  display(last_get_data_time);
+}
+
 void HeroHitFlashUi::updateHittingConfig(const rm_msgs::GameRobotHp& msg)
 {
   if (base_.robot_id_ > 100)
