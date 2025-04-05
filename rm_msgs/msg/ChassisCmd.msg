@@ -3,6 +3,7 @@ uint8 FOLLOW = 1
 uint8 TWIST = 2
 uint8 UP_SLOPE = 3
 uint8 FALLEN = 4
+uint8 DEPLOY = 5
 
 uint8 mode
 geometry_msgs/Accel accel
