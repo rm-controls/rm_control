@@ -19,3 +19,4 @@ geometry_msgs/PointStamped target_pos
 #TRAJ
 float64 traj_yaw
 float64 traj_pitch
+string traj_frame_id
