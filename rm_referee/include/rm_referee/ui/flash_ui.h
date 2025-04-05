@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <rm_msgs/MultiDofCmd.h>
-
 #include "rm_referee/ui/ui_base.h"
 
 namespace rm_referee
@@ -101,14 +99,13 @@ class DeployFlashUi : public FlashUi {
                            std::deque<Graph> *character_queue)
       : FlashUi(rpc_value, base, "deploy", graph_queue, character_queue) {
     };
-    void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data,
-                              const rm_msgs::MultiDofCmd::ConstPtr vector,
-                              const ros::Time &last_get_data_time);
+    void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr &data, const ros::Time &last_get_data_time);
+    void updateChassisVelData(const geometry_msgs::Twist::ConstPtr &data);
 
   private:
     void display(const ros::Time &time) override;
     uint8_t chassis_mode_;
-    double angular_z_;
+    double angular_z_{0.};
 };
 
 class HeroHitFlashUi : public FlashGroupUi

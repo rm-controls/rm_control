@@ -169,15 +169,17 @@ void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data,
 void DeployFlashUi::display(const ros::Time &time) {
   if (!(chassis_mode_ == rm_msgs::ChassisCmd::RAW && angular_z_ == 0.0))
     graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  FlashUi::updateFlashUiForQueue(time, (chassis_mode_ == rm_msgs::ChassisCmd::RAW && angular_z_ == 0.0), true);
+  FlashUi::updateFlashUiForQueue(time, (chassis_mode_ == rm_msgs::ChassisCmd::RAW && angular_z_ == 0.0), false);
 }
 
-void DeployFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data,
-                                         const rm_msgs::MultiDofCmd::ConstPtr vector,
+void DeployFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr &data,
                                          const ros::Time &last_get_data_time) {
   chassis_mode_ = data->mode;
-  angular_z_ = vector->angular.z;
   display(last_get_data_time);
+}
+
+void DeployFlashUi::updateChassisVelData(const geometry_msgs::Twist::ConstPtr &data) {
+  angular_z_ = data->angular.z;
 }
 
 void HeroHitFlashUi::updateHittingConfig(const rm_msgs::GameRobotHp& msg)

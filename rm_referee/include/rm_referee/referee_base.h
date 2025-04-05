@@ -130,6 +130,7 @@ public:
 
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
+  DeployFlashUi* deploy_flash_ui_{};
   HeroHitFlashUi* hero_hit_flash_ui_{};
   ExceedBulletSpeedFlashUi* exceed_bullet_speed_flash_ui_{};
   CustomizeDisplayFlashUi* customize_display_flash_ui_{};
