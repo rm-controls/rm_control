@@ -373,8 +373,7 @@ public:
     }
     if (!nh.getParam("track_armor_error_tolerance", track_armor_error_tolerance_))
       ROS_ERROR("track armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("center_armor_error_tolerance", center_armor_error_tolerance_))
-      ROS_ERROR("center armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
+    nh.param("center_armor_error_tolerance", center_armor_error_tolerance_, track_armor_error_tolerance_);
     nh.param("track_buff_error_tolerance", track_buff_error_tolerance_, track_armor_error_tolerance_);
     if (!nh.getParam("max_track_target_vel", max_track_target_vel_))
     {
@@ -454,7 +453,7 @@ public:
     {
       gimbal_error_tolerance = track_buff_error_tolerance_;
     }
-    else if (track_data_.v_yaw < max_track_target_vel_)
+    else if (std::abs(track_data_.v_yaw) < max_track_target_vel_)
     {
       gimbal_error_tolerance = track_armor_error_tolerance_;
     }
