@@ -293,6 +293,10 @@ public:
       ROS_ERROR("Max yaw velocity no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("max_pitch_vel", max_pitch_vel_))
       ROS_ERROR("Max pitch velocity no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("time_constant_rc", time_constant_rc_))
+      ROS_ERROR("Time constant rc no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("time_constant_pc", time_constant_pc_))
+      ROS_ERROR("Time constant pc no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("track_timeout", track_timeout_))
       ROS_ERROR("Track timeout no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("eject_sensitivity", eject_sensitivity_))
@@ -305,8 +309,14 @@ public:
       scale_yaw = scale_yaw > 0 ? 1 : -1;
     if (std::abs(scale_pitch) > 1)
       scale_pitch = scale_pitch > 0 ? 1 : -1;
-    msg_.rate_yaw = scale_yaw * max_yaw_vel_;
-    msg_.rate_pitch = scale_pitch * max_pitch_vel_;
+    double time_constant{};
+    if (use_rc_)
+      time_constant = time_constant_rc_;
+    else
+      time_constant = time_constant_pc_;
+    msg_.rate_yaw = msg_.rate_yaw + (scale_yaw * max_yaw_vel_ - msg_.rate_yaw) * (0.001 / (time_constant + 0.001));
+    msg_.rate_pitch =
+        msg_.rate_pitch + (scale_pitch * max_pitch_vel_ - msg_.rate_pitch) * (0.001 / (time_constant + 0.001));
     if (eject_flag_)
     {
       msg_.rate_yaw *= eject_sensitivity_;
@@ -331,6 +341,10 @@ public:
   {
     eject_flag_ = flag;
   }
+  void setUseRc(bool flag)
+  {
+    use_rc_ = flag;
+  }
   bool getEject() const
   {
     return eject_flag_;
@@ -350,7 +364,8 @@ public:
 
 private:
   double max_yaw_vel_{}, max_pitch_vel_{}, track_timeout_{}, eject_sensitivity_ = 1.;
-  bool eject_flag_{}, use_lio_{};
+  double time_constant_rc_{}, time_constant_pc_{};
+  bool eject_flag_{}, use_rc_{}, use_lio_{};
 };
 
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd>
