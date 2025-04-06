@@ -335,6 +335,14 @@ public:
   {
     return eject_flag_;
   }
+  void setUseLio(bool flag)
+  {
+    use_lio_ = flag;
+  }
+  bool getUseLio() const
+  {
+    return use_lio_;
+  }
   void setPoint(geometry_msgs::PointStamped point)
   {
     msg_.target_pos = point;
@@ -342,7 +350,7 @@ public:
 
 private:
   double max_yaw_vel_{}, max_pitch_vel_{}, track_timeout_{}, eject_sensitivity_ = 1.;
-  bool eject_flag_{};
+  bool eject_flag_{}, use_lio_{};
 };
 
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd>
