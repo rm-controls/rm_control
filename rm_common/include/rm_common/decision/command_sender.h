@@ -349,14 +349,6 @@ public:
   {
     return eject_flag_;
   }
-  void setUseLio(bool flag)
-  {
-    use_lio_ = flag;
-  }
-  bool getUseLio() const
-  {
-    return use_lio_;
-  }
   void setPoint(geometry_msgs::PointStamped point)
   {
     msg_.target_pos = point;
@@ -365,7 +357,7 @@ public:
 private:
   double max_yaw_vel_{}, max_pitch_vel_{}, track_timeout_{}, eject_sensitivity_ = 1.;
   double time_constant_rc_{}, time_constant_pc_{};
-  bool eject_flag_{}, use_rc_{}, use_lio_{};
+  bool eject_flag_{}, use_rc_{};
 };
 
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd>
@@ -568,6 +560,24 @@ private:
   rm_msgs::ShootData shoot_data_;
   std_msgs::Bool suggest_fire_;
   uint8_t armor_type_{};
+};
+
+class UseLioCommandSender : public CommandSenderBase<std_msgs::Bool>
+{
+public:
+  explicit UseLioCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Bool>(nh)
+  {
+  }
+
+  void setUseLio(bool flag)
+  {
+    msg_.data = flag;
+  }
+  bool getUseLio() const
+  {
+    return msg_.data;
+  }
+  void setZero() override{};
 };
 
 class BalanceCommandSender : public CommandSenderBase<std_msgs::UInt8>
