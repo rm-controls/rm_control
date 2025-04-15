@@ -388,7 +388,13 @@ public:
     }
     if (!nh.getParam("track_armor_error_tolerance", track_armor_error_tolerance_))
       ROS_ERROR("track armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
+    nh.param("untrack_armor_error_tolerance", untrack_armor_error_tolerance_, track_armor_error_tolerance_);
     nh.param("track_buff_error_tolerance", track_buff_error_tolerance_, track_armor_error_tolerance_);
+    if (!nh.getParam("max_track_target_vel", max_track_target_vel_))
+    {
+      max_track_target_vel_ = 9.0;
+      ROS_ERROR("max track target vel no defined (namespace: %s)", nh.getNamespace().c_str());
+    }
   }
   ~ShooterCommandSender()
   {
@@ -457,7 +463,13 @@ public:
         return;
       }
     }
-    double gimbal_error_tolerance = track_data_.id == 12 ? track_buff_error_tolerance_ : track_armor_error_tolerance_;
+    double gimbal_error_tolerance;
+    if (track_data_.id == 12)
+      gimbal_error_tolerance = track_buff_error_tolerance_;
+    else if (std::abs(track_data_.v_yaw) < max_track_target_vel_)
+      gimbal_error_tolerance = track_armor_error_tolerance_;
+    else
+      gimbal_error_tolerance = untrack_armor_error_tolerance_;
     if (((gimbal_des_error_.error > gimbal_error_tolerance && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
          (track_data_.accel > target_acceleration_tolerance_)) ||
         (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE))
@@ -550,6 +562,8 @@ private:
       wheel_speed_des_{}, last_bullet_speed_{}, speed_oscillation_{};
   double track_armor_error_tolerance_{};
   double track_buff_error_tolerance_{};
+  double untrack_armor_error_tolerance_{};
+  double max_track_target_vel_{};
   double target_acceleration_tolerance_{};
   double extra_wheel_speed_once_{};
   double total_extra_wheel_speed_{};
