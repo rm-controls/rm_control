@@ -1,6 +1,6 @@
 float32 chassis_power
-float32 chassis_expect_power
-float32 capacity_recent_charge_power
+float32 cap_error_flag
+float32 cap_received_msg
 float32 capacity_remain_charge
 uint8 capacity_discharge_power
 uint8 state_machine_running_state
