@@ -54,6 +54,10 @@ jobs:
           echo "Catkin-lint version:"
           catkin_lint --version
 
+      - name: Clear pre-commit cache
+        run: |
+          rm -rf /github/home/.cache/pre-commit
+
       - name: Run pre-commit
         run: |
           pre-commit run --all-files --verbose
