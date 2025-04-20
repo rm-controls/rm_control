@@ -11,26 +11,25 @@ on:
 jobs:
   pre-commit:
     name: pre-commit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
     container:
-      image: ubuntu:20.04  
+      image: ubuntu:20.04 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v2 
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y wget gnupg lsb-release
       - name: Install clang-format-10
         run: |
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
-          sudo apt-get install clang-format-10
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+          echo "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main" > /etc/apt/sources.list.d/llvm.list
+          apt-get update
+          apt-get install -y clang-format-10
       - name: Install catkin-lint
         run: |
-          lsb_release -sc
-          sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-          sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
-          sudo apt-get -q update
-          sudo apt-get -q install python3-rosdep
-          sudo rm -rf /etc/ros/rosdep/sources.list.d/*
-          sudo rosdep init
-          rosdep update
-          sudo apt-get -q install catkin-lint
-          export ROS_DISTRO=noetic
-      - uses: pre-commit/action@v2.0.0
+          sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+          apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+          apt-get update
+          apt-get install -y python3-catkin-lint
+      - uses: pre-commit/action@v2.0.0  
