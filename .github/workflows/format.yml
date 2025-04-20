@@ -46,6 +46,6 @@ jobs:
           catkin_lint --version
           pre-commit --version
 
-      - name: run pre-commit
+      - name: Run pre-commit
         run: |
-          pre-commit run -a
+          pre-commit run --all-files --verbose
