@@ -285,15 +285,15 @@ typedef struct
 
 typedef struct
 {
-  uint8_t overlapping_supply_station_state : 1;
   uint8_t nan_overlapping_supply_station_state : 1;
+  uint8_t overlapping_supply_station_state : 1;
   uint8_t supplier_zone_state : 1;
   uint8_t small_power_rune_state : 1;
   uint8_t large_power_rune_state : 1;
   uint8_t central_elevated_ground_state : 2;
   uint8_t trapezoidal_elevated_ground_state : 2;
   uint16_t be_hit_time : 9;
-  uint8_t be_hit_target : 2;
+  uint8_t be_hit_target : 3;
   uint8_t central_point_state : 2;
   uint16_t reserved : 9;
 } __packed EventData;
@@ -318,7 +318,7 @@ typedef struct
   uint8_t dart_remaining_time;
   uint8_t dart_last_aim_state : 3;
   uint8_t enemy_total_hit_received : 3;
-  uint8_t dart_current_target : 3;
+  uint8_t dart_current_target : 2;
   uint8_t reserved;
 } __packed DartInfo;
 
@@ -415,7 +415,6 @@ typedef struct
   uint8_t overlapping_supplier_zone : 1;
   uint8_t own_large_resource_island_point : 1;
   uint8_t enemy_large_resource_island_point : 1;
-  uint8_t own_exchange_zone : 1;
   uint8_t central_buff_point : 1;
   uint32_t reversed : 8;
 } __packed RfidStatus;
@@ -423,14 +422,9 @@ typedef struct
 typedef struct
 {
   uint8_t dart_launch_opening_status;
-  //  uint8_t dart_attack_target;
+  uint8_t reversed;
   uint16_t target_change_time;
-  uint8_t first_dart_speed;
-  uint8_t second_dart_speed;
-  uint8_t third_dart_speed;
-  uint8_t fourth_dart_speed;
-  uint16_t last_dart_launch_time;
-  uint16_t operate_launch_cmd_time;
+  uint16_t latest_launch_cmd_time;
 } __packed DartClientCmd;
 
 /*********************** Interactive data between robots----0x0301 ********************/

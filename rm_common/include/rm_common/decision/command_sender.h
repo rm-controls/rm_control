@@ -293,6 +293,10 @@ public:
       ROS_ERROR("Max yaw velocity no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("max_pitch_vel", max_pitch_vel_))
       ROS_ERROR("Max pitch velocity no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("time_constant_rc", time_constant_rc_))
+      ROS_ERROR("Time constant rc no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("time_constant_pc", time_constant_pc_))
+      ROS_ERROR("Time constant pc no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("track_timeout", track_timeout_))
       ROS_ERROR("Track timeout no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("eject_sensitivity", eject_sensitivity_))
@@ -305,8 +309,14 @@ public:
       scale_yaw = scale_yaw > 0 ? 1 : -1;
     if (std::abs(scale_pitch) > 1)
       scale_pitch = scale_pitch > 0 ? 1 : -1;
-    msg_.rate_yaw = scale_yaw * max_yaw_vel_;
-    msg_.rate_pitch = scale_pitch * max_pitch_vel_;
+    double time_constant{};
+    if (use_rc_)
+      time_constant = time_constant_rc_;
+    else
+      time_constant = time_constant_pc_;
+    msg_.rate_yaw = msg_.rate_yaw + (scale_yaw * max_yaw_vel_ - msg_.rate_yaw) * (0.001 / (time_constant + 0.001));
+    msg_.rate_pitch =
+        msg_.rate_pitch + (scale_pitch * max_pitch_vel_ - msg_.rate_pitch) * (0.001 / (time_constant + 0.001));
     if (eject_flag_)
     {
       msg_.rate_yaw *= eject_sensitivity_;
@@ -331,6 +341,10 @@ public:
   {
     eject_flag_ = flag;
   }
+  void setUseRc(bool flag)
+  {
+    use_rc_ = flag;
+  }
   bool getEject() const
   {
     return eject_flag_;
@@ -342,7 +356,8 @@ public:
 
 private:
   double max_yaw_vel_{}, max_pitch_vel_{}, track_timeout_{}, eject_sensitivity_ = 1.;
-  bool eject_flag_{};
+  double time_constant_rc_{}, time_constant_pc_{};
+  bool eject_flag_{}, use_rc_{};
 };
 
 class ShooterCommandSender : public TimeStampCommandSenderBase<rm_msgs::ShootCmd>
@@ -373,7 +388,13 @@ public:
     }
     if (!nh.getParam("track_armor_error_tolerance", track_armor_error_tolerance_))
       ROS_ERROR("track armor error tolerance no defined (namespace: %s)", nh.getNamespace().c_str());
+    nh.param("untrack_armor_error_tolerance", untrack_armor_error_tolerance_, track_armor_error_tolerance_);
     nh.param("track_buff_error_tolerance", track_buff_error_tolerance_, track_armor_error_tolerance_);
+    if (!nh.getParam("max_track_target_vel", max_track_target_vel_))
+    {
+      max_track_target_vel_ = 9.0;
+      ROS_ERROR("max track target vel no defined (namespace: %s)", nh.getNamespace().c_str());
+    }
   }
   ~ShooterCommandSender()
   {
@@ -442,7 +463,13 @@ public:
         return;
       }
     }
-    double gimbal_error_tolerance = track_data_.id == 12 ? track_buff_error_tolerance_ : track_armor_error_tolerance_;
+    double gimbal_error_tolerance;
+    if (track_data_.id == 12)
+      gimbal_error_tolerance = track_buff_error_tolerance_;
+    else if (std::abs(track_data_.v_yaw) < max_track_target_vel_)
+      gimbal_error_tolerance = track_armor_error_tolerance_;
+    else
+      gimbal_error_tolerance = untrack_armor_error_tolerance_;
     if (((gimbal_des_error_.error > gimbal_error_tolerance && time - gimbal_des_error_.stamp < ros::Duration(0.1)) ||
          (track_data_.accel > target_acceleration_tolerance_)) ||
         (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE))
@@ -535,6 +562,8 @@ private:
       wheel_speed_des_{}, last_bullet_speed_{}, speed_oscillation_{};
   double track_armor_error_tolerance_{};
   double track_buff_error_tolerance_{};
+  double untrack_armor_error_tolerance_{};
+  double max_track_target_vel_{};
   double target_acceleration_tolerance_{};
   double extra_wheel_speed_once_{};
   double total_extra_wheel_speed_{};
