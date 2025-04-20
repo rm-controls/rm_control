@@ -20,12 +20,7 @@ jobs:
       PRE_COMMIT_PYTHON: python3       # 指定 Python 解释器
     steps:
       - uses: actions/checkout@v2
-
-      - name: Set timezone
-        run: |
-          ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
-          dpkg-reconfigure --frontend noninteractive tzdata
-
+      
       - name: Install dependencies
         run: |
           apt-get update
