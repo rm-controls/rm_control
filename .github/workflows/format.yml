@@ -15,23 +15,34 @@ jobs:
     container:
       image: ubuntu:20.04
     env:
-      PRE_COMMIT_PYTHON: python3  # 指定 Python 解释器
+      DEBIAN_FRONTEND: noninteractive  # 避免交互式提示
+      TZ: Asia/Shanghai                # 设置时区（根据需要调整）
+      PRE_COMMIT_PYTHON: python3       # 指定 Python 解释器
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set timezone
+        run: |
+          ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
+          dpkg-reconfigure --frontend noninteractive tzdata
+
       - name: Install dependencies
         run: |
           apt-get update
           apt-get install -y wget gnupg lsb-release python3 python3-pip
+
       - name: Install clang-format-10
         run: |
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
           echo "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main" > /etc/apt/sources.list.d/llvm.list
           apt-get update
           apt-get install -y clang-format-10
+
       - name: Install catkin-lint
         run: |
           sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
           apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
           apt-get update
           apt-get install -y python3-catkin-lint
+
       - uses: pre-commit/action@v2.0.0
