@@ -46,6 +46,6 @@ jobs:
           catkin_lint --version
           pre-commit --version
 
-      - uses: pre-commit/action@v2.0.0
-        with:
-          extra_args: --all-files --verbose
+      - name: run pre-commit
+        run: |
+          pre-commit run -a
