@@ -555,9 +555,8 @@ int Referee::unpack(uint8_t* rx_data)
           uint8_t data[sizeof(rm_referee::PowerManagementSampleAndStatusData)];
           memcpy(&data, rx_data + 7, sizeof(rm_referee::PowerManagementSampleAndStatusData));
           sample_and_status_pub_data.chassis_power = (static_cast<uint16_t>((data[0] << 8) | data[1]) / 100.);
-          sample_and_status_pub_data.chassis_expect_power = (static_cast<uint16_t>((data[2] << 8) | data[3]) / 100.);
-          sample_and_status_pub_data.capacity_recent_charge_power =
-              (static_cast<uint16_t>((data[4] << 8) | data[5]) / 100.);
+          sample_and_status_pub_data.cap_error_flag = (static_cast<uint16_t>((data[2] << 8) | data[3]) / 100.);
+          sample_and_status_pub_data.cap_received_msg = (static_cast<uint16_t>((data[4] << 8) | data[5]) / 100.);
           sample_and_status_pub_data.capacity_remain_charge =
               (static_cast<uint16_t>((data[6] << 8) | data[7]) / 10000.);
           sample_and_status_pub_data.capacity_discharge_power = static_cast<uint8_t>(data[8]);
