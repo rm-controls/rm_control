@@ -56,6 +56,10 @@ public:
       ROS_ERROR("Safety power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("capacitor_threshold", capacitor_threshold_))
       ROS_ERROR("Capacitor threshold no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("disable_cap_gyro_threshold",disable_cap_gyro_threshold_))
+      ROS_ERROR("Disable cap gyro threshold no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("enable_cap_gyro_threshold",enable_cap_gyro_threshold_))
+      ROS_ERROR("Enable cap gyro threshold no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("charge_power", charge_power_))
       ROS_ERROR("Charge power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("extra_power", extra_power_))
@@ -119,6 +123,17 @@ public:
   {
     return expect_state_;
   }
+  void setGyroPower(rm_msgs::ChassisCmd& chassis_cmd)
+  {
+    if (!allow_gyro_cap_ && cap_energy_>=enable_cap_gyro_threshold_)
+      allow_gyro_cap_ = true;
+    if (allow_gyro_cap_ && cap_energy_<=disable_cap_gyro_threshold_)
+      allow_gyro_cap_ = false;
+    if ( allow_gyro_cap_ && chassis_power_limit_ < 80)
+      chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
+    else
+      expect_state_ = NORMAL;
+  }
   void setLimitPower(rm_msgs::ChassisCmd& chassis_cmd, bool is_gyro)
   {
     if (robot_id_ == rm_msgs::GameRobotStatus::BLUE_ENGINEER || robot_id_ == rm_msgs::GameRobotStatus::RED_ENGINEER)
@@ -127,31 +142,26 @@ public:
     {  // standard and hero
       if (referee_is_online_)
       {
-        if (capacity_is_online_)
+        if (capacity_is_online_ && expect_state_ != ALLOFF)
         {
-          if (expect_state_ == ALLOFF)
-            normal(chassis_cmd);
+          if (chassis_power_limit_ > burst_power_)
+            chassis_cmd.power_limit = burst_power_;
           else
           {
-            if (chassis_power_limit_ > burst_power_)
-              chassis_cmd.power_limit = burst_power_;
-            else
+            switch (is_new_capacitor_ ? expect_state_ : cap_state_)
             {
-              switch (is_new_capacitor_ ? expect_state_ : cap_state_)
-              {
-                case NORMAL:
-                  normal(chassis_cmd);
-                  break;
-                case BURST:
-                  burst(chassis_cmd, is_gyro);
-                  break;
-                case CHARGE:
-                  charge(chassis_cmd);
-                  break;
-                default:
-                  zero(chassis_cmd);
-                  break;
-              }
+              case NORMAL:
+                normal(chassis_cmd);
+                break;
+              case BURST:
+                burst(chassis_cmd, is_gyro);
+                break;
+              case CHARGE:
+                charge(chassis_cmd);
+                break;
+              default:
+                zero(chassis_cmd);
+                break;
             }
           }
         }
@@ -184,7 +194,7 @@ private:
     if (cap_state_ != ALLOFF && cap_energy_ > capacitor_threshold_)
     {
       if (is_gyro)
-        chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
+        setGyroPower(chassis_cmd);
       else
         chassis_cmd.power_limit = burst_power_;
     }
@@ -197,12 +207,14 @@ private:
   float cap_energy_;
   double safety_power_{};
   double capacitor_threshold_{};
+  double enable_cap_gyro_threshold_{},disable_cap_gyro_threshold_{};
   double charge_power_{}, extra_power_{}, burst_power_{};
   double buffer_threshold_{};
   double power_gain_{};
   bool is_new_capacitor_{ false };
   uint8_t expect_state_{}, cap_state_{};
   bool capacitor_is_on_{ true };
+  bool allow_gyro_cap_{ false };
 
   bool referee_is_online_{ false };
   bool capacity_is_online_{ false };
