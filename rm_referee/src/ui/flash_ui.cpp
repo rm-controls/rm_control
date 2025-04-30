@@ -220,16 +220,20 @@ void ExceedBulletSpeedFlashUi::updateShootData(const rm_msgs::ShootData& msg)
   shoot_data_ = msg;
 }
 
-void BurstFlashUi::display(const ros::Time &time) {
+void BurstFlashUi::display(const ros::Time& time)
+{
   ros::Time now = ros::Time::now();
-  if (now - start_burst_time_ < ros::Duration(20)) {
+  if (now - start_burst_time_ < ros::Duration(20))
+  {
     graph_->setColor(rm_referee::GraphColor::PURPLE);
     FlashUi::updateFlashUiForQueue(time, true, false);
-  } else
+  }
+  else
     FlashUi::updateFlashUiForQueue(time, false, false);
 }
 
-void BurstFlashUi::updateBurstTimeData(const rm_msgs::ManualToReferee::ConstPtr& data) {
+void BurstFlashUi::updateBurstTimeData(const rm_msgs::ManualToReferee::ConstPtr& data)
+{
   start_burst_time_ = data->start_burst_time;
   display(ros::Time::now());
 }

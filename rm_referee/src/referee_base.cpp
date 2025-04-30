@@ -160,7 +160,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "customize_display")
         customize_display_flash_ui_ =
             new CustomizeDisplayFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
-      if (rpc_value[i]["name"]=="burst")
+      if (rpc_value[i]["name"] == "burst")
         burst_flash_ui_ = new BurstFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
   }
