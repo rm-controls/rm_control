@@ -1,5 +1,5 @@
 //
-// Created by chen on 24-11-23.
+// Created by ch on 24-11-23.
 //
 
 #pragma once
@@ -15,8 +15,10 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include "std_msgs/UInt32.h"
-#include "std_msgs/Float64MultiArray.h"
 #include "rm_msgs/VisualizeStateData.h"
+#include "rm_msgs/CustomControllerData.h"
+#include "rm_msgs/VTKeyboardMouseData.h"
+#include "rm_msgs/VTReceiverControlData.h"
 
 #include "rm_vt/common/protocol.h"
 
@@ -26,13 +28,13 @@ class Base
 {
 public:
   serial::Serial serial_;
-  bool video_tran_is_online_ = false;
+  bool video_transmission_is_online_ = false;
 
   void initSerial()
   {
     serial::Timeout timeout = serial::Timeout::simpleTimeout(50);
     serial_.setPort("/dev/usbImagetran");
-    serial_.setBaudrate(115200);
+    serial_.setBaudrate(921600);
     serial_.setTimeout(timeout);
     if (serial_.isOpen())
       return;

@@ -34,6 +34,9 @@ add_message_files(
         TagMsg.msg
         TagMsgArray.msg
         SentryDeviate.msg
+        CustomControllerData.msg
+        VTKeyboardMouseData.msg
+        VTReceiverControlData.msg
 )
 
 add_service_files(

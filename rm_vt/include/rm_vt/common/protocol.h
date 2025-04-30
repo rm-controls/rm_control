@@ -1,5 +1,5 @@
 //
-// Created by chen on 24-11-23.
+// Created by ch on 24-11-23.
 //
 #pragma once
 #define __packed __attribute__((packed))
@@ -9,43 +9,10 @@ namespace rm_vt
 {
 typedef enum
 {
-  GAME_STATUS_CMD = 0x0001,
-  GAME_RESULT_CMD = 0x0002,
-  GAME_ROBOT_HP_CMD = 0x0003,
-  DART_STATUS_CMD = 0x0004,
-  ICRA_ZONE_STATUS_CMD = 0x0005,
-  FIELD_EVENTS_CMD = 0x0101,
-  SUPPLY_PROJECTILE_ACTION_CMD = 0x0102,
-  REFEREE_WARNING_CMD = 0x0104,
-  DART_REMAINING_CMD = 0x0105,
-  ROBOT_STATUS_CMD = 0x0201,
-  POWER_HEAT_DATA_CMD = 0x0202,
-  ROBOT_POS_CMD = 0x0203,
-  BUFF_CMD = 0x0204,
-  AERIAL_ROBOT_ENERGY_CMD = 0x0205,
-  ROBOT_HURT_CMD = 0x0206,
-  SHOOT_DATA_CMD = 0x0207,
-  BULLET_REMAINING_CMD = 0x0208,
-  ROBOT_RFID_STATUS_CMD = 0x0209,
-  DART_CLIENT_CMD = 0x020A,
-  ROBOTS_POS_CMD = 0X020B,
-  RADAR_MARK_CMD = 0X020C,
-  SENTRY_INFO_CMD = 0x020D,
-  RADAR_INFO_CMD = 0x020E,
-  INTERACTIVE_DATA_CMD = 0x0301,
-  CUSTOM_CONTROLLER_CMD = 0x0302,  // controller
-  TARGET_POS_CMD = 0x0303,
-  ROBOT_COMMAND_CMD = 0x0304,  // controller
-  CLIENT_MAP_CMD = 0x0305,
-  CUSTOM_CLIENT_CMD = 0x0306,  // controller
-  MAP_SENTRY_CMD = 0x0307,     // send sentry->aerial
-  CUSTOM_INFO_CMD = 0x0308,
-  POWER_MANAGEMENT_SAMPLE_AND_STATUS_DATA_CMD = 0X8301,
-  POWER_MANAGEMENT_INITIALIZATION_EXCEPTION_CMD = 0X8302,
-  POWER_MANAGEMENT_SYSTEM_EXCEPTION_CMD = 0X8303,
-  POWER_MANAGEMENT_PROCESS_STACK_OVERFLOW_CMD = 0X8304,
-  POWER_MANAGEMENT_UNKNOWN_EXCEPTION_CMD = 0X8305
-} RefereeCmdId;
+  CUSTOM_CONTROLLER_CMD = 0x0302,  // custom_controller
+  ROBOT_COMMAND_CMD = 0x0304,  // keyboard_data
+  ROBOT_TO_CUSTOM_CMD = 0x0309
+}VideoTransmissionCmdId;
 
 typedef struct
 {
@@ -57,9 +24,97 @@ typedef struct
 
 typedef struct
 {
-  uint8_t data[30];
+  uint16_t encoder_data[6];
+  uint16_t joystick_l_y_data;
+  uint16_t joystick_l_x_data;
+  uint16_t joystick_r_y_data;
+  uint16_t joystick_r_x_data;
+  uint8_t unused_button_data : 4;
+  uint8_t button1_data : 1;
+  uint8_t button2_data : 1;
+  uint8_t button3_data : 1;
+  uint8_t button4_data : 1;
+  uint8_t unused_data_1;
+  uint8_t unused_data_2;
+  uint8_t unused_data_3;
+  uint8_t unused_data_4;
+  uint8_t unused_data_5;
+  uint8_t unused_data_6;
+  uint8_t unused_data_7;
+  uint8_t unused_data_8;
+  uint8_t unused_data_9;
 } __packed CustomControllerData;
 
+typedef struct
+{
+  uint8_t data[30];
+} __packed RobotToCustomData;
+
+typedef struct
+{
+  int16_t mouse_x;
+  int16_t mouse_y;
+  int16_t mouse_z;
+  int8_t left_button_down;
+  int8_t right_button_down;
+  uint16_t key_w : 1;
+  uint16_t key_s : 1;
+  uint16_t key_a : 1;
+  uint16_t key_d : 1;
+  uint16_t key_shift : 1;
+  uint16_t key_ctrl : 1;
+  uint16_t key_q : 1;
+  uint16_t key_e : 1;
+  uint16_t key_r : 1;
+  uint16_t key_f : 1;
+  uint16_t key_g : 1;
+  uint16_t key_z : 1;
+  uint16_t key_x : 1;
+  uint16_t key_c : 1;
+  uint16_t key_v : 1;
+  uint16_t key_b : 1;
+  uint16_t reserved;
+} __packed KeyboardMouseData;
+
+typedef struct
+{
+  uint16_t joystick_r_x : 11;
+  uint16_t joystick_r_y : 11;
+  uint16_t joystick_l_y : 11;
+  uint16_t joystick_l_x : 11;
+  uint8_t mode_switch : 2;
+  uint8_t pause_button : 1;
+  uint8_t custom_button_l : 1;
+  uint8_t custom_button_r : 1;
+  uint16_t wheel : 11;
+  uint8_t trigger : 1;
+  uint8_t unused_1 : 3;
+  //mouse
+  int16_t mouse_x;
+  int16_t mouse_y;
+  int16_t mouse_wheel;
+  uint8_t mouse_left_down : 2;
+  uint8_t mouse_right_down : 2;
+  uint8_t mouse_mid_down : 2;
+  uint8_t unused_2 : 2;
+  //keyboard
+  uint16_t key_w : 1;
+  uint16_t key_s : 1;
+  uint16_t key_a : 1;
+  uint16_t key_d : 1;
+  uint16_t key_shift : 1;
+  uint16_t key_ctrl : 1;
+  uint16_t key_q : 1;
+  uint16_t key_e : 1;
+  uint16_t key_r : 1;
+  uint16_t key_f : 1;
+  uint16_t key_g : 1;
+  uint16_t key_z : 1;
+  uint16_t key_x : 1;
+  uint16_t key_c : 1;
+  uint16_t key_v : 1;
+  uint16_t key_b : 1;
+} __packed ControlData;
 /***********************Frame tail(CRC8_CRC16)********************************************/
 const uint8_t kCrc8Init = 0xff;
 const uint8_t kCrc8Table[256] = {
