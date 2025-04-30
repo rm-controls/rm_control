@@ -156,4 +156,15 @@ private:
   rm_msgs::ShootData shoot_data_;
 };
 
+class BurstFlashUi : public FlashUi
+{
+public:
+  explicit BurstFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                    std::deque<Graph>* character_queue)
+                                      :FlashUi(rpc_value, base, "burst", graph_queue, character_queue){}
+  void updateBurstTimeData(const rm_msgs::ManualToReferee::ConstPtr& data);
+private:
+  void display(const ros::Time& time) override;
+  ros::Time start_burst_time_;
+};
 }  // namespace rm_referee
