@@ -70,12 +70,38 @@ int VideoTransmission::unpack(uint8_t* rx_data)
           rm_vt::CustomControllerData custom_controller_ref;
           rm_msgs::CustomControllerData custom_controller_data;
           memcpy(&custom_controller_ref, rx_data + 7, sizeof(rm_vt::CustomControllerData));
-          for (int i = 0; i < 6; i++)
-            custom_controller_data.encoder_data[i] = custom_controller_ref.encoder_data[i] * 3.14 / 18000.0;
-          custom_controller_data.joystick_l_y_data = custom_controller_ref.joystick_l_y_data;
-          custom_controller_data.joystick_l_x_data = custom_controller_ref.joystick_l_x_data;
-          custom_controller_data.joystick_r_y_data = custom_controller_ref.joystick_r_y_data;
-          custom_controller_data.joystick_r_x_data = custom_controller_ref.joystick_r_x_data;
+          custom_controller_data.encoder_data[0] = 3.14 *
+                                                   ((uint16_t)(custom_controller_ref.encoder1_data[0] << 8) |
+                                                    (uint16_t)custom_controller_ref.encoder1_data[1]) /
+                                                   18000.0;
+          custom_controller_data.encoder_data[1] = 3.14 *
+                                                   ((uint16_t)(custom_controller_ref.encoder2_data[0] << 8) |
+                                                    (uint16_t)custom_controller_ref.encoder2_data[1]) /
+                                                   18000.0;
+          custom_controller_data.encoder_data[5] = 3.14 *
+                                                   ((uint16_t)(custom_controller_ref.encoder3_data[0] << 8) |
+                                                    (uint16_t)custom_controller_ref.encoder3_data[1]) /
+                                                   18000.0;
+          custom_controller_data.encoder_data[3] = 3.14 *
+                                                   ((uint16_t)(custom_controller_ref.encoder4_data[0] << 8) |
+                                                    (uint16_t)custom_controller_ref.encoder4_data[1]) /
+                                                   18000.0;
+          custom_controller_data.encoder_data[4] = 3.14 *
+                                                   ((uint16_t)(custom_controller_ref.encoder5_data[0] << 8) |
+                                                    (uint16_t)custom_controller_ref.encoder5_data[1]) /
+                                                   18000.0;
+          custom_controller_data.encoder_data[2] = 3.14 *
+                                                   ((uint16_t)(custom_controller_ref.encoder6_data[0] << 8) |
+                                                    (uint16_t)custom_controller_ref.encoder6_data[1]) /
+                                                   18000.0;
+          custom_controller_data.joystick_l_y_data = ((uint16_t)(custom_controller_ref.joystick_l_x_data[0] << 8) |
+                                                      (uint16_t)custom_controller_ref.joystick_l_x_data[1]);
+          custom_controller_data.joystick_l_x_data = ((uint16_t)(custom_controller_ref.joystick_l_y_data[0] << 8) |
+                                                      (uint16_t)custom_controller_ref.joystick_l_y_data[1]);
+          custom_controller_data.joystick_r_y_data = ((uint16_t)(custom_controller_ref.joystick_r_x_data[0] << 8) |
+                                                      (uint16_t)custom_controller_ref.joystick_r_x_data[1]);
+          custom_controller_data.joystick_r_x_data = ((uint16_t)(custom_controller_ref.joystick_r_y_data[0] << 8) |
+                                                      (uint16_t)custom_controller_ref.joystick_r_y_data[1]);
           custom_controller_data.button_data[0] = custom_controller_ref.button1_data;
           custom_controller_data.button_data[1] = custom_controller_ref.button2_data;
           custom_controller_data.button_data[2] = custom_controller_ref.button3_data;

@@ -10,9 +10,9 @@ namespace rm_vt
 typedef enum
 {
   CUSTOM_CONTROLLER_CMD = 0x0302,  // custom_controller
-  ROBOT_COMMAND_CMD = 0x0304,  // keyboard_data
+  ROBOT_COMMAND_CMD = 0x0304,      // keyboard_data
   ROBOT_TO_CUSTOM_CMD = 0x0309
-}VideoTransmissionCmdId;
+} VideoTransmissionCmdId;
 
 typedef struct
 {
@@ -24,16 +24,21 @@ typedef struct
 
 typedef struct
 {
-  uint16_t encoder_data[6];
-  uint16_t joystick_l_y_data;
-  uint16_t joystick_l_x_data;
-  uint16_t joystick_r_y_data;
-  uint16_t joystick_r_x_data;
-  uint8_t unused_button_data : 4;
+  uint8_t encoder1_data[2];
+  uint8_t encoder2_data[2];
+  uint8_t encoder3_data[2];
+  uint8_t encoder4_data[2];
+  uint8_t encoder5_data[2];
+  uint8_t encoder6_data[2];
+  uint8_t joystick_l_y_data[2];
+  uint8_t joystick_l_x_data[2];
+  uint8_t joystick_r_y_data[2];
+  uint8_t joystick_r_x_data[2];
   uint8_t button1_data : 1;
   uint8_t button2_data : 1;
   uint8_t button3_data : 1;
   uint8_t button4_data : 1;
+  uint8_t unused_button_data : 4;
   uint8_t unused_data_1;
   uint8_t unused_data_2;
   uint8_t unused_data_3;
@@ -89,7 +94,7 @@ typedef struct
   uint16_t wheel : 11;
   uint8_t trigger : 1;
   uint8_t unused_1 : 3;
-  //mouse
+  // mouse
   int16_t mouse_x;
   int16_t mouse_y;
   int16_t mouse_wheel;
@@ -97,7 +102,7 @@ typedef struct
   uint8_t mouse_right_down : 2;
   uint8_t mouse_mid_down : 2;
   uint8_t unused_2 : 2;
-  //keyboard
+  // keyboard
   uint16_t key_w : 1;
   uint16_t key_s : 1;
   uint16_t key_a : 1;
