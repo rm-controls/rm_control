@@ -328,6 +328,10 @@ public:
     msg_.traj_yaw = traj_yaw;
     msg_.traj_pitch = traj_pitch;
   }
+  void setGimbalTrajFrameId(std::string traj_frame_id)
+  {
+    msg_.traj_frame_id = traj_frame_id;
+  }
   void setZero() override
   {
     msg_.rate_yaw = 0.;
