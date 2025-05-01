@@ -418,7 +418,6 @@ int Referee::unpack(uint8_t* rx_data)
           rfid_status_data.overlapping_supplier_zone = rfid_status_ref.overlapping_supplier_zone;
           rfid_status_data.own_large_resource_island_point = rfid_status_ref.own_large_resource_island_point;
           rfid_status_data.enemy_large_resource_island_point = rfid_status_ref.enemy_large_resource_island_point;
-          rfid_status_data.own_exchange_zone = rfid_status_ref.own_exchange_zone;
           rfid_status_data.central_buff_point = rfid_status_ref.central_buff_point;
           rfid_status_data.stamp = last_get_data_time_;
 
@@ -430,16 +429,9 @@ int Referee::unpack(uint8_t* rx_data)
           rm_referee::DartClientCmd dart_client_cmd_ref;
           rm_msgs::DartClientCmd dart_client_cmd_data;
           memcpy(&dart_client_cmd_ref, rx_data + 7, sizeof(rm_referee::DartClientCmd));
-
-          //          dart_client_cmd_data.dart_attack_target = dart_client_cmd_ref.dart_attack_target;
           dart_client_cmd_data.dart_launch_opening_status = dart_client_cmd_ref.dart_launch_opening_status;
-          dart_client_cmd_data.first_dart_speed = dart_client_cmd_ref.first_dart_speed;
-          dart_client_cmd_data.second_dart_speed = dart_client_cmd_ref.second_dart_speed;
-          dart_client_cmd_data.third_dart_speed = dart_client_cmd_ref.third_dart_speed;
-          dart_client_cmd_data.fourth_dart_speed = dart_client_cmd_ref.fourth_dart_speed;
-          dart_client_cmd_data.last_dart_launch_time = dart_client_cmd_ref.last_dart_launch_time;
-          dart_client_cmd_data.operate_launch_cmd_time = dart_client_cmd_ref.operate_launch_cmd_time;
           dart_client_cmd_data.target_change_time = dart_client_cmd_ref.target_change_time;
+          dart_client_cmd_data.latest_launch_cmd_time = dart_client_cmd_ref.latest_launch_cmd_time;
           dart_client_cmd_data.stamp = last_get_data_time_;
 
           dart_client_cmd_pub_.publish(dart_client_cmd_data);
@@ -563,9 +555,8 @@ int Referee::unpack(uint8_t* rx_data)
           uint8_t data[sizeof(rm_referee::PowerManagementSampleAndStatusData)];
           memcpy(&data, rx_data + 7, sizeof(rm_referee::PowerManagementSampleAndStatusData));
           sample_and_status_pub_data.chassis_power = (static_cast<uint16_t>((data[0] << 8) | data[1]) / 100.);
-          sample_and_status_pub_data.chassis_expect_power = (static_cast<uint16_t>((data[2] << 8) | data[3]) / 100.);
-          sample_and_status_pub_data.capacity_recent_charge_power =
-              (static_cast<uint16_t>((data[4] << 8) | data[5]) / 100.);
+          sample_and_status_pub_data.cap_error_flag = (static_cast<uint16_t>((data[2] << 8) | data[3]) / 100.);
+          sample_and_status_pub_data.cap_received_msg = (static_cast<uint16_t>((data[4] << 8) | data[5]) / 100.);
           sample_and_status_pub_data.capacity_remain_charge =
               (static_cast<uint16_t>((data[6] << 8) | data[7]) / 10000.);
           sample_and_status_pub_data.capacity_discharge_power = static_cast<uint8_t>(data[8]);
