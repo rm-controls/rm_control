@@ -22,5 +22,5 @@ jobs:
       - name: Install catkin-lint
         run: |
           sudo apt update
-          sudo apt-get -y install catkin-lint     
+          sudo apt-get install catkin-lint     
       - uses: pre-commit/action@v3.0.0
