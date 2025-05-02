@@ -17,7 +17,6 @@ jobs:
       - uses: actions/setup-python@v3
       - name: Install clang-format-10
         run: |
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           sudo apt update
-          sudo apt-get install clang-10 llvm-10-dev llvm-10-tools -
+          sudo apt-get -y install clang-format
       - uses: pre-commit/action@v3.0.0
