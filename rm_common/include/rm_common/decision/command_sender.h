@@ -383,6 +383,7 @@ public:
     nh.getParam("wheel_speed_30", wheel_speed_30_);
     nh.param("speed_oscillation", speed_oscillation_, 1.0);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
+    nh.param("extra_speed_for_deploy", extra_speed_for_deploy_, 85.0);
     if (!nh.getParam("auto_wheel_speed", auto_wheel_speed_))
       ROS_INFO("auto_wheel_speed no defined (namespace: %s), set to false.", nh.getNamespace().c_str());
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
@@ -545,6 +546,12 @@ public:
   {
     total_extra_wheel_speed_ += extra_wheel_speed_once_;
   }
+  void deploySpeed() {
+    total_extra_wheel_speed_ -= extra_speed_for_deploy_;
+  }
+  void exitDeploySpeed() {
+    total_extra_wheel_speed_ += extra_speed_for_deploy_;
+  }
   void setArmorType(uint8_t armor_type)
   {
     armor_type_ = armor_type;
@@ -571,6 +578,7 @@ private:
   double target_acceleration_tolerance_{};
   double extra_wheel_speed_once_{};
   double total_extra_wheel_speed_{};
+  double extra_speed_for_deploy_{};
   bool auto_wheel_speed_ = false;
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
