@@ -18,7 +18,11 @@ jobs:
       - name: Install clang-format
         run: |
           sudo apt update
-          sudo apt-get -y install clang-format
+          sudo apt install -y wget gnupg2
+          # 添加 LLVM 的官方 APT 仓库
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt install clang-format-14
+
       - name: Install catkin-lint
         run: |
           lsb_release -sc
