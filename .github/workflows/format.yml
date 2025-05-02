@@ -15,8 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
-      - name: Install clang-format-10
+      - name: Install clang-format
         run: |
           sudo apt update
           sudo apt-get -y install clang-format
+      - name: Install catkin-lint         
+          sudo apt update
+          sudo apt-get -y install catkin-lint     
       - uses: pre-commit/action@v3.0.0
