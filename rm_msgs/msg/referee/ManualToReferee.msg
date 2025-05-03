@@ -1,4 +1,5 @@
 uint8 power_limit_state
+time start_burst_time
 
 #standard
 uint8 shoot_frequency

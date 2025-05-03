@@ -5,7 +5,7 @@
   <description>The rm_vt package</description>
 
   <license>BSD</license>
-  <maintainer email="chen@todo.todo">chen</maintainer>
+  <maintainer email="3631676002@qq.com">ch</maintainer>
   <!-- buildtool_depend: dependencies of the build process -->
   <buildtool_depend>catkin</buildtool_depend>
   <!-- depend: build, export, and execution dependency -->

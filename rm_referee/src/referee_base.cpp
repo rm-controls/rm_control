@@ -163,6 +163,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "customize_display")
         customize_display_flash_ui_ =
             new CustomizeDisplayFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "burst")
+        burst_flash_ui_ = new BurstFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
   }
   if (nh.hasParam("interactive_data"))
@@ -489,6 +491,8 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
     target_trigger_change_ui_->updateManualCmdData(data);
   if (cover_flash_ui_ && !is_adding_)
     cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
+  if (burst_flash_ui_ && !is_adding_)
+    burst_flash_ui_->updateBurstTimeData(data);
 }
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {
