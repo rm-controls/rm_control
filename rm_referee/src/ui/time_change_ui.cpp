@@ -4,6 +4,8 @@
 
 #include "rm_referee/ui/time_change_ui.h"
 
+#include <sensor_msgs/Image.h>
+
 namespace rm_referee
 {
 void TimeChangeUi::update()
@@ -289,6 +291,22 @@ void PitchAngleTimeChangeUi::updateConfig()
   std::string pitch = std::to_string(pitch_angle_);
   graph_->setContent(pitch);
   graph_->setColor(rm_referee::GraphColor::YELLOW);
+}
+
+void ImageTransmissionAngleTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data,
+                                                              const ros::Time& time)
+{
+  for (unsigned int i = 0; i < data->name.size(); i++)
+    if (data->name[i] == "image_transmission_joint")
+      image_transmission_angle_ = data->position[i];
+  updateForQueue();
+}
+
+void ImageTransmissionAngleTimeChangeUi::updateConfig()
+{
+  std::string image_transmission = std::to_string(image_transmission_angle_);
+  graph_->setContent(image_transmission);
+  graph_->setColor(rm_referee::GraphColor::PINK);
 }
 
 void JointPositionTimeChangeUi::updateConfig()
