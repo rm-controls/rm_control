@@ -328,7 +328,7 @@ public:
     msg_.traj_yaw = traj_yaw;
     msg_.traj_pitch = traj_pitch;
   }
-  void setGimbalTrajFrameId(std::string traj_frame_id)
+  void setGimbalTrajFrameId(const std::string& traj_frame_id)
   {
     msg_.traj_frame_id = traj_frame_id;
   }
@@ -546,10 +546,12 @@ public:
   {
     total_extra_wheel_speed_ += extra_wheel_speed_once_;
   }
-  void deploySpeed() {
+  void deploySpeed()
+  {
     total_extra_wheel_speed_ -= extra_speed_for_deploy_;
   }
-  void exitDeploySpeed() {
+  void exitDeploySpeed()
+  {
     total_extra_wheel_speed_ += extra_speed_for_deploy_;
   }
   void setArmorType(uint8_t armor_type)
