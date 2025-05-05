@@ -554,6 +554,10 @@ public:
   {
     total_extra_wheel_speed_ += extra_speed_for_deploy_;
   }
+  void resetExtraWheelSpeed()
+  {
+    total_extra_wheel_speed_ = 0;
+  }
   void setArmorType(uint8_t armor_type)
   {
     armor_type_ = armor_type;
