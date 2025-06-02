@@ -503,7 +503,7 @@ public:
   }
   void setDeployState(bool flag)
   {
-    deploy_flag_= flag;
+    deploy_flag_ = flag;
   }
   void setSpeedDesAndWheelSpeedDes()
   {
