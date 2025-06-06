@@ -116,6 +116,7 @@ public:
   LaneLineTimeChangeGroupUi* lane_line_time_change_ui_{};
   BalancePitchTimeChangeGroupUi* balance_pitch_time_change_group_ui_{};
   PitchAngleTimeChangeUi* pitch_angle_time_change_ui_{};
+  ImageTransmissionAngleTimeChangeUi* image_transmission_angle_time_change_ui_{};
   JointPositionTimeChangeUi *engineer_joint1_time_change_ui{}, *engineer_joint2_time_change_ui{},
       *engineer_joint3_time_change_ui{};
   TargetDistanceTimeChangeUi* target_distance_time_change_ui_{};
@@ -134,6 +135,7 @@ public:
   HeroHitFlashUi* hero_hit_flash_ui_{};
   ExceedBulletSpeedFlashUi* exceed_bullet_speed_flash_ui_{};
   CustomizeDisplayFlashUi* customize_display_flash_ui_{};
+  BurstFlashUi* burst_flash_ui_{};
 
   InteractiveSender* interactive_data_sender_{};
   CustomInfoSender* custom_info_sender{};

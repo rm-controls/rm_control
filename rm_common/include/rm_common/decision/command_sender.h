@@ -328,7 +328,7 @@ public:
     msg_.traj_yaw = traj_yaw;
     msg_.traj_pitch = traj_pitch;
   }
-  void setGimbalTrajFrameId(std::string traj_frame_id)
+  void setGimbalTrajFrameId(const std::string& traj_frame_id)
   {
     msg_.traj_frame_id = traj_frame_id;
   }
@@ -383,6 +383,7 @@ public:
     nh.getParam("wheel_speed_30", wheel_speed_30_);
     nh.param("speed_oscillation", speed_oscillation_, 1.0);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
+    nh.param("deploy_wheel_speed", deploy_wheel_speed_, 410.0);
     if (!nh.getParam("auto_wheel_speed", auto_wheel_speed_))
       ROS_INFO("auto_wheel_speed no defined (namespace: %s), set to false.", nh.getNamespace().c_str());
     if (!nh.getParam("target_acceleration_tolerance", target_acceleration_tolerance_))
@@ -494,7 +495,15 @@ public:
   double getWheelSpeedDes()
   {
     setSpeedDesAndWheelSpeedDes();
+    if (deploy_flag_)
+    {
+      return deploy_wheel_speed_ + total_extra_wheel_speed_;
+    }
     return wheel_speed_des_ + total_extra_wheel_speed_;
+  }
+  void setDeployState(bool flag)
+  {
+    deploy_flag_ = flag;
   }
   void setSpeedDesAndWheelSpeedDes()
   {
@@ -571,7 +580,9 @@ private:
   double target_acceleration_tolerance_{};
   double extra_wheel_speed_once_{};
   double total_extra_wheel_speed_{};
+  double deploy_wheel_speed_{};
   bool auto_wheel_speed_ = false;
+  bool deploy_flag_{};
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
   rm_msgs::ShootBeforehandCmd shoot_beforehand_cmd_;

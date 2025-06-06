@@ -251,6 +251,19 @@ private:
   double pitch_angle_ = 0.;
 };
 
+class ImageTransmissionAngleTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit ImageTransmissionAngleTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base,
+                                              std::deque<Graph>* graph_queue, std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "image_transmission", graph_queue, character_queue){};
+  void updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time);
+
+private:
+  void updateConfig() override;
+  double image_transmission_angle_ = 0.;
+};
+
 class JointPositionTimeChangeUi : public TimeChangeUi
 {
 public:

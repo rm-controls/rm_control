@@ -115,6 +115,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
             new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "pitch")
         pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "image_transmission")
+        image_transmission_angle_time_change_ui_ =
+            new ImageTransmissionAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "balance_pitch")
         balance_pitch_time_change_group_ui_ =
             new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
@@ -160,6 +163,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "customize_display")
         customize_display_flash_ui_ =
             new CustomizeDisplayFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "burst")
+        burst_flash_ui_ = new BurstFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
   }
   if (nh.hasParam("interactive_data"))
@@ -230,6 +235,8 @@ void RefereeBase::addUi()
     balance_pitch_time_change_group_ui_->addForQueue();
   if (pitch_angle_time_change_ui_)
     pitch_angle_time_change_ui_->addForQueue();
+  if (image_transmission_angle_time_change_ui_)
+    image_transmission_angle_time_change_ui_->addForQueue();
   if (engineer_joint1_time_change_ui)
     engineer_joint1_time_change_ui->addForQueue();
   if (engineer_joint2_time_change_ui)
@@ -398,6 +405,8 @@ void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& da
     lane_line_time_change_ui_->updateJointStateData(data, ros::Time::now());
   if (pitch_angle_time_change_ui_ && !is_adding_)
     pitch_angle_time_change_ui_->updateJointStateData(data, ros::Time::now());
+  if (image_transmission_angle_time_change_ui_ && !is_adding_)
+    image_transmission_angle_time_change_ui_->updateJointStateData(data, ros::Time::now());
   if (engineer_joint1_time_change_ui && !is_adding_)
     engineer_joint1_time_change_ui->updateJointStateData(data, ros::Time::now());
   if (engineer_joint2_time_change_ui && !is_adding_)
@@ -482,6 +491,8 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
     target_trigger_change_ui_->updateManualCmdData(data);
   if (cover_flash_ui_ && !is_adding_)
     cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
+  if (burst_flash_ui_ && !is_adding_)
+    burst_flash_ui_->updateBurstTimeData(data);
 }
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {
