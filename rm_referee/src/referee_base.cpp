@@ -115,7 +115,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         lane_line_time_change_ui_ =
             new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "distance")
-        distance_base_time_change_ui_ = new DistanceBaseTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+        distance_base_time_change_ui_ =
+            new DistanceBaseTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "pitch")
         pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "image_transmission")
