@@ -505,6 +505,10 @@ public:
   {
     deploy_flag_ = flag;
   }
+  bool getDeployState()
+  {
+    return deploy_flag_;
+  }
   void setSpeedDesAndWheelSpeedDes()
   {
     switch (heat_limit_->getSpeedLimit())
@@ -582,7 +586,7 @@ private:
   double total_extra_wheel_speed_{};
   double deploy_wheel_speed_{};
   bool auto_wheel_speed_ = false;
-  bool deploy_flag_{};
+  bool deploy_flag_ = false;
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
   rm_msgs::ShootBeforehandCmd shoot_beforehand_cmd_;
