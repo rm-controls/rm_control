@@ -11,4 +11,5 @@ float64 power_limit
 float64 follow_vel_des
 string follow_source_frame
 string command_source_frame
+bool wireless_state
 time stamp
