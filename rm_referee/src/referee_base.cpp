@@ -141,6 +141,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "friend_bullets")
         friend_bullets_time_change_group_ui_ =
             new FriendBulletsTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "target_hp")
+        target_hp_time_change_ui_ = new TargetHpTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -262,6 +264,8 @@ void RefereeBase::addUi()
     target_distance_time_change_ui_->addForQueue();
   if (friend_bullets_time_change_group_ui_)
     friend_bullets_time_change_group_ui_->addForQueue();
+  if (target_hp_time_change_ui_)
+    target_hp_time_change_ui_->addForQueue();
   if (visualize_state_trigger_change_ui_)
     visualize_state_trigger_change_ui_->addForQueue();
   add_ui_times_++;
@@ -359,10 +363,12 @@ void RefereeBase::robotStatusDataCallBack(const rm_msgs::GameRobotStatus& data, 
     fixed_ui_->updateForQueue();
 }
 
-void RefereeBase::updateHeroHitDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data)
+void RefereeBase::updateGameRobotHpDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data)
 {
   if (hero_hit_flash_ui_)
     hero_hit_flash_ui_->updateHittingConfig(game_robot_hp_data);
+  if (target_hp_time_change_ui_)
+    target_hp_time_change_ui_->setEnemyHp(game_robot_hp_data);
 }
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {
@@ -508,6 +514,8 @@ void RefereeBase::trackCallBack(const rm_msgs::TrackDataConstPtr& data)
     target_view_angle_trigger_change_ui_->updateTrackID(data->id);
   if (target_distance_time_change_ui_ && !is_adding_)
     target_distance_time_change_ui_->updateTargetDistanceData(data);
+  if (target_hp_time_change_ui_ && !is_adding_)
+    target_hp_time_change_ui_->updateTrackID(data->id);
 }
 void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data)
 {

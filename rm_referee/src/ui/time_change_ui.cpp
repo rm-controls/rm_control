@@ -501,4 +501,47 @@ void FriendBulletsTimeChangeGroupUi::updateConfig()
   }
 }
 
+void TargetHpTimeChangeUi::setEnemyHp(const rm_msgs::GameRobotHp& data)
+{
+  bool is_enemy_red = base_.robot_id_ > 100;
+  if (is_enemy_red)
+  {
+    enemy_robot_hp_[1] = data.red_1_robot_hp;
+    enemy_robot_hp_[2] = data.red_2_robot_hp;
+    enemy_robot_hp_[3] = data.red_3_robot_hp;
+    enemy_robot_hp_[4] = data.red_4_robot_hp;
+    enemy_robot_hp_[7] = data.red_7_robot_hp;
+  }
+  else
+  {
+    enemy_robot_hp_[1] = data.blue_1_robot_hp;
+    enemy_robot_hp_[2] = data.blue_2_robot_hp;
+    enemy_robot_hp_[3] = data.blue_3_robot_hp;
+    enemy_robot_hp_[4] = data.blue_4_robot_hp;
+    enemy_robot_hp_[7] = data.blue_7_robot_hp;
+  }
+}
+
+void TargetHpTimeChangeUi::updateTrackID(int id)
+{
+  target_id_ = id;
+  updateTargeHptData();
+}
+
+void TargetHpTimeChangeUi::updateTargeHptData()
+{
+  auto it = enemy_robot_hp_.find(target_id_);
+  target_hp_ = it == enemy_robot_hp_.end() ? 0 : it->second;
+  updateForQueue();
+}
+
+void TargetHpTimeChangeUi::updateConfig()
+{
+  graph_->setIntNum(target_hp_);
+  if (target_hp_ > 50)
+    graph_->setColor(rm_referee::GraphColor::GREEN);
+  else
+    graph_->setColor(rm_referee::GraphColor::ORANGE);
+}
+
 }  // namespace rm_referee

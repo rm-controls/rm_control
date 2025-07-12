@@ -138,7 +138,7 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_hp_data.red_base_hp = game_robot_hp_ref.red_base_hp;
           game_robot_hp_data.stamp = last_get_data_time_;
 
-          referee_ui_.updateHeroHitDataCallBack(game_robot_hp_data);
+          referee_ui_.updateGameRobotHpDataCallBack(game_robot_hp_data);
           game_robot_hp_pub_.publish(game_robot_hp_data);
           break;
         }

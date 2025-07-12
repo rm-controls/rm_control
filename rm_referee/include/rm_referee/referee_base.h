@@ -35,7 +35,7 @@ public:
   virtual void interactiveDataCallBack(const rm_referee::InteractiveData& interactive_data,
                                        const ros::Time& last_get_data_time);
   virtual void eventDataCallBack(const rm_msgs::EventData& event_data, const ros::Time& last_get_data_time);
-  virtual void updateHeroHitDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data);
+  virtual void updateGameRobotHpDataCallBack(const rm_msgs::GameRobotHp& game_robot_hp_data);
   virtual void supplyBulletDataCallBack(const rm_msgs::SupplyProjectileAction& data);
   virtual void updateShootDataDataCallBack(const rm_msgs::ShootData& msg);
   virtual void updateBulletRemainData(const rm_referee::BulletNumData& data);
@@ -121,6 +121,7 @@ public:
       *engineer_joint3_time_change_ui{};
   TargetDistanceTimeChangeUi* target_distance_time_change_ui_{};
   FriendBulletsTimeChangeGroupUi* friend_bullets_time_change_group_ui_{};
+  TargetHpTimeChangeUi* target_hp_time_change_ui_{};
 
   DroneTowardsTimeChangeGroupUi* drone_towards_time_change_group_ui_{};
   StringTriggerChangeUi *servo_mode_trigger_change_ui_{}, *stone_num_trigger_change_ui_{},

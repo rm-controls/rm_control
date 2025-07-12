@@ -379,4 +379,31 @@ private:
   int hero_bullets_{ 1 }, standard3_bullets_{ 3 }, standard4_bullets_{ 4 }, standard5_bullets_{ 5 };
 };
 
+class TargetHpTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit TargetHpTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "target_hp", graph_queue, character_queue)
+  {
+    if (rpc_value.hasMember("enemy_id"))
+    {
+      XmlRpc::XmlRpcValue& enemy_id = rpc_value["enemy_id"];
+      for (int i = 0; i < enemy_id.size(); i++)
+      {
+        int id = static_cast<int>(enemy_id[i]);
+        enemy_robot_hp_[id] = 0;
+      }
+    }
+  }
+  void setEnemyHp(const rm_msgs::GameRobotHp& data);
+  void updateTrackID(int id);
+  void updateTargeHptData();
+
+private:
+  void updateConfig() override;
+  std::map<int, int> enemy_robot_hp_;
+  int target_hp_{}, target_id_{};
+};
+
 }  // namespace rm_referee
