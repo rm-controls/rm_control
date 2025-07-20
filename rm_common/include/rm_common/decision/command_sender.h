@@ -515,6 +515,10 @@ public:
   {
     hero_flag_ = flag;
   }
+  bool getDeployState()
+  {
+    return deploy_flag_;
+  }
   void setSpeedDesAndWheelSpeedDes()
   {
     switch (heat_limit_->getSpeedLimit())
@@ -610,14 +614,32 @@ private:
   double total_extra_wheel_speed_{};
   double deploy_wheel_speed_{};
   bool auto_wheel_speed_ = false;
-  bool deploy_flag_{};
   bool hero_flag_{};
+  bool deploy_flag_ = false;
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
   rm_msgs::ShootBeforehandCmd shoot_beforehand_cmd_;
   rm_msgs::ShootData shoot_data_;
   std_msgs::Bool suggest_fire_;
   uint8_t armor_type_{};
+};
+
+class UseLioCommandSender : public CommandSenderBase<std_msgs::Bool>
+{
+public:
+  explicit UseLioCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Bool>(nh)
+  {
+  }
+
+  void setUseLio(bool flag)
+  {
+    msg_.data = flag;
+  }
+  bool getUseLio() const
+  {
+    return msg_.data;
+  }
+  void setZero() override{};
 };
 
 class BalanceCommandSender : public CommandSenderBase<std_msgs::UInt8>

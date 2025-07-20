@@ -138,7 +138,7 @@ int Referee::unpack(uint8_t* rx_data)
           game_robot_hp_data.red_base_hp = game_robot_hp_ref.red_base_hp;
           game_robot_hp_data.stamp = last_get_data_time_;
 
-          referee_ui_.updateHeroHitDataCallBack(game_robot_hp_data);
+          referee_ui_.updateGameRobotHpDataCallBack(game_robot_hp_data);
           game_robot_hp_pub_.publish(game_robot_hp_data);
           break;
         }
@@ -204,6 +204,7 @@ int Referee::unpack(uint8_t* rx_data)
           event_data.be_hit_time = event_ref.be_hit_time;
           event_data.be_hit_target = event_ref.be_hit_target;
           event_data.central_point_state = event_ref.central_point_state;
+          event_data.own_fortress_state = event_ref.own_fortress_state;
           event_data.stamp = last_get_data_time_;
 
           event_data_pub_.publish(event_data);
@@ -369,6 +370,7 @@ int Referee::unpack(uint8_t* rx_data)
           bullet_allowance_data.bullet_allowance_num_17_mm = bullet_allowance_ref.bullet_allowance_num_17_mm;
           bullet_allowance_data.bullet_allowance_num_42_mm = bullet_allowance_ref.bullet_allowance_num_42_mm;
           bullet_allowance_data.coin_remaining_num = bullet_allowance_ref.coin_remaining_num;
+          bullet_allowance_data.projectile_allowance_fortress = bullet_allowance_ref.projectile_allowance_fortress;
           bullet_allowance_data.stamp = last_get_data_time_;
           referee_ui_.bulletRemainDataCallBack(bullet_allowance_data, last_get_data_time_);
 
@@ -419,6 +421,7 @@ int Referee::unpack(uint8_t* rx_data)
           rfid_status_data.own_large_resource_island_point = rfid_status_ref.own_large_resource_island_point;
           rfid_status_data.enemy_large_resource_island_point = rfid_status_ref.enemy_large_resource_island_point;
           rfid_status_data.central_buff_point = rfid_status_ref.central_buff_point;
+          rfid_status_data.enemy_fortress_buff_point = rfid_status_ref.enemy_fortress_buff_point;
           rfid_status_data.stamp = last_get_data_time_;
 
           rfid_status_pub_.publish(rfid_status_data);

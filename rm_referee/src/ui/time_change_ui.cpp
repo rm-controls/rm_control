@@ -278,6 +278,19 @@ void BalancePitchTimeChangeGroupUi::calculatePointPosition(const rm_msgs::Balanc
   updateForQueue();
 }
 
+void DistanceBaseTimeChangeUi::updateDistanceBaseData(const std_msgs::Float32ConstPtr data, const ros::Time& time)
+{
+  distance_base_ = data->data;
+  updateForQueue();
+}
+
+void DistanceBaseTimeChangeUi::updateConfig()
+{
+  std::string distance = std::to_string(distance_base_);
+  graph_->setContent(distance);
+  graph_->setColor(rm_referee::GraphColor::ORANGE);
+}
+
 void PitchAngleTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
   for (unsigned int i = 0; i < data->name.size(); i++)
@@ -499,6 +512,49 @@ void FriendBulletsTimeChangeGroupUi::updateConfig()
     else if (it.first == "standard5")
       it.second->setIntNum(standard5_bullets_);
   }
+}
+
+void TargetHpTimeChangeUi::setEnemyHp(const rm_msgs::GameRobotHp& data)
+{
+  bool is_enemy_red = base_.robot_id_ > 100;
+  if (is_enemy_red)
+  {
+    enemy_robot_hp_[1] = data.red_1_robot_hp;
+    enemy_robot_hp_[2] = data.red_2_robot_hp;
+    enemy_robot_hp_[3] = data.red_3_robot_hp;
+    enemy_robot_hp_[4] = data.red_4_robot_hp;
+    enemy_robot_hp_[7] = data.red_7_robot_hp;
+  }
+  else
+  {
+    enemy_robot_hp_[1] = data.blue_1_robot_hp;
+    enemy_robot_hp_[2] = data.blue_2_robot_hp;
+    enemy_robot_hp_[3] = data.blue_3_robot_hp;
+    enemy_robot_hp_[4] = data.blue_4_robot_hp;
+    enemy_robot_hp_[7] = data.blue_7_robot_hp;
+  }
+}
+
+void TargetHpTimeChangeUi::updateTrackID(int id)
+{
+  target_id_ = id;
+  updateTargeHptData();
+}
+
+void TargetHpTimeChangeUi::updateTargeHptData()
+{
+  auto it = enemy_robot_hp_.find(target_id_);
+  target_hp_ = it == enemy_robot_hp_.end() ? 0 : it->second;
+  updateForQueue();
+}
+
+void TargetHpTimeChangeUi::updateConfig()
+{
+  graph_->setIntNum(target_hp_);
+  if (target_hp_ > 50)
+    graph_->setColor(rm_referee::GraphColor::GREEN);
+  else
+    graph_->setColor(rm_referee::GraphColor::ORANGE);
 }
 
 }  // namespace rm_referee
