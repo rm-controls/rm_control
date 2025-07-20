@@ -381,8 +381,8 @@ public:
     nh.getParam("wheel_speed_16", wheel_speed_16_);
     nh.getParam("wheel_speed_18", wheel_speed_18_);
     nh.getParam("wheel_speed_30", wheel_speed_30_);
-    nh.getParam("wheel_speed_offset_front", wheel_speed_offset_front_);
-    nh.getParam("wheel_speed_offset_back", wheel_speed_offset_back_);
+    nh.param("wheel_speed_offset_front", wheel_speed_offset_front_, 0.0);
+    nh.param("wheel_speed_offset_back", wheel_speed_offset_back_, 0.0);
     nh.param("speed_oscillation", speed_oscillation_, 1.0);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
     nh.param("deploy_wheel_speed", deploy_wheel_speed_, 410.0);
