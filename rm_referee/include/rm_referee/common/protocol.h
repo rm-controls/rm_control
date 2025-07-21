@@ -295,7 +295,8 @@ typedef struct
   uint16_t be_hit_time : 9;
   uint8_t be_hit_target : 3;
   uint8_t central_point_state : 2;
-  uint16_t reserved : 9;
+  uint8_t own_fortress_state : 2;
+  uint8_t reserved : 7;
 } __packed EventData;
 
 typedef struct
@@ -388,6 +389,7 @@ typedef struct
   uint16_t bullet_allowance_num_17_mm;
   uint16_t bullet_allowance_num_42_mm;
   uint16_t coin_remaining_num;
+  uint16_t projectile_allowance_fortress;
 } __packed BulletAllowance;
 
 typedef struct
@@ -416,7 +418,8 @@ typedef struct
   uint8_t own_large_resource_island_point : 1;
   uint8_t enemy_large_resource_island_point : 1;
   uint8_t central_buff_point : 1;
-  uint32_t reversed : 8;
+  uint8_t enemy_fortress_buff_point : 1;
+  uint8_t reversed : 7;
 } __packed RfidStatus;
 
 typedef struct
