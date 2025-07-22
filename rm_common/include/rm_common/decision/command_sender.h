@@ -269,6 +269,10 @@ public:
   {
     msg_.follow_vel_des = follow_vel_des;
   }
+  void setWirelessState(bool state)
+  {
+    msg_.wireless_state = state;
+  }
   void sendChassisCommand(const ros::Time& time, bool is_gyro)
   {
     power_limit_->setLimitPower(msg_, is_gyro);

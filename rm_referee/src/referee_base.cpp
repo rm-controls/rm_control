@@ -161,6 +161,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "deploy")
         deploy_flash_ui_ = new DeployFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "wireless")
+        wireless_flash_ui_ = new WirelessFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "hero_hit")
         hero_hit_flash_ui_ = new HeroHitFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "exceed_bullet_speed")
@@ -457,6 +459,8 @@ void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& da
     spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
   if (deploy_flash_ui_ && !is_adding_)
     deploy_flash_ui_->updateChassisCmdData(data, ros::Time::now());
+  if (wireless_flash_ui_ && !is_adding_)
+    wireless_flash_ui_->updateChassisCmdData(data, ros::Time::now());
   if (rotation_time_change_ui_ && !is_adding_)
     rotation_time_change_ui_->updateChassisCmdData(data);
 }
