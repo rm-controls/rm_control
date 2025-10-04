@@ -15,6 +15,7 @@ add_message_files(
         BalanceState.msg
         BusState.msg
         DbusData.msg
+        Dart.msg
         ExchangerMsg.msg
         ChassisCmd.msg
         ShootCmd.msg
