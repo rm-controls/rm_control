@@ -1,0 +1,14 @@
+float64 roll
+float64 pitch
+float64 d_pitch
+float64 yaw
+float64 d_yaw
+float64 left_leg_length
+float64 right_leg_length
+float64 x
+float64 x_dot
+float64 left_leg_theta
+float64 left_leg_theta_dot
+float64 right_leg_theta
+float64 right_leg_theta_dot
+float64[] linear_acc_base
