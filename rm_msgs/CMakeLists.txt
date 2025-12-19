@@ -24,6 +24,7 @@ add_message_files(
         GimbalDesError.msg
         GimbalPosState.msg
         LegCmd.msg
+        LeggedChassisMode.msg
         LeggedChassisStatus.msg
         LeggedLQRStatus.msg
         LQRkMatrix.msg
