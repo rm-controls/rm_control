@@ -42,6 +42,7 @@
 
 #include <ros/ros.h>
 #include <rm_msgs/ChassisCmd.h>
+#include <rm_msgs/ChassisActiveSusCmd.h>
 #include <rm_msgs/GimbalCmd.h>
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/ShootBeforehandCmd.h>
@@ -287,7 +288,30 @@ public:
 private:
   LinearInterp accel_x_, accel_y_, accel_z_;
 };
-
+class ChassisActiveSuspensionCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>
+{
+public:
+  explicit ChassisActiveSuspensionCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>(nh)
+  {
+  }
+  void setZero() override
+  {
+    msg_.mode = 0;
+    msg_.is_active_suspension = 1;
+  }
+  void sendActiveSusCommand(const ros::Time& time)
+  {
+    if (msg_.mode == 0)
+    {
+      msg_.is_active_suspension = 1;
+    }
+    else if (msg_.mode == 1)
+    {
+      msg_.is_active_suspension = 0;
+    }
+    TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>::sendCommand(time);
+  }
+};
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd>
 {
 public:
