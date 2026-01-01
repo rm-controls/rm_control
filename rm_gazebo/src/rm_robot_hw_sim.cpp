@@ -136,8 +136,9 @@ void RmRobotHWSim::writeSim(ros::Time time, ros::Duration period)
                                           .ff_ = joint.ff_ });
 
     const auto& cmd = buffer.back();
-    joint.joint_.setCommand(cmd.kp_ * (cmd.posDes_ - joint.joint_.getPosition()) +
-                            cmd.kd_ * (cmd.velDes_ - joint.joint_.getVelocity()) + cmd.ff_);
+    if (joint.joint_.getCommand() == 0.0f)
+      joint.joint_.setCommand(cmd.kp_ * (cmd.posDes_ - joint.joint_.getPosition()) +
+                              cmd.kd_ * (cmd.velDes_ - joint.joint_.getVelocity()) + cmd.ff_);
   }
   DefaultRobotHWSim::writeSim(time, period);
 }
