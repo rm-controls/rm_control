@@ -299,7 +299,7 @@ private:
   joint_limits_interface::SoftJointLimits soft_limits_;
 
   double prev_pos_cmd_ = { std::numeric_limits<double>::quiet_NaN() };
-  double max_vel_limit_;
+  double max_vel_limit_{};
 };
 
 /** Interface for enforcing limits on an effort-controlled joint through saturation. */
