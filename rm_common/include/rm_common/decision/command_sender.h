@@ -62,6 +62,7 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Bool.h>
 #include <control_msgs/JointControllerState.h>
+#include <std_msgs/Float32.h>
 
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
@@ -288,6 +289,7 @@ public:
 private:
   LinearInterp accel_x_, accel_y_, accel_z_;
 };
+
 class ChassisActiveSuspensionCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>
 {
 public:
@@ -297,19 +299,6 @@ public:
   void setZero() override
   {
     msg_.mode = 0;
-    msg_.is_active_suspension = 1;
-  }
-  void sendActiveSusCommand(const ros::Time& time)
-  {
-    if (msg_.mode == 0)
-    {
-      msg_.is_active_suspension = 1;
-    }
-    else if (msg_.mode == 1)
-    {
-      msg_.is_active_suspension = 0;
-    }
-    TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>::sendCommand(time);
   }
 };
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd>
@@ -509,7 +498,9 @@ public:
          (track_data_.accel > target_acceleration_tolerance_)) ||
         (!suggest_fire_.data && armor_type_ == rm_msgs::StatusChangeRequest::ARMOR_OUTPOST_BASE))
       if (msg_.mode == rm_msgs::ShootCmd::PUSH)
+      {
         setMode(rm_msgs::ShootCmd::READY);
+      }
   }
   void sendCommand(const ros::Time& time) override
   {
@@ -626,6 +617,11 @@ public:
   }
   void setZero() override{};
   HeatLimit* heat_limit_{};
+
+  int getShootMode()
+  {
+    return msg_.mode;
+  }
 
 private:
   double speed_10_{}, speed_15_{}, speed_16_{}, speed_18_{}, speed_30_{}, speed_des_{}, speed_limit_{};
@@ -917,12 +913,16 @@ class CameraSwitchCommandSender : public CommandSenderBase<std_msgs::String>
 public:
   explicit CameraSwitchCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::String>(nh)
   {
-    ROS_ASSERT(nh.getParam("camera1_name", camera1_name_) && nh.getParam("camera2_name", camera2_name_));
+    ROS_ASSERT(nh.getParam("camera_left_name", camera1_name_) && nh.getParam("camera_right_name", camera2_name_));
+    msg_.data = camera2_name_;
+  }
+  void switchCameraLeft()
+  {
     msg_.data = camera1_name_;
   }
-  void switchCamera()
+  void switchCameraRight()
   {
-    msg_.data = msg_.data == camera1_name_ ? camera2_name_ : camera1_name_;
+    msg_.data = camera2_name_;
   }
   void sendCommand(const ros::Time& time) override
   {
