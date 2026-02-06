@@ -26,6 +26,7 @@ add_message_files(
         LegCmd.msg
         LeggedChassisMode.msg
         LeggedChassisStatus.msg
+        LeggedUpstairStatus.msg
         LeggedLQRStatus.msg
         LQRkMatrix.msg
         LpData.msg
