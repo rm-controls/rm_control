@@ -5,3 +5,4 @@ uint8  RECOVERY = 3
 uint8  UPSTAIRS = 4
 
 uint8 mode
+string mode_name
