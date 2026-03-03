@@ -13,6 +13,10 @@ namespace rm_vt
 class VideoTransmission
 {
 public:
+  static uint16_t keyboardMaskFromLegacyFrame(const rm_vt::KeyboardMouseData& data);
+  static uint16_t keyCodeToMask(uint8_t key_code);
+  static uint16_t keyboardMaskFromKeyCodes(uint16_t key_value);
+
   explicit VideoTransmission(ros::NodeHandle& nh) : last_get_data_time_(ros::Time::now())
   {
     ROS_INFO("Video transmission load.");

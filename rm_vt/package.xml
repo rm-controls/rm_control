@@ -18,4 +18,5 @@
   <depend>rm_common</depend>
   <depend>tf2_geometry_msgs</depend>
   <depend>serial</depend>
+  <test_depend>gtest</test_depend>
 </package>

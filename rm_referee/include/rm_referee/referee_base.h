@@ -59,7 +59,7 @@ public:
   virtual void mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data);
   virtual void sentryAttackingTargetCallback(const rm_msgs::SentryAttackingTargetConstPtr& data);
   virtual void sendSentryCmdCallback(const rm_msgs::SentryCmdConstPtr& data);
-  virtual void sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data);
+  virtual void sendRadarCmdCallback(const rm_msgs::RadarCmdConstPtr& data);
   virtual void sendCustomInfoCallback(const std_msgs::StringConstPtr& data);
   virtual void dronePoseCallBack(const geometry_msgs::PoseStampedConstPtr& data);
   virtual void shootCmdCallBack(const rm_msgs::ShootCmdConstPtr& data);

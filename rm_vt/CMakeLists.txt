@@ -102,3 +102,15 @@ install(
 	DIRECTORY launch
 	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
+
+if(CATKIN_ENABLE_TESTING)
+	catkin_add_gtest(video_transmission_test
+		test/video_transmission_test.cpp
+		src/video_transmission.cpp
+	)
+	if(TARGET video_transmission_test)
+		target_link_libraries(video_transmission_test
+			${catkin_LIBRARIES}
+		)
+	endif()
+endif()

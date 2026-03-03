@@ -4,6 +4,8 @@
 
 #include "rm_referee/ui/interactive_data.h"
 
+#include <cstring>
+
 namespace rm_referee
 {
 void InteractiveSender::sendInteractiveData(int data_cmd_id, int receiver_id, unsigned char data)
@@ -11,7 +13,7 @@ void InteractiveSender::sendInteractiveData(int data_cmd_id, int receiver_id, un
   uint8_t tx_data[sizeof(InteractiveData)] = { 0 };
   auto student_interactive_data = (InteractiveData*)tx_data;
 
-  for (int i = 0; i < 127; i++)
+  for (int i = 0; i < k_frame_length_; i++)
     tx_buffer_[i] = 0;
   student_interactive_data->header_data.data_cmd_id = data_cmd_id;
   student_interactive_data->header_data.sender_id = base_.robot_id_;
@@ -33,7 +35,7 @@ void InteractiveSender::sendMapSentryData(const rm_referee::MapSentryData& data)
   uint8_t tx_data[sizeof(rm_referee::MapSentryData)] = { 0 };
   auto map_sentry_data = (rm_referee::MapSentryData*)tx_data;
 
-  for (int i = 0; i < 127; i++)
+  for (int i = 0; i < k_frame_length_; i++)
     tx_buffer_[i] = 0;
   map_sentry_data->intention = data.intention;
   map_sentry_data->start_position_x = data.start_position_x;
@@ -85,7 +87,7 @@ void CustomInfoSender::sendCustomInfoData(std::wstring data)
     tx_data.user_data[2 * i] = characters[i] & 0xFF;
     tx_data.user_data[2 * i + 1] = (characters[i] >> 8) & 0xFF;
   }
-  pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::CUSTOM_TO_ROBOT_CMD, data_len);
+  pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::CUSTOM_INFO_CMD, data_len);
   last_send_ = ros::Time::now();
   sendSerial(ros::Time::now(), data_len);
 }
@@ -95,7 +97,7 @@ void InteractiveSender::sendRadarInteractiveData(const rm_msgs::ClientMapReceive
   uint8_t tx_data[sizeof(rm_referee::ClientMapReceiveData)] = { 0 };
   auto radar_interactive_data = (rm_referee::ClientMapReceiveData*)tx_data;
 
-  for (int i = 0; i < 127; i++)
+  for (int i = 0; i < k_frame_length_; i++)
     tx_buffer_[i] = 0;
   radar_interactive_data->hero_position_x = data->hero_position_x;
   radar_interactive_data->hero_position_y = data->hero_position_y;
@@ -105,8 +107,8 @@ void InteractiveSender::sendRadarInteractiveData(const rm_msgs::ClientMapReceive
   radar_interactive_data->infantry_3_position_y = data->infantry_3_position_y;
   radar_interactive_data->infantry_4_position_x = data->infantry_4_position_x;
   radar_interactive_data->infantry_4_position_y = data->infantry_4_position_y;
-  radar_interactive_data->infantry_5_position_x = data->infantry_5_position_x;
-  radar_interactive_data->infantry_5_position_y = data->infantry_5_position_y;
+  radar_interactive_data->reserved_1 = data->reserved_1;
+  radar_interactive_data->reserved_2 = data->reserved_2;
   radar_interactive_data->sentry_position_x = data->sentry_position_x;
   radar_interactive_data->sentry_position_y = data->sentry_position_y;
   pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::CLIENT_MAP_CMD, sizeof(rm_referee::ClientMapReceiveData));
@@ -126,26 +128,49 @@ void InteractiveSender::sendRadarInteractiveData(const rm_msgs::ClientMapReceive
 void InteractiveSender::sendSentryCmdData(const rm_msgs::SentryCmdConstPtr& data)
 {
   int data_len;
-  rm_referee::SentryCmd tx_data;
-  data_len = static_cast<int>(sizeof(rm_referee::SentryCmd));
+  rm_referee::SentryCmdInteractiveData tx_data;
+  data_len = static_cast<int>(sizeof(rm_referee::SentryCmdInteractiveData));
 
   tx_data.header.sender_id = base_.robot_id_;
   tx_data.header.receiver_id = REFEREE_SERVER;
-  tx_data.sentry_info = data->sentry_info;
+  rm_referee::SentryCmd sentry_cmd{};
+  sentry_cmd.confirm_respawn = data->confirm_respawn;
+  sentry_cmd.confirm_instant_respawn = data->confirm_instant_respawn;
+  sentry_cmd.bullet_exchange_target = data->bullet_exchange_target;
+  sentry_cmd.remote_bullet_exchange_req_cnt = data->remote_bullet_exchange_req_cnt;
+  sentry_cmd.remote_hp_exchange_req_cnt = data->remote_hp_exchange_req_cnt;
+  sentry_cmd.posture_cmd = data->posture_cmd;
+  sentry_cmd.confirm_rune_activating = data->confirm_rune_activating;
+
+  const bool has_protocol_split = data->confirm_respawn || data->confirm_instant_respawn ||
+                                  data->bullet_exchange_target != 0 || data->remote_bullet_exchange_req_cnt != 0 ||
+                                  data->remote_hp_exchange_req_cnt != 0 || data->posture_cmd != 0 ||
+                                  data->confirm_rune_activating;
+  if (has_protocol_split)
+    tx_data.sentry_cmd = sentry_cmd;
+  else
+    tx_data.sentry_cmd.sentry_cmd = data->sentry_cmd;
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::SENTRY_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(ros::Time::now(), data_len);
 }
 
-void InteractiveSender::sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data)
+void InteractiveSender::sendRadarCmdData(const rm_msgs::RadarCmdConstPtr& data)
 {
   int data_len;
-  rm_referee::RadarInfo tx_data;
-  data_len = static_cast<int>(sizeof(rm_referee::RadarInfo));
+  rm_referee::RadarCmdInteractiveData tx_data;
+  data_len = static_cast<int>(sizeof(rm_referee::RadarCmdInteractiveData));
 
   tx_data.header.sender_id = base_.robot_id_;
   tx_data.header.receiver_id = REFEREE_SERVER;
-  tx_data.radar_info = data->radar_info;
+  tx_data.radar_cmd.radar_cmd = data->radar_cmd;
+  tx_data.radar_cmd.password_cmd = data->password_cmd;
+  tx_data.radar_cmd.password_1 = data->password_1;
+  tx_data.radar_cmd.password_2 = data->password_2;
+  tx_data.radar_cmd.password_3 = data->password_3;
+  tx_data.radar_cmd.password_4 = data->password_4;
+  tx_data.radar_cmd.password_5 = data->password_5;
+  tx_data.radar_cmd.password_6 = data->password_6;
 
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::RADAR_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
@@ -166,7 +191,7 @@ void BulletNumShare::sendBulletData()
   uint8_t tx_data[sizeof(BulletNumData)] = { 0 };
   auto bullet_num_data = (BulletNumData*)tx_data;
 
-  for (int i = 0; i < 127; i++)
+  for (int i = 0; i < k_frame_length_; i++)
     tx_buffer_[i] = 0;
   bullet_num_data->header_data.data_cmd_id = rm_referee::DataCmdId::BULLET_NUM_SHARE_CMD;
   bullet_num_data->header_data.sender_id = base_.robot_id_;
@@ -200,7 +225,7 @@ void SentryToRadar::sendSentryToRadarData()
   uint8_t tx_data[sizeof(SentryAttackingTargetData)] = { 0 };
   auto sentry_attacking_target_data = (SentryAttackingTargetData*)tx_data;
 
-  for (int i = 0; i < 127; i++)
+  for (int i = 0; i < k_frame_length_; i++)
     tx_buffer_[i] = 0;
   sentry_attacking_target_data->header_data.data_cmd_id = rm_referee::DataCmdId::SENTRY_TO_RADAR_CMD;
   sentry_attacking_target_data->header_data.sender_id = base_.robot_id_;
@@ -236,7 +261,7 @@ void RadarToSentry::sendRadarToSentryData()
   uint8_t tx_data[sizeof(RadarToSentryData)] = { 0 };
   auto radar_to_sentry_data = (RadarToSentryData*)tx_data;
 
-  for (int i = 0; i < 127; i++)
+  for (int i = 0; i < k_frame_length_; i++)
     tx_buffer_[i] = 0;
   radar_to_sentry_data->header_data.data_cmd_id = rm_referee::DataCmdId::RADAR_TO_SENTRY_CMD;
   radar_to_sentry_data->header_data.sender_id = base_.robot_id_;

@@ -47,8 +47,8 @@ typedef enum
   GAME_STATUS_CMD = 0x0001,
   GAME_RESULT_CMD = 0x0002,
   GAME_ROBOT_HP_CMD = 0x0003,
-  DART_STATUS_CMD = 0x0004,
-  ICRA_ZONE_STATUS_CMD = 0x0005,
+  DART_STATUS_CMD = 0x0004,       // legacy, not listed in 2026 V1.2.0 command table
+  ICRA_ZONE_STATUS_CMD = 0x0005,  // legacy, not listed in 2026 V1.2.0 command table
   FIELD_EVENTS_CMD = 0x0101,
   SUPPLY_PROJECTILE_ACTION_CMD = 0x0102,
   REFEREE_WARNING_CMD = 0x0104,
@@ -57,7 +57,7 @@ typedef enum
   POWER_HEAT_DATA_CMD = 0x0202,
   ROBOT_POS_CMD = 0x0203,
   BUFF_CMD = 0x0204,
-  AERIAL_ROBOT_ENERGY_CMD = 0x0205,
+  AERIAL_ROBOT_ENERGY_CMD = 0x0205,  // legacy, not listed in 2026 V1.2.0 command table
   ROBOT_HURT_CMD = 0x0206,
   SHOOT_DATA_CMD = 0x0207,
   BULLET_REMAINING_CMD = 0x0208,
@@ -70,12 +70,18 @@ typedef enum
   INTERACTIVE_DATA_CMD = 0x0301,
   CUSTOM_CONTROLLER_CMD = 0x0302,  // controller
   TARGET_POS_CMD = 0x0303,
-  ROBOT_COMMAND_CMD = 0x0304,  // controller
+  ROBOT_COMMAND_CMD = 0x0304,  // legacy keyboard/mouse command (deleted in 2026 V1.2.0)
   CLIENT_MAP_CMD = 0x0305,
-  CUSTOM_CLIENT_CMD = 0x0306,  // controller
-  MAP_SENTRY_CMD = 0x0307,     // send sentry->aerial
-  CUSTOM_TO_ROBOT_CMD = 0x0308,
-  ROBOT_TO_CUSTOM_CMD = 0x0309,
+  KEYBOARD_MOUSE_CMD = 0x0306,             // 2026 table 1-42
+  CUSTOM_CLIENT_CMD = KEYBOARD_MOUSE_CMD,  // legacy alias
+  MAP_SENTRY_CMD = 0x0307,                 // send sentry->aerial
+  CUSTOM_INFO_CMD = 0x0308,                // robot -> custom controller text/info
+  ROBOT_TO_CUSTOM_CONTROLLER_CMD = 0x0309,
+  ROBOT_TO_CUSTOM_CLIENT_CMD = 0x0310,
+  CUSTOM_CLIENT_TO_ROBOT_CMD = 0x0311,
+  CUSTOM_TO_ROBOT_CMD = CUSTOM_INFO_CMD,                 // legacy misnomer alias kept for compatibility
+  ROBOT_TO_CUSTOM_CMD = ROBOT_TO_CUSTOM_CONTROLLER_CMD,  // legacy alias
+  ROBOT_TO_CUSTOM_CMD_2 = ROBOT_TO_CUSTOM_CLIENT_CMD,    // legacy alias
   POWER_MANAGEMENT_SAMPLE_AND_STATUS_DATA_CMD = 0X8301,
   POWER_MANAGEMENT_INITIALIZATION_EXCEPTION_CMD = 0X8302,
   POWER_MANAGEMENT_SYSTEM_EXCEPTION_CMD = 0X8303,
@@ -239,22 +245,14 @@ typedef struct
 
 typedef struct
 {
-  uint16_t red_1_robot_hp;
-  uint16_t red_2_robot_hp;
-  uint16_t red_3_robot_hp;
-  uint16_t red_4_robot_hp;
-  uint16_t reserved_1;
-  uint16_t red_7_robot_hp;
-  uint16_t red_outpost_hp;
-  uint16_t red_base_hp;
-  uint16_t blue_1_robot_hp;
-  uint16_t blue_2_robot_hp;
-  uint16_t blue_3_robot_hp;
-  uint16_t blue_4_robot_hp;
-  uint16_t reserved_2;
-  uint16_t blue_7_robot_hp;
-  uint16_t blue_outpost_hp;
-  uint16_t blue_base_hp;
+  uint16_t ally_1_robot_hp;
+  uint16_t ally_2_robot_hp;
+  uint16_t ally_3_robot_hp;
+  uint16_t ally_4_robot_hp;
+  uint16_t reserved;
+  uint16_t ally_7_robot_hp;
+  uint16_t ally_outpost_hp;
+  uint16_t ally_base_hp;
 } __packed GameRobotHp;
 
 typedef struct
@@ -316,10 +314,7 @@ typedef struct
 typedef struct
 {
   uint8_t dart_remaining_time;
-  uint8_t dart_last_aim_state : 3;
-  uint8_t enemy_total_hit_received : 3;
-  uint8_t dart_current_target : 3;
-  uint8_t reserved;
+  uint16_t dart_info;
 } __packed DartInfo;
 
 typedef struct
@@ -343,7 +338,6 @@ typedef struct
   float reserved_3;
   uint16_t chassis_power_buffer;
   uint16_t shooter_id_1_17_mm_cooling_heat;
-  uint16_t shooter_id_2_17_mm_cooling_heat;
   uint16_t shooter_id_1_42_mm_cooling_heat;
 } __packed PowerHeatData;
 
@@ -357,7 +351,7 @@ typedef struct
 typedef struct
 {
   uint8_t recovery_buff;
-  uint8_t cooling_buff;
+  uint16_t cooling_buff;
   uint8_t defence_buff;
   uint8_t vulnerability_buff;
   uint16_t attack_buff;
@@ -388,49 +382,21 @@ typedef struct
   uint16_t bullet_allowance_num_17_mm;
   uint16_t bullet_allowance_num_42_mm;
   uint16_t coin_remaining_num;
+  uint16_t projectile_allowance_fortress;
 } __packed BulletAllowance;
 
 typedef struct
 {
-  uint8_t base_buff_point_state : 1;
-  uint8_t own_central_elevated_ground_state : 1;
-  uint8_t enemy_central_elevated_ground_state : 1;
-  uint8_t own_trapezoidal_elevated_ground_state : 1;
-  uint8_t enemy_trapezoidal_elevated_ground_state : 1;
-  uint8_t forward_own_terrain_span_buff_point_state : 1;
-  uint8_t behind_own_terrain_span_buff_point_state : 1;
-  uint8_t forward_enemy_terrain_span_buff_point_state : 1;
-  uint8_t behind_enemy_terrain_span_buff_point_state : 1;
-  uint8_t below_central_own_terrain_span_buff_point_state : 1;
-  uint8_t upper_central_own_terrain_span_buff_point_state : 1;
-  uint8_t below_central_enemy_terrain_span_buff_point_state : 1;
-  uint8_t upper_central_enemy_terrain_span_buff_point_state : 1;
-  uint8_t below_road_own_terrain_span_buff_point_state : 1;
-  uint8_t upper_road_own_terrain_span_buff_point_state : 1;
-  uint8_t below_road_enemy_terrain_span_buff_point_state : 1;
-  uint8_t upper_road_enemy_terrain_span_buff_point_state : 1;
-  uint8_t own_fort_buff_point : 1;
-  uint8_t own_outpost_buff_point : 1;
-  uint8_t nan_overlapping_supplier_zone : 1;
-  uint8_t overlapping_supplier_zone : 1;
-  uint8_t own_large_resource_island_point : 1;
-  uint8_t enemy_large_resource_island_point : 1;
-  uint8_t own_exchange_zone : 1;
-  uint8_t central_buff_point : 1;
-  uint32_t reversed : 8;
+  uint32_t rfid_status;
+  uint8_t rfid_status_2;
 } __packed RfidStatus;
 
 typedef struct
 {
   uint8_t dart_launch_opening_status;
-  //  uint8_t dart_attack_target;
+  uint8_t reserved;
   uint16_t target_change_time;
-  uint8_t first_dart_speed;
-  uint8_t second_dart_speed;
-  uint8_t third_dart_speed;
-  uint8_t fourth_dart_speed;
-  uint16_t last_dart_launch_time;
-  uint16_t operate_launch_cmd_time;
+  uint16_t latest_launch_cmd_time;
 } __packed DartClientCmd;
 
 /*********************** Interactive data between robots----0x0301 ********************/
@@ -501,14 +467,44 @@ typedef struct
   float reserved_2;
 } __packed RobotsPositionData;
 
-typedef struct
+// Table 1-21 (0x020C): radar_mark_data_t
+typedef union
 {
-  uint8_t mark_hero_progress : 1;
-  uint8_t mark_engineer_progress : 1;
-  uint8_t mark_standard_3_progress : 1;
-  uint8_t mark_standard_4_progress : 1;
-  uint8_t mark_sentry_progress : 1;
+  uint16_t mark_progress;
+  struct
+  {
+    uint16_t enemy_hero_vulnerable : 1;        // bit 0
+    uint16_t enemy_engineer_vulnerable : 1;    // bit 1
+    uint16_t enemy_standard_3_vulnerable : 1;  // bit 2
+    uint16_t enemy_standard_4_vulnerable : 1;  // bit 3
+    uint16_t enemy_aerial_special_mark : 1;    // bit 4
+    uint16_t enemy_sentry_vulnerable : 1;      // bit 5
+    uint16_t own_hero_special_mark : 1;        // bit 6
+    uint16_t own_engineer_special_mark : 1;    // bit 7
+    uint16_t own_standard_3_special_mark : 1;  // bit 8
+    uint16_t own_standard_4_special_mark : 1;  // bit 9
+    uint16_t own_aerial_special_mark : 1;      // bit 10
+    uint16_t own_sentry_special_mark : 1;      // bit 11
+    uint16_t reserved : 4;                     // bit 12-15
+  };
 } __packed RadarMarkData;
+
+// Table 1-32 (0x0120): sentry_cmd_t
+typedef union
+{
+  uint32_t sentry_cmd;
+  struct
+  {
+    uint32_t confirm_respawn : 1;
+    uint32_t confirm_instant_respawn : 1;
+    uint32_t bullet_exchange_target : 11;
+    uint32_t remote_bullet_exchange_req_cnt : 4;
+    uint32_t remote_hp_exchange_req_cnt : 4;
+    uint32_t posture_cmd : 2;
+    uint32_t confirm_rune_activating : 1;
+    uint32_t reserved : 8;
+  };
+} __packed SentryCmd;
 
 typedef struct
 {
@@ -550,14 +546,47 @@ typedef struct
 typedef struct
 {
   InteractiveDataHeader header;
-  uint32_t sentry_info;
-} __packed SentryCmd;
+  SentryCmd sentry_cmd;
+} __packed SentryCmdInteractiveData;
+
+// Table 1-23 (0x020E): radar_info_t
+typedef union
+{
+  uint8_t radar_info;
+  struct
+  {
+    uint8_t double_vulnerability_chances : 2;   // bit 0-1
+    uint8_t enemy_in_double_vulnerability : 1;  // bit 2
+    uint8_t own_encryption_level : 2;           // bit 3-4
+    uint8_t can_modify_key : 1;                 // bit 5
+    uint8_t reserved : 2;                       // bit 6-7
+  };
+} __packed RadarInfo;
 
 typedef struct
 {
   InteractiveDataHeader header;
-  uint8_t radar_info;
-} __packed RadarInfo;
+  RadarInfo radar_info;
+} __packed RadarInfoInteractiveData;
+
+// Table 1-33 (0x0121): radar_cmd_t
+typedef struct
+{
+  uint8_t radar_cmd;
+  uint8_t password_cmd;
+  uint8_t password_1;
+  uint8_t password_2;
+  uint8_t password_3;
+  uint8_t password_4;
+  uint8_t password_5;
+  uint8_t password_6;
+} __packed RadarCmd;
+
+typedef struct
+{
+  InteractiveDataHeader header;
+  RadarCmd radar_cmd;
+} __packed RadarCmdInteractiveData;
 
 typedef struct
 {
@@ -566,10 +595,32 @@ typedef struct
 
 typedef struct
 {
-  uint32_t sentry_info;
-  uint16_t is_out_of_war : 1;
-  uint16_t remaining_bullets_can_supply : 11;
-  uint16_t reverse : 4;
+  union
+  {
+    uint32_t sentry_info;
+    struct
+    {
+      uint32_t exchanged_bullet_allowance : 11;         // bit 0-10
+      uint32_t remote_bullet_exchange_success_cnt : 4;  // bit 11-14
+      uint32_t remote_hp_exchange_success_cnt : 4;      // bit 15-18
+      uint32_t can_confirm_free_respawn : 1;            // bit 19
+      uint32_t can_exchange_instant_respawn : 1;        // bit 20
+      uint32_t instant_respawn_cost : 10;               // bit 21-30
+      uint32_t reserved : 1;                            // bit 31
+    };
+  };
+  union
+  {
+    uint16_t sentry_info_2;
+    struct
+    {
+      uint16_t is_out_of_war : 1;
+      uint16_t remaining_bullets_can_supply : 11;
+      uint16_t sentry_mode : 2;
+      uint16_t can_activate_energy_mechanism : 1;
+      uint16_t reserved_1 : 1;
+    };
+  };
 } __packed SentryInfo;
 
 typedef struct
@@ -578,7 +629,7 @@ typedef struct
   float target_position_y;
   uint8_t command_keyboard;
   uint8_t target_robot_ID;
-  uint8_t cmd_source;
+  uint16_t cmd_source;
 } __packed ClientMapSendData;
 
 typedef struct
@@ -591,8 +642,8 @@ typedef struct
   uint16_t infantry_3_position_y;
   uint16_t infantry_4_position_x;
   uint16_t infantry_4_position_y;
-  uint16_t infantry_5_position_x;
-  uint16_t infantry_5_position_y;
+  uint16_t reserved_1;
+  uint16_t reserved_2;
   uint16_t sentry_position_x;
   uint16_t sentry_position_y;
 } __packed ClientMapReceiveData;
@@ -735,4 +786,26 @@ const uint16_t wCRC_table[256] = {
   0x0e70, 0x1ff9, 0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330, 0x7bc7, 0x6a4e, 0x58d5, 0x495c,
   0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 };
+
+static_assert(sizeof(FrameHeader) == 5, "FrameHeader size must match protocol (5 bytes).");
+static_assert(sizeof(GameRobotHp) == 16, "GameRobotHp size must match protocol (16 bytes).");
+static_assert(sizeof(DartInfo) == 3, "DartInfo size must match protocol (3 bytes).");
+static_assert(sizeof(PowerHeatData) == 14, "PowerHeatData size must match protocol (14 bytes).");
+static_assert(sizeof(Buff) == 8, "Buff size must match protocol (8 bytes).");
+static_assert(sizeof(BulletAllowance) == 8, "BulletAllowance size must match protocol (8 bytes).");
+static_assert(sizeof(RfidStatus) == 5, "RfidStatus size must match protocol (5 bytes).");
+static_assert(sizeof(DartClientCmd) == 6, "DartClientCmd size must match protocol (6 bytes).");
+static_assert(sizeof(InteractiveDataHeader) == 6, "InteractiveDataHeader size must match protocol (6 bytes).");
+static_assert(sizeof(RadarMarkData) == 2, "RadarMarkData size must match protocol (2 bytes).");
+static_assert(sizeof(SentryCmd) == 4, "SentryCmd size must match protocol (4 bytes).");
+static_assert(sizeof(SentryCmdInteractiveData) == 10, "SentryCmdInteractiveData size must match protocol (10 bytes).");
+static_assert(sizeof(RadarInfo) == 1, "RadarInfo size must match protocol (1 byte).");
+static_assert(sizeof(RadarInfoInteractiveData) == 7, "RadarInfoInteractiveData size must match protocol (7 bytes).");
+static_assert(sizeof(RadarCmd) == 8, "RadarCmd size must match protocol (8 bytes).");
+static_assert(sizeof(RadarCmdInteractiveData) == 14, "RadarCmdInteractiveData size must match protocol (14 bytes).");
+static_assert(sizeof(SentryInfo) == 6, "SentryInfo size must match protocol (6 bytes).");
+static_assert(sizeof(ClientMapSendData) == 12, "ClientMapSendData size must match protocol (12 bytes).");
+static_assert(sizeof(ClientMapReceiveData) == 24, "ClientMapReceiveData size must match protocol (24 bytes).");
+static_assert(sizeof(MapSentryData) == 105, "MapSentryData size must match protocol (105 bytes).");
+static_assert(sizeof(CustomInfo) == 34, "CustomInfo size must match protocol (34 bytes).");
 }  // namespace rm_referee

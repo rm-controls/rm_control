@@ -5,9 +5,7 @@
 
 namespace rm_vt
 {
-namespace
-{
-uint16_t keyboardMaskFromLegacyFrame(const rm_vt::KeyboardMouseData& data)
+uint16_t VideoTransmission::keyboardMaskFromLegacyFrame(const rm_vt::KeyboardMouseData& data)
 {
   uint16_t mask = 0;
   mask |= static_cast<uint16_t>(data.key_w) << 0;
@@ -29,7 +27,7 @@ uint16_t keyboardMaskFromLegacyFrame(const rm_vt::KeyboardMouseData& data)
   return mask;
 }
 
-uint16_t keyCodeToMask(uint8_t key_code)
+uint16_t VideoTransmission::keyCodeToMask(uint8_t key_code)
 {
   switch (key_code)
   {
@@ -78,19 +76,23 @@ uint16_t keyCodeToMask(uint8_t key_code)
     return (1u << 5);
   return 0;
 }
-}  // namespace
+
+uint16_t VideoTransmission::keyboardMaskFromKeyCodes(uint16_t key_value)
+{
+  const uint8_t key_1 = static_cast<uint8_t>(key_value & 0xFFu);
+  const uint8_t key_2 = static_cast<uint8_t>((key_value >> 8) & 0xFFu);
+  uint16_t new_mask = 0;
+  new_mask |= keyCodeToMask(key_1);
+  new_mask |= keyCodeToMask(key_2);
+  return new_mask;
+}
 
 uint16_t VideoTransmission::updateKeyboardValueStateFromKeyCodes(uint16_t key_value)
 {
   if (key_value == 0)
     return keyboard_value_state_;
 
-  const uint8_t key_1 = static_cast<uint8_t>(key_value & 0xFFu);
-  const uint8_t key_2 = static_cast<uint8_t>((key_value >> 8) & 0xFFu);
-  uint16_t new_mask = 0;
-  new_mask |= keyCodeToMask(key_1);
-  new_mask |= keyCodeToMask(key_2);
-  keyboard_value_state_ = new_mask;
+  keyboard_value_state_ = keyboardMaskFromKeyCodes(key_value);
   return keyboard_value_state_;
 }
 

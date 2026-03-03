@@ -39,7 +39,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::sentry_cmd_sub_ =
       nh.subscribe<rm_msgs::SentryCmd>("/sentry_cmd", 1, &RefereeBase::sendSentryCmdCallback, this);
   RefereeBase::radar_cmd_sub_ =
-      nh.subscribe<rm_msgs::RadarInfo>("/radar_cmd", 1, &RefereeBase::sendRadarCmdCallback, this);
+      nh.subscribe<rm_msgs::RadarCmd>("/radar_cmd", 1, &RefereeBase::sendRadarCmdCallback, this);
   RefereeBase::sentry_state_sub_ =
       nh.subscribe<std_msgs::String>("/custom_info", 1, &RefereeBase::sendCustomInfoCallback, this);
   RefereeBase::drone_pose_sub_ =
@@ -541,7 +541,7 @@ void RefereeBase::sendSentryCmdCallback(const rm_msgs::SentryCmdConstPtr& data)
     sentry_cmd_data_last_send_ = ros::Time::now();
   }
 }
-void RefereeBase::sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data)
+void RefereeBase::sendRadarCmdCallback(const rm_msgs::RadarCmdConstPtr& data)
 {
   if (ros::Time::now() - radar_cmd_data_last_send_ <= ros::Duration(0.15))
     return;

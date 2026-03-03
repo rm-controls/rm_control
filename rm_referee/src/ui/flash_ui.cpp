@@ -168,16 +168,10 @@ void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data,
 
 void HeroHitFlashUi::updateHittingConfig(const rm_msgs::GameRobotHp& msg)
 {
-  if (base_.robot_id_ > 100)
-  {
-    hitted_ =
-        (last_hp_msg_.red_outpost_hp - msg.red_outpost_hp > 190 || last_hp_msg_.red_base_hp - msg.red_base_hp > 190);
-  }
-  else
-  {
-    hitted_ = (last_hp_msg_.blue_outpost_hp - msg.blue_outpost_hp > 190 ||
-               last_hp_msg_.blue_base_hp - msg.blue_base_hp > 190);
-  }
+  // Temporarily disable hit flash trigger after GameRobotHp switched to ally semantics.
+  // hitted_ = (last_hp_msg_.ally_outpost_hp - msg.ally_outpost_hp > 190 ||
+  //            last_hp_msg_.ally_base_hp - msg.ally_base_hp > 190);
+  hitted_ = false;
   last_hp_msg_ = msg;
   display(ros::Time::now());
 }

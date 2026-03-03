@@ -13,9 +13,11 @@ add_message_files(
         FILES
         ActuatorState.msg
         BalanceState.msg
+        BusState.msg
         DbusData.msg
         ExchangerMsg.msg
         ChassisCmd.msg
+        CustomControllerData.msg
         ShootCmd.msg
         ShootState.msg
         ShootBeforehandCmd.msg
@@ -33,6 +35,8 @@ add_message_files(
         TagMsg.msg
         TagMsgArray.msg
         SentryDeviate.msg
+        VTKeyboardMouseData.msg
+        VTReceiverControlData.msg
 )
 
 add_service_files(
@@ -43,6 +47,7 @@ add_service_files(
         CameraStatus.srv
         EnableImuTrigger.srv
         EnableGyro.srv
+        CloseToTarget.srv
 )
 
 add_message_files(
@@ -94,6 +99,17 @@ add_message_files(
         PowerManagementProcessStackOverflowData.msg
         PowerManagementSystemExceptionData.msg
         PowerManagementUnknownExceptionData.msg
+        CurrentSentryPosData.msg
+        DartRemainingTime.msg
+        EnemyHpInfo.msg
+        RadarCmd.msg
+        RadarWirelessEnemyCallSign.msg
+        RadarWirelessEnemyCoinAndFieldStatus.msg
+        RadarWirelessEnemyProjectileAllowance.msg
+        RadarWirelessEnemyRobotBuff.msg
+        RadarWirelessEnemyRobotHp.msg
+        RadarWirelessEnemyRobotPos.msg
+        RobotCustomData2.msg
 )
 
 add_action_files(
