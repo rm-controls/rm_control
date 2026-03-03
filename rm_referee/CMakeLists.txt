@@ -66,6 +66,7 @@ include_directories(
 
 ## Declare cpp executables
 FILE(GLOB ALL_SOURCES "src/*.cpp" "src/common/*.cpp" "src/ui/*.cpp")
+list(REMOVE_ITEM ALL_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/referee_benchmark.cpp")
 add_executable(${PROJECT_NAME} ${ALL_SOURCES})
 
 ## Add dependencies to exported targets, like ROS msgs or srvs

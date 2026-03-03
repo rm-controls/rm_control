@@ -11,6 +11,7 @@
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/Int8MultiArray.h>
+#include <std_msgs/UInt8MultiArray.h>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>

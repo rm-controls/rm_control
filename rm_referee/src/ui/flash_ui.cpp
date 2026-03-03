@@ -166,36 +166,12 @@ void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data,
   display(last_get_data_time);
 }
 
-void DeployFlashUi::display(const ros::Time& time)
-{
-  if (!(chassis_mode_ == rm_msgs::ChassisCmd::RAW && angular_z_ == 0.0))
-    graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  FlashUi::updateFlashUiForQueue(time, (chassis_mode_ == rm_msgs::ChassisCmd::RAW && angular_z_ == 0.0), false);
-}
-
-void DeployFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr& data, const ros::Time& last_get_data_time)
-{
-  chassis_mode_ = data->mode;
-  display(last_get_data_time);
-}
-
-void DeployFlashUi::updateChassisVelData(const geometry_msgs::Twist::ConstPtr& data)
-{
-  angular_z_ = data->angular.z;
-}
-
 void HeroHitFlashUi::updateHittingConfig(const rm_msgs::GameRobotHp& msg)
 {
-  if (base_.robot_id_ > 100)
-  {
-    hitted_ =
-        (last_hp_msg_.red_outpost_hp - msg.red_outpost_hp > 190 || last_hp_msg_.red_base_hp - msg.red_base_hp > 190);
-  }
-  else
-  {
-    hitted_ = (last_hp_msg_.blue_outpost_hp - msg.blue_outpost_hp > 190 ||
-               last_hp_msg_.blue_base_hp - msg.blue_base_hp > 190);
-  }
+  // Temporarily disable hit flash trigger after GameRobotHp switched to ally semantics.
+  // hitted_ = (last_hp_msg_.ally_outpost_hp - msg.ally_outpost_hp > 190 ||
+  //            last_hp_msg_.ally_base_hp - msg.ally_base_hp > 190);
+  hitted_ = false;
   last_hp_msg_ = msg;
   display(ros::Time::now());
 }
@@ -220,22 +196,5 @@ void ExceedBulletSpeedFlashUi::updateShootData(const rm_msgs::ShootData& msg)
   shoot_data_ = msg;
 }
 
-void BurstFlashUi::display(const ros::Time& time)
-{
-  ros::Time now = ros::Time::now();
-  if (now - start_burst_time_ < ros::Duration(20))
-  {
-    graph_->setColor(rm_referee::GraphColor::PURPLE);
-    FlashUi::updateFlashUiForQueue(time, true, false);
-  }
-  else
-    FlashUi::updateFlashUiForQueue(time, false, false);
-}
-
-void BurstFlashUi::updateBurstTimeData(const rm_msgs::ManualToReferee::ConstPtr& data)
-{
-  start_burst_time_ = data->start_burst_time;
-  display(ros::Time::now());
-}
 }  // namespace rm_referee
 // namespace rm_referee

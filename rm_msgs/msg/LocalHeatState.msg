@@ -1,5 +1,3 @@
-float64 friction_speed
-float64 friction_change_speed
-float64 friction_change_speed_derivative
+float64 friction_change_vel
 bool has_shoot
 time stamp

@@ -1,3 +1,16 @@
+uint16 mark_progress
+bool enemy_hero_vulnerable
+bool enemy_engineer_vulnerable
+bool enemy_standard_3_vulnerable
+bool enemy_standard_4_vulnerable
+bool enemy_aerial_special_mark
+bool enemy_sentry_vulnerable
+bool own_hero_special_mark
+bool own_engineer_special_mark
+bool own_standard_3_special_mark
+bool own_standard_4_special_mark
+bool own_aerial_special_mark
+bool own_sentry_special_mark
 bool mark_hero_progress
 bool mark_engineer_progress
 bool mark_standard_3_progress

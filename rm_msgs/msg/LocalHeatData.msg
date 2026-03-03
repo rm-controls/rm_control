@@ -1,2 +1,0 @@
-int64 once_shoot_num
-float64 local_shooter_cooling_heat

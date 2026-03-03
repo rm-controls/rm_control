@@ -50,6 +50,9 @@ public:
   Referee(ros::NodeHandle& nh) : referee_ui_(nh, base_), last_get_data_time_(ros::Time::now())
   {
     ROS_INFO("New serial protocol loading.");
+    nh.param("enable_perf_stats", perf_stats_enabled_, false);
+    nh.param("perf_log_period", perf_log_period_, 1.0);
+    perf_window_start_ = ros::WallTime::now();
     // pub
     game_robot_status_pub_ = nh.advertise<rm_msgs::GameRobotStatus>("game_robot_status", 1);
     game_status_pub_ = nh.advertise<rm_msgs::GameStatus>("game_status", 1);
@@ -135,14 +138,30 @@ public:
   int rx_len_;
 
 private:
-  int unpack(uint8_t* rx_data);
+  int unpack(uint8_t* rx_data, int rx_data_len);
   void getRobotInfo();
   void publishCapacityData();
+  void recordPerfStats(int rx_bytes, int unpack_calls, int frames_ok, double read_ms, double unpack_ms_sum,
+                       double unpack_max_ms);
 
   ros::Time last_get_data_time_;
-  const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
-  const int k_unpack_buffer_length_ = 256;
-  uint8_t unpack_buffer_[256]{};
+  static constexpr int k_frame_length_ = 128;
+  static constexpr int k_header_length_ = 5;
+  static constexpr int k_cmd_id_length_ = 2;
+  static constexpr int k_tail_length_ = 2;
+  static constexpr int k_unpack_buffer_length_ = 512;
+  uint8_t unpack_buffer_[k_unpack_buffer_length_]{};
+  bool perf_stats_enabled_{ false };
+  double perf_log_period_{ 1.0 };
+  ros::WallTime perf_window_start_;
+  uint64_t perf_read_cycles_{ 0 };
+  uint64_t perf_rx_bytes_{ 0 };
+  uint64_t perf_unpack_calls_{ 0 };
+  uint64_t perf_frames_ok_{ 0 };
+  double perf_read_ms_sum_{ 0.0 };
+  double perf_unpack_ms_sum_{ 0.0 };
+  double perf_read_ms_max_{ 0.0 };
+  double perf_unpack_ms_max_{ 0.0 };
 };
 
 }  // namespace rm_referee

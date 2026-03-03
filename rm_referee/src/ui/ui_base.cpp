@@ -338,6 +338,11 @@ void FixedUi::updateForQueue()
 
 void UiBase::pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const
 {
+  if (len < 0 || (k_header_length_ + k_cmd_id_length_ + k_tail_length_ + len) > k_frame_length_)
+  {
+    ROS_ERROR("Referee pack overflow: cmd=0x%04X len=%d exceeds frame buffer %d", cmd_id, len, k_frame_length_);
+    return;
+  }
   memset(tx_buffer, 0, k_frame_length_);
   auto* frame_header = reinterpret_cast<FrameHeader*>(tx_buffer);
 
@@ -365,7 +370,7 @@ void UiBase::sendSerial(const ros::Time& time, int data_len)
 
 void UiBase::clearTxBuffer()
 {
-  for (int i = 0; i < 127; i++)
+  for (int i = 0; i < k_frame_length_; i++)
     tx_buffer_[i] = 0;
   tx_len_ = 0;
 }

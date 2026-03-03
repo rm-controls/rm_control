@@ -38,12 +38,10 @@
 #pragma once
 
 #include <ros/ros.h>
-#include <mutex>
 #include <rm_msgs/GameRobotStatus.h>
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/LocalHeatState.h>
-#include <rm_msgs/LocalHeatData.h>
 #include <std_msgs/Float64.h>
 
 namespace rm_common
@@ -68,14 +66,12 @@ public:
       ROS_ERROR("Heat coeff no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("type", type_))
       ROS_ERROR("Shooter type no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("local_heat_protect_threshold", heat_protect_threshold_))
-      ROS_ERROR("Local heat protect threshold no defined (namespace: %s)", nh.getNamespace().c_str());
     nh.param("use_local_heat", use_local_heat_, true);
     if (type_ == "ID1_42MM")
       bullet_heat_ = 100.;
     else
       bullet_heat_ = 10.;
-    local_heat_pub_ = nh.advertise<rm_msgs::LocalHeatData>("/local_heat_state/local_cooling_heat", 10);
+    local_heat_pub_ = nh.advertise<std_msgs::Float64>("/local_heat_state/local_cooling_heat", 10);
     shoot_state_sub_ =
         nh.subscribe<rm_msgs::LocalHeatState>("/local_heat_state/shooter_state", 50, &HeatLimit::heatCB, this);
     timer_ = nh.createTimer(ros::Duration(0.1), std::bind(&HeatLimit::timerCB, this));
@@ -91,34 +87,24 @@ public:
 
   void heatCB(const rm_msgs::LocalHeatStateConstPtr& msg)
   {
-    std::lock_guard<std::mutex> lock(heat_mutex_);
-    if (msg->has_shoot && last_shoot_state_ != msg->has_shoot)
-    {
+    if (msg->has_shoot)
       local_shooter_cooling_heat_ += bullet_heat_;
-      if (local_shooter_cooling_heat_ > 0)
-        once_shoot_num_++;
-    }
-    last_shoot_state_ = msg->has_shoot;
   }
 
   void timerCB()
   {
-    std::lock_guard<std::mutex> lock(heat_mutex_);
     if (local_shooter_cooling_heat_ > 0.0)
-      local_shooter_cooling_heat_ -= shooter_cooling_rate_ * 0.1;
+      local_shooter_cooling_heat_ -= shooter_cooling_rate_ / 10.0;
     if (local_shooter_cooling_heat_ < 0.0)
-    {
       local_shooter_cooling_heat_ = 0.0;
-      once_shoot_num_ = 0;
-    }
-    local_heat_pub_data_.once_shoot_num = once_shoot_num_;
-    local_heat_pub_data_.local_shooter_cooling_heat = local_shooter_cooling_heat_;
-    local_heat_pub_.publish(local_heat_pub_data_);
+    std_msgs::Float64 msg;
+    msg.data = local_shooter_cooling_heat_;
+    local_heat_pub_.publish(msg);
   }
 
   void setStatusOfShooter(const rm_msgs::GameRobotStatus data)
   {
-    shooter_cooling_limit_ = data.shooter_cooling_limit - heat_protect_threshold_;
+    shooter_cooling_limit_ = data.shooter_cooling_limit;
     shooter_cooling_rate_ = data.shooter_cooling_rate;
   }
 
@@ -130,7 +116,8 @@ public:
     }
     else if (type_ == "ID2_17MM")
     {
-      shooter_cooling_heat_ = data.shooter_id_2_17_mm_cooling_heat;
+      // RoboMaster 2026 protocol only reports one 17mm barrel heat field.
+      shooter_cooling_heat_ = data.shooter_id_1_17_mm_cooling_heat;
     }
     else if (type_ == "ID1_42MM")
     {
@@ -145,7 +132,6 @@ public:
 
   double getShootFrequency() const
   {
-    std::lock_guard<std::mutex> lock(heat_mutex_);
     if (state_ == BURST)
       return shoot_frequency_;
     double shooter_cooling_heat =
@@ -230,18 +216,13 @@ private:
   double bullet_heat_, safe_shoot_frequency_{}, heat_coeff_{}, shoot_frequency_{}, low_shoot_frequency_{},
       high_shoot_frequency_{}, burst_shoot_frequency_{}, minimal_shoot_frequency_{};
 
-  bool referee_is_online_, use_local_heat_, last_shoot_state_{};
+  bool referee_is_online_, use_local_heat_;
   int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_;
-  double local_shooter_cooling_heat_{}, heat_protect_threshold_{};
-  int once_shoot_num_{};
+  double local_shooter_cooling_heat_{};
 
   ros::Publisher local_heat_pub_;
   ros::Subscriber shoot_state_sub_;
   ros::Timer timer_;
-
-  rm_msgs::LocalHeatData local_heat_pub_data_;
-
-  mutable std::mutex heat_mutex_;
 };
 
 }  // namespace rm_common

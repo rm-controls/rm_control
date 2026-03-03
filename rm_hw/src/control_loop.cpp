@@ -68,7 +68,6 @@ RmRobotHWLoop::RmRobotHWLoop(ros::NodeHandle& nh, std::shared_ptr<RmRobotHW> har
   last_time_ = clock::now();
 
   // Setup loop thread
-  loop_running_ = true;
   loop_thread_ = std::thread([&]() {
     while (loop_running_)
     {
