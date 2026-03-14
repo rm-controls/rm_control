@@ -1,1 +1,8 @@
-uint32 sentry_info
+uint32 sentry_cmd
+bool confirm_respawn
+bool confirm_instant_respawn
+uint16 bullet_exchange_target
+uint8 remote_bullet_exchange_req_cnt
+uint8 remote_hp_exchange_req_cnt
+uint8 posture_cmd
+bool confirm_rune_activating

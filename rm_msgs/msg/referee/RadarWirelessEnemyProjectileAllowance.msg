@@ -1,0 +1,7 @@
+uint16 hero_projectile_allowance
+uint16 infantry_3_projectile_allowance
+uint16 infantry_4_projectile_allowance
+uint16 aerial_projectile_allowance
+uint16 sentry_projectile_allowance
+
+time stamp

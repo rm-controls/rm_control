@@ -128,10 +128,6 @@ public:
     {
       shooter_cooling_heat_ = data.shooter_id_1_17_mm_cooling_heat;
     }
-    else if (type_ == "ID2_17MM")
-    {
-      shooter_cooling_heat_ = data.shooter_id_2_17_mm_cooling_heat;
-    }
     else if (type_ == "ID1_42MM")
     {
       shooter_cooling_heat_ = data.shooter_id_1_42_mm_cooling_heat;

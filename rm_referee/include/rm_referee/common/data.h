@@ -87,6 +87,7 @@
 #include "rm_msgs/SentryInfo.h"
 #include "rm_msgs/SentryCmd.h"
 #include "rm_msgs/RadarInfo.h"
+#include "rm_msgs/RadarCmd.h"
 #include "rm_msgs/Buff.h"
 #include "rm_msgs/TrackData.h"
 #include "rm_msgs/SentryAttackingTarget.h"
