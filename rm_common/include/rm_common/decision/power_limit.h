@@ -37,6 +37,9 @@
 
 #pragma once
 
+#include <algorithm>
+#include <cmath>
+
 #include <ros/ros.h>
 #include <rm_msgs/ChassisCmd.h>
 #include <rm_msgs/GameStatus.h>
@@ -207,6 +210,7 @@ public:
       else
         chassis_cmd.power_limit = safety_power_;
     }
+    applyPosturePowerScale(chassis_cmd);
   }
 
 private:
@@ -217,6 +221,11 @@ private:
   }
   void normal(rm_msgs::ChassisCmd& chassis_cmd)
   {
+    if (is_new_capacitor_)
+    {
+      chassis_cmd.power_limit = chassis_power_limit_;
+      return;
+    }
     allow_use_cap_ = false;
     double buffer_energy_error = chassis_power_buffer_ - buffer_threshold_;
     double plus_power = buffer_energy_error * power_gain_;
@@ -233,7 +242,9 @@ private:
   {
     if (cap_state_ != ALLOFF && cap_energy_ > capacitor_threshold_ && chassis_power_buffer_ > power_buffer_threshold_)
     {
-      if (is_gyro)
+      if (is_new_capacitor_)
+        chassis_cmd.power_limit = burst_power_;
+      else if (is_gyro)
         setGyroPower(chassis_cmd);
       else
         setBurstPower(chassis_cmd);
@@ -241,6 +252,13 @@ private:
     else
       normal(chassis_cmd);
     // expect_state_ = NORMAL;
+  }
+
+  void applyPosturePowerScale(rm_msgs::ChassisCmd& chassis_cmd) const
+  {
+    if (std::abs(posture_power_scale_ - 1.0) < 1e-6)
+      return;
+    chassis_cmd.power_limit = std::max(0.0, std::floor(chassis_cmd.power_limit * posture_power_scale_));
   }
 
   int chassis_power_buffer_;
@@ -259,6 +277,7 @@ private:
   uint8_t expect_state_{}, cap_state_{};
   bool capacitor_is_on_{ true };
   bool allow_gyro_cap_{ false }, allow_use_cap_{ false };
+  double posture_power_scale_{ 1.0 };
 
   ros::Time start_burst_time_{};
   int total_burst_time_{};

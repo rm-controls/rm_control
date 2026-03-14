@@ -1,0 +1,32 @@
+uint8 hero_recovery_buff
+uint16 hero_cooling_buff
+uint8 hero_defense_buff
+uint8 hero_negative_defense_buff
+uint16 hero_attack_buff
+
+uint8 engineer_recovery_buff
+uint16 engineer_cooling_buff
+uint8 engineer_defense_buff
+uint8 engineer_negative_defense_buff
+uint16 engineer_attack_buff
+
+uint8 infantry_3_recovery_buff
+uint16 infantry_3_cooling_buff
+uint8 infantry_3_defense_buff
+uint8 infantry_3_negative_defense_buff
+uint16 infantry_3_attack_buff
+
+uint8 infantry_4_recovery_buff
+uint16 infantry_4_cooling_buff
+uint8 infantry_4_defense_buff
+uint8 infantry_4_negative_defense_buff
+uint16 infantry_4_attack_buff
+
+uint8 sentry_recovery_buff
+uint16 sentry_cooling_buff
+uint8 sentry_defense_buff
+uint8 sentry_negative_defense_buff
+uint16 sentry_attack_buff
+uint8 sentry_posture
+
+time stamp
