@@ -242,7 +242,7 @@ public:
     if (active_port_index_ == static_cast<int>(index))
       return;
     const std::string from = 
-      active_port_index_ >= 0 ? serial_ports_[static_cast<size_t>(active_port_index_)].device : std::string("<none>");
+        active_port_index_ >= 0 ? serial_ports_[static_cast<size_t>(active_port_index_)].device : std::string("<none>");
     active_port_index_ = static_cast<int>(index);
     ROS_INFO_STREAM("Switched active referee port from " << from << " to " << serial_ports_[index].device);
   }
