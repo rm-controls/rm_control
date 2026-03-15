@@ -66,7 +66,6 @@ public:
   virtual void radarToRefereeCallBack(const rm_msgs::RadarToSentryConstPtr& data);
   virtual void customizeDisplayCmdCallBack(const std_msgs::UInt32ConstPtr& data);
   virtual void visualizeStateDataCallBack(const rm_msgs::VisualizeStateDataConstPtr& data);
-  virtual void disBase2TargetDataCallBack(const std_msgs::Float32ConstPtr& data);
 
   // send  ui
   void sendSerialDataCallback();
@@ -99,7 +98,6 @@ public:
   ros::Subscriber shoot_cmd_sub_;
   ros::Subscriber customize_display_cmd_sub_;
   ros::Subscriber visualize_state_data_sub_;
-  ros::Subscriber dis_base2target_data_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
@@ -117,7 +115,6 @@ public:
   RotationTimeChangeUi* rotation_time_change_ui_{};
   LaneLineTimeChangeGroupUi* lane_line_time_change_ui_{};
   BalancePitchTimeChangeGroupUi* balance_pitch_time_change_group_ui_{};
-  DistanceBaseTimeChangeUi* distance_base_time_change_ui_{};
   PitchAngleTimeChangeUi* pitch_angle_time_change_ui_{};
   ImageTransmissionAngleTimeChangeUi* image_transmission_angle_time_change_ui_{};
   JointPositionTimeChangeUi *engineer_joint1_time_change_ui{}, *engineer_joint2_time_change_ui{},
@@ -136,7 +133,6 @@ public:
   CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
   DeployFlashUi* deploy_flash_ui_{};
-  WirelessFlashUi* wireless_flash_ui_{};
   HeroHitFlashUi* hero_hit_flash_ui_{};
   ExceedBulletSpeedFlashUi* exceed_bullet_speed_flash_ui_{};
   CustomizeDisplayFlashUi* customize_display_flash_ui_{};

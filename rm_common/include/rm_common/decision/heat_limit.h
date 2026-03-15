@@ -43,6 +43,7 @@
 #include <rm_msgs/PowerHeatData.h>
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/LocalHeatState.h>
+#include <rm_msgs/LocalHeatData.h>
 #include <std_msgs/Float64.h>
 
 namespace rm_common
@@ -74,7 +75,7 @@ public:
       bullet_heat_ = 100.;
     else
       bullet_heat_ = 10.;
-    local_heat_pub_ = nh.advertise<std_msgs::Float64>("/local_heat_state/local_cooling_heat", 10);
+    local_heat_pub_ = nh.advertise<rm_msgs::LocalHeatData>("/local_heat_state/local_cooling_heat", 10);
     shoot_state_sub_ =
         nh.subscribe<rm_msgs::LocalHeatState>("/local_heat_state/shooter_state", 50, &HeatLimit::heatCB, this);
     timer_ = nh.createTimer(ros::Duration(0.1), std::bind(&HeatLimit::timerCB, this));
@@ -92,7 +93,11 @@ public:
   {
     std::lock_guard<std::mutex> lock(heat_mutex_);
     if (msg->has_shoot && last_shoot_state_ != msg->has_shoot)
+    {
       local_shooter_cooling_heat_ += bullet_heat_;
+      if (local_shooter_cooling_heat_ > 0)
+        once_shoot_num_++;
+    }
     last_shoot_state_ = msg->has_shoot;
   }
 
@@ -102,10 +107,13 @@ public:
     if (local_shooter_cooling_heat_ > 0.0)
       local_shooter_cooling_heat_ -= shooter_cooling_rate_ * 0.1;
     if (local_shooter_cooling_heat_ < 0.0)
+    {
       local_shooter_cooling_heat_ = 0.0;
-    std_msgs::Float64 msg;
-    msg.data = local_shooter_cooling_heat_;
-    local_heat_pub_.publish(msg);
+      once_shoot_num_ = 0;
+    }
+    local_heat_pub_data_.once_shoot_num = once_shoot_num_;
+    local_heat_pub_data_.local_shooter_cooling_heat = local_shooter_cooling_heat_;
+    local_heat_pub_.publish(local_heat_pub_data_);
   }
 
   void setStatusOfShooter(const rm_msgs::GameRobotStatus data)
@@ -225,10 +233,13 @@ private:
   bool referee_is_online_, use_local_heat_, last_shoot_state_{};
   int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_;
   double local_shooter_cooling_heat_{}, heat_protect_threshold_{};
+  int once_shoot_num_{};
 
   ros::Publisher local_heat_pub_;
   ros::Subscriber shoot_state_sub_;
   ros::Timer timer_;
+
+  rm_msgs::LocalHeatData local_heat_pub_data_;
 
   mutable std::mutex heat_mutex_;
 };

@@ -22,6 +22,5 @@ bool overlapping_supplier_zone
 bool own_large_resource_island_point
 bool enemy_large_resource_island_point
 bool central_buff_point
-bool enemy_fortress_buff_point
 
 time stamp

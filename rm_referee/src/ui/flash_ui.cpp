@@ -184,20 +184,6 @@ void DeployFlashUi::updateChassisVelData(const geometry_msgs::Twist::ConstPtr& d
   angular_z_ = data->angular.z;
 }
 
-void WirelessFlashUi::display(const ros::Time& time)
-{
-  if (!(wireless_state_))
-    graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  FlashUi::updateFlashUiForQueue(time, (wireless_state_), false);
-}
-
-void WirelessFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr& data,
-                                           const ros::Time& last_get_data_time)
-{
-  wireless_state_ = data->wireless_state;
-  display(last_get_data_time);
-}
-
 void HeroHitFlashUi::updateHittingConfig(const rm_msgs::GameRobotHp& msg)
 {
   if (base_.robot_id_ > 100)

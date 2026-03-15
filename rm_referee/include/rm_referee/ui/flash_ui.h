@@ -106,19 +106,6 @@ private:
   double angular_z_{ 0. };
 };
 
-class WirelessFlashUi : public FlashUi
-{
-public:
-  explicit WirelessFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
-                           std::deque<Graph>* character_queue)
-    : FlashUi(rpc_value, base, "wireless", graph_queue, character_queue){};
-  void updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr& data, const ros::Time& last_get_data_time);
-
-private:
-  void display(const ros::Time& time) override;
-  bool wireless_state_;
-};
-
 class HeroHitFlashUi : public FlashGroupUi
 {
 public:
