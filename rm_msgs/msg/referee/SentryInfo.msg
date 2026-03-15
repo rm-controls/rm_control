@@ -1,3 +1,12 @@
 uint32 sentry_info
+uint16 sentry_info_2
+uint16 exchanged_bullet_allowance
+uint8 remote_bullet_exchange_success_cnt
+uint8 remote_hp_exchange_success_cnt
+bool can_confirm_free_respawn
+bool can_exchange_instant_respawn
+uint16 instant_respawn_cost
 bool is_out_of_war
 uint16 remaining_bullets_can_supply
+uint8 sentry_mode
+bool can_activate_energy_mechanism

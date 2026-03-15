@@ -56,6 +56,8 @@ add_service_files(
         CameraStatus.srv
         EnableImuTrigger.srv
         EnableGyro.srv
+        ExtraFrictionWheelSpeed.srv
+        ShooterSpeed.srv
 )
 
 add_message_files(
@@ -88,19 +90,29 @@ add_message_files(
         BulletAllowance.msg
         RfidStatus.msg
         DartClientCmd.msg
+        DartRemainingTime.msg
         ManualToReferee.msg
         RadarData.msg
+        RadarCmd.msg
         RadarMarkData.msg
         RobotsPositionData.msg
         ClientMapSendData.msg
         ClientMapReceiveData.msg
         MapSentryData.msg
         GameRobotPosData.msg
+        EnemyHpInfo.msg
         SentryInfo.msg
         RadarInfo.msg
         Buff.msg
         RadarToSentry.msg
         SentryCmd.msg
+        RadarWirelessEnemyCallSign.msg
+        RadarWirelessEnemyCoinAndFieldStatus.msg
+        RadarWirelessEnemyProjectileAllowance.msg
+        RadarWirelessEnemyRobotBuff.msg
+        RadarWirelessEnemyRobotHp.msg
+        RadarWirelessEnemyRobotPos.msg
+        RobotCustomData2.msg
         VisualizeStateData.msg
         PowerManagementSampleAndStatusData.msg
         PowerManagementInitializationExceptionData.msg

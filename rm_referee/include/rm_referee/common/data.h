@@ -37,6 +37,8 @@
 
 #pragma once
 
+#include <array>
+#include <vector>
 #include <ros/ros.h>
 #include <unistd.h>
 #include <serial/serial.h>
@@ -87,6 +89,7 @@
 #include "rm_msgs/SentryInfo.h"
 #include "rm_msgs/SentryCmd.h"
 #include "rm_msgs/RadarInfo.h"
+#include "rm_msgs/RadarCmd.h"
 #include "rm_msgs/Buff.h"
 #include "rm_msgs/TrackData.h"
 #include "rm_msgs/SentryAttackingTarget.h"
@@ -111,7 +114,21 @@ struct CapacityData
 class Base
 {
 public:
-  serial::Serial serial_;
+  static constexpr size_t kMaxSerialPorts = 2;
+
+  struct SerialPortState
+  {
+    serial::Serial serial;
+    std::string device;
+    ros::Time last_valid_frame_time;
+    ros::Time next_open_attempt_time;
+    bool configured = false;
+  };
+
+  std::array<SerialPortState, kMaxSerialPorts> serial_ports_{};
+  size_t serial_port_count_ = 0;
+  int active_port_index_ = -1;
+  ros::Duration reopen_interval_{ 1.0 };
 
   int client_id_ = 0;  // recipient's id
   int robot_id_ = 0;   // recent  robot's id
@@ -119,22 +136,152 @@ public:
   std::string robot_color_;
   bool referee_data_is_online_ = false;
 
-  void initSerial()
+  void initSerial(ros::NodeHandle& nh)
   {
+    std::vector<std::string> devices;
+    if (!nh.getParam("serial_ports", devices) || devices.empty())
+      devices = { "/dev/usbReferee" };
+    if (devices.size() > kMaxSerialPorts)
+    {
+      ROS_WARN("rm_referee serial_ports size %zu exceeds max %zu, truncating", devices.size(), kMaxSerialPorts);
+      devices.resize(kMaxSerialPorts);
+    }
+    serial_port_count_ = 0;
+    for (const auto& device : devices)
+    {
+      if (device.empty())
+        continue;
+      auto& port = serial_ports_[serial_port_count_++];
+      port.device = device;
+      port.configured = true;
+      port.last_valid_frame_time = ros::Time();
+      port.next_open_attempt_time = ros::Time();
+    }
+    if (serial_port_count_ == 0)
+    {
+      auto& port = serial_ports_[0];
+      port.device = "/dev/usbReferee";
+      port.configured = true;
+      serial_port_count_ = 1;
+    }
+    for (size_t i = 0; i < serial_port_count_; ++i)
+      ensurePortOpen(i, ros::Time::now());
+  }
+
+  bool ensurePortOpen(size_t index, const ros::Time& now)
+  {
+    if (index >= serial_port_count_)
+      return false;
+    auto& port = serial_ports_[index];
+    if (!port.configured)
+      return false;
+    if (port.serial.isOpen())
+      return true;
+    if (!port.next_open_attempt_time.isZero() && now < port.next_open_attempt_time)
+      return false;
+
     serial::Timeout timeout = serial::Timeout::simpleTimeout(50);
-    serial_.setPort("/dev/usbReferee");
-    serial_.setBaudrate(115200);
-    serial_.setTimeout(timeout);
-    if (serial_.isOpen())
-      return;
+    port.serial.setPort(port.device);
+    port.serial.setBaudrate(115200);
+    port.serial.setTimeout(timeout);
     try
     {
-      serial_.open();
+      port.serial.open();
+      port.next_open_attempt_time = ros::Time();
+      ROS_INFO_STREAM("Opened referee port: " << port.device);
+      return true;
     }
-    catch (serial::IOException& e)
+    catch (const std::exception& e)
     {
-      ROS_ERROR("Cannot open referee port");
+      port.next_open_attempt_time = now + reopen_interval_;
+      ROS_WARN_STREAM("Cannot open referee port " << port.device << ": " << e.what());
+      return false;
     }
+  }
+
+  void handlePortIoFailure(size_t index, const ros::Time& now, const std::string& action, const std::exception& e)
+  {
+    if (index >= serial_port_count_)
+      return;
+    auto& port = serial_ports_[index];
+    if (port.serial.isOpen())
+      port.serial.close();
+    port.last_valid_frame_time = ros::Time();
+    if (active_port_index_ == static_cast<int>(index))
+      active_port_index_ = -1;
+    port.next_open_attempt_time = now + reopen_interval_;
+    ROS_WARN_STREAM("Referee port " << port.device << " " << action << " failed: " << e.what());
+  }
+
+  bool isPortFresh(size_t index, const ros::Time& now, const ros::Duration& freshness) const
+  {
+    if (index >= serial_port_count_)
+      return false;
+    const auto& port = serial_ports_[index];
+    return !port.last_valid_frame_time.isZero() && (now - port.last_valid_frame_time) <= freshness;
+  }
+
+  bool isActivePortFresh(const ros::Time& now, const ros::Duration& freshness) const
+  {
+    return active_port_index_ >= 0 && isPortFresh(static_cast<size_t>(active_port_index_), now, freshness);
+  }
+
+  bool shouldProcessPort(size_t index, const ros::Time& now, const ros::Duration& freshness) const
+  {
+    if (index >= serial_port_count_)
+      return false;
+    if (active_port_index_ < 0)
+      return true;
+    return static_cast<size_t>(active_port_index_) == index || !isActivePortFresh(now, freshness);
+  }
+
+  void activatePort(size_t index)
+  {
+    if (index >= serial_port_count_)
+      return;
+    if (active_port_index_ == static_cast<int>(index))
+      return;
+    const std::string from =
+        active_port_index_ >= 0 ? serial_ports_[static_cast<size_t>(active_port_index_)].device : std::string("<none>");
+    active_port_index_ = static_cast<int>(index);
+    ROS_INFO_STREAM("Switched active referee port from " << from << " to " << serial_ports_[index].device);
+  }
+
+  void markValidFrame(size_t index, const ros::Time& stamp, const ros::Duration& freshness)
+  {
+    if (index >= serial_port_count_)
+      return;
+    serial_ports_[index].last_valid_frame_time = stamp;
+    if (active_port_index_ < 0 || !isActivePortFresh(stamp, freshness) || active_port_index_ == static_cast<int>(index))
+      activatePort(index);
+    referee_data_is_online_ = true;
+  }
+
+  void refreshOnlineState(const ros::Time& now, const ros::Duration& freshness)
+  {
+    referee_data_is_online_ = false;
+    for (size_t i = 0; i < serial_port_count_; ++i)
+    {
+      if (isPortFresh(i, now, freshness))
+      {
+        referee_data_is_online_ = true;
+        break;
+      }
+    }
+  }
+
+  bool writeActive(const uint8_t* data, size_t data_len)
+  {
+    if (active_port_index_ < 0)
+      return false;
+    const size_t active_index = static_cast<size_t>(active_port_index_);
+    if (active_index >= serial_port_count_)
+      return false;
+    auto& port = serial_ports_[active_index];
+    if (!port.serial.isOpen())
+      return false;
+    port.serial.write(data, data_len);
+    return true;
   }
 
   // CRC check
