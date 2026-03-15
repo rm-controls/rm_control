@@ -42,6 +42,7 @@
 
 #include <ros/ros.h>
 #include <rm_msgs/ChassisCmd.h>
+#include <rm_msgs/ChassisActiveSusCmd.h>
 #include <rm_msgs/GimbalCmd.h>
 #include <rm_msgs/ShootCmd.h>
 #include <rm_msgs/ShootBeforehandCmd.h>
@@ -61,6 +62,7 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Bool.h>
 #include <control_msgs/JointControllerState.h>
+#include <std_msgs/Float32.h>
 
 #include "rm_common/ros_utilities.h"
 #include "rm_common/decision/heat_limit.h"
@@ -288,6 +290,18 @@ private:
   LinearInterp accel_x_, accel_y_, accel_z_;
 };
 
+class ChassisActiveSuspensionCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>
+{
+public:
+  explicit ChassisActiveSuspensionCommandSender(ros::NodeHandle& nh)
+    : TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>(nh)
+  {
+  }
+  void setZero() override
+  {
+    msg_.mode = 0;
+  }
+};
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd>
 {
 public:

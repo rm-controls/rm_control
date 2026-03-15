@@ -13,10 +13,12 @@ add_message_files(
         FILES
         ActuatorState.msg
         BalanceState.msg
+        BulletSolverData.msg
         BusState.msg
         DbusData.msg
         Dart.msg
         ExchangerMsg.msg
+        ChassisActiveSusCmd.msg
         ChassisCmd.msg
         ShootCmd.msg
         ShootState.msg

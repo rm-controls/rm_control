@@ -1,0 +1,14 @@
+
+std_msgs/Header header
+float64 yaw_subtract_
+float64 output_yaw_central
+float64 test_number
+float64 after_fly_yaw_subtract_
+float64 switch_armor_angle
+float64 switche_time_yaw_
+float64 center_this_armor_
+float64 center_next_armor_
+float64 center_diagonal_armor_
+float64 center_triple_next_armor_
+float64 traject_acc_
+int16 selected_armor_
