@@ -324,36 +324,55 @@ void RefereeBase::sendSerialDataCallback()
 
 void RefereeBase::sendQueue()
 {
+  auto warn_send_retry = [](const char* queue_name) {
+    ROS_WARN_THROTTLE(1.0, "Referee %s send deferred: active serial port not writable yet", queue_name);
+  };
   if (!character_queue_.empty() && graph_queue_.size() <= 14)
   {
-    graph_queue_sender_->sendCharacter(ros::Time::now(), &character_queue_.at(0));
-    character_queue_.pop_front();
+    if (graph_queue_sender_->sendCharacter(ros::Time::now(), &character_queue_.at(0)))
+      character_queue_.pop_front();
+    else
+      warn_send_retry("character queue");
   }
   else if (graph_queue_.size() >= 7)
   {
-    graph_queue_sender_->sendSevenGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1), &graph_queue_.at(2),
-                                        &graph_queue_.at(3), &graph_queue_.at(4), &graph_queue_.at(5),
-                                        &graph_queue_.at(6));
-    for (int i = 0; i < 7; i++)
-      graph_queue_.pop_front();
+    if (graph_queue_sender_->sendSevenGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1),
+                                            &graph_queue_.at(2), &graph_queue_.at(3), &graph_queue_.at(4),
+                                            &graph_queue_.at(5), &graph_queue_.at(6)))
+    {
+      for (int i = 0; i < 7; i++)
+        graph_queue_.pop_front();
+    }
+    else
+      warn_send_retry("graph queue");
   }
   else if (graph_queue_.size() >= 5)
   {
-    graph_queue_sender_->sendFiveGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1), &graph_queue_.at(2),
-                                       &graph_queue_.at(3), &graph_queue_.at(4));
-    for (int i = 0; i < 5; i++)
-      graph_queue_.pop_front();
+    if (graph_queue_sender_->sendFiveGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1),
+                                           &graph_queue_.at(2), &graph_queue_.at(3), &graph_queue_.at(4)))
+    {
+      for (int i = 0; i < 5; i++)
+        graph_queue_.pop_front();
+    }
+    else
+      warn_send_retry("graph queue");
   }
   else if (graph_queue_.size() >= 2)
   {
-    graph_queue_sender_->sendDoubleGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1));
-    for (int i = 0; i < 2; i++)
-      graph_queue_.pop_front();
+    if (graph_queue_sender_->sendDoubleGraph(ros::Time::now(), &graph_queue_.at(0), &graph_queue_.at(1)))
+    {
+      for (int i = 0; i < 2; i++)
+        graph_queue_.pop_front();
+    }
+    else
+      warn_send_retry("graph queue");
   }
   else if (graph_queue_.size() == 1)
   {
-    graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.at(0));
-    graph_queue_.pop_front();
+    if (graph_queue_sender_->sendSingleGraph(ros::Time::now(), &graph_queue_.at(0)))
+      graph_queue_.pop_front();
+    else
+      warn_send_retry("graph queue");
   }
 }
 

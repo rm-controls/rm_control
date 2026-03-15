@@ -38,47 +38,106 @@
 
 namespace rm_referee
 {
+void Referee::clearRxBuffer(size_t port_index)
+{
+  if (port_index >= base_.serial_port_count_)
+    return;
+  rx_states_[port_index].rx_buffer.clear();
+  rx_states_[port_index].rx_len = 0;
+}
+
+void Referee::resetPortState(size_t port_index)
+{
+  if (port_index >= base_.serial_port_count_)
+    return;
+  clearRxBuffer(port_index);
+  rx_states_[port_index].unpack_buffer.fill(0);
+}
+
+bool Referee::handlePortBytes(size_t port_index, const std::vector<uint8_t>& data, const ros::Time& stamp)
+{
+  if (port_index >= base_.serial_port_count_ || data.empty())
+    return false;
+  if (!base_.shouldProcessPort(port_index, stamp, port_freshness_timeout_))
+  {
+    resetPortState(port_index);
+    return false;
+  }
+
+  auto& rx_state = rx_states_[port_index];
+  rx_state.rx_buffer = data;
+  rx_state.rx_len = static_cast<int>(data.size());
+
+  std::array<uint8_t, k_unpack_buffer_length_> temp_buffer{};
+  if (rx_state.rx_len < k_unpack_buffer_length_)
+  {
+    for (int k_i = 0; k_i < k_unpack_buffer_length_ - rx_state.rx_len; ++k_i)
+      temp_buffer[k_i] = rx_state.unpack_buffer[k_i + rx_state.rx_len];
+    for (int k_i = 0; k_i < rx_state.rx_len; ++k_i)
+      temp_buffer[k_i + k_unpack_buffer_length_ - rx_state.rx_len] = rx_state.rx_buffer[k_i];
+    for (int k_i = 0; k_i < k_unpack_buffer_length_; ++k_i)
+      rx_state.unpack_buffer[k_i] = temp_buffer[k_i];
+  }
+  else
+  {
+    const int offset = rx_state.rx_len - k_unpack_buffer_length_;
+    for (int k_i = 0; k_i < k_unpack_buffer_length_; ++k_i)
+      rx_state.unpack_buffer[k_i] = rx_state.rx_buffer[offset + k_i];
+  }
+
+  bool accepted_frame = false;
+  for (int k_i = 0; k_i < k_unpack_buffer_length_ - k_frame_length_; ++k_i)
+  {
+    if (rx_state.unpack_buffer[k_i] == 0xA5)
+    {
+      const int frame_len = unpack(port_index, &rx_state.unpack_buffer[k_i], k_unpack_buffer_length_ - k_i, stamp);
+      if (frame_len > 0)
+      {
+        accepted_frame = true;
+        k_i += frame_len - 1;
+      }
+    }
+  }
+  clearRxBuffer(port_index);
+  return accepted_frame;
+}
+
 // read data from referee
 void Referee::read()
 {
-  if (base_.serial_.available())
+  const ros::Time stamp = ros::Time::now();
+  for (size_t port_index = 0; port_index < base_.serial_port_count_; ++port_index)
   {
-    rx_len_ = static_cast<int>(base_.serial_.available());
-    base_.serial_.read(rx_buffer_, rx_len_);
-  }
-  else
-    return;
-  uint8_t temp_buffer[256] = { 0 };
-  int frame_len;
-  if (ros::Time::now() - last_get_data_time_ > ros::Duration(0.1))
-    base_.referee_data_is_online_ = false;
-  if (rx_len_ < k_unpack_buffer_length_)
-  {
-    for (int k_i = 0; k_i < k_unpack_buffer_length_ - rx_len_; ++k_i)
-      temp_buffer[k_i] = unpack_buffer_[k_i + rx_len_];
-    for (int k_i = 0; k_i < rx_len_; ++k_i)
-      temp_buffer[k_i + k_unpack_buffer_length_ - rx_len_] = rx_buffer_[k_i];
-    for (int k_i = 0; k_i < k_unpack_buffer_length_; ++k_i)
-      unpack_buffer_[k_i] = temp_buffer[k_i];
-  }
-  for (int k_i = 0; k_i < k_unpack_buffer_length_ - k_frame_length_; ++k_i)
-  {
-    if (unpack_buffer_[k_i] == 0xA5)
+    if (!base_.ensurePortOpen(port_index, stamp))
+      continue;
+    try
     {
-      frame_len = unpack(&unpack_buffer_[k_i]);
-      if (frame_len != -1)
-        k_i += frame_len;
+      auto& port = base_.serial_ports_[port_index];
+      const int available = static_cast<int>(port.serial.available());
+      if (available <= 0)
+        continue;
+      std::vector<uint8_t> data(static_cast<size_t>(available));
+      port.serial.read(data, static_cast<size_t>(available));
+      handlePortBytes(port_index, data, stamp);
+    }
+    catch (const std::exception& e)
+    {
+      base_.handlePortIoFailure(port_index, stamp, "read", e);
+      resetPortState(port_index);
     }
   }
+  base_.refreshOnlineState(stamp, port_freshness_timeout_);
   getRobotInfo();
-  clearRxBuffer();
 }
 
-int Referee::unpack(uint8_t* rx_data)
+int Referee::unpack(size_t port_index, uint8_t* rx_data, int rx_data_len, const ros::Time& stamp)
 {
   uint16_t cmd_id;
   int frame_len;
   rm_referee::FrameHeader frame_header;
+
+  if (rx_data_len < k_header_length_)
+    return -1;
 
   memcpy(&frame_header, rx_data, k_header_length_);
   if (static_cast<bool>(base_.verifyCRC8CheckSum(rx_data, k_header_length_)))
@@ -89,9 +148,13 @@ int Referee::unpack(uint8_t* rx_data)
       return 0;
     }
     frame_len = frame_header.data_length + k_header_length_ + k_cmd_id_length_ + k_tail_length_;
+    if (frame_len > rx_data_len || frame_len > k_unpack_buffer_length_)
+      return -1;
 
     if (base_.verifyCRC16CheckSum(rx_data, frame_len) == 1)
     {
+      last_get_data_time_ = stamp;
+      base_.markValidFrame(port_index, stamp, port_freshness_timeout_);
       cmd_id = (rx_data[6] << 8 | rx_data[5]);
       switch (cmd_id)
       {
@@ -679,7 +742,6 @@ int Referee::unpack(uint8_t* rx_data)
           break;
       }
       base_.referee_data_is_online_ = true;
-      last_get_data_time_ = ros::Time::now();
       return frame_len;
     }
   }

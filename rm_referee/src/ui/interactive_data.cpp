@@ -49,9 +49,9 @@ void InteractiveSender::sendMapSentryData(const rm_referee::MapSentryData& data)
 
   try
   {
-    base_.serial_.write(tx_buffer_, tx_len_);
+    base_.writeActive(tx_buffer_, static_cast<size_t>(tx_len_));
   }
-  catch (serial::PortNotOpenedException& e)
+  catch (const std::exception& e)
   {
     ROS_ERROR_STREAM(e.what());
   }
@@ -114,9 +114,9 @@ void InteractiveSender::sendRadarInteractiveData(const rm_msgs::ClientMapReceive
       k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::ClientMapReceiveData) + k_tail_length_);
   try
   {
-    base_.serial_.write(tx_buffer_, tx_len_);
+    base_.writeActive(tx_buffer_, static_cast<size_t>(tx_len_));
   }
-  catch (serial::PortNotOpenedException& e)
+  catch (const std::exception& e)
   {
     ROS_ERROR_STREAM(e.what());
   }
