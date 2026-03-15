@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <std_msgs/Float32.h>
-
 #include "rm_referee/ui/ui_base.h"
 
 namespace rm_referee
@@ -238,19 +236,6 @@ private:
 
   int centre_point_[2], triangle_left_point_[2], triangle_right_point_[2], length_;
   double bottom_angle_;
-};
-
-class DistanceBaseTimeChangeUi : public TimeChangeUi
-{
-public:
-  explicit DistanceBaseTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
-                                    std::deque<Graph>* character_queue)
-    : TimeChangeUi(rpc_value, base, "distance", graph_queue, character_queue){};
-  void updateDistanceBaseData(const std_msgs::Float32ConstPtr data, const ros::Time& time);
-
-private:
-  void updateConfig() override;
-  double distance_base_ = 0.;
 };
 
 class PitchAngleTimeChangeUi : public TimeChangeUi

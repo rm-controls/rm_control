@@ -278,19 +278,6 @@ void BalancePitchTimeChangeGroupUi::calculatePointPosition(const rm_msgs::Balanc
   updateForQueue();
 }
 
-void DistanceBaseTimeChangeUi::updateDistanceBaseData(const std_msgs::Float32ConstPtr data, const ros::Time& time)
-{
-  distance_base_ = data->data;
-  updateForQueue();
-}
-
-void DistanceBaseTimeChangeUi::updateConfig()
-{
-  std::string distance = std::to_string(distance_base_);
-  graph_->setContent(distance);
-  graph_->setColor(rm_referee::GraphColor::ORANGE);
-}
-
 void PitchAngleTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
 {
   for (unsigned int i = 0; i < data->name.size(); i++)

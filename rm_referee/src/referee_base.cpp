@@ -54,8 +54,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<std_msgs::UInt32>("/customize_display_ui", 1, &RefereeBase::customizeDisplayCmdCallBack, this);
   RefereeBase::visualize_state_data_sub_ =
       nh.subscribe<rm_msgs::VisualizeStateData>("/visualize_state", 1, &RefereeBase::visualizeStateDataCallBack, this);
-  RefereeBase::dis_base2target_data_sub_ =
-      nh.subscribe<std_msgs::Float32>("/dis_baselink2target", 1, &RefereeBase::disBase2TargetDataCallBack, this);
+
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
   add_ui_frequency_ = getParam(nh, "add_ui_frequency", 5);
@@ -114,9 +113,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "lane_line")
         lane_line_time_change_ui_ =
             new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
-      if (rpc_value[i]["name"] == "distance")
-        distance_base_time_change_ui_ =
-            new DistanceBaseTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "pitch")
         pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "image_transmission")
@@ -161,8 +157,6 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "deploy")
         deploy_flash_ui_ = new DeployFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
-      if (rpc_value[i]["name"] == "wireless")
-        wireless_flash_ui_ = new WirelessFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "hero_hit")
         hero_hit_flash_ui_ = new HeroHitFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "exceed_bullet_speed")
@@ -241,8 +235,6 @@ void RefereeBase::addUi()
     lane_line_time_change_ui_->addForQueue();
   if (balance_pitch_time_change_group_ui_)
     balance_pitch_time_change_group_ui_->addForQueue();
-  if (distance_base_time_change_ui_)
-    distance_base_time_change_ui_->addForQueue();
   if (pitch_angle_time_change_ui_)
     pitch_angle_time_change_ui_->addForQueue();
   if (image_transmission_angle_time_change_ui_)
@@ -459,8 +451,6 @@ void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& da
     spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
   if (deploy_flash_ui_ && !is_adding_)
     deploy_flash_ui_->updateChassisCmdData(data, ros::Time::now());
-  if (wireless_flash_ui_ && !is_adding_)
-    wireless_flash_ui_->updateChassisCmdData(data, ros::Time::now());
   if (rotation_time_change_ui_ && !is_adding_)
     rotation_time_change_ui_->updateChassisCmdData(data);
 }
@@ -643,12 +633,6 @@ void RefereeBase::visualizeStateDataCallBack(const rm_msgs::VisualizeStateDataCo
       state.push_back(state_data);
     visualize_state_trigger_change_ui_->updateUiColor(state);
   }
-}
-
-void RefereeBase::disBase2TargetDataCallBack(const std_msgs::Float32ConstPtr& data)
-{
-  if (distance_base_time_change_ui_ && !is_adding_)
-    distance_base_time_change_ui_->updateDistanceBaseData(data, ros::Time::now());
 }
 
 }  // namespace rm_referee

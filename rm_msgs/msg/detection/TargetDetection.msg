@@ -3,3 +3,6 @@ float64 distance_to_image_center
 float64 confidence
 bool is_large_armor
 geometry_msgs/Pose pose
+geometry_msgs/Point[4] armor_points
+uint32 x_offset
+uint32 y_offset

@@ -8,6 +8,5 @@ uint8 trapezoidal_elevated_ground_state
 uint16 be_hit_time
 uint8 be_hit_target
 uint8 central_point_state
-uint8 own_fortress_state
 
 time stamp
