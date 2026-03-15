@@ -293,7 +293,8 @@ private:
 class ChassisActiveSuspensionCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>
 {
 public:
-  explicit ChassisActiveSuspensionCommandSender(ros::NodeHandle& nh) : TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>(nh)
+  explicit ChassisActiveSuspensionCommandSender(ros::NodeHandle& nh)
+    : TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>(nh)
   {
   }
   void setZero() override
