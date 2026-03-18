@@ -900,16 +900,12 @@ class CameraSwitchCommandSender : public CommandSenderBase<std_msgs::String>
 public:
   explicit CameraSwitchCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::String>(nh)
   {
-    ROS_ASSERT(nh.getParam("camera_left_name", camera1_name_) && nh.getParam("camera_right_name", camera2_name_));
-    msg_.data = camera2_name_;
-  }
-  void switchCameraLeft()
-  {
+    ROS_ASSERT(nh.getParam("camera1_name", camera1_name_) && nh.getParam("camera2_name", camera2_name_));
     msg_.data = camera1_name_;
   }
-  void switchCameraRight()
+  void switchCamera()
   {
-    msg_.data = camera2_name_;
+    msg_.data = msg_.data == camera1_name_ ? camera2_name_ : camera1_name_;
   }
   void sendCommand(const ros::Time& time) override
   {

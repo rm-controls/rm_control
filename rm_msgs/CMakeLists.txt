@@ -13,10 +13,12 @@ add_message_files(
         FILES
         ActuatorState.msg
         BalanceState.msg
+        BulletSolverData.msg
         BusState.msg
         DbusData.msg
         Dart.msg
         ExchangerMsg.msg
+        ChassisActiveSusCmd.msg
         ChassisCmd.msg
         ShootCmd.msg
         ShootState.msg
@@ -25,6 +27,11 @@ add_message_files(
         GimbalDesError.msg
         GimbalPosState.msg
         LegCmd.msg
+        LeggedChassisMode.msg
+        LeggedChassisStatus.msg
+        LeggedUpstairStatus.msg
+        LeggedLQRStatus.msg
+        LQRkMatrix.msg
         LpData.msg
         LocalHeatData.msg
         LocalHeatState.msg
@@ -117,6 +124,7 @@ add_message_files(
 add_action_files(
         FILES
         Engineer.action
+        QueryGlobalLocalization.action
 )
 # Generate added messages and services with any dependencies listed here
 generate_messages(

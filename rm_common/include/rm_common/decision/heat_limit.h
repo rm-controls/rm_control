@@ -128,6 +128,11 @@ public:
     {
       shooter_cooling_heat_ = data.shooter_id_1_17_mm_cooling_heat;
     }
+    else if (type_ == "ID2_17MM")
+    {
+      // RoboMaster 2026 protocol only reports one 17mm barrel heat field.
+      shooter_cooling_heat_ = data.shooter_id_1_17_mm_cooling_heat;
+    }
     else if (type_ == "ID1_42MM")
     {
       shooter_cooling_heat_ = data.shooter_id_1_42_mm_cooling_heat;
@@ -143,7 +148,7 @@ public:
   {
     std::lock_guard<std::mutex> lock(heat_mutex_);
     if (!referee_is_online_)
-      return 1.0;
+      return 5.0;
     if (state_ == BURST)
       return shoot_frequency_;
     double shooter_cooling_heat =

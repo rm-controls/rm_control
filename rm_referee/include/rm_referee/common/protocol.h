@@ -703,10 +703,10 @@ typedef struct
 {
   uint8_t chassis_power_high_8_bit;
   uint8_t chassis_power_low_8_bit;
-  uint8_t cap_error_flag_high_8_bit;
-  uint8_t cap_error_flag_low_8_bit;
-  uint8_t cap_received_msg_high_8_bit;
-  uint8_t cap_received_msg_low_8_bit;
+  uint8_t chassis_expect_power_high_8_bit;
+  uint8_t chassis_expect_power_low_8_bit;
+  uint8_t capacity_recent_charge_power_high_8_bit;
+  uint8_t capacity_recent_charge_power_low_8_bit;
   uint8_t capacity_remain_charge_high_8_bit;
   uint8_t capacity_remain_charge_low_8_bit;
   uint8_t capacity_expect_charge_power;
