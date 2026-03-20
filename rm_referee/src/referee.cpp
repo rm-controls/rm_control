@@ -74,6 +74,25 @@ void Referee::read()
   clearRxBuffer();
 }
 
+void Referee::reconnect()
+{
+  try
+  {
+    if (base_.serial_.isOpen())
+      base_.serial_.close();
+
+    base_.serial_.open();
+    clearRxBuffer();
+
+    ROS_WARN("Referee serial reconnected");
+  }
+  catch (...)
+  {
+    ROS_ERROR("Referee reconnect failed");
+    ros::Duration(1.0).sleep();
+  }
+}
+
 int Referee::unpack(uint8_t* rx_data)
 {
   uint16_t cmd_id;
@@ -278,7 +297,6 @@ int Referee::unpack(uint8_t* rx_data)
 
           power_heat_data.chassis_power_buffer = power_heat_ref.chassis_power_buffer;
           power_heat_data.shooter_id_1_17_mm_cooling_heat = power_heat_ref.shooter_id_1_17_mm_cooling_heat;
-          power_heat_data.shooter_id_2_17_mm_cooling_heat = power_heat_ref.shooter_id_2_17_mm_cooling_heat;
           power_heat_data.shooter_id_1_42_mm_cooling_heat = power_heat_ref.shooter_id_1_42_mm_cooling_heat;
 
           power_heat_data.stamp = last_get_data_time_;

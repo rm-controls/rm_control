@@ -98,6 +98,7 @@ public:
     rx_buffer_.clear();
     rx_len_ = 0;
   }
+  void reconnect();
 
   ros::Publisher game_robot_status_pub_;
   ros::Publisher game_status_pub_;
