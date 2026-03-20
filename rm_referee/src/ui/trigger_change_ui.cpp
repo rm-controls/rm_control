@@ -197,7 +197,9 @@ std::string ChassisTriggerChangeUi::getChassisState(uint8_t mode)
   else if (mode == rm_msgs::ChassisCmd::UP_SLOPE)
     return "up_slope";
   else if (mode == rm_msgs::ChassisCmd::FALLEN)
-    return "fallen";
+    return "sit_down";
+  else if (mode == rm_msgs::ChassisCmd::RECOVERY)
+    return "recovery";
   else
     return "error";
 }
