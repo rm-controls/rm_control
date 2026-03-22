@@ -53,6 +53,11 @@ public:
   {
     config_.radius = radius;
   }
+  void setWidth(int width)
+  {
+    if (width > 0)
+      config_.width = width;
+  }
   void setIntNum(int num)
   {
     int a = num & 1023;

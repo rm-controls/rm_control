@@ -83,6 +83,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "friction_speed")
         friction_speed_trigger_change_ui_ =
             new FrictionSpeedTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "gyro")
+        gyro_trigger_change_ui_ = new GyroTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "gripper")
         gripper_state_trigger_change_ui_ =
             new StringTriggerChangeUi(rpc_value[i], base_, "gripper", &graph_queue_, &character_queue_);
@@ -255,6 +257,8 @@ void RefereeBase::addUi()
     servo_mode_trigger_change_ui_->addForQueue();
   if (friction_speed_trigger_change_ui_)
     friction_speed_trigger_change_ui_->addForQueue();
+  if (gyro_trigger_change_ui_)
+    gyro_trigger_change_ui_->addForQueue();
   if (bullet_time_change_ui_)
   {
     bullet_time_change_ui_->reset();
@@ -447,6 +451,8 @@ void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& da
 {
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateChassisCmdData(data);
+  if (gyro_trigger_change_ui_ && !is_adding_)
+    gyro_trigger_change_ui_->updateChassisCmdData(data);
   if (spin_flash_ui_ && !is_adding_)
     spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
   // if (deploy_flash_ui_ && !is_adding_)

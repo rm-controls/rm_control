@@ -106,6 +106,7 @@ public:
   TargetViewAngleTriggerChangeUi* target_view_angle_trigger_change_ui_{};
   CameraTriggerChangeUi* camera_trigger_change_ui_{};
   FrictionSpeedTriggerChangeUi* friction_speed_trigger_change_ui_{};
+  GyroTriggerChangeUi* gyro_trigger_change_ui_{};
 
   BulletTimeChangeUi* bullet_time_change_ui_{};
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};

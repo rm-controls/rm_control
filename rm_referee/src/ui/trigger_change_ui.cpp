@@ -227,6 +227,22 @@ void ChassisTriggerChangeUi::updateCapacityResetStatus()
   displayInCapacity();
 }
 
+void GyroTriggerChangeUi::update()
+{
+  if (chassis_mode_ == rm_msgs::ChassisCmd::RAW)
+    graph_->setWidth(fill_width_);
+  else
+    graph_->setWidth(outline_width_);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  updateForQueue(true);
+}
+
+void GyroTriggerChangeUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr& data)
+{
+  chassis_mode_ = data->mode;
+  update();
+}
+
 void ShooterTriggerChangeUi::update()
 {
   updateConfig(shooter_mode_, 0, shoot_frequency_, false);

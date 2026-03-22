@@ -153,8 +153,7 @@ public:
     if (allow_gyro_cap_ && chassis_power_limit_ < 80)
       chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
     else
-      normal(chassis_cmd);
-    // expect_state_ = NORMAL;
+      expect_state_ = NORMAL;
   }
   void setBurstPower(rm_msgs::ChassisCmd& chassis_cmd)
   {
@@ -170,8 +169,7 @@ public:
         chassis_cmd.power_limit = standard_power_;
     }
     else
-      normal(chassis_cmd);
-    // expect_state_ = NORMAL;
+      expect_state_ = NORMAL;
   }
   void setLimitPower(rm_msgs::ChassisCmd& chassis_cmd, bool is_gyro)
   {
@@ -250,8 +248,7 @@ private:
         setBurstPower(chassis_cmd);
     }
     else
-      normal(chassis_cmd);
-    // expect_state_ = NORMAL;
+      expect_state_ = NORMAL;
   }
 
   void applyPosturePowerScale(rm_msgs::ChassisCmd& chassis_cmd) const
