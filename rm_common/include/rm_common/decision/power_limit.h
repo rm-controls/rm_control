@@ -258,13 +258,6 @@ private:
     chassis_cmd.power_limit = std::max(0.0, std::floor(chassis_cmd.power_limit * posture_power_scale_));
   }
 
-  void applyPosturePowerScale(rm_msgs::ChassisCmd& chassis_cmd) const
-  {
-    if (std::abs(posture_power_scale_ - 1.0) < 1e-6)
-      return;
-    chassis_cmd.power_limit = std::max(0.0, std::floor(chassis_cmd.power_limit * posture_power_scale_));
-  }
-
   int chassis_power_buffer_;
   int robot_id_, chassis_power_limit_;
   int max_power_limit_{ 70 };
