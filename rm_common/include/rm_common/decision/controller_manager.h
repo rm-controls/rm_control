@@ -153,6 +153,13 @@ public:
   {
     return switch_caller_.isCalling();
   }
+  bool hasController(const std::string& controller) const
+  {
+    return std::find(state_controllers_.begin(), state_controllers_.end(), controller) != state_controllers_.end() ||
+           std::find(main_controllers_.begin(), main_controllers_.end(), controller) != main_controllers_.end() ||
+           std::find(calibration_controllers_.begin(), calibration_controllers_.end(), controller) !=
+               calibration_controllers_.end();
+  }
 
 private:
   ros::ServiceClient load_client_;
