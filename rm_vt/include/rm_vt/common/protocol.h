@@ -10,8 +10,11 @@ namespace rm_vt
 typedef enum
 {
   CUSTOM_CONTROLLER_CMD = 0x0302,  // custom_controller
-  ROBOT_COMMAND_CMD = 0x0304,      // keyboard_data
-  ROBOT_TO_CUSTOM_CMD = 0x0309
+  KEYBOARD_MOUSE_CMD = 0x0306,
+  ROBOT_TO_CUSTOM_CONTROLLER_CMD = 0x0309,
+  ROBOT_TO_CUSTOM_CLIENT_CMD = 0x0310,
+  CUSTOM_CLIENT_TO_ROBOT_CMD = 0x0311,
+  ROBOT_TO_CUSTOM_CMD = ROBOT_TO_CUSTOM_CONTROLLER_CMD
 } VideoTransmissionCmdId;
 
 typedef struct
@@ -57,6 +60,26 @@ typedef struct
 
 typedef struct
 {
+  uint8_t data[300];
+} __packed RobotToCustomData2;
+
+typedef struct
+{
+  uint8_t data[30];
+} __packed CustomClientCmdData;
+
+typedef struct
+{
+  uint16_t key_value;
+  uint16_t x_position : 12;
+  uint16_t mouse_left : 4;
+  uint16_t y_position : 12;
+  uint16_t mouse_right : 4;
+  uint16_t reserved;
+} __packed CustomClientData;
+
+typedef struct
+{
   int16_t mouse_x;
   int16_t mouse_y;
   int16_t mouse_z;
@@ -79,7 +102,7 @@ typedef struct
   uint16_t key_v : 1;
   uint16_t key_b : 1;
   uint16_t reserved;
-} __packed KeyboardMouseData;
+} __packed LegacyKeyboardMouseData;
 
 typedef struct
 {

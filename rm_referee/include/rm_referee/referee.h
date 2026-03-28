@@ -36,7 +36,6 @@
 //
 #pragma once
 
-#include <array>
 #include <cstdint>
 #include <vector>
 #include <ros/ros.h>
@@ -78,6 +77,18 @@ public:
     radar_info_pub_ = nh.advertise<rm_msgs::RadarInfo>("radar_info", 1);
     sentry_to_radar_pub_ = nh.advertise<rm_msgs::SentryAttackingTarget>("sentry_target_to_radar", 1);
     radar_to_sentry_pub_ = nh.advertise<rm_msgs::RadarToSentry>("radar_to_sentry", 1);
+    radar_wireless_enemy_robot_pos_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyRobotPos>("radar_wireless_enemy_robot_pos", 1);
+    radar_wireless_enemy_robot_hp_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyRobotHp>("radar_wireless_enemy_robot_hp", 1);
+    radar_wireless_enemy_projectile_allowance_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyProjectileAllowance>("radar_wireless_enemy_projectile_allowance", 1);
+    radar_wireless_enemy_coin_and_field_status_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyCoinAndFieldStatus>("radar_wireless_enemy_coin_and_field_status", 1);
+    radar_wireless_enemy_robot_buff_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyRobotBuff>("radar_wireless_enemy_robot_buff", 1);
+    radar_wireless_enemy_call_sign_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyCallSign>("radar_wireless_enemy_call_sign", 1);
 
     ros::NodeHandle power_management_nh = ros::NodeHandle(nh, "power_management");
     power_management_sample_and_status_data_pub_ =
@@ -92,9 +103,14 @@ public:
     power_management_unknown_exception_pub_ =
         power_management_nh.advertise<rm_msgs::PowerManagementUnknownExceptionData>("unknown_exception", 1);
     // initSerial
-    base_.initSerial(nh);
+    base_.initSerial();
   };
   void read();
+  void clearRxBuffer()
+  {
+    rx_buffer_.clear();
+    rx_len_ = 0;
+  }
 
   ros::Publisher game_robot_status_pub_;
   ros::Publisher game_status_pub_;
@@ -120,6 +136,12 @@ public:
   ros::Publisher radar_info_pub_;
   ros::Publisher client_map_send_data_pub_;
   ros::Publisher radar_to_sentry_pub_;
+  ros::Publisher radar_wireless_enemy_robot_pos_pub_;
+  ros::Publisher radar_wireless_enemy_robot_hp_pub_;
+  ros::Publisher radar_wireless_enemy_projectile_allowance_pub_;
+  ros::Publisher radar_wireless_enemy_coin_and_field_status_pub_;
+  ros::Publisher radar_wireless_enemy_robot_buff_pub_;
+  ros::Publisher radar_wireless_enemy_call_sign_pub_;
   ros::Publisher power_management_sample_and_status_data_pub_;
   ros::Publisher power_management_initialization_exception_pub_;
   ros::Publisher power_management_system_exception_data_;
@@ -127,32 +149,19 @@ public:
   ros::Publisher power_management_unknown_exception_pub_;
 
   Base base_;
+  std::vector<uint8_t> rx_buffer_;
   rm_referee::RefereeBase referee_ui_;
+  int rx_len_;
 
 private:
-  static constexpr int k_frame_length_ = 128;
-  static constexpr int k_header_length_ = 5;
-  static constexpr int k_cmd_id_length_ = 2;
-  static constexpr int k_tail_length_ = 2;
-  static constexpr int k_unpack_buffer_length_ = 256;
-
-  struct SerialRxState
-  {
-    std::vector<uint8_t> rx_buffer;
-    int rx_len = 0;
-    std::array<uint8_t, k_unpack_buffer_length_> unpack_buffer{};
-  };
-
-  bool handlePortBytes(size_t port_index, const std::vector<uint8_t>& data, const ros::Time& stamp);
-  void clearRxBuffer(size_t port_index);
-  void resetPortState(size_t port_index);
-  int unpack(size_t port_index, uint8_t* rx_data, int rx_data_len, const ros::Time& stamp);
+  int unpack(uint8_t* rx_data);
   void getRobotInfo();
   void publishCapacityData();
 
   ros::Time last_get_data_time_;
-  const ros::Duration port_freshness_timeout_{ 0.1 };
-  std::array<SerialRxState, Base::kMaxSerialPorts> rx_states_{};
+  const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
+  const int k_unpack_buffer_length_ = 256;
+  uint8_t unpack_buffer_[256]{};
 };
 
 }  // namespace rm_referee

@@ -19,6 +19,9 @@ public:
     custom_controller_cmd_pub_ = nh.advertise<rm_msgs::CustomControllerData>("custom_controller_data", 1);
     vt_keyboard_mouse_pub_ = nh.advertise<rm_msgs::VTKeyboardMouseData>("keyboard_mouse_data", 1);
     vt_receiver_control_pub_ = nh.advertise<rm_msgs::VTReceiverControlData>("receiver_control_data", 1);
+    robot_custom_data_pub_ = nh.advertise<rm_msgs::RobotCustomData>("robot_custom_data", 1);
+    robot_custom_data_2_pub_ = nh.advertise<rm_msgs::RobotCustomData2>("robot_custom_data_2", 1);
+    custom_client_cmd_pub_ = nh.advertise<rm_msgs::CustomClientCmdData>("custom_client_cmd_data", 1);
     base_.initSerial();
   }
   void read();
@@ -29,6 +32,7 @@ public:
   }
 
   ros::Publisher custom_controller_cmd_pub_, vt_keyboard_mouse_pub_, vt_receiver_control_pub_;
+  ros::Publisher robot_custom_data_pub_, robot_custom_data_2_pub_, custom_client_cmd_pub_;
 
   Base base_;
   std::vector<uint8_t> rx_buffer_;
