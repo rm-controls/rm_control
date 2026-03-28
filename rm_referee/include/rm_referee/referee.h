@@ -77,6 +77,18 @@ public:
     radar_info_pub_ = nh.advertise<rm_msgs::RadarInfo>("radar_info", 1);
     sentry_to_radar_pub_ = nh.advertise<rm_msgs::SentryAttackingTarget>("sentry_target_to_radar", 1);
     radar_to_sentry_pub_ = nh.advertise<rm_msgs::RadarToSentry>("radar_to_sentry", 1);
+    radar_wireless_enemy_robot_pos_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyRobotPos>("radar_wireless_enemy_robot_pos", 1);
+    radar_wireless_enemy_robot_hp_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyRobotHp>("radar_wireless_enemy_robot_hp", 1);
+    radar_wireless_enemy_projectile_allowance_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyProjectileAllowance>("radar_wireless_enemy_projectile_allowance", 1);
+    radar_wireless_enemy_coin_and_field_status_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyCoinAndFieldStatus>("radar_wireless_enemy_coin_and_field_status", 1);
+    radar_wireless_enemy_robot_buff_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyRobotBuff>("radar_wireless_enemy_robot_buff", 1);
+    radar_wireless_enemy_call_sign_pub_ =
+        nh.advertise<rm_msgs::RadarWirelessEnemyCallSign>("radar_wireless_enemy_call_sign", 1);
 
     ros::NodeHandle power_management_nh = ros::NodeHandle(nh, "power_management");
     power_management_sample_and_status_data_pub_ =
@@ -124,6 +136,12 @@ public:
   ros::Publisher radar_info_pub_;
   ros::Publisher client_map_send_data_pub_;
   ros::Publisher radar_to_sentry_pub_;
+  ros::Publisher radar_wireless_enemy_robot_pos_pub_;
+  ros::Publisher radar_wireless_enemy_robot_hp_pub_;
+  ros::Publisher radar_wireless_enemy_projectile_allowance_pub_;
+  ros::Publisher radar_wireless_enemy_coin_and_field_status_pub_;
+  ros::Publisher radar_wireless_enemy_robot_buff_pub_;
+  ros::Publisher radar_wireless_enemy_call_sign_pub_;
   ros::Publisher power_management_sample_and_status_data_pub_;
   ros::Publisher power_management_initialization_exception_pub_;
   ros::Publisher power_management_system_exception_data_;
