@@ -27,4 +27,4 @@ float32 target_position_x
 float32 target_position_y
 uint8 command_keyboard
 uint8 target_robot_ID
-uint8 cmd_source
+uint16 cmd_source

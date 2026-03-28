@@ -159,7 +159,7 @@ void UiBase::sendUi(const ros::Time& time)
     sendSingleGraph(time, graph_);
 }
 
-void UiBase::sendCharacter(const ros::Time& time, rm_referee::Graph* graph)
+bool UiBase::sendCharacter(const ros::Time& time, rm_referee::Graph* graph)
 {
   int data_len;
   std::string characters = graph->getCharacters();
@@ -179,10 +179,10 @@ void UiBase::sendCharacter(const ros::Time& time, rm_referee::Graph* graph)
   }
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_CHARACTER_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
-  sendSerial(time, data_len);
+  return sendSerial(time, data_len);
 }
 
-void UiBase::sendSingleGraph(const ros::Time& time, Graph* graph)
+bool UiBase::sendSingleGraph(const ros::Time& time, Graph* graph)
 {
   int data_len;
   rm_referee::SingleGraphData tx_data;
@@ -194,7 +194,7 @@ void UiBase::sendSingleGraph(const ros::Time& time, Graph* graph)
 
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_SINGLE_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
-  sendSerial(time, data_len);
+  return sendSerial(time, data_len);
 }
 
 void GroupUiBase::display(bool check_repeat)
@@ -260,7 +260,7 @@ void GroupUiBase::sendUi(const ros::Time& time)
     sendSingleGraph(time, it.second);
 }
 
-void GroupUiBase::sendDoubleGraph(const ros::Time& time, Graph* graph0, Graph* graph1)
+bool GroupUiBase::sendDoubleGraph(const ros::Time& time, Graph* graph0, Graph* graph1)
 {
   int data_len;
   rm_referee::DoubleGraphData tx_data;
@@ -273,10 +273,10 @@ void GroupUiBase::sendDoubleGraph(const ros::Time& time, Graph* graph0, Graph* g
 
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_DOUBLE_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
-  sendSerial(time, data_len);
+  return sendSerial(time, data_len);
 }
 
-void GroupUiBase::sendFiveGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2, Graph* graph3,
+bool GroupUiBase::sendFiveGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2, Graph* graph3,
                                 Graph* graph4)
 {
   int data_len;
@@ -293,10 +293,10 @@ void GroupUiBase::sendFiveGraph(const ros::Time& time, Graph* graph0, Graph* gra
 
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_FIVE_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
-  sendSerial(time, data_len);
+  return sendSerial(time, data_len);
 }
 
-void GroupUiBase::sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2, Graph* graph3,
+bool GroupUiBase::sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2, Graph* graph3,
                                  Graph* graph4, Graph* graph5, Graph* graph6)
 {
   int data_len;
@@ -315,7 +315,7 @@ void GroupUiBase::sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* gr
 
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::CLIENT_GRAPH_SEVEN_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
-  sendSerial(time, data_len);
+  return sendSerial(time, data_len);
 }
 
 void FixedUi::updateForQueue()
@@ -349,23 +349,27 @@ void UiBase::pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const
   base_.appendCRC16CheckSum(tx_buffer, k_header_length_ + k_cmd_id_length_ + len + k_tail_length_);
 }
 
-void UiBase::sendSerial(const ros::Time& time, int data_len)
+bool UiBase::sendSerial(const ros::Time& time, int data_len)
 {
   tx_len_ = k_header_length_ + k_cmd_id_length_ + k_tail_length_ + data_len;
-  last_send_ = time;
+  bool sent = false;
   try
   {
-    base_.serial_.write(tx_buffer_, tx_len_);
+    sent = base_.writeActive(tx_buffer_, static_cast<size_t>(tx_len_));
   }
-  catch (serial::PortNotOpenedException& e)
+  catch (const std::exception& e)
   {
+    ROS_ERROR_STREAM_THROTTLE(1.0, "Referee serial write failed: " << e.what());
   }
+  if (sent)
+    last_send_ = time;
   clearTxBuffer();
+  return sent;
 }
 
 void UiBase::clearTxBuffer()
 {
-  for (int i = 0; i < 127; i++)
+  for (int i = 0; i < k_frame_length_; i++)
     tx_buffer_[i] = 0;
   tx_len_ = 0;
 }

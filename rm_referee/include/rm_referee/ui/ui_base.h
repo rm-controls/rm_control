@@ -39,10 +39,10 @@ public:
   virtual void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time){};
   virtual void sendUi(const ros::Time& time);
 
-  void sendCharacter(const ros::Time& time, Graph* graph);
-  void sendSingleGraph(const ros::Time& time, Graph* graph);
+  bool sendCharacter(const ros::Time& time, Graph* graph);
+  bool sendSingleGraph(const ros::Time& time, Graph* graph);
 
-  void sendSerial(const ros::Time& time, int data_len);
+  bool sendSerial(const ros::Time& time, int data_len);
   void clearTxBuffer();
 
   virtual void display(bool check_repeat = true);
@@ -51,7 +51,7 @@ public:
   void display(const ros::Time& time, bool state, bool once = false);
   void pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const;
 
-  uint8_t tx_buffer_[127];
+  uint8_t tx_buffer_[128];
   int tx_len_;
 
 protected:
@@ -81,9 +81,9 @@ public:
   void erasure() override;
   void addForQueue(int add_times = 1) override;
   void sendUi(const ros::Time& time) override;
-  void sendDoubleGraph(const ros::Time& time, Graph* graph0, Graph* graph1);
-  void sendFiveGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2, Graph* graph3, Graph* graph4);
-  void sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2, Graph* graph3, Graph* graph4,
+  bool sendDoubleGraph(const ros::Time& time, Graph* graph0, Graph* graph1);
+  bool sendFiveGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2, Graph* graph3, Graph* graph4);
+  bool sendSevenGraph(const ros::Time& time, Graph* graph0, Graph* graph1, Graph* graph2, Graph* graph3, Graph* graph4,
                       Graph* graph5, Graph* graph6);
   void display(bool check_repeat = true) override;
   void display(const ros::Time& time) override;

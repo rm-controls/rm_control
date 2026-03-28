@@ -49,9 +49,9 @@ void InteractiveSender::sendMapSentryData(const rm_referee::MapSentryData& data)
 
   try
   {
-    base_.serial_.write(tx_buffer_, tx_len_);
+    base_.writeActive(tx_buffer_, static_cast<size_t>(tx_len_));
   }
-  catch (serial::PortNotOpenedException& e)
+  catch (const std::exception& e)
   {
     ROS_ERROR_STREAM(e.what());
   }
@@ -105,8 +105,8 @@ void InteractiveSender::sendRadarInteractiveData(const rm_msgs::ClientMapReceive
   radar_interactive_data->infantry_3_position_y = data->infantry_3_position_y;
   radar_interactive_data->infantry_4_position_x = data->infantry_4_position_x;
   radar_interactive_data->infantry_4_position_y = data->infantry_4_position_y;
-  radar_interactive_data->infantry_5_position_x = data->infantry_5_position_x;
-  radar_interactive_data->infantry_5_position_y = data->infantry_5_position_y;
+  radar_interactive_data->reserved_1 = data->reserved_1;
+  radar_interactive_data->reserved_2 = data->reserved_2;
   radar_interactive_data->sentry_position_x = data->sentry_position_x;
   radar_interactive_data->sentry_position_y = data->sentry_position_y;
   pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::CLIENT_MAP_CMD, sizeof(rm_referee::ClientMapReceiveData));
@@ -114,9 +114,9 @@ void InteractiveSender::sendRadarInteractiveData(const rm_msgs::ClientMapReceive
       k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::ClientMapReceiveData) + k_tail_length_);
   try
   {
-    base_.serial_.write(tx_buffer_, tx_len_);
+    base_.writeActive(tx_buffer_, static_cast<size_t>(tx_len_));
   }
-  catch (serial::PortNotOpenedException& e)
+  catch (const std::exception& e)
   {
     ROS_ERROR_STREAM(e.what());
   }
@@ -126,27 +126,46 @@ void InteractiveSender::sendRadarInteractiveData(const rm_msgs::ClientMapReceive
 void InteractiveSender::sendSentryCmdData(const rm_msgs::SentryCmdConstPtr& data)
 {
   int data_len;
-  rm_referee::SentryCmd tx_data;
-  data_len = static_cast<int>(sizeof(rm_referee::SentryCmd));
+  rm_referee::SentryCmdInteractiveData tx_data;
+  rm_referee::SentryCmd sentry_cmd{ 0 };
+  data_len = static_cast<int>(sizeof(rm_referee::SentryCmdInteractiveData));
 
   tx_data.header.sender_id = base_.robot_id_;
   tx_data.header.receiver_id = REFEREE_SERVER;
-  tx_data.sentry_info = data->sentry_info;
+  sentry_cmd.confirm_respawn = data->confirm_respawn;
+  sentry_cmd.confirm_instant_respawn = data->confirm_instant_respawn;
+  sentry_cmd.bullet_exchange_target = data->bullet_exchange_target;
+  sentry_cmd.remote_bullet_exchange_req_cnt = data->remote_bullet_exchange_req_cnt;
+  sentry_cmd.remote_hp_exchange_req_cnt = data->remote_hp_exchange_req_cnt;
+  sentry_cmd.posture_cmd = data->posture_cmd;
+  sentry_cmd.confirm_rune_activating = data->confirm_rune_activating;
+  if (data->confirm_respawn || data->confirm_instant_respawn || data->bullet_exchange_target ||
+      data->remote_bullet_exchange_req_cnt || data->remote_hp_exchange_req_cnt || data->posture_cmd ||
+      data->confirm_rune_activating)
+    tx_data.sentry_cmd = sentry_cmd;
+  else
+    tx_data.sentry_cmd.sentry_cmd = data->sentry_cmd;
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::SENTRY_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(ros::Time::now(), data_len);
 }
 
-void InteractiveSender::sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data)
+void InteractiveSender::sendRadarCmdData(const rm_msgs::RadarCmdConstPtr& data)
 {
   int data_len;
-  rm_referee::RadarInfo tx_data;
-  data_len = static_cast<int>(sizeof(rm_referee::RadarInfo));
+  rm_referee::RadarCmdInteractiveData tx_data;
+  data_len = static_cast<int>(sizeof(rm_referee::RadarCmdInteractiveData));
 
   tx_data.header.sender_id = base_.robot_id_;
   tx_data.header.receiver_id = REFEREE_SERVER;
-  tx_data.radar_info = data->radar_info;
-
+  tx_data.radar_cmd.radar_cmd = data->radar_cmd;
+  tx_data.radar_cmd.password_cmd = data->password_cmd;
+  tx_data.radar_cmd.password_1 = data->password_1;
+  tx_data.radar_cmd.password_2 = data->password_2;
+  tx_data.radar_cmd.password_3 = data->password_3;
+  tx_data.radar_cmd.password_4 = data->password_4;
+  tx_data.radar_cmd.password_5 = data->password_5;
+  tx_data.radar_cmd.password_6 = data->password_6;
   tx_data.header.data_cmd_id = rm_referee::DataCmdId::RADAR_CMD;
   pack(tx_buffer_, reinterpret_cast<uint8_t*>(&tx_data), rm_referee::RefereeCmdId::INTERACTIVE_DATA_CMD, data_len);
   sendSerial(ros::Time::now(), data_len);

@@ -36,7 +36,9 @@
 //
 #pragma once
 
+#include <array>
 #include <cstdint>
+#include <vector>
 #include <ros/ros.h>
 
 #include "rm_referee/common/data.h"
@@ -90,15 +92,9 @@ public:
     power_management_unknown_exception_pub_ =
         power_management_nh.advertise<rm_msgs::PowerManagementUnknownExceptionData>("unknown_exception", 1);
     // initSerial
-    base_.initSerial();
+    base_.initSerial(nh);
   };
   void read();
-  void clearRxBuffer()
-  {
-    rx_buffer_.clear();
-    rx_len_ = 0;
-  }
-  void reconnect();
 
   ros::Publisher game_robot_status_pub_;
   ros::Publisher game_status_pub_;
@@ -131,19 +127,32 @@ public:
   ros::Publisher power_management_unknown_exception_pub_;
 
   Base base_;
-  std::vector<uint8_t> rx_buffer_;
   rm_referee::RefereeBase referee_ui_;
-  int rx_len_;
 
 private:
-  int unpack(uint8_t* rx_data);
+  static constexpr int k_frame_length_ = 128;
+  static constexpr int k_header_length_ = 5;
+  static constexpr int k_cmd_id_length_ = 2;
+  static constexpr int k_tail_length_ = 2;
+  static constexpr int k_unpack_buffer_length_ = 256;
+
+  struct SerialRxState
+  {
+    std::vector<uint8_t> rx_buffer;
+    int rx_len = 0;
+    std::array<uint8_t, k_unpack_buffer_length_> unpack_buffer{};
+  };
+
+  bool handlePortBytes(size_t port_index, const std::vector<uint8_t>& data, const ros::Time& stamp);
+  void clearRxBuffer(size_t port_index);
+  void resetPortState(size_t port_index);
+  int unpack(size_t port_index, uint8_t* rx_data, int rx_data_len, const ros::Time& stamp);
   void getRobotInfo();
   void publishCapacityData();
 
   ros::Time last_get_data_time_;
-  const int k_frame_length_ = 128, k_header_length_ = 5, k_cmd_id_length_ = 2, k_tail_length_ = 2;
-  const int k_unpack_buffer_length_ = 256;
-  uint8_t unpack_buffer_[256]{};
+  const ros::Duration port_freshness_timeout_{ 0.1 };
+  std::array<SerialRxState, Base::kMaxSerialPorts> rx_states_{};
 };
 
 }  // namespace rm_referee
