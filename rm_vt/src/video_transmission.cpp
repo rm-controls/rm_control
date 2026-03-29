@@ -109,33 +109,73 @@ int VideoTransmission::unpack(uint8_t* rx_data)
           custom_controller_cmd_pub_.publish(custom_controller_data);
           break;
         }
-        case rm_vt::ROBOT_COMMAND_CMD:
+        case rm_vt::KEYBOARD_MOUSE_CMD:
         {
-          rm_vt::KeyboardMouseData keyboard_mouse_ref;
+          rm_vt::CustomClientData custom_client_ref;
           rm_msgs::VTKeyboardMouseData keyboard_mouse_data;
-          memcpy(&keyboard_mouse_ref, rx_data + 7, sizeof(rm_vt::KeyboardMouseData));
-          keyboard_mouse_data.mouse_x = keyboard_mouse_ref.mouse_x;
-          keyboard_mouse_data.mouse_y = keyboard_mouse_ref.mouse_y;
-          keyboard_mouse_data.mouse_z = keyboard_mouse_ref.mouse_z;
-          keyboard_mouse_data.left_button_down = keyboard_mouse_ref.left_button_down;
-          keyboard_mouse_data.right_button_down = keyboard_mouse_ref.right_button_down;
-          keyboard_mouse_data.key_w = keyboard_mouse_ref.key_w;
-          keyboard_mouse_data.key_s = keyboard_mouse_ref.key_s;
-          keyboard_mouse_data.key_a = keyboard_mouse_ref.key_a;
-          keyboard_mouse_data.key_d = keyboard_mouse_ref.key_d;
-          keyboard_mouse_data.key_shift = keyboard_mouse_ref.key_shift;
-          keyboard_mouse_data.key_ctrl = keyboard_mouse_ref.key_ctrl;
-          keyboard_mouse_data.key_q = keyboard_mouse_ref.key_q;
-          keyboard_mouse_data.key_e = keyboard_mouse_ref.key_e;
-          keyboard_mouse_data.key_r = keyboard_mouse_ref.key_r;
-          keyboard_mouse_data.key_f = keyboard_mouse_ref.key_f;
-          keyboard_mouse_data.key_g = keyboard_mouse_ref.key_g;
-          keyboard_mouse_data.key_z = keyboard_mouse_ref.key_z;
-          keyboard_mouse_data.key_x = keyboard_mouse_ref.key_x;
-          keyboard_mouse_data.key_c = keyboard_mouse_ref.key_c;
-          keyboard_mouse_data.key_v = keyboard_mouse_ref.key_v;
-          keyboard_mouse_data.key_b = keyboard_mouse_ref.key_b;
+          memcpy(&custom_client_ref, rx_data + 7, sizeof(rm_vt::CustomClientData));
+
+          const uint8_t key_1 = static_cast<uint8_t>(custom_client_ref.key_value & 0x00FFu);
+          const uint8_t key_2 = static_cast<uint8_t>((custom_client_ref.key_value >> 8) & 0x00FFu);
+          auto key_pressed = [&](uint8_t key_code) { return key_1 == key_code || key_2 == key_code; };
+          constexpr uint8_t kVkShift = 0x10;
+          constexpr uint8_t kVkControl = 0x11;
+
+          keyboard_mouse_data.mouse_x = static_cast<int16_t>(custom_client_ref.x_position);
+          keyboard_mouse_data.mouse_y = static_cast<int16_t>(custom_client_ref.y_position);
+          keyboard_mouse_data.mouse_z = 0;
+          keyboard_mouse_data.left_button_down = custom_client_ref.mouse_left == 1;
+          keyboard_mouse_data.right_button_down = custom_client_ref.mouse_right == 1;
+          keyboard_mouse_data.key_w = key_pressed('W');
+          keyboard_mouse_data.key_s = key_pressed('S');
+          keyboard_mouse_data.key_a = key_pressed('A');
+          keyboard_mouse_data.key_d = key_pressed('D');
+          keyboard_mouse_data.key_shift = key_pressed(kVkShift);
+          keyboard_mouse_data.key_ctrl = key_pressed(kVkControl);
+          keyboard_mouse_data.key_q = key_pressed('Q');
+          keyboard_mouse_data.key_e = key_pressed('E');
+          keyboard_mouse_data.key_r = key_pressed('R');
+          keyboard_mouse_data.key_f = key_pressed('F');
+          keyboard_mouse_data.key_g = key_pressed('G');
+          keyboard_mouse_data.key_z = key_pressed('Z');
+          keyboard_mouse_data.key_x = key_pressed('X');
+          keyboard_mouse_data.key_c = key_pressed('C');
+          keyboard_mouse_data.key_v = key_pressed('V');
+          keyboard_mouse_data.key_b = key_pressed('B');
           vt_keyboard_mouse_pub_.publish(keyboard_mouse_data);
+          break;
+        }
+        case rm_vt::ROBOT_TO_CUSTOM_CONTROLLER_CMD:
+        {
+          rm_vt::RobotToCustomData robot_custom_ref;
+          rm_msgs::RobotCustomData robot_custom_data;
+          memcpy(&robot_custom_ref, rx_data + 7, sizeof(rm_vt::RobotToCustomData));
+          for (int i = 0; i < 30; ++i)
+            robot_custom_data.data[i] = robot_custom_ref.data[i];
+          robot_custom_data.stamp = last_get_data_time_;
+          robot_custom_data_pub_.publish(robot_custom_data);
+          break;
+        }
+        case rm_vt::ROBOT_TO_CUSTOM_CLIENT_CMD:
+        {
+          rm_vt::RobotToCustomData2 robot_custom_ref;
+          rm_msgs::RobotCustomData2 robot_custom_data;
+          memcpy(&robot_custom_ref, rx_data + 7, sizeof(rm_vt::RobotToCustomData2));
+          for (int i = 0; i < 300; ++i)
+            robot_custom_data.data[i] = robot_custom_ref.data[i];
+          robot_custom_data.stamp = last_get_data_time_;
+          robot_custom_data_2_pub_.publish(robot_custom_data);
+          break;
+        }
+        case rm_vt::CUSTOM_CLIENT_TO_ROBOT_CMD:
+        {
+          rm_vt::CustomClientCmdData custom_client_cmd_ref;
+          rm_msgs::CustomClientCmdData custom_client_cmd_data;
+          memcpy(&custom_client_cmd_ref, rx_data + 7, sizeof(rm_vt::CustomClientCmdData));
+          for (int i = 0; i < 30; ++i)
+            custom_client_cmd_data.data[i] = custom_client_cmd_ref.data[i];
+          custom_client_cmd_data.stamp = last_get_data_time_;
+          custom_client_cmd_pub_.publish(custom_client_cmd_data);
           break;
         }
         default:

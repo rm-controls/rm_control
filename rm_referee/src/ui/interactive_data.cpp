@@ -97,18 +97,30 @@ void InteractiveSender::sendRadarInteractiveData(const rm_msgs::ClientMapReceive
 
   for (int i = 0; i < 127; i++)
     tx_buffer_[i] = 0;
-  radar_interactive_data->hero_position_x = data->hero_position_x;
-  radar_interactive_data->hero_position_y = data->hero_position_y;
-  radar_interactive_data->engineer_position_x = data->engineer_position_x;
-  radar_interactive_data->engineer_position_y = data->engineer_position_y;
-  radar_interactive_data->infantry_3_position_x = data->infantry_3_position_x;
-  radar_interactive_data->infantry_3_position_y = data->infantry_3_position_y;
-  radar_interactive_data->infantry_4_position_x = data->infantry_4_position_x;
-  radar_interactive_data->infantry_4_position_y = data->infantry_4_position_y;
-  radar_interactive_data->reserved_1 = data->reserved_1;
-  radar_interactive_data->reserved_2 = data->reserved_2;
-  radar_interactive_data->sentry_position_x = data->sentry_position_x;
-  radar_interactive_data->sentry_position_y = data->sentry_position_y;
+  radar_interactive_data->opponent_hero_position_x = data->opponent_hero_position_x;
+  radar_interactive_data->opponent_hero_position_y = data->opponent_hero_position_y;
+  radar_interactive_data->opponent_engineer_position_x = data->opponent_engineer_position_x;
+  radar_interactive_data->opponent_engineer_position_y = data->opponent_engineer_position_y;
+  radar_interactive_data->opponent_infantry_3_position_x = data->opponent_infantry_3_position_x;
+  radar_interactive_data->opponent_infantry_3_position_y = data->opponent_infantry_3_position_y;
+  radar_interactive_data->opponent_infantry_4_position_x = data->opponent_infantry_4_position_x;
+  radar_interactive_data->opponent_infantry_4_position_y = data->opponent_infantry_4_position_y;
+  radar_interactive_data->opponent_aerial_position_x = data->opponent_aerial_position_x;
+  radar_interactive_data->opponent_aerial_position_y = data->opponent_aerial_position_y;
+  radar_interactive_data->opponent_sentry_position_x = data->opponent_sentry_position_x;
+  radar_interactive_data->opponent_sentry_position_y = data->opponent_sentry_position_y;
+  radar_interactive_data->ally_hero_position_x = data->ally_hero_position_x;
+  radar_interactive_data->ally_hero_position_y = data->ally_hero_position_y;
+  radar_interactive_data->ally_engineer_position_x = data->ally_engineer_position_x;
+  radar_interactive_data->ally_engineer_position_y = data->ally_engineer_position_y;
+  radar_interactive_data->ally_infantry_3_position_x = data->ally_infantry_3_position_x;
+  radar_interactive_data->ally_infantry_3_position_y = data->ally_infantry_3_position_y;
+  radar_interactive_data->ally_infantry_4_position_x = data->ally_infantry_4_position_x;
+  radar_interactive_data->ally_infantry_4_position_y = data->ally_infantry_4_position_y;
+  radar_interactive_data->ally_aerial_position_x = data->ally_aerial_position_x;
+  radar_interactive_data->ally_aerial_position_y = data->ally_aerial_position_y;
+  radar_interactive_data->ally_sentry_position_x = data->ally_sentry_position_x;
+  radar_interactive_data->ally_sentry_position_y = data->ally_sentry_position_y;
   pack(tx_buffer_, tx_data, rm_referee::RefereeCmdId::CLIENT_MAP_CMD, sizeof(rm_referee::ClientMapReceiveData));
   tx_len_ =
       k_header_length_ + k_cmd_id_length_ + static_cast<int>(sizeof(rm_referee::ClientMapReceiveData) + k_tail_length_);

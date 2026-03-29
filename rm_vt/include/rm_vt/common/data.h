@@ -19,6 +19,9 @@
 #include "rm_msgs/CustomControllerData.h"
 #include "rm_msgs/VTKeyboardMouseData.h"
 #include "rm_msgs/VTReceiverControlData.h"
+#include "rm_msgs/RobotCustomData.h"
+#include "rm_msgs/RobotCustomData2.h"
+#include "rm_msgs/CustomClientCmdData.h"
 
 #include "rm_vt/common/protocol.h"
 
