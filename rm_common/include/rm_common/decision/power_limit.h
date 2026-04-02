@@ -186,7 +186,8 @@ private:
       chassis_cmd.power_limit = max_power_limit_;
       return;
     }
-    if (cap_state_ != ALLOFF && cap_energy_ > capacitor_threshold_ && chassis_power_buffer_ > power_buffer_threshold_)
+    if (cap_state_ != ALLOFF && cap_energy_ > enable_use_cap_threshold_ &&
+        chassis_power_buffer_ > power_buffer_threshold_)
     {
       chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
     }
