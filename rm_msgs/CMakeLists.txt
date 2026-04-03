@@ -20,6 +20,7 @@ add_message_files(
         ExchangerMsg.msg
         ChassisActiveSusCmd.msg
         ChassisCmd.msg
+        DebugData.msg
         ShootCmd.msg
         ShootState.msg
         ShootBeforehandCmd.msg

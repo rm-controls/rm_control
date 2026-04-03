@@ -112,7 +112,7 @@ public:
   }
   void setCapacityData(const rm_msgs::PowerManagementSampleAndStatusData data)
   {
-    capacity_is_online_ = ros::Time::now() - data.stamp < ros::Duration(0.3);
+    capacity_is_online_ = ros::Time::now() - data.stamp < ros::Duration(10);
     cap_energy_ = data.capacity_remain_charge;
     cap_state_ = data.state_machine_running_state;
   }
