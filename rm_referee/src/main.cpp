@@ -23,7 +23,6 @@ int main(int argc, char** argv)
   catch (const serial::SerialException& e)
   {
     ROS_ERROR_STREAM("Serial lost: " << e.what());
-    referee.reconnect();
   }
   return 0;
 }
