@@ -63,7 +63,7 @@ public:
       ROS_ERROR("Disable burst cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("enable_burst_cap_threshold", enable_burst_cap_threshold_))
       ROS_ERROR("Enable burst cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("enable_normal_cap_threshold", enable_normal_cap_threshold_))
+    if (!nh.getParam("disable_normal_cap_threshold", disable_normal_cap_threshold_))
       ROS_ERROR("Enable normal cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("enable_gyro_cap_threshold", enable_gyro_cap_threshold_))
       ROS_ERROR("Enable gyro cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
@@ -214,7 +214,7 @@ private:
   void normal(rm_msgs::ChassisCmd& chassis_cmd)
   {
     allow_use_cap_ = false;
-    if (cap_state_ != ALLOFF && cap_energy_ > enable_normal_cap_threshold_ &&
+    if (cap_state_ != ALLOFF && cap_energy_ > disable_normal_cap_threshold_ &&
         chassis_power_buffer_ > power_buffer_threshold_)
     {
       chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
@@ -269,7 +269,7 @@ private:
   double power_buffer_threshold_{ 50.0 };
   double enable_burst_cap_threshold_{}, disable_burst_cap_threshold_{};
   double enable_gyro_cap_threshold_{}, disable_gyro_cap_threshold_{};
-  double enable_normal_cap_threshold_{};
+  double disable_normal_cap_threshold_{};
   double extra_power_{}, burst_power_{}, gyro_power_{};
   double power_gain_{};
 
