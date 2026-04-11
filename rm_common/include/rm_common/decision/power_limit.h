@@ -64,7 +64,7 @@ public:
     if (!nh.getParam("enable_burst_cap_threshold", enable_burst_cap_threshold_))
       ROS_ERROR("Enable burst cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("disable_normal_cap_threshold", disable_normal_cap_threshold_))
-      ROS_ERROR("Enable normal cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
+      ROS_ERROR("Disable normal cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("enable_gyro_cap_threshold", enable_gyro_cap_threshold_))
       ROS_ERROR("Enable gyro cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("disable_gyro_cap_threshold", disable_gyro_cap_threshold_))
