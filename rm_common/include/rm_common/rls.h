@@ -11,18 +11,19 @@
 #include <Eigen/Dense>
 #include "eigen_types.h"
 
+#define RLS_ASSERT(condition, message)                                                                                 \
+  if (!(condition))                                                                                                    \
+  throw std::invalid_argument(message)
+
 template <typename T>
 class Rls
 {
 public:
   Rls(int xSize, int ySize, T lambda, T pInit) : xSize_(xSize), ySize_(ySize), lambda_(lambda)
   {
-    if (xSize_ <= 0)
-      throw std::invalid_argument("rls: xSize should be positive");
-    if (ySize_ <= 0)
-      throw std::invalid_argument("rls: ySize should be positive");
-    if (std::abs(lambda_) <= std::numeric_limits<T>::epsilon())
-      throw std::invalid_argument("rls: lambda should be non-zero");
+    RLS_ASSERT(xSize_ > 0, "rls: xSize should be positive");
+    RLS_ASSERT(ySize_ > 0, "rls: ySize should be positive");
+    RLS_ASSERT(std::abs(lambda_) > std::numeric_limits<T>::epsilon(), "rls: lambda should be non-zero");
 
     x_.resize(xSize_, 1);
     x_.setZero();
@@ -55,8 +56,7 @@ public:
   {
     static_assert(TX::ColsAtCompileTime == 1 || TX::ColsAtCompileTime == Eigen::Dynamic,
                   "rls: X should be a column vector");
-    if (x.rows() != xSize_ || x.cols() != 1)
-      return false;
+    RLS_ASSERT(x.rows() == xSize_ && x.cols() == 1, "rls: X size mismatch");
     x_ = x;
     return true;
   }
@@ -66,17 +66,40 @@ public:
   {
     static_assert(TY::ColsAtCompileTime == 1 || TY::ColsAtCompileTime == Eigen::Dynamic,
                   "rls: Y should be a column vector");
-    if (y.rows() != ySize_ || y.cols() != 1)
-      return false;
+    RLS_ASSERT(y.rows() == ySize_ && y.cols() == 1, "rls: Y size mismatch");
     y_ = y;
     return true;
   }
 
   bool setY(T y)
   {
-    if (ySize_ != 1)
-      return false;
+    RLS_ASSERT(ySize_ == 1, "rls: setY(scalar) requires ySize==1");
     y_(0, 0) = y;
+    return true;
+  }
+
+  template <typename TW>
+  bool setW(const Eigen::MatrixBase<TW>& w)
+  {
+    RLS_ASSERT(w.rows() == xSize_ && w.cols() == ySize_, "rls: W size mismatch");
+    w_ = w;
+    return true;
+  }
+
+  template <typename TU>
+  bool setU(const Eigen::MatrixBase<TU>& u)
+  {
+    static_assert(TU::ColsAtCompileTime == 1 || TU::ColsAtCompileTime == Eigen::Dynamic,
+                  "rls: U should be a column vector");
+    RLS_ASSERT(u.rows() == ySize_ && u.cols() == 1, "rls: U size mismatch");
+    u_ = u;
+    return true;
+  }
+
+  bool setU(T u)
+  {
+    RLS_ASSERT(ySize_ == 1, "rls: setU(scalar) requires ySize==1");
+    u_(0, 0) = u;
     return true;
   }
 
@@ -88,8 +111,8 @@ public:
 
     kNumerator_ = p_ * x_;
     T denominator = lambda_ + (xt_ * p_ * x_)(0, 0);
-    if (std::abs(denominator) <= std::numeric_limits<T>::epsilon())
-      return false;
+    RLS_ASSERT(std::abs(denominator) > std::numeric_limits<T>::epsilon(),
+               "rls: denominator too small, numerical instability");
 
     k_ = kNumerator_ / denominator;
     output_ = w_ + k_ * e_.transpose();
