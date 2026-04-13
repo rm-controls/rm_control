@@ -106,7 +106,6 @@ public:
   bool update()
   {
     xt_ = x_.transpose();
-    u_ = w_.transpose() * x_;
     e_ = y_ - u_;
 
     kNumerator_ = p_ * x_;
