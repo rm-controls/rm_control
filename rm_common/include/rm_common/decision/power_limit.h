@@ -155,10 +155,7 @@ public:
       allow_use_cap_ = false;
     if (allow_use_cap_)
     {
-      if (ros::Time::now() - start_burst_time_ > ros::Duration(0.5))
-        chassis_cmd.power_limit = burst_power_;
-      else
-        expect_state_ = NORMAL;
+      chassis_cmd.power_limit = burst_power_;
     }
     else
       expect_state_ = NORMAL;
