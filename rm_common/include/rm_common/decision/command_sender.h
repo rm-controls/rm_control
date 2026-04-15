@@ -72,20 +72,6 @@
 
 namespace rm_common
 {
-namespace detail
-{
-template <typename TMsg>
-auto setTrajFrameIdIfSupported(TMsg& msg, const std::string& traj_frame_id, int)
-    -> decltype((void)(msg.traj_frame_id = traj_frame_id), void())
-{
-  msg.traj_frame_id = traj_frame_id;
-}
-
-template <typename TMsg>
-void setTrajFrameIdIfSupported(TMsg&, const std::string&, long)
-{
-}
-}  // namespace detail
 
 template <class MsgType>
 class CommandSenderBase
@@ -307,7 +293,7 @@ public:
     msg_.accel.angular.z = accel_z_.output(msg_.power_limit);
     TimeStampCommandSenderBase<rm_msgs::ChassisCmd>::sendCommand(time);
   }
-  void setZero() override{};
+  void setZero() override {};
   PowerLimit* power_limit_;
 
 private:
@@ -371,9 +357,9 @@ public:
     msg_.traj_yaw = traj_yaw;
     msg_.traj_pitch = traj_pitch;
   }
-  void setTrajFrameId(const std::string& traj_frame_id)
+  void setGimbalTrajFrameId(const std::string& traj_frame_id)
   {
-    detail::setTrajFrameIdIfSupported(msg_, traj_frame_id, 0);
+    msg_.traj_frame_id = traj_frame_id;
   }
   void setZero() override
   {
@@ -645,7 +631,7 @@ public:
   {
     return heat_limit_->getShootFrequencyMode();
   }
-  void setZero() override{};
+  void setZero() override {};
   HeatLimit* heat_limit_{};
 
   int getShootMode()
@@ -694,7 +680,7 @@ public:
   {
     return msg_.data;
   }
-  void setZero() override{};
+  void setZero() override {};
 };
 
 class BalanceCommandSender : public CommandSenderBase<std_msgs::UInt8>
@@ -712,7 +698,7 @@ public:
   {
     return msg_.data;
   }
-  void setZero() override{};
+  void setZero() override {};
 };
 
 class LegCommandSender : public CommandSenderBase<rm_msgs::LegCmd>
@@ -738,7 +724,7 @@ public:
   {
     return msg_.leg_length;
   }
-  void setZero() override{};
+  void setZero() override {};
 };
 
 class Vel3DCommandSender : public HeaderStampCommandSenderBase<geometry_msgs::TwistStamped>
@@ -816,7 +802,7 @@ public:
   {
     CommandSenderBase<std_msgs::Float64>::sendCommand(time);
   }
-  void setZero() override{};
+  void setZero() override {};
 
 private:
   bool state{};
@@ -854,7 +840,7 @@ public:
   {
     CommandSenderBase<std_msgs::Float64>::sendCommand(time);
   }
-  void setZero() override{};
+  void setZero() override {};
 
 private:
   bool state{};
@@ -931,7 +917,7 @@ public:
       return -1;
     }
   }
-  void setZero() override{};
+  void setZero() override {};
 
 private:
   std::string joint_{};
@@ -959,7 +945,7 @@ public:
   {
     CommandSenderBase<std_msgs::String>::sendCommand(time);
   }
-  void setZero() override{};
+  void setZero() override {};
 
 private:
   std::string camera1_name_{}, camera2_name_{};
