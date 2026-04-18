@@ -14,7 +14,7 @@ void VideoTransmission::read()
   }
   else
     return;
-  uint8_t temp_buffer[256] = { 0 };
+  uint8_t temp_buffer[512] = { 0 };
   int frame_len;
   if (ros::Time::now() - last_get_data_time_ > ros::Duration(0.1))
     base_.video_transmission_is_online_ = false;
@@ -54,7 +54,7 @@ int VideoTransmission::unpack(uint8_t* rx_data)
   memcpy(&frame_header, rx_data, k_header_length_);
   if (static_cast<bool>(base_.verifyCRC8CheckSum(rx_data, k_header_length_)))
   {
-    if (frame_header.data_length > 256)  // temporary and inaccurate value
+    if (frame_header.data_length > 512)  // temporary and inaccurate value
     {
       ROS_INFO("discard possible wrong frames, data length: %d", frame_header.data_length);
       return 0;
