@@ -72,21 +72,6 @@
 
 namespace rm_common
 {
-namespace detail
-{
-template <typename TMsg>
-auto setTrajFrameIdIfSupported(TMsg& msg, const std::string& traj_frame_id, int)
-    -> decltype((void)(msg.traj_frame_id = traj_frame_id), void())
-{
-  msg.traj_frame_id = traj_frame_id;
-}
-
-template <typename TMsg>
-void setTrajFrameIdIfSupported(TMsg&, const std::string&, long)
-{
-}
-}  // namespace detail
-
 template <class MsgType>
 class CommandSenderBase
 {
@@ -371,9 +356,9 @@ public:
     msg_.traj_yaw = traj_yaw;
     msg_.traj_pitch = traj_pitch;
   }
-  void setTrajFrameId(const std::string& traj_frame_id)
+  void setGimbalTrajFrameId(const std::string& traj_frame_id)
   {
-    detail::setTrajFrameIdIfSupported(msg_, traj_frame_id, 0);
+    msg_.traj_frame_id = traj_frame_id;
   }
   void setZero() override
   {
