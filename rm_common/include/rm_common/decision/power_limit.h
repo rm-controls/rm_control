@@ -118,7 +118,9 @@ public:
   }
 
   void updateState(uint8_t state)
-  { expect_state_ = state; }
+  {
+    expect_state_ = state;
+  }
 
   void setGameRobotData(const rm_msgs::GameRobotStatus data)
   {
@@ -128,7 +130,9 @@ public:
   }
 
   void setChassisPowerBuffer(const rm_msgs::PowerHeatData data)
-  { chassis_power_buffer_ = data.chassis_power_buffer; }
+  {
+    chassis_power_buffer_ = data.chassis_power_buffer;
+  }
 
   void setCapacityData(const rm_msgs::PowerManagementSampleAndStatusData data)
   {
@@ -138,16 +142,24 @@ public:
   }
 
   void setRefereeStatus(bool status)
-  { referee_is_online_ = status; }
+  {
+    referee_is_online_ = status;
+  }
 
   void setStartBurstTime(const ros::Time start_burst_time)
-  { start_burst_time_ = start_burst_time; }
+  {
+    start_burst_time_ = start_burst_time;
+  }
 
   ros::Time getStartBurstTime() const
-  { return start_burst_time_; }
+  {
+    return start_burst_time_;
+  }
 
   uint8_t getState()
-  { return expect_state_; }
+  {
+    return expect_state_;
+  }
 
   void setGyroPower(rm_msgs::ChassisCmd& chassis_cmd)
   {
@@ -244,7 +256,9 @@ private:
   }
 
   void zero(rm_msgs::ChassisCmd& chassis_cmd)
-  { chassis_cmd.power_limit = 0.0; }
+  {
+    chassis_cmd.power_limit = 0.0;
+  }
 
   void burst(rm_msgs::ChassisCmd& chassis_cmd, bool is_gyro)
   {
