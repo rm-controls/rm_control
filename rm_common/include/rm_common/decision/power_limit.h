@@ -39,6 +39,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <string>
 
 #include <ros/ros.h>
 #include <rm_msgs/ChassisCmd.h>
@@ -77,10 +78,8 @@ public:
       ROS_ERROR("Gyro power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("max_power_limit", max_power_limit_))
       ROS_ERROR("max power limit no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("power_gain", power_gain_))
-      ROS_ERROR("power gain no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("total_burst_time", total_burst_time_))
-      ROS_ERROR("total burst time no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("robot_type", robot_type_))
+      ROS_WARN("Only standard and hero robot types are supported (namespace: %s)", nh.getNamespace().c_str());
   }
   typedef enum
   {
@@ -91,47 +90,64 @@ public:
     TEST = 4,
   } Mode;
 
+  typedef enum
+  {
+    // Melee and Remote for hero, Burst and Health for standard
+    // Not used now.
+    Melee = 0,
+    Remote = 1,
+    Burst = 2,
+    Health = 3,
+  } RobotPerformanceSelect;
+
   void updateSafetyPower(int safety_power)
   {
-    if (safety_power > 0)
-      safety_power_ = safety_power;
-    ROS_INFO("update safety power: %d", safety_power);
+    if (robot_type_ == "standard")
+      safety_power_ = 40 + robot_id_ * 5;
+    else if (robot_type_ == "hero")
+      safety_power_ = 45 + robot_id_ * 5;
+    else
+      safety_power_ = safety_power > 0 ? safety_power : safety_power_;
+    ROS_WARN("update safety power: %.0f", safety_power_);
   }
-  void updateState(uint8_t state)
+
+  void updateBurstPower(int burst_power)
   {
-    expect_state_ = state;
+    burst_power_ = burst_power > 0 ? burst_power : burst_power_;
+    ROS_INFO("update burst power: %.0f", burst_power_);
   }
+
+  void updateState(uint8_t state)
+  { expect_state_ = state; }
+
   void setGameRobotData(const rm_msgs::GameRobotStatus data)
   {
+    robot_level_ = data.robot_level;
     robot_id_ = data.robot_id;
     chassis_power_limit_ = data.chassis_power_limit;
   }
+
   void setChassisPowerBuffer(const rm_msgs::PowerHeatData data)
-  {
-    chassis_power_buffer_ = data.chassis_power_buffer;
-  }
+  { chassis_power_buffer_ = data.chassis_power_buffer; }
+
   void setCapacityData(const rm_msgs::PowerManagementSampleAndStatusData data)
   {
     capacity_is_online_ = ros::Time::now() - data.stamp < ros::Duration(0.3);
     cap_energy_ = data.capacity_remain_charge;
     cap_state_ = data.state_machine_running_state;
   }
+
   void setRefereeStatus(bool status)
-  {
-    referee_is_online_ = status;
-  }
+  { referee_is_online_ = status; }
+
   void setStartBurstTime(const ros::Time start_burst_time)
-  {
-    start_burst_time_ = start_burst_time;
-  }
+  { start_burst_time_ = start_burst_time; }
+
   ros::Time getStartBurstTime() const
-  {
-    return start_burst_time_;
-  }
+  { return start_burst_time_; }
+
   uint8_t getState()
-  {
-    return expect_state_;
-  }
+  { return expect_state_; }
 
   void setGyroPower(rm_msgs::ChassisCmd& chassis_cmd)
   {
@@ -166,7 +182,7 @@ public:
     if (robot_id_ == rm_msgs::GameRobotStatus::BLUE_ENGINEER || robot_id_ == rm_msgs::GameRobotStatus::RED_ENGINEER)
       chassis_cmd.power_limit = 400;
     else
-    {  // standard and hero
+    {
       if (referee_is_online_)
       {
         if (capacity_is_online_ && expect_state_ != ALLOFF)
@@ -196,7 +212,10 @@ public:
           normal(chassis_cmd);
       }
       else
+      {
+        updateSafetyPower(safety_power_);
         chassis_cmd.power_limit = safety_power_;
+      }
     }
     applyPosturePowerScale(chassis_cmd);
   }
@@ -221,28 +240,20 @@ private:
       chassis_cmd.power_limit = chassis_power_limit_;
     }
     if (chassis_cmd.power_limit > max_power_limit_)
-    {
       chassis_cmd.power_limit = max_power_limit_;
-    }
   }
 
   void zero(rm_msgs::ChassisCmd& chassis_cmd)
-  {
-    chassis_cmd.power_limit = 0.0;
-  }
+  { chassis_cmd.power_limit = 0.0; }
 
   void burst(rm_msgs::ChassisCmd& chassis_cmd, bool is_gyro)
   {
     if (cap_state_ != ALLOFF && cap_energy_ > capacitor_threshold_ && chassis_power_buffer_ > power_buffer_threshold_)
     {
       if (is_gyro)
-      {
         setGyroPower(chassis_cmd);
-      }
       else
-      {
         setBurstPower(chassis_cmd);
-      }
     }
     else
       expect_state_ = NORMAL;
@@ -257,9 +268,11 @@ private:
 
   uint8_t expect_state_{}, cap_state_{};
 
+  std::string robot_type_{};
   int chassis_power_buffer_{};
-  int robot_id_{}, chassis_power_limit_{};
-  int max_power_limit_{ 70 };
+  int robot_id_{}, robot_level_{};
+  int chassis_power_limit_{};
+  int max_power_limit_{ 220 };
   float cap_energy_{};
   double safety_power_{};
   double capacitor_threshold_{};
@@ -268,13 +281,11 @@ private:
   double enable_gyro_cap_threshold_{}, disable_gyro_cap_threshold_{};
   double disable_normal_cap_threshold_{};
   double extra_power_{}, burst_power_{}, gyro_power_{};
-  double power_gain_{};
 
   bool allow_gyro_cap_{ false }, allow_use_cap_{ false };
   double posture_power_scale_{ 1.0 };
 
   ros::Time start_burst_time_{};
-  int total_burst_time_{};
 
   bool referee_is_online_{ false };
   bool capacity_is_online_{ false };
