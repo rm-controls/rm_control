@@ -46,6 +46,18 @@ bool RmRobotHWSim::initSim(const std::string& robot_namespace, ros::NodeHandle m
                            std::vector<transmission_interface::TransmissionInfo> transmissions)
 {
   bool ret = DefaultRobotHWSim::initSim(robot_namespace, model_nh, parent_model, urdf_model, transmissions);
+  // Joint interface
+  registerInterface(&hybridJointInterface_);
+  std::vector<std::string> names = ej_interface_.getNames();
+  for (const auto& name : names)
+  {
+    hybridJointDatas_.push_back(HybridJointData{ .joint_ = ej_interface_.getHandle(name) });
+    HybridJointData& back = hybridJointDatas_.back();
+    hybridJointInterface_.registerHandle(
+        rm_control::HybridJointHandle(back.joint_, &back.posDes_, &back.velDes_, &back.kp_, &back.kd_, &back.ff_));
+    cmdBuffer_.insert(std::make_pair(name.c_str(), std::deque<HybridJointCommand>()));
+  }
+
   gazebo_ros_control::DefaultRobotHWSim::registerInterface(&robot_state_interface_);
   gazebo_ros_control::DefaultRobotHWSim::registerInterface(&imu_sensor_interface_);
   gazebo_ros_control::DefaultRobotHWSim::registerInterface(&rm_imu_sensor_interface_);
@@ -92,6 +104,43 @@ void RmRobotHWSim::readSim(ros::Time time, ros::Duration period)
     cmd = 0;
   for (auto& cmd : joint_velocity_command_)
     cmd = 0;
+  for (auto& joint : hybridJointDatas_)
+  {
+    joint.posDes_ = joint.joint_.getPosition();
+    joint.velDes_ = joint.joint_.getVelocity();
+    joint.kp_ = 0.;
+    joint.kd_ = 0.;
+    joint.ff_ = 0.;
+  }
+}
+
+void RmRobotHWSim::writeSim(ros::Time time, ros::Duration period)
+{
+  for (auto joint : hybridJointDatas_)
+  {
+    auto& buffer = cmdBuffer_.find(joint.joint_.getName())->second;
+    if (time == ros::Time(period.toSec()))
+    {  // Simulation reset
+      buffer.clear();
+    }
+
+    while (!buffer.empty() && buffer.back().stamp_ + ros::Duration(delay_) < time)
+    {
+      buffer.pop_back();
+    }
+    buffer.push_front(HybridJointCommand{ .stamp_ = time,
+                                          .posDes_ = joint.posDes_,
+                                          .velDes_ = joint.velDes_,
+                                          .kp_ = joint.kp_,
+                                          .kd_ = joint.kd_,
+                                          .ff_ = joint.ff_ });
+
+    const auto& cmd = buffer.back();
+    if (joint.joint_.getCommand() == 0.0f)
+      joint.joint_.setCommand(cmd.kp_ * (cmd.posDes_ - joint.joint_.getPosition()) +
+                              cmd.kd_ * (cmd.velDes_ - joint.joint_.getVelocity()) + cmd.ff_);
+  }
+  DefaultRobotHWSim::writeSim(time, period);
 }
 
 void RmRobotHWSim::parseImu(XmlRpc::XmlRpcValue& imu_datas, const gazebo::physics::ModelPtr& parent_model)
