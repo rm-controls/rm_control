@@ -132,6 +132,10 @@ public:
   {
     return start_burst_time_;
   }
+  inline void setBurstPowerLimit(const double& burst_power_limit)
+  {
+    burst_power_ = burst_power_limit;
+  }
   uint8_t getState()
   {
     return expect_state_;
