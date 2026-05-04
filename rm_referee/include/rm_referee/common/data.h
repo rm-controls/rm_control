@@ -61,6 +61,7 @@
 #include <rm_msgs/RobotHurt.h>
 #include <rm_msgs/ShootData.h>
 #include <rm_msgs/DartStatus.h>
+#include <rm_msgs/ChassisActiveSusCmd.h>
 #include <rm_msgs/ChassisCmd.h>
 #include <rm_msgs/GameStatus.h>
 #include <rm_msgs/RfidStatus.h>

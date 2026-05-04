@@ -78,7 +78,37 @@ void CapacitorTimeChangeUi::updateRemainCharge(const double remain_charge, const
   remain_charge_ = remain_charge;
   updateForQueue();
 }
+void RelocalizeProgressTimeChangeUi::add()
+{
+  graph_->setOperation(rm_referee::GraphOperation::ADD);
+  UiBase::display(false);
+}
 
+void RelocalizeProgressTimeChangeUi::updateConfig()
+{
+  if (relocalize_progress_ >= 0.)
+  {
+    graph_->setStartX(610);
+    graph_->setStartY(150);
+    graph_->setEndX(610 + 600 * relocalize_progress_ / 100.0);
+    graph_->setEndY(150);
+
+    if (relocalize_progress_ >= 70.)
+      graph_->setColor(rm_referee::GraphColor::GREEN);
+    else if (relocalize_progress_ >= 30.)
+      graph_->setColor(rm_referee::GraphColor::ORANGE);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
+  else
+    return;
+}
+
+void RelocalizeProgressTimeChangeUi::updateRelocalizeProgress(const double data, const ros::Time& time)
+{
+  relocalize_progress_ = data;
+  updateForQueue();
+}
 void EffortTimeChangeUi::updateConfig()
 {
   char data_str[30] = { ' ' };
@@ -427,6 +457,32 @@ void TargetDistanceTimeChangeUi::updateConfig()
   graph_->setFloatNum(target_distance_);
 }
 
+void DeployDistanceTimeChangeUi::updateDeployDistanceData(const geometry_msgs::PointConstPtr& data)
+{
+  deploy_distance_ = sqrt(data->x * data->x + data->y * data->y);
+  updateForQueue();
+}
+
+void DeployDistanceTimeChangeUi::updateConfig()
+{
+  char buffer[32];
+  snprintf(buffer, sizeof(buffer), "%.3f", deploy_distance_);
+  std::string deploy_dis(buffer);
+  graph_->setContent(deploy_dis);
+  graph_->setColor(rm_referee::GraphColor::PINK);
+}
+
+void HeroLegTimeChangeUi::updateFeedforwardCountdown(int feedforward_countdown)
+{
+  feedforward_countdown_ = feedforward_countdown;
+  updateForQueue();
+}
+
+void HeroLegTimeChangeUi::updateConfig()
+{
+  graph_->setIntNum(feedforward_countdown_);
+  graph_->setColor(rm_referee::GraphColor::CYAN);
+}
 void DroneTowardsTimeChangeGroupUi::updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data)
 {
   angle_ = yawFromQuat(data->pose.orientation) - M_PI / 2;

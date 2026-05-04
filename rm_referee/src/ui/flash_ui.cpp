@@ -169,14 +169,38 @@ void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data,
 void DeployFlashUi::display(const ros::Time& time)
 {
   if (!(chassis_mode_ == rm_msgs::ChassisCmd::RAW && angular_z_ == 0.0))
-    graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  FlashUi::updateFlashUiForQueue(time, (chassis_mode_ == rm_msgs::ChassisCmd::RAW && angular_z_ == 0.0), false);
+  {
+    FlashUi::updateFlashUiForQueue(time, false, true);
+    return;
+  }
+  if (allow_deploy_fire_)
+  {
+    graph_->setColor(rm_referee::GraphColor ::YELLOW);
+  }
+  else
+  {
+    graph_->setColor(rm_referee::GraphColor ::PINK);
+  }
+  FlashUi::updateFlashUiForQueue(time, false, true);
+  FlashUi::updateFlashUiForQueue(time, true, true);
 }
 
-void DeployFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr& data, const ros::Time& last_get_data_time)
+void DeployFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr& data)
 {
-  chassis_mode_ = data->mode;
-  display(last_get_data_time);
+  if (data->mode != chassis_mode_)
+  {
+    chassis_mode_ = data->mode;
+    display(ros::Time::now());
+  }
+}
+
+void DeployFlashUi::updateAllowDeployFire(bool flag)
+{
+  if (flag != allow_deploy_fire_)
+  {
+    allow_deploy_fire_ = flag;
+    display(ros::Time::now());
+  }
 }
 
 void DeployFlashUi::updateChassisVelData(const geometry_msgs::Twist::ConstPtr& data)
