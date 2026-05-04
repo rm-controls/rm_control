@@ -108,7 +108,7 @@ public:
       safety_power_ = 45 + robot_id_ * 5;
     else
       safety_power_ = safety_power > 0 ? safety_power : safety_power_;
-    ROS_WARN("update safety power: %.0f", safety_power_);
+    ROS_WARN_THROTTLE(2.0, "update safety power: %.0f", safety_power_);
   }
 
   void updateBurstPower(int burst_power)
