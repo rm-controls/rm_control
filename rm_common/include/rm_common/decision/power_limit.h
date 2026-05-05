@@ -136,7 +136,7 @@ public:
 
   void setCapacityData(const rm_msgs::PowerManagementSampleAndStatusData data)
   {
-    capacity_is_online_ = ros::Time::now() - data.stamp < ros::Duration(5);
+    capacity_is_online_ = ros::Time::now() - data.stamp < ros::Duration(0.3);
     cap_energy_ = data.capacity_remain_charge;
     cap_state_ = data.state_machine_running_state;
   }
@@ -150,7 +150,6 @@ public:
   {
     start_burst_time_ = start_burst_time;
   }
-
   ros::Time getStartBurstTime() const
   {
     return start_burst_time_;

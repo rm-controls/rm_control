@@ -17,9 +17,9 @@ public:
    * @brief Construct and initialize the publisher.
    * @param nh         ROS NodeHandle used for advertise.
    * @param topic      Topic name, defaults to "debug_data".
-   * @param queue_size Publish queue size, defaults to 10.
+   * @param queue_size Publish queue size, defaults to 5.
    */
-  explicit DebugDataPublisher(ros::NodeHandle& nh, const std::string& topic = "debug_data", int queue_size = 10)
+  explicit DebugDataPublisher(ros::NodeHandle& nh, const std::string& topic = "debug_data", int queue_size = 5)
   {
     debug_data_pub_ = nh.advertise<rm_msgs::DebugData>(topic, queue_size);
   }

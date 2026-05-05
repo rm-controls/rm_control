@@ -11,18 +11,12 @@ int main(int argc, char** argv)
   ros::NodeHandle nh("~");
   rm_referee::Referee referee(nh);
   ros::Rate loop_rate(80);
-  try
+  while (ros::ok())
   {
-    while (ros::ok())
-    {
-      ros::spinOnce();
-      referee.read();
-      loop_rate.sleep();
-    }
+    ros::spinOnce();
+    referee.read();
+    loop_rate.sleep();
   }
-  catch (const serial::SerialException& e)
-  {
-    ROS_ERROR_STREAM("Serial lost: " << e.what());
-  }
+
   return 0;
 }

@@ -66,14 +66,24 @@ public:
 
   ~KalmanFilter() = default;
 
+  template <typename T1, typename T2>
+  void clear(const Eigen::MatrixBase<T1>& x, const Eigen::MatrixBase<T2>& P0)
+  {
+    x_ = x;
+    inited = true;
+    K_ = DMat<T>::Zero(n_, m_);
+    P_ = P0;
+    P_new_ = P0;
+  }
+
   template <typename T1>
   void clear(const Eigen::MatrixBase<T1>& x)
   {
     x_ = x;
     inited = true;
     K_ = DMat<T>::Zero(n_, m_);
-    P_ = DMat<T>::Zero(n_, m_);
-    P_new_ = DMat<T>::Zero(n_, n_);
+    P_.setIdentity();
+    P_new_.setIdentity();
   }
 
   template <typename T1>
