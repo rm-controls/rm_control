@@ -103,6 +103,28 @@ private:
   int fill_width_{};
 };
 
+class ZipTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit ZipTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                              std::deque<Graph>* character_queue)
+    : TriggerChangeUi(rpc_value, base, "zip", graph_queue, character_queue)
+  {
+    outline_width_ = graph_->getConfig().width;
+    const auto config = graph_->getConfig();
+    const int rect_w = std::abs(config.end_x - config.start_x);
+    const int rect_h = std::abs(config.end_y - config.start_y);
+    fill_width_ = std::max(outline_width_ + 1, std::min(rect_w, rect_h) / 1);
+  }
+  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data) override;
+
+private:
+  void update() override;
+  uint8_t zip_mode_{};
+  int outline_width_{};
+  int fill_width_{};
+};
+
 class ShooterTriggerChangeUi : public TriggerChangeUi
 {
 public:

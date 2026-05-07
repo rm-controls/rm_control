@@ -78,7 +78,7 @@ public:
       ROS_ERROR("Gyro power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("max_power_limit", max_power_limit_))
       ROS_ERROR("max power limit no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("robot_type", robot_type_))
+    if (!nh.getParam("/rm_manual/robot_type", robot_type_))
       ROS_WARN("Only standard and hero robot types are supported (namespace: %s)", nh.getNamespace().c_str());
   }
   typedef enum
@@ -89,16 +89,6 @@ public:
     ALLOFF = 3,
     TEST = 4,
   } Mode;
-
-  typedef enum
-  {
-    // Melee and Remote for hero, Burst and Health for standard
-    // Not used now.
-    Melee = 0,
-    Remote = 1,
-    Burst = 2,
-    Health = 3,
-  } RobotPerformanceSelect;
 
   void updateSafetyPower(int safety_power)
   {

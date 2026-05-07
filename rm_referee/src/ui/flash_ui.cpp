@@ -139,20 +139,6 @@ void CustomizeDisplayFlashUi::display(const ros::Time& time)
   }
 }
 
-void CoverFlashUi::display(const ros::Time& time)
-{
-  if (!cover_state_)
-    graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  FlashUi::updateFlashUiForQueue(time, cover_state_, true);
-}
-
-void CoverFlashUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data,
-                                       const ros::Time& last_get_data_time)
-{
-  cover_state_ = data->cover_state;
-  display(last_get_data_time);
-}
-
 void SpinFlashUi::display(const ros::Time& time)
 {
   if (chassis_mode_ != rm_msgs::ChassisCmd::RAW)

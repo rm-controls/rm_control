@@ -245,6 +245,22 @@ void GyroTriggerChangeUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstP
   update();
 }
 
+void ZipTriggerChangeUi::update()
+{
+  if (zip_mode_)
+    graph_->setWidth(fill_width_);
+  else
+    graph_->setWidth(outline_width_);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  updateForQueue(true);
+}
+
+void ZipTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
+{
+  zip_mode_ = data->zip_state;
+  update();
+}
+
 void ShooterTriggerChangeUi::update()
 {
   updateConfig(shooter_mode_, 0, shoot_frequency_, false);
