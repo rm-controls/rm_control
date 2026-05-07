@@ -143,6 +143,8 @@ public:
       robot_height_ = data["height"];
       camera_range_ = data["camera_range"];
       surface_coefficient_ = data["surface_coefficient"];
+      if (data.hasMember("x_offset"))
+        x_offset_ = data["x_offset"];
     }
     else
       ROS_WARN("LaneLineTimeChangeGroupUi config 's member 'data' not defined.");
@@ -167,6 +169,7 @@ public:
 protected:
   std::string reference_frame_;
   double robot_radius_, robot_height_, camera_range_, surface_coefficient_ = 0.5;
+  double x_offset_ = 0.0;
   double pitch_angle_ = 0., screen_x_ = 1920, screen_y_ = 1080;
   double end_point_a_angle_, end_point_b_angle_;
 
