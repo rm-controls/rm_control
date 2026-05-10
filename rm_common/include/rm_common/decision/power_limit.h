@@ -78,7 +78,7 @@ public:
       ROS_ERROR("Gyro power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("max_power_limit", max_power_limit_))
       ROS_ERROR("max power limit no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("/rm_manual/robot_type", robot_type_))
+    if (!nh.getParam("robot_type", robot_type_))
       ROS_WARN("Only standard and hero robot types are supported (namespace: %s)", nh.getNamespace().c_str());
   }
   typedef enum
@@ -90,6 +90,16 @@ public:
     TEST = 4,
   } Mode;
 
+  typedef enum
+  {
+    // Melee and Remote for hero, Burst and Health for standard
+    // Not used now.
+    Melee = 0,
+    Remote = 1,
+    Burst = 2,
+    Health = 3,
+  } RobotPerformanceSelect;
+
   void updateSafetyPower(int safety_power)
   {
     if (robot_type_ == "standard")
@@ -98,7 +108,7 @@ public:
       safety_power_ = 45 + robot_id_ * 5;
     else
       safety_power_ = safety_power > 0 ? safety_power : safety_power_;
-    ROS_WARN_THROTTLE(2.0, "update safety power: %.0f", safety_power_);
+    ROS_WARN("update safety power: %.0f", safety_power_);
   }
 
   void updateBurstPower(int burst_power)
@@ -126,7 +136,7 @@ public:
 
   void setCapacityData(const rm_msgs::PowerManagementSampleAndStatusData data)
   {
-    capacity_is_online_ = ros::Time::now() - data.stamp < ros::Duration(0.3);
+    capacity_is_online_ = ros::Time::now() - data.stamp < ros::Duration(5);
     cap_energy_ = data.capacity_remain_charge;
     cap_state_ = data.state_machine_running_state;
   }
@@ -140,6 +150,7 @@ public:
   {
     start_burst_time_ = start_burst_time;
   }
+
   ros::Time getStartBurstTime() const
   {
     return start_burst_time_;

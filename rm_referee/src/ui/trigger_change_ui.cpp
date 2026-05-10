@@ -252,7 +252,7 @@ void ZipTriggerChangeUi::update()
   else
     graph_->setWidth(outline_width_);
   graph_->setOperation(rm_referee::GraphOperation::UPDATE);
-  updateForQueue(true);
+  updateForQueue(false);
 }
 
 void ZipTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)

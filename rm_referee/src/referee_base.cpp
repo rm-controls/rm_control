@@ -261,6 +261,8 @@ void RefereeBase::addUi()
     friction_speed_trigger_change_ui_->addForQueue();
   if (gyro_trigger_change_ui_)
     gyro_trigger_change_ui_->addForQueue();
+  if (zip_trigger_change_ui_)
+    zip_trigger_change_ui_->addForQueue();
   if (bullet_time_change_ui_)
   {
     bullet_time_change_ui_->reset();
