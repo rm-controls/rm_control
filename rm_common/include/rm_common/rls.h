@@ -106,6 +106,9 @@ public:
   bool update()
   {
     xt_ = x_.transpose();
+    // Compute predicted output using current weights: u_pred = x^T * w
+    u_ = xt_ * w_;
+    // Compute prediction error: e = y - u_pred
     e_ = y_ - u_;
 
     kNumerator_ = p_ * x_;
@@ -113,11 +116,14 @@ public:
     RLS_ASSERT(std::abs(denominator) > std::numeric_limits<T>::epsilon(),
                "rls: denominator too small, numerical instability");
 
+    // Compute gain vector: k = P*x / (lambda + x^T*P*x)
     k_ = kNumerator_ / denominator;
+    // Update parameters: w = w + k * e^T
     output_ = w_ + k_ * e_.transpose();
     w_ = output_;
 
-    p_ = (p_ - (p_ * x_ * xt_ * p_) / denominator) / lambda_;
+    // Update covariance matrix: P = (P - k*x^T*P) / lambda
+    p_ = (p_ - k_ * xt_ * p_) / lambda_;
     return true;
   }
 
