@@ -107,7 +107,6 @@ public:
   {
     xt_ = x_.transpose();
     // Compute predicted output using current weights: u_pred = x^T * w
-    u_ = xt_ * w_;
     // Compute prediction error: e = y - u_pred
     e_ = y_ - u_;
 
