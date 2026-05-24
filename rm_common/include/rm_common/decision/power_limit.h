@@ -39,6 +39,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <string>
 
 #include <ros/ros.h>
 #include <rm_msgs/ChassisCmd.h>
@@ -59,32 +60,26 @@ public:
       ROS_ERROR("Safety power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("capacitor_threshold", capacitor_threshold_))
       ROS_ERROR("Capacitor threshold no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("disable_cap_gyro_threshold", disable_cap_gyro_threshold_))
-      ROS_ERROR("Disable cap gyro threshold no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("enable_cap_gyro_threshold", enable_cap_gyro_threshold_))
-      ROS_ERROR("Enable cap gyro threshold no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("disable_use_cap_threshold", disable_use_cap_threshold_))
-      ROS_ERROR("Disable use cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("enable_use_cap_threshold", enable_use_cap_threshold_))
-      ROS_ERROR("Enable use cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("charge_power", charge_power_))
-      ROS_ERROR("Charge power no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("disable_burst_cap_threshold", disable_burst_cap_threshold_))
+      ROS_ERROR("Disable burst cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("enable_burst_cap_threshold", enable_burst_cap_threshold_))
+      ROS_ERROR("Enable burst cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("disable_normal_cap_threshold", disable_normal_cap_threshold_))
+      ROS_ERROR("Disable normal cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("enable_gyro_cap_threshold", enable_gyro_cap_threshold_))
+      ROS_ERROR("Enable gyro cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("disable_gyro_cap_threshold", disable_gyro_cap_threshold_))
+      ROS_ERROR("Disable gyro cap threshold no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("extra_power", extra_power_))
       ROS_ERROR("Extra power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("burst_power", burst_power_))
       ROS_ERROR("Burst power no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("standard_power", standard_power_))
-      ROS_ERROR("Standard power no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("gyro_power", gyro_power_))
+      ROS_ERROR("Gyro power no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("max_power_limit", max_power_limit_))
       ROS_ERROR("max power limit no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("power_gain", power_gain_))
-      ROS_ERROR("power gain no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("buffer_threshold", buffer_threshold_))
-      ROS_ERROR("buffer threshold no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("is_new_capacitor", is_new_capacitor_))
-      ROS_ERROR("is_new_capacitor no defined (namespace: %s)", nh.getNamespace().c_str());
-    if (!nh.getParam("total_burst_time", total_burst_time_))
-      ROS_ERROR("total burst time no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("robot_type", robot_type_))
+      ROS_WARN("Only standard and hero robot types are supported (namespace: %s)", nh.getNamespace().c_str());
   }
   typedef enum
   {
@@ -95,94 +90,111 @@ public:
     TEST = 4,
   } Mode;
 
+  typedef enum
+  {
+    // Melee and Remote for hero, Burst and Health for standard
+    // Not used now.
+    Melee = 0,
+    Remote = 1,
+    Burst = 2,
+    Health = 3,
+  } RobotPerformanceSelect;
+
   void updateSafetyPower(int safety_power)
   {
-    if (safety_power > 0)
-      safety_power_ = safety_power;
-    ROS_INFO("update safety power: %d", safety_power);
+    if (robot_type_ == "standard")
+      safety_power_ = 40 + robot_id_ * 5;
+    else if (robot_type_ == "hero")
+      safety_power_ = 45 + robot_id_ * 5;
+    else
+      safety_power_ = safety_power > 0 ? safety_power : safety_power_;
+    ROS_WARN("update safety power: %.0f", safety_power_);
   }
+
+  void updateBurstPower(int burst_power)
+  {
+    burst_power_ = burst_power > 0 ? burst_power : burst_power_;
+    ROS_INFO("update burst power: %.0f", burst_power_);
+  }
+
   void updateState(uint8_t state)
   {
-    if (!capacitor_is_on_)
-      expect_state_ = ALLOFF;
-    else
-      expect_state_ = state;
+    expect_state_ = state;
   }
-  void updateCapSwitchState(bool state)
-  {
-    capacitor_is_on_ = state;
-  }
+
   void setGameRobotData(const rm_msgs::GameRobotStatus data)
   {
+    robot_level_ = data.robot_level;
     robot_id_ = data.robot_id;
     chassis_power_limit_ = data.chassis_power_limit;
   }
+
   void setChassisPowerBuffer(const rm_msgs::PowerHeatData data)
   {
     chassis_power_buffer_ = data.chassis_power_buffer;
-    power_buffer_threshold_ = chassis_power_buffer_ * 0.8;
   }
+
   void setCapacityData(const rm_msgs::PowerManagementSampleAndStatusData data)
   {
-    capacity_is_online_ = ros::Time::now() - data.stamp < ros::Duration(0.3);
+    capacity_is_online_ = ros::Time::now() - data.stamp < ros::Duration(5);
     cap_energy_ = data.capacity_remain_charge;
     cap_state_ = data.state_machine_running_state;
   }
+
   void setRefereeStatus(bool status)
   {
     referee_is_online_ = status;
   }
+
   void setStartBurstTime(const ros::Time start_burst_time)
   {
     start_burst_time_ = start_burst_time;
   }
-  inline void setBurstPowerLimit(const double& burst_power_limit)
-  {
-    burst_power_ = burst_power_limit;
-  }
+
   ros::Time getStartBurstTime() const
   {
     return start_burst_time_;
   }
+
   uint8_t getState()
   {
     return expect_state_;
   }
+
   void setGyroPower(rm_msgs::ChassisCmd& chassis_cmd)
   {
-    if (!allow_gyro_cap_ && cap_energy_ >= enable_cap_gyro_threshold_)
+    if (!allow_gyro_cap_ && cap_energy_ >= enable_gyro_cap_threshold_)
       allow_gyro_cap_ = true;
-    if (allow_gyro_cap_ && cap_energy_ <= disable_cap_gyro_threshold_)
+    if (allow_gyro_cap_ && cap_energy_ <= disable_gyro_cap_threshold_)
       allow_gyro_cap_ = false;
-    if (allow_gyro_cap_ && chassis_power_limit_ < 80)
-      chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
+    if (allow_gyro_cap_)
+    {
+      chassis_cmd.power_limit = gyro_power_;
+    }
     else
-      normal(chassis_cmd);
-    // expect_state_ = NORMAL;
+      expect_state_ = NORMAL;
   }
+
   void setBurstPower(rm_msgs::ChassisCmd& chassis_cmd)
   {
-    if (!allow_use_cap_ && cap_energy_ >= enable_use_cap_threshold_)
+    if (!allow_use_cap_ && cap_energy_ >= enable_burst_cap_threshold_)
       allow_use_cap_ = true;
-    if (allow_use_cap_ && cap_energy_ <= disable_use_cap_threshold_)
+    if (allow_use_cap_ && cap_energy_ <= disable_burst_cap_threshold_)
       allow_use_cap_ = false;
     if (allow_use_cap_)
     {
-      if (ros::Time::now() - start_burst_time_ < ros::Duration(total_burst_time_))
-        chassis_cmd.power_limit = burst_power_;
-      else
-        chassis_cmd.power_limit = standard_power_;
+      chassis_cmd.power_limit = burst_power_;
     }
     else
-      normal(chassis_cmd);
-    // expect_state_ = NORMAL;
+      expect_state_ = NORMAL;
   }
+
   void setLimitPower(rm_msgs::ChassisCmd& chassis_cmd, bool is_gyro)
   {
     if (robot_id_ == rm_msgs::GameRobotStatus::BLUE_ENGINEER || robot_id_ == rm_msgs::GameRobotStatus::RED_ENGINEER)
       chassis_cmd.power_limit = 400;
     else
-    {  // standard and hero
+    {
       if (referee_is_online_)
       {
         if (capacity_is_online_ && expect_state_ != ALLOFF)
@@ -191,7 +203,7 @@ public:
             chassis_cmd.power_limit = burst_power_;
           else
           {
-            switch (is_new_capacitor_ ? expect_state_ : cap_state_)
+            switch (expect_state_)
             {
               case NORMAL:
                 normal(chassis_cmd);
@@ -212,7 +224,10 @@ public:
           normal(chassis_cmd);
       }
       else
+      {
+        updateSafetyPower(safety_power_);
         chassis_cmd.power_limit = safety_power_;
+      }
     }
     applyPosturePowerScale(chassis_cmd);
   }
@@ -223,39 +238,39 @@ private:
     allow_use_cap_ = false;
     chassis_cmd.power_limit = chassis_power_limit_ * 0.70;
   }
+
   void normal(rm_msgs::ChassisCmd& chassis_cmd)
   {
-    if (is_new_capacitor_)
+    allow_use_cap_ = false;
+    if (cap_state_ != ALLOFF && cap_energy_ > disable_normal_cap_threshold_ &&
+        chassis_power_buffer_ > power_buffer_threshold_)
+    {
+      chassis_cmd.power_limit = chassis_power_limit_ + extra_power_;
+    }
+    else
     {
       chassis_cmd.power_limit = chassis_power_limit_;
-      return;
     }
-    allow_use_cap_ = false;
-    double buffer_energy_error = chassis_power_buffer_ - buffer_threshold_;
-    double plus_power = buffer_energy_error * power_gain_;
-    chassis_cmd.power_limit = chassis_power_limit_ + plus_power;
-    // TODO:Add protection when buffer<5
     if (chassis_cmd.power_limit > max_power_limit_)
       chassis_cmd.power_limit = max_power_limit_;
   }
+
   void zero(rm_msgs::ChassisCmd& chassis_cmd)
   {
     chassis_cmd.power_limit = 0.0;
   }
+
   void burst(rm_msgs::ChassisCmd& chassis_cmd, bool is_gyro)
   {
     if (cap_state_ != ALLOFF && cap_energy_ > capacitor_threshold_ && chassis_power_buffer_ > power_buffer_threshold_)
     {
-      if (is_new_capacitor_)
-        chassis_cmd.power_limit = burst_power_;
-      else if (is_gyro)
+      if (is_gyro)
         setGyroPower(chassis_cmd);
       else
         setBurstPower(chassis_cmd);
     }
     else
-      normal(chassis_cmd);
-    // expect_state_ = NORMAL;
+      expect_state_ = NORMAL;
   }
 
   void applyPosturePowerScale(rm_msgs::ChassisCmd& chassis_cmd) const
@@ -265,26 +280,26 @@ private:
     chassis_cmd.power_limit = std::max(0.0, std::floor(chassis_cmd.power_limit * posture_power_scale_));
   }
 
-  int chassis_power_buffer_;
-  int robot_id_, chassis_power_limit_;
-  int max_power_limit_{ 70 };
-  float cap_energy_;
+  uint8_t expect_state_{}, cap_state_{};
+
+  std::string robot_type_{};
+  int chassis_power_buffer_{};
+  int robot_id_{}, robot_level_{};
+  int chassis_power_limit_{};
+  int max_power_limit_{ 220 };
+  float cap_energy_{};
   double safety_power_{};
   double capacitor_threshold_{};
   double power_buffer_threshold_{ 50.0 };
-  double enable_cap_gyro_threshold_{}, disable_cap_gyro_threshold_{}, enable_use_cap_threshold_{},
-      disable_use_cap_threshold_{};
-  double charge_power_{}, extra_power_{}, burst_power_{}, standard_power_{};
-  double buffer_threshold_{};
-  double power_gain_{};
-  bool is_new_capacitor_{ false };
-  uint8_t expect_state_{}, cap_state_{};
-  bool capacitor_is_on_{ true };
+  double enable_burst_cap_threshold_{}, disable_burst_cap_threshold_{};
+  double enable_gyro_cap_threshold_{}, disable_gyro_cap_threshold_{};
+  double disable_normal_cap_threshold_{};
+  double extra_power_{}, burst_power_{}, gyro_power_{};
+
   bool allow_gyro_cap_{ false }, allow_use_cap_{ false };
   double posture_power_scale_{ 1.0 };
 
   ros::Time start_burst_time_{};
-  int total_burst_time_{};
 
   bool referee_is_online_{ false };
   bool capacity_is_online_{ false };

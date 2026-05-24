@@ -83,6 +83,10 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "friction_speed")
         friction_speed_trigger_change_ui_ =
             new FrictionSpeedTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "gyro")
+        gyro_trigger_change_ui_ = new GyroTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "zip")
+        zip_trigger_change_ui_ = new ZipTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "gripper")
         gripper_state_trigger_change_ui_ =
             new StringTriggerChangeUi(rpc_value[i], base_, "gripper", &graph_queue_, &character_queue_);
@@ -151,8 +155,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     ui_nh.getParam("flash", rpc_value);
     for (int i = 0; i < rpc_value.size(); i++)
     {
-      if (rpc_value[i]["name"] == "cover")
-        cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      // if (rpc_value[i]["name"] == "cover")
+      //   cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "spin")
         spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       // if (rpc_value[i]["name"] == "deploy")
@@ -255,6 +259,10 @@ void RefereeBase::addUi()
     servo_mode_trigger_change_ui_->addForQueue();
   if (friction_speed_trigger_change_ui_)
     friction_speed_trigger_change_ui_->addForQueue();
+  if (gyro_trigger_change_ui_)
+    gyro_trigger_change_ui_->addForQueue();
+  if (zip_trigger_change_ui_)
+    zip_trigger_change_ui_->addForQueue();
   if (bullet_time_change_ui_)
   {
     bullet_time_change_ui_->reset();
@@ -447,6 +455,8 @@ void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& da
 {
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateChassisCmdData(data);
+  if (gyro_trigger_change_ui_ && !is_adding_)
+    gyro_trigger_change_ui_->updateChassisCmdData(data);
   if (spin_flash_ui_ && !is_adding_)
     spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
   // if (deploy_flash_ui_ && !is_adding_)
@@ -495,10 +505,8 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
     gimbal_trigger_change_ui_->updateManualCmdData(data);
   if (target_trigger_change_ui_ && !is_adding_)
     target_trigger_change_ui_->updateManualCmdData(data);
-  if (cover_flash_ui_ && !is_adding_)
-    cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
-  // if (burst_flash_ui_ && !is_adding_)
-  //   burst_flash_ui_->updateBurstTimeData(data);
+  if (zip_trigger_change_ui_ && !is_adding_)
+    zip_trigger_change_ui_->updateManualCmdData(data);
 }
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {

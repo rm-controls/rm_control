@@ -64,20 +64,6 @@ private:
   uint32_t symbol_;
 };
 
-class CoverFlashUi : public FlashUi
-{
-public:
-  explicit CoverFlashUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
-                        std::deque<Graph>* character_queue)
-    : FlashUi(rpc_value, base, "cover", graph_queue, character_queue){};
-  void updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data, const ros::Time& last_get_data_time) override;
-
-private:
-  void display(const ros::Time& time) override;
-
-  uint8_t cover_state_;
-};
-
 class SpinFlashUi : public FlashUi
 {
 public:

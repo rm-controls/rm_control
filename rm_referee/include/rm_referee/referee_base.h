@@ -106,6 +106,8 @@ public:
   TargetViewAngleTriggerChangeUi* target_view_angle_trigger_change_ui_{};
   CameraTriggerChangeUi* camera_trigger_change_ui_{};
   FrictionSpeedTriggerChangeUi* friction_speed_trigger_change_ui_{};
+  GyroTriggerChangeUi* gyro_trigger_change_ui_{};
+  ZipTriggerChangeUi* zip_trigger_change_ui_{};
 
   BulletTimeChangeUi* bullet_time_change_ui_{};
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
@@ -130,7 +132,6 @@ public:
 
   FixedUi* fixed_ui_{};
 
-  CoverFlashUi* cover_flash_ui_{};
   SpinFlashUi* spin_flash_ui_{};
   DeployFlashUi* deploy_flash_ui_{};
   HeroHitFlashUi* hero_hit_flash_ui_{};

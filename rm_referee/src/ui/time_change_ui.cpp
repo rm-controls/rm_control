@@ -208,16 +208,16 @@ void LaneLineTimeChangeGroupUi::updateConfig()
   {
     if (it.first == "lane_line_left")
     {
-      it.second->setStartX(screen_x_ / 2 - spacing_x_a);
+      it.second->setStartX(screen_x_ / 2 + x_offset_ - spacing_x_a);
       it.second->setStartY(screen_y_ / 2 - spacing_y_a);
-      it.second->setEndX(screen_x_ / 2 - spacing_x_b * surface_coefficient_);
+      it.second->setEndX(screen_x_ / 2 + x_offset_ - spacing_x_b * surface_coefficient_);
       it.second->setEndY(screen_y_ / 2 - spacing_y_b);
     }
     else if (it.first == "lane_line_right")
     {
-      it.second->setStartX(screen_x_ / 2 + spacing_x_a);
+      it.second->setStartX(screen_x_ / 2 + x_offset_ + spacing_x_a);
       it.second->setStartY(screen_y_ / 2 - spacing_y_a);
-      it.second->setEndX(screen_x_ / 2 + spacing_x_b * surface_coefficient_);
+      it.second->setEndX(screen_x_ / 2 + x_offset_ + spacing_x_b * surface_coefficient_);
       it.second->setEndY(screen_y_ / 2 - spacing_y_b);
     }
   }

@@ -1,0 +1,9 @@
+# Goal (Empty)
+---
+# Result
+bool success
+float64 coarse_align_inlier_fraction
+float64 fine_align_inlier_fraction
+---
+# Feedback
+float64 progress

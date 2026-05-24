@@ -3,7 +3,7 @@ time start_burst_time
 
 #standard
 uint8 shoot_frequency
-bool cover_state
+bool zip_state
 
 #hero
 bool gimbal_eject

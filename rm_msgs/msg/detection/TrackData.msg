@@ -10,4 +10,5 @@ float64 v_yaw
 float64 radius_1
 float64 radius_2
 float64 dz
+float64 za
 float64 accel
