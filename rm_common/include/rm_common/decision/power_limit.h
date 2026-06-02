@@ -90,16 +90,6 @@ public:
     TEST = 4,
   } Mode;
 
-  typedef enum
-  {
-    // Melee and Remote for hero, Burst and Health for standard
-    // Not used now.
-    Melee = 0,
-    Remote = 1,
-    Burst = 2,
-    Health = 3,
-  } RobotPerformanceSelect;
-
   void updateSafetyPower(int safety_power)
   {
     if (robot_type_ == "standard")
