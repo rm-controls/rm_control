@@ -306,11 +306,31 @@ public:
   explicit ChassisActiveSuspensionCommandSender(ros::NodeHandle& nh)
     : TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>(nh)
   {
+    nh.param("leg_feedforward_duration", leg_feedforward_duration_, 20.0);
+  }
+  void setLegSwitchTime(ros::Time leg_switch_time)
+  {
+    leg_switch_time_ = leg_switch_time;
+  }
+  int getLegMode()
+  {
+    return msg_.mode;
+  }
+  void sendCommand(const ros::Time& time) override
+  {
+    msg_.feedforward_countdown =
+        std::max(0, static_cast<int>(leg_feedforward_duration_ - (ros::Time::now() - leg_switch_time_).toSec()));
+    TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>::sendCommand(time);
   }
   void setZero() override
   {
     msg_.mode = 0;
+    msg_.feedforward_countdown = 0;
   }
+
+private:
+  double leg_feedforward_duration_{};
+  ros::Time leg_switch_time_{};
 };
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd>
 {
@@ -516,6 +536,7 @@ public:
   }
   void sendCommand(const ros::Time& time) override
   {
+    msg_.allow_deploy_fire = getDeployAllowFireFlag();
     msg_.wheel_speed = getWheelSpeedDes();
     msg_.wheels_speed_offset_front = getFrontWheelSpeedOffset();
     msg_.wheels_speed_offset_back = getBackWheelSpeedOffset();
@@ -591,6 +612,14 @@ public:
       }
     }
   }
+  void setDeployAllowFireFlag(bool flag)
+  {
+    allow_deploy_fire_ = flag;
+  }
+  bool getDeployAllowFireFlag()
+  {
+    return allow_deploy_fire_;
+  }
   double getFrontWheelSpeedOffset()
   {
     wheels_speed_offset_front_ = wheel_speed_offset_front_;
@@ -656,6 +685,7 @@ private:
   bool auto_wheel_speed_ = false;
   bool hero_flag_{};
   bool deploy_flag_ = false;
+  bool allow_deploy_fire_ = false;
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
   rm_msgs::ShootBeforehandCmd shoot_beforehand_cmd_;

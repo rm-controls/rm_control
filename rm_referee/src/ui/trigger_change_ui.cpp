@@ -259,6 +259,36 @@ void ZipTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::Con
 {
   zip_mode_ = data->zip_state;
   update();
+void HeroLegTriggerChangeUi::updateMode(uint8_t mode)
+{
+  leg_mode_ = mode;
+  update();
+}
+
+void HeroLegTriggerChangeUi::update()
+{
+  updateConfig(leg_mode_, false);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  updateTwiceForQueue(true);
+}
+
+void HeroLegTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode, bool sub_flag)
+{
+  std::string state = getHeroLegState(main_mode);
+  graph_->setContent(state);
+  graph_->setColor(rm_referee::GraphColor::YELLOW);
+}
+
+std::string HeroLegTriggerChangeUi::getHeroLegState(uint8_t mode)
+{
+  if (mode == rm_msgs::ChassisActiveSusCmd::DOWN)
+    return "down";
+  else if (mode == rm_msgs::ChassisActiveSusCmd::MID)
+    return "mid";
+  else if (mode == rm_msgs::ChassisActiveSusCmd::UP)
+    return "up";
+  else
+    return "error";
 }
 
 void ShooterTriggerChangeUi::update()
