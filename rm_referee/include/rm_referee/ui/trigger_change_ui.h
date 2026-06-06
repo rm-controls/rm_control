@@ -123,6 +123,7 @@ private:
   uint8_t zip_mode_{};
   int outline_width_{};
   int fill_width_{};
+
 class HeroLegTriggerChangeUi : public TriggerChangeUi
 {
 public:
