@@ -551,10 +551,10 @@ public:
   double getWheelSpeedDes()
   {
     setSpeedDesAndWheelSpeedDes();
+    if (deploy_flag_)
+      return deploy_wheel_speed_;
     if (hero_flag_)
     {
-      if (deploy_flag_)
-        return deploy_wheel_speed_;
       return wheel_speed_des_;
     }
     return wheel_speed_des_ + total_extra_wheel_speed_;
