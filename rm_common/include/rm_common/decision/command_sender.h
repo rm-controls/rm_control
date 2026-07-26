@@ -712,6 +712,29 @@ public:
   void setZero() override{};
 };
 
+class DeployShootPidCommandSender : public CommandSenderBase<std_msgs::Bool>
+{
+public:
+  explicit DeployShootPidCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Bool>(nh)
+  {
+  }
+
+  void setEnabled(bool flag)
+  {
+    msg_.data = flag;
+  }
+
+  bool getEnabled() const
+  {
+    return msg_.data;
+  }
+
+  void setZero() override
+  {
+    msg_.data = false;
+  }
+};
+
 class BalanceCommandSender : public CommandSenderBase<std_msgs::UInt8>
 {
 public:
