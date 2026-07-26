@@ -551,10 +551,10 @@ public:
   double getWheelSpeedDes()
   {
     setSpeedDesAndWheelSpeedDes();
+    if (deploy_flag_)
+      return deploy_wheel_speed_;
     if (hero_flag_)
     {
-      if (deploy_flag_)
-        return deploy_wheel_speed_;
       return wheel_speed_des_;
     }
     return wheel_speed_des_ + total_extra_wheel_speed_;
@@ -712,6 +712,29 @@ public:
   void setZero() override{};
 };
 
+class DeployShootPidCommandSender : public CommandSenderBase<std_msgs::Bool>
+{
+public:
+  explicit DeployShootPidCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Bool>(nh)
+  {
+  }
+
+  void setEnabled(bool flag)
+  {
+    msg_.data = flag;
+  }
+
+  bool getEnabled() const
+  {
+    return msg_.data;
+  }
+
+  void setZero() override
+  {
+    msg_.data = false;
+  }
+};
+
 class BalanceCommandSender : public CommandSenderBase<std_msgs::UInt8>
 {
 public:
@@ -805,7 +828,8 @@ class JointPositionBinaryCommandSender : public CommandSenderBase<std_msgs::Floa
 public:
   explicit JointPositionBinaryCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
   {
-    ROS_ASSERT(nh.getParam("on_pos", on_pos_) && nh.getParam("off_pos", off_pos_));
+    nh.getParam("on_pos", on_pos_);
+    nh.getParam("off_pos", off_pos_);
   }
   void on()
   {
@@ -835,7 +859,7 @@ public:
 
 private:
   bool state{};
-  double on_pos_{}, off_pos_{}, current_position_{}, change_position_{}, per_change_position_{ 0.05 };
+  double on_pos_{}, off_pos_{}, current_position_{}, change_position_{}, per_change_position_{ 0.03 };
 };
 
 class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
@@ -843,8 +867,9 @@ class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
 public:
   explicit CardCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
   {
-    ROS_ASSERT(nh.getParam("long_pos", long_pos_) && nh.getParam("short_pos", short_pos_) &&
-               nh.getParam("off_pos", off_pos_));
+    nh.getParam("long_pos", long_pos_);
+    nh.getParam("short_pos", short_pos_);
+    nh.getParam("off_pos", off_pos_);
   }
   void long_on()
   {
@@ -861,6 +886,12 @@ public:
     msg_.data = off_pos_;
     state = false;
   }
+  void changePosition(double scale)
+  {
+    current_position_ = msg_.data;
+    change_position_ = current_position_ + scale * per_change_position_;
+    msg_.data = change_position_;
+  }
   bool getState() const
   {
     return state;
@@ -873,7 +904,7 @@ public:
 
 private:
   bool state{};
-  double long_pos_{}, short_pos_{}, off_pos_{};
+  double long_pos_{}, short_pos_{}, off_pos_{}, current_position_{}, change_position_{}, per_change_position_{ 0.03 };
 };
 
 class JointJogCommandSender : public CommandSenderBase<std_msgs::Float64>
