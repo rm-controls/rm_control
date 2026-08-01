@@ -62,6 +62,8 @@ public:
       ROS_ERROR("Burst shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("minimal_shoot_frequency", minimal_shoot_frequency_))
       ROS_ERROR("Minimal shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("outpost_shoot_frequency", outpost_shoot_frequency_))
+      ROS_ERROR("Outpost shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("safe_shoot_frequency", safe_shoot_frequency_))
       ROS_ERROR("Safe shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("heat_coeff", heat_coeff_))
@@ -70,6 +72,8 @@ public:
       ROS_ERROR("Shooter type no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("local_heat_protect_threshold", heat_protect_threshold_))
       ROS_ERROR("Local heat protect threshold no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("buff_offset", buff_offset_))
+      ROS_ERROR("Buff offset no defined (namespace: %s)", nh.getNamespace().c_str());
     nh.param("use_local_heat", use_local_heat_, true);
     if (type_ == "ID1_42MM")
       bullet_heat_ = 100.;
@@ -79,6 +83,8 @@ public:
     shoot_state_sub_ =
         nh.subscribe<rm_msgs::LocalHeatState>("/local_heat_state/shooter_state", 50, &HeatLimit::heatCB, this);
     timer_ = nh.createTimer(ros::Duration(0.1), std::bind(&HeatLimit::timerCB, this));
+    fly_time_sub_ = nh.subscribe<std_msgs::Float64>("/controllers/gimbal_controller/bullet_solver/fly_time", 10,
+                                             &HeatLimit::flyTimeCB, this);
   }
 
   typedef enum
@@ -113,6 +119,7 @@ public:
     }
     local_heat_pub_data_.once_shoot_num = once_shoot_num_;
     local_heat_pub_data_.local_shooter_cooling_heat = local_shooter_cooling_heat_;
+    local_heat_pub_data_.desire_shoot_frequency = shoot_frequency_;
     local_heat_pub_.publish(local_heat_pub_data_);
   }
 
@@ -130,12 +137,14 @@ public:
     }
     else if (type_ == "ID2_17MM")
     {
-      shooter_cooling_heat_ = data.shooter_id_2_17_mm_cooling_heat;
+      // RoboMaster 2026 protocol only reports one 17mm barrel heat field.
+      shooter_cooling_heat_ = data.shooter_id_1_17_mm_cooling_heat;
     }
     else if (type_ == "ID1_42MM")
     {
       shooter_cooling_heat_ = data.shooter_id_1_42_mm_cooling_heat;
     }
+    referee_status_change_ = true;
   }
 
   void setRefereeStatus(bool status)
@@ -143,11 +152,16 @@ public:
     referee_is_online_ = status;
   }
 
-  double getShootFrequency() const
+  double getShootFrequency()
   {
     std::lock_guard<std::mutex> lock(heat_mutex_);
-    if (state_ == BURST)
-      return shoot_frequency_;
+    if (!referee_is_online_)
+      return 5.0;
+    if(referee_status_change_ && abs(local_shooter_cooling_heat_ - shooter_cooling_heat_) > 10)
+    {
+      local_shooter_cooling_heat_ = shooter_cooling_heat_;
+    }
+    referee_status_change_ = false;
     double shooter_cooling_heat =
         (use_local_heat_ || !referee_is_online_) ? local_shooter_cooling_heat_ : shooter_cooling_heat_;
     if (shooter_cooling_limit_ - shooter_cooling_heat < bullet_heat_)
@@ -189,9 +203,14 @@ public:
     state_ = mode;
   }
 
-  bool getShootFrequencyMode() const
+  int getShootFrequencyMode() const
   {
     return state_;
+  }
+
+  void flyTimeCB(const std_msgs::Float64ConstPtr& msg)
+  {
+    buff_shoot_frequency_ = 1/(msg->data + buff_offset);
   }
 
 private:
@@ -214,7 +233,8 @@ private:
     }
     else if (state_ == HeatLimit::MINIMAL)
     {
-      shoot_frequency_ = minimal_shoot_frequency_;
+      shoot_frequency_ = buff_shoot_frequency_;
+      //shoot_frequency_ = minimal_shoot_frequency_;
       burst_flag_ = false;
     }
     else
@@ -228,15 +248,18 @@ private:
   std::string type_{};
   bool burst_flag_ = false;
   double bullet_heat_, safe_shoot_frequency_{}, heat_coeff_{}, shoot_frequency_{}, low_shoot_frequency_{},
-      high_shoot_frequency_{}, burst_shoot_frequency_{}, minimal_shoot_frequency_{};
+      high_shoot_frequency_{}, burst_shoot_frequency_{}, minimal_shoot_frequency_{}, outpost_shoot_frequency_{};
 
   bool referee_is_online_, use_local_heat_, last_shoot_state_{};
   int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_;
   double local_shooter_cooling_heat_{}, heat_protect_threshold_{};
+  double buff_shoot_frequency_{},buff_offset_{0.0};
   int once_shoot_num_{};
+  bool referee_status_change_{};
 
   ros::Publisher local_heat_pub_;
   ros::Subscriber shoot_state_sub_;
+  ros::Subscriber fly_time_sub_;
   ros::Timer timer_;
 
   rm_msgs::LocalHeatData local_heat_pub_data_;
