@@ -551,10 +551,10 @@ public:
   double getWheelSpeedDes()
   {
     setSpeedDesAndWheelSpeedDes();
+    if (deploy_flag_)
+      return deploy_wheel_speed_;
     if (hero_flag_)
     {
-      if (deploy_flag_)
-        return deploy_wheel_speed_;
       return wheel_speed_des_;
     }
     return wheel_speed_des_ + total_extra_wheel_speed_;
@@ -805,7 +805,9 @@ class JointPositionBinaryCommandSender : public CommandSenderBase<std_msgs::Floa
 public:
   explicit JointPositionBinaryCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
   {
-    ROS_ASSERT(nh.getParam("on_pos", on_pos_) && nh.getParam("off_pos", off_pos_));
+    // ROS_ASSERT(nh.getParam("on_pos", on_pos_) && nh.getParam("off_pos", off_pos_));
+    nh.getParam("on_pos", on_pos_);
+    nh.getParam("off_pos", off_pos_);
   }
   void on()
   {
@@ -821,6 +823,12 @@ public:
   {
     current_position_ = msg_.data;
     change_position_ = current_position_ + scale * per_change_position_;
+    const double min_position = on_pos_ < off_pos_ ? on_pos_ : off_pos_;
+    const double max_position = on_pos_ > off_pos_ ? on_pos_ : off_pos_;
+    if (change_position_ < min_position)
+      change_position_ = min_position;
+    else if (change_position_ > max_position)
+      change_position_ = max_position;
     msg_.data = change_position_;
   }
   bool getState() const
@@ -835,7 +843,7 @@ public:
 
 private:
   bool state{};
-  double on_pos_{}, off_pos_{}, current_position_{}, change_position_{}, per_change_position_{ 0.05 };
+  double on_pos_{}, off_pos_{}, current_position_{}, change_position_{}, per_change_position_{ 0.03 };
 };
 
 class CardCommandSender : public CommandSenderBase<std_msgs::Float64>

@@ -37,6 +37,8 @@
 
 #pragma once
 
+#include <array>
+#include <vector>
 #include <ros/ros.h>
 #include <unistd.h>
 #include <serial/serial.h>

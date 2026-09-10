@@ -238,16 +238,16 @@ void LaneLineTimeChangeGroupUi::updateConfig()
   {
     if (it.first == "lane_line_left")
     {
-      it.second->setStartX(screen_x_ / 2 - spacing_x_a);
+      it.second->setStartX(screen_x_ / 2 + x_offset_ - spacing_x_a);
       it.second->setStartY(screen_y_ / 2 - spacing_y_a);
-      it.second->setEndX(screen_x_ / 2 - spacing_x_b * surface_coefficient_);
+      it.second->setEndX(screen_x_ / 2 + x_offset_ - spacing_x_b * surface_coefficient_);
       it.second->setEndY(screen_y_ / 2 - spacing_y_b);
     }
     else if (it.first == "lane_line_right")
     {
-      it.second->setStartX(screen_x_ / 2 + spacing_x_a);
+      it.second->setStartX(screen_x_ / 2 + x_offset_ + spacing_x_a);
       it.second->setStartY(screen_y_ / 2 - spacing_y_a);
-      it.second->setEndX(screen_x_ / 2 + spacing_x_b * surface_coefficient_);
+      it.second->setEndX(screen_x_ / 2 + x_offset_ + spacing_x_b * surface_coefficient_);
       it.second->setEndY(screen_y_ / 2 - spacing_y_b);
     }
   }
@@ -598,6 +598,19 @@ void TargetDistanceTimeChangeUi::updateTargetDistanceData(const rm_msgs::TrackDa
 void TargetDistanceTimeChangeUi::updateConfig()
 {
   graph_->setFloatNum(target_distance_);
+}
+void EnemyColorTimeChangeUi::updateEnemyColorData(const std_msgs::Bool::ConstPtr& data)
+{
+  enemy_color_ = data->data;
+  updateForQueue();
+}
+void EnemyColorTimeChangeUi::updateConfig()
+{
+  char temp_content[32];
+  snprintf(temp_content, sizeof(temp_content), "%s", enemy_color_ ? "BLUE" : "RED");
+  std::string enemy_color_content(temp_content);
+  graph_->setContent(enemy_color_content);
+  graph_->setColor(enemy_color_ ? rm_referee::GraphColor::CYAN : rm_referee::GraphColor::PINK);
 }
 
 void DeployDistanceTimeChangeUi::updateDeployDistanceData(const geometry_msgs::PointConstPtr& data)

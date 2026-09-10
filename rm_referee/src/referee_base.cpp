@@ -38,6 +38,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::legged_chassis_status_sub_ = nh.subscribe<rm_msgs::LeggedChassisStatus>(
       legged_chassis_status_topic, 10, &RefereeBase::leggedChassisStatusCallback, this);
   RefereeBase::track_sub_ = nh.subscribe<rm_msgs::TrackData>("/track", 10, &RefereeBase::trackCallBack, this);
+  RefereeBase::enemy_color_sub_ =
+      nh.subscribe<std_msgs::Bool>("/sp_vision/enemy_color", 10, &RefereeBase::enemycolorCallBack, this);
   RefereeBase::deploy_distance_sub_ =
       nh.subscribe<geometry_msgs::Point>("/base2target", 10, &RefereeBase::deployDistanceCallBack, this);
   RefereeBase::map_sentry_sub_ =
@@ -95,6 +97,10 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "friction_speed")
         friction_speed_trigger_change_ui_ =
             new FrictionSpeedTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "gyro")
+        gyro_trigger_change_ui_ = new GyroTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "zip")
+        zip_trigger_change_ui_ = new ZipTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "gripper")
         gripper_state_trigger_change_ui_ =
             new StringTriggerChangeUi(rpc_value[i], base_, "gripper", &graph_queue_, &character_queue_);
@@ -165,6 +171,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "drone_towards")
         drone_towards_time_change_group_ui_ =
             new DroneTowardsTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "enemy_color")
+        enemy_color_time_change_ui_ = new EnemyColorTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "friend_bullets")
         friend_bullets_time_change_group_ui_ =
             new FriendBulletsTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
@@ -178,8 +186,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     ui_nh.getParam("flash", rpc_value);
     for (int i = 0; i < rpc_value.size(); i++)
     {
-      if (rpc_value[i]["name"] == "cover")
-        cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      // if (rpc_value[i]["name"] == "cover")
+      //   cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "spin")
         spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "capacity_run_out")
@@ -291,6 +299,10 @@ void RefereeBase::addUi()
     servo_mode_trigger_change_ui_->addForQueue();
   if (friction_speed_trigger_change_ui_)
     friction_speed_trigger_change_ui_->addForQueue();
+  if (gyro_trigger_change_ui_)
+    gyro_trigger_change_ui_->addForQueue();
+  if (zip_trigger_change_ui_)
+    zip_trigger_change_ui_->addForQueue();
   if (bullet_time_change_ui_)
   {
     bullet_time_change_ui_->reset();
@@ -298,6 +310,8 @@ void RefereeBase::addUi()
   }
   if (target_distance_time_change_ui_)
     target_distance_time_change_ui_->addForQueue();
+  if (enemy_color_time_change_ui_)
+    enemy_color_time_change_ui_->addForQueue();
   if (deploy_distance_time_change_ui_)
     deploy_distance_time_change_ui_->addForQueue();
   if (hero_leg_time_change_ui_)
@@ -497,10 +511,17 @@ void RefereeBase::heroLegDataCallback(const rm_msgs::ChassisActiveSusCmd::ConstP
   if (hero_leg_time_change_ui_ && !is_adding_)
     hero_leg_time_change_ui_->updateFeedforwardCountdown(data->feedforward_countdown);
 }
+void RefereeBase::enemycolorCallBack(const std_msgs::BoolConstPtr& data)
+{
+  if (enemy_color_time_change_ui_ && !is_adding_)
+    enemy_color_time_change_ui_->updateEnemyColorData(data);
+}
 void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
 {
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateChassisCmdData(data);
+  if (gyro_trigger_change_ui_ && !is_adding_)
+    gyro_trigger_change_ui_->updateChassisCmdData(data);
   if (spin_flash_ui_ && !is_adding_)
     spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
   if (deploy_flash_ui_ && !is_adding_)
@@ -549,10 +570,8 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
     gimbal_trigger_change_ui_->updateManualCmdData(data);
   if (target_trigger_change_ui_ && !is_adding_)
     target_trigger_change_ui_->updateManualCmdData(data);
-  if (cover_flash_ui_ && !is_adding_)
-    cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
-  // if (burst_flash_ui_ && !is_adding_)
-  //   burst_flash_ui_->updateBurstTimeData(data);
+  if (zip_trigger_change_ui_ && !is_adding_)
+    zip_trigger_change_ui_->updateManualCmdData(data);
 }
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {

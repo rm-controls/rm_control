@@ -36,6 +36,7 @@
 //
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <vector>
 #include <ros/ros.h>

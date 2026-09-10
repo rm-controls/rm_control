@@ -1,0 +1,14 @@
+std_msgs/Header header
+bool valid
+uint8 target_id
+uint8 shoot_cmd
+float64 yaw
+float64 pitch
+float64 yaw_rate
+float64 pitch_rate
+float64 yaw_acc
+float64 pitch_acc
+float64 target_yaw
+float64 target_pitch
+float64 error
+geometry_msgs/Point selected_armor_pos

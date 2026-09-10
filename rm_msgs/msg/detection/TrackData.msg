@@ -1,5 +1,6 @@
 std_msgs/Header header
 uint8 id
+uint8 outpost_id
 bool tracking
 uint8 armors_num
 geometry_msgs/Point position
@@ -10,4 +11,6 @@ float64 v_yaw
 float64 radius_1
 float64 radius_2
 float64 dz
+float64 za
+float64 next_armor_z_diff
 float64 accel

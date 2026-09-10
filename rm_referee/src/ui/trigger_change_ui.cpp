@@ -229,6 +229,38 @@ void ChassisTriggerChangeUi::updateCapacityResetStatus()
   displayInCapacity();
 }
 
+void GyroTriggerChangeUi::update()
+{
+  if (chassis_mode_ == rm_msgs::ChassisCmd::RAW)
+    graph_->setWidth(fill_width_);
+  else
+    graph_->setWidth(outline_width_);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  updateForQueue(false);
+}
+
+void GyroTriggerChangeUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr& data)
+{
+  chassis_mode_ = data->mode;
+  update();
+}
+
+void ZipTriggerChangeUi::update()
+{
+  if (zip_mode_)
+    graph_->setWidth(fill_width_);
+  else
+    graph_->setWidth(outline_width_);
+  graph_->setOperation(rm_referee::GraphOperation::UPDATE);
+  updateForQueue(false);
+}
+
+void ZipTriggerChangeUi::updateManualCmdData(const rm_msgs::ManualToReferee::ConstPtr data)
+{
+  zip_mode_ = data->zip_state;
+  update();
+}
+
 void HeroLegTriggerChangeUi::updateMode(uint8_t mode)
 {
   leg_mode_ = mode;
@@ -359,11 +391,11 @@ void TargetTriggerChangeUi::updateConfig(uint8_t main_mode, bool main_flag, uint
 {
   graph_->setContent(getTargetState(main_mode, sub_mode));
   if (main_flag)
-    graph_->setColor(rm_referee::GraphColor::ORANGE);
+    graph_->setColor(rm_referee::GraphColor::WHITE);
   else if (sub_flag)
-    graph_->setColor(rm_referee::GraphColor::PINK);
+    graph_->setColor(rm_referee::GraphColor::WHITE);
   else
-    graph_->setColor(rm_referee::GraphColor::CYAN);
+    graph_->setColor(rm_referee::GraphColor::WHITE);
 }
 
 std::string TargetTriggerChangeUi::getTargetState(uint8_t target, uint8_t armor_target)

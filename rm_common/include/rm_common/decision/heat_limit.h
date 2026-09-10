@@ -62,6 +62,8 @@ public:
       ROS_ERROR("Burst shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("minimal_shoot_frequency", minimal_shoot_frequency_))
       ROS_ERROR("Minimal shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("outpost_shoot_frequency", outpost_shoot_frequency_))
+      ROS_ERROR("Outpost shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("safe_shoot_frequency", safe_shoot_frequency_))
       ROS_ERROR("Safe shoot frequency no defined (namespace: %s)", nh.getNamespace().c_str());
     if (!nh.getParam("heat_coeff", heat_coeff_))
@@ -113,6 +115,7 @@ public:
     }
     local_heat_pub_data_.once_shoot_num = once_shoot_num_;
     local_heat_pub_data_.local_shooter_cooling_heat = local_shooter_cooling_heat_;
+    local_heat_pub_data_.desire_shoot_frequency = shoot_frequency_;
     local_heat_pub_.publish(local_heat_pub_data_);
   }
 
@@ -137,6 +140,7 @@ public:
     {
       shooter_cooling_heat_ = data.shooter_id_1_42_mm_cooling_heat;
     }
+    referee_status_change_ = true;
   }
 
   void setRefereeStatus(bool status)
@@ -144,13 +148,16 @@ public:
     referee_is_online_ = status;
   }
 
-  double getShootFrequency() const
+  double getShootFrequency()
   {
     std::lock_guard<std::mutex> lock(heat_mutex_);
     if (!referee_is_online_)
       return 5.0;
-    if (state_ == BURST)
-      return shoot_frequency_;
+    if (referee_status_change_ && abs(local_shooter_cooling_heat_ - shooter_cooling_heat_) > 10)
+    {
+      local_shooter_cooling_heat_ = shooter_cooling_heat_;
+    }
+    referee_status_change_ = false;
     double shooter_cooling_heat =
         (use_local_heat_ || !referee_is_online_) ? local_shooter_cooling_heat_ : shooter_cooling_heat_;
     if (shooter_cooling_limit_ - shooter_cooling_heat < bullet_heat_)
@@ -192,7 +199,7 @@ public:
     state_ = mode;
   }
 
-  bool getShootFrequencyMode() const
+  int getShootFrequencyMode() const
   {
     return state_;
   }
@@ -231,12 +238,13 @@ private:
   std::string type_{};
   bool burst_flag_ = false;
   double bullet_heat_, safe_shoot_frequency_{}, heat_coeff_{}, shoot_frequency_{}, low_shoot_frequency_{},
-      high_shoot_frequency_{}, burst_shoot_frequency_{}, minimal_shoot_frequency_{};
+      high_shoot_frequency_{}, burst_shoot_frequency_{}, minimal_shoot_frequency_{}, outpost_shoot_frequency_{};
 
   bool referee_is_online_, use_local_heat_, last_shoot_state_{};
   int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_;
   double local_shooter_cooling_heat_{}, heat_protect_threshold_{};
   int once_shoot_num_{};
+  bool referee_status_change_{};
 
   ros::Publisher local_heat_pub_;
   ros::Subscriber shoot_state_sub_;

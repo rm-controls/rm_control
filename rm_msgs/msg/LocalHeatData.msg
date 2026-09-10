@@ -1,2 +1,3 @@
 int64 once_shoot_num
 float64 local_shooter_cooling_heat
+float64 desire_shoot_frequency
