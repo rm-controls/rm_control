@@ -926,6 +926,10 @@ public:
   explicit JointPointCommandSender(ros::NodeHandle& nh, const sensor_msgs::JointState& joint_state)
     : CommandSenderBase<std_msgs::Float64>(nh), joint_state_(joint_state)
   {
+    if (!nh.getParam("joint", joint_))
+    {
+      ROS_ERROR("JointPointCommandSender failed to get 'joint' param under namespace: %s", nh.getNamespace().c_str());
+    }
     ROS_ASSERT(nh.getParam("joint", joint_));
   }
   void setPoint(double point)
