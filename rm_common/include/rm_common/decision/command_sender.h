@@ -805,7 +805,10 @@ class JointPositionBinaryCommandSender : public CommandSenderBase<std_msgs::Floa
 public:
   explicit JointPositionBinaryCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
   {
-    ROS_ASSERT(nh.getParam("on_pos", on_pos_) && nh.getParam("off_pos", off_pos_));
+    if (!nh.getParam("on_pos", on_pos_))
+      ROS_ERROR("on_pos no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("off_pos", off_pos_))
+      ROS_ERROR("off_pos no defined (namespace: %s)", nh.getNamespace().c_str());
   }
   void on()
   {
@@ -843,8 +846,12 @@ class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
 public:
   explicit CardCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
   {
-    ROS_ASSERT(nh.getParam("long_pos", long_pos_) && nh.getParam("short_pos", short_pos_) &&
-               nh.getParam("off_pos", off_pos_));
+    if (!nh.getParam("long_pos", long_pos_))
+      ROS_ERROR("long_pos no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("short_pos", short_pos_))
+      ROS_ERROR("short_pos no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("off_pos", off_pos_))
+      ROS_ERROR("off_pos no defined (namespace: %s)", nh.getNamespace().c_str());
   }
   void long_on()
   {
@@ -882,8 +889,10 @@ public:
   explicit JointJogCommandSender(ros::NodeHandle& nh, const sensor_msgs::JointState& joint_state)
     : CommandSenderBase<std_msgs::Float64>(nh), joint_state_(joint_state)
   {
-    ROS_ASSERT(nh.getParam("joint", joint_));
-    ROS_ASSERT(nh.getParam("step", step_));
+    if (!nh.getParam("joint", joint_))
+      ROS_ERROR("joint no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("step", step_))
+      ROS_ERROR("step no defined (namespace: %s)", nh.getNamespace().c_str());
   }
   void reset()
   {
@@ -927,10 +936,7 @@ public:
     : CommandSenderBase<std_msgs::Float64>(nh), joint_state_(joint_state)
   {
     if (!nh.getParam("joint", joint_))
-    {
       ROS_ERROR("JointPointCommandSender failed to get 'joint' param under namespace: %s", nh.getNamespace().c_str());
-    }
-    ROS_ASSERT(nh.getParam("joint", joint_));
   }
   void setPoint(double point)
   {
@@ -963,7 +969,10 @@ class CameraSwitchCommandSender : public CommandSenderBase<std_msgs::String>
 public:
   explicit CameraSwitchCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::String>(nh)
   {
-    ROS_ASSERT(nh.getParam("camera_left_name", camera1_name_) && nh.getParam("camera_right_name", camera2_name_));
+    if (!nh.getParam("camera_left_name", camera1_name_))
+      ROS_ERROR("camera_left_name no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("camera_right_name", camera2_name_))
+      ROS_ERROR("camera_right_name no defined (namespace: %s)", nh.getNamespace().c_str());
     msg_.data = camera2_name_;
   }
   void switchCameraLeft()
