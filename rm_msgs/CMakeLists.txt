@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
         FILES
         ActuatorState.msg
-	AssemblyErrorData.msg
+        AssemblyErrorData.msg
         BalanceState.msg
         BulletSolverData.msg
         BusState.msg
