@@ -46,6 +46,9 @@
 #include <controller_manager_msgs/SwitchController.h>
 #include <control_msgs/QueryCalibrationState.h>
 #include <rm_msgs/StatusChange.h>
+#include <std_srvs/Empty.h>
+#include <std_srvs/SetBool.h>
+#include <std_srvs/Trigger.h>
 
 namespace rm_common
 {
@@ -132,7 +135,35 @@ protected:
   std::mutex mutex_;
   int fail_count_, fail_limit_;
 };
+class ColorChangeServiceCaller : public ServiceCallerBase<std_srvs::SetBool>
+{
+public:
+  explicit ColorChangeServiceCaller(ros::NodeHandle& nh)
+    : ServiceCallerBase<std_srvs::SetBool>(nh, "/superpower_track_vision/change_color")
+  {
+    service_.request.data = false;
+    callService();
+  }
+  void changeColor()
+  {
+    service_.request.data = !service_.request.data;
+    callService();
+  }
+};
 
+class TrackerResetServiceCaller : public ServiceCallerBase<std_srvs::Trigger>
+{
+public:
+  explicit TrackerResetServiceCaller(ros::NodeHandle& nh)
+    : ServiceCallerBase<std_srvs::Trigger>(nh, "/superpower_track/reset")
+  {
+    callService();
+  }
+  void reset()
+  {
+    callService();
+  }
+};
 class SwitchControllersServiceCaller : public ServiceCallerBase<controller_manager_msgs::SwitchController>
 {
 public:
@@ -185,7 +216,7 @@ class SwitchDetectionCaller : public ServiceCallerBase<rm_msgs::StatusChange>
 {
 public:
   explicit SwitchDetectionCaller(ros::NodeHandle& nh)
-    : ServiceCallerBase<rm_msgs::StatusChange>(nh, "/detection_nodelet/status_switch")
+    : ServiceCallerBase<rm_msgs::StatusChange>(nh, "/Processor/status_change")
   {
     service_.request.target = rm_msgs::StatusChangeRequest::ARMOR;
     service_.request.exposure = rm_msgs::StatusChangeRequest::EXPOSURE_LEVEL_0;

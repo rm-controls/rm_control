@@ -78,7 +78,37 @@ void CapacitorTimeChangeUi::updateRemainCharge(const double remain_charge, const
   remain_charge_ = remain_charge;
   updateForQueue();
 }
+void RelocalizeProgressTimeChangeUi::add()
+{
+  graph_->setOperation(rm_referee::GraphOperation::ADD);
+  UiBase::display(false);
+}
 
+void RelocalizeProgressTimeChangeUi::updateConfig()
+{
+  if (relocalize_progress_ >= 0.)
+  {
+    graph_->setStartX(610);
+    graph_->setStartY(150);
+    graph_->setEndX(610 + 600 * relocalize_progress_ / 100.0);
+    graph_->setEndY(150);
+
+    if (relocalize_progress_ >= 70.)
+      graph_->setColor(rm_referee::GraphColor::GREEN);
+    else if (relocalize_progress_ >= 30.)
+      graph_->setColor(rm_referee::GraphColor::ORANGE);
+    else
+      graph_->setColor(rm_referee::GraphColor::PINK);
+  }
+  else
+    return;
+}
+
+void RelocalizeProgressTimeChangeUi::updateRelocalizeProgress(const double data, const ros::Time& time)
+{
+  relocalize_progress_ = data;
+  updateForQueue();
+}
 void EffortTimeChangeUi::updateConfig()
 {
   char data_str[30] = { ' ' };
@@ -208,16 +238,16 @@ void LaneLineTimeChangeGroupUi::updateConfig()
   {
     if (it.first == "lane_line_left")
     {
-      it.second->setStartX(screen_x_ / 2 - spacing_x_a);
+      it.second->setStartX(screen_x_ / 2 + x_offset_ - spacing_x_a);
       it.second->setStartY(screen_y_ / 2 - spacing_y_a);
-      it.second->setEndX(screen_x_ / 2 - spacing_x_b * surface_coefficient_);
+      it.second->setEndX(screen_x_ / 2 + x_offset_ - spacing_x_b * surface_coefficient_);
       it.second->setEndY(screen_y_ / 2 - spacing_y_b);
     }
     else if (it.first == "lane_line_right")
     {
-      it.second->setStartX(screen_x_ / 2 + spacing_x_a);
+      it.second->setStartX(screen_x_ / 2 + x_offset_ + spacing_x_a);
       it.second->setStartY(screen_y_ / 2 - spacing_y_a);
-      it.second->setEndX(screen_x_ / 2 + spacing_x_b * surface_coefficient_);
+      it.second->setEndX(screen_x_ / 2 + x_offset_ + spacing_x_b * surface_coefficient_);
       it.second->setEndY(screen_y_ / 2 - spacing_y_b);
     }
   }
@@ -426,7 +456,46 @@ void TargetDistanceTimeChangeUi::updateConfig()
 {
   graph_->setFloatNum(target_distance_);
 }
+void EnemyColorTimeChangeUi::updateEnemyColorData(const std_msgs::Bool::ConstPtr& data)
+{
+  enemy_color_ = data->data;
+  updateForQueue();
+}
+void EnemyColorTimeChangeUi::updateConfig()
+{
+  char temp_content[32];
+  snprintf(temp_content, sizeof(temp_content), "%s", enemy_color_ ? "BLUE" : "RED" );
+  std::string enemy_color_content(temp_content);
+  graph_->setContent(enemy_color_content);
+  graph_->setColor(enemy_color_ ? rm_referee::GraphColor::CYAN : rm_referee::GraphColor::PINK);
+}
 
+void DeployDistanceTimeChangeUi::updateDeployDistanceData(const geometry_msgs::PointConstPtr& data)
+{
+  deploy_distance_ = sqrt(data->x * data->x + data->y * data->y);
+  updateForQueue();
+}
+
+void DeployDistanceTimeChangeUi::updateConfig()
+{
+  char buffer[32];
+  snprintf(buffer, sizeof(buffer), "%.3f", deploy_distance_);
+  std::string deploy_dis(buffer);
+  graph_->setContent(deploy_dis);
+  graph_->setColor(rm_referee::GraphColor::PINK);
+}
+
+void HeroLegTimeChangeUi::updateFeedforwardCountdown(int feedforward_countdown)
+{
+  feedforward_countdown_ = feedforward_countdown;
+  updateForQueue();
+}
+
+void HeroLegTimeChangeUi::updateConfig()
+{
+  graph_->setIntNum(feedforward_countdown_);
+  graph_->setColor(rm_referee::GraphColor::CYAN);
+}
 void DroneTowardsTimeChangeGroupUi::updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data)
 {
   angle_ = yawFromQuat(data->pose.orientation) - M_PI / 2;
@@ -503,23 +572,7 @@ void FriendBulletsTimeChangeGroupUi::updateConfig()
 
 void TargetHpTimeChangeUi::setEnemyHp(const rm_msgs::GameRobotHp& data)
 {
-  bool is_enemy_red = base_.robot_id_ > 100;
-  if (is_enemy_red)
-  {
-    enemy_robot_hp_[1] = data.red_1_robot_hp;
-    enemy_robot_hp_[2] = data.red_2_robot_hp;
-    enemy_robot_hp_[3] = data.red_3_robot_hp;
-    enemy_robot_hp_[4] = data.red_4_robot_hp;
-    enemy_robot_hp_[7] = data.red_7_robot_hp;
-  }
-  else
-  {
-    enemy_robot_hp_[1] = data.blue_1_robot_hp;
-    enemy_robot_hp_[2] = data.blue_2_robot_hp;
-    enemy_robot_hp_[3] = data.blue_3_robot_hp;
-    enemy_robot_hp_[4] = data.blue_4_robot_hp;
-    enemy_robot_hp_[7] = data.blue_7_robot_hp;
-  }
+  (void)data;
 }
 
 void TargetHpTimeChangeUi::updateTrackID(int id)
@@ -530,8 +583,7 @@ void TargetHpTimeChangeUi::updateTrackID(int id)
 
 void TargetHpTimeChangeUi::updateTargeHptData()
 {
-  auto it = enemy_robot_hp_.find(target_id_);
-  target_hp_ = it == enemy_robot_hp_.end() ? 0 : it->second;
+  target_hp_ = 0;
   updateForQueue();
 }
 

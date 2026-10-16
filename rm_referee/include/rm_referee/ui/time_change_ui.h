@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include <std_msgs/Bool.h>
 #include "rm_referee/ui/ui_base.h"
 
 namespace rm_referee
@@ -51,6 +51,22 @@ public:
 private:
   void updateConfig() override;
   double remain_charge_;
+};
+
+class RelocalizeProgressTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit RelocalizeProgressTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                          std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "relocalize", graph_queue, character_queue)
+  {
+  }
+  void add() override;
+  void updateRelocalizeProgress(const double data, const ros::Time& time);
+
+private:
+  void updateConfig() override;
+  double relocalize_progress_;
 };
 
 class EffortTimeChangeUi : public TimeChangeUi
@@ -143,6 +159,8 @@ public:
       robot_height_ = data["height"];
       camera_range_ = data["camera_range"];
       surface_coefficient_ = data["surface_coefficient"];
+      if (data.hasMember("x_offset"))
+        x_offset_ = data["x_offset"];
     }
     else
       ROS_WARN("LaneLineTimeChangeGroupUi config 's member 'data' not defined.");
@@ -167,6 +185,7 @@ public:
 protected:
   std::string reference_frame_;
   double robot_radius_, robot_height_, camera_range_, surface_coefficient_ = 0.5;
+  double x_offset_ = 0.0;
   double pitch_angle_ = 0., screen_x_ = 1920, screen_y_ = 1080;
   double end_point_a_angle_, end_point_b_angle_;
 
@@ -315,7 +334,45 @@ private:
   void updateConfig() override;
   double target_distance_;
 };
+class EnemyColorTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit EnemyColorTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                  std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "enemy_color", graph_queue, character_queue){};
+  void updateEnemyColorData(const std_msgs::Bool::ConstPtr& data);
 
+private:
+  void updateConfig() override;
+  int enemy_color_{};
+};
+class DeployDistanceTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit DeployDistanceTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                      std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "deploy_distance", graph_queue, character_queue){};
+  void updateDeployDistanceData(const geometry_msgs::PointConstPtr& data);
+
+private:
+  void updateConfig() override;
+  double deploy_distance_{};
+};
+
+class HeroLegTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit HeroLegTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                               std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "hero_leg_feedforward_countdown", graph_queue, character_queue)
+  {
+  }
+  void updateFeedforwardCountdown(int feedforward_countdown);
+
+private:
+  void updateConfig() override;
+  int feedforward_countdown_{};
+};
 class DroneTowardsTimeChangeGroupUi : public TimeChangeGroupUi
 {
 public:
