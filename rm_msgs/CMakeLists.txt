@@ -23,7 +23,6 @@ add_message_files(
         ShootCmd.msg
         ShootState.msg
         ShootBeforehandCmd.msg
-        GimbalAimCmd.msg
         GimbalCmd.msg
         GimbalDesError.msg
         GimbalPosState.msg

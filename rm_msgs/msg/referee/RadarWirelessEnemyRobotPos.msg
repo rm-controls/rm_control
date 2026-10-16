@@ -1,0 +1,14 @@
+uint16 hero_position_x
+uint16 hero_position_y
+uint16 engineer_position_x
+uint16 engineer_position_y
+uint16 infantry_3_position_x
+uint16 infantry_3_position_y
+uint16 infantry_4_position_x
+uint16 infantry_4_position_y
+uint16 aerial_position_x
+uint16 aerial_position_y
+uint16 sentry_position_x
+uint16 sentry_position_y
+
+time stamp
