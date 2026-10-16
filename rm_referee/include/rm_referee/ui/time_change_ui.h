@@ -355,256 +355,256 @@ public:
     : TimeChangeUi(rpc_value, base, "deploy_distance", graph_queue, character_queue){};
   void updateDeployDistanceData(const geometry_msgs::PointConstPtr& data);
 
-class DeployDistanceTimeChangeUi : public TimeChangeUi
-{
-public:
-  explicit DeployDistanceTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
-                                      std::deque<Graph>* character_queue)
-    : TimeChangeUi(rpc_value, base, "deploy_distance", graph_queue, character_queue){};
-  void updateDeployDistanceData(const geometry_msgs::PointConstPtr& data);
-
-private:
-  void updateConfig() override;
-  double deploy_distance_{};
-};
-
-class HeroLegTimeChangeUi : public TimeChangeUi
-{
-public:
-  explicit HeroLegTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
-                               std::deque<Graph>* character_queue)
-    : TimeChangeUi(rpc_value, base, "hero_leg_feedforward_countdown", graph_queue, character_queue)
+  class DeployDistanceTimeChangeUi : public TimeChangeUi
   {
-  }
-  void updateFeedforwardCountdown(int feedforward_countdown);
+  public:
+    explicit DeployDistanceTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                        std::deque<Graph>* character_queue)
+      : TimeChangeUi(rpc_value, base, "deploy_distance", graph_queue, character_queue){};
+    void updateDeployDistanceData(const geometry_msgs::PointConstPtr& data);
 
-private:
-  void updateConfig() override;
-  int feedforward_countdown_{};
-};
-class DroneTowardsTimeChangeGroupUi : public TimeChangeGroupUi
-{
-public:
-  explicit DroneTowardsTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
-                                         std::deque<Graph>* character_queue)
-    : TimeChangeGroupUi(rpc_value, base, "drone_towards", graph_queue, character_queue)
-  {
-    if (rpc_value.hasMember("data"))
-    {
-      XmlRpc::XmlRpcValue& data = rpc_value["data"];
-      ori_x_ = static_cast<int>(data["ori_x"]);
-      ori_y_ = static_cast<int>(data["ori_y"]);
-    }
-    else
-      ROS_WARN("DroneTowardsTimeChangeGroupUi config 's member 'data' not defined.");
-
-    graph_vector_.insert(
-        std::pair<std::string, Graph*>(graph_name_ + "_mid", new Graph(rpc_value["config"], base_, id_++)));
-    graph_vector_.insert(
-        std::pair<std::string, Graph*>(graph_name_ + "_left", new Graph(rpc_value["config"], base_, id_++)));
-    graph_vector_.insert(
-        std::pair<std::string, Graph*>(graph_name_ + "_right", new Graph(rpc_value["config"], base_, id_++)));
+  private:
+    void updateConfig() override;
+    double deploy_distance_{};
   };
-  void updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data);
 
-private:
-  void updateConfig() override;
-  int ori_x_, ori_y_;
-  double angle_;
-  int mid_line_x1_, mid_line_y1_, mid_line_x2_, mid_line_y2_, left_line_x2_, left_line_y2_, right_line_x2_,
-      right_line_y2_;
-};
-
-class FriendBulletsTimeChangeGroupUi : public TimeChangeGroupUi
-{
-public:
-  explicit FriendBulletsTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
-                                          std::deque<Graph>* character_queue)
-    : TimeChangeGroupUi(rpc_value, base, "friend_bullets", graph_queue, character_queue)
+  class HeroLegTimeChangeUi : public TimeChangeUi
   {
-    graph_vector_.insert(std::pair<std::string, Graph*>("hero", new Graph(rpc_value["config"], base_, id_++)));
-    graph_vector_.insert(std::pair<std::string, Graph*>("standard3", new Graph(rpc_value["config"], base_, id_++)));
-    graph_vector_.insert(std::pair<std::string, Graph*>("standard4", new Graph(rpc_value["config"], base_, id_++)));
-    graph_vector_.insert(std::pair<std::string, Graph*>("standard5", new Graph(rpc_value["config"], base_, id_++)));
-    int ui_start_y = 0;
-    for (auto it = graph_vector_.begin(); it != graph_vector_.end(); ++it)
+  public:
+    explicit HeroLegTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                 std::deque<Graph>* character_queue)
+      : TimeChangeUi(rpc_value, base, "hero_leg_feedforward_countdown", graph_queue, character_queue)
     {
-      if (it == graph_vector_.begin())
-        ui_start_y = it->second->getConfig().start_y;
-      else
-      {
-        ui_start_y -= 40;
-        it->second->setStartY(ui_start_y);
-      }
     }
+    void updateFeedforwardCountdown(int feedforward_countdown);
+
+  private:
+    void updateConfig() override;
+    int feedforward_countdown_{};
   };
-  void updateBulletsData(const rm_referee::BulletNumData& data);
-
-private:
-  void updateConfig() override;
-  int hero_bullets_{ 1 }, standard3_bullets_{ 3 }, standard4_bullets_{ 4 }, standard5_bullets_{ 5 };
-};
-
-class TargetHpTimeChangeUi : public TimeChangeUi
-{
-public:
-  explicit TargetHpTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
-                                std::deque<Graph>* character_queue)
-    : TimeChangeUi(rpc_value, base, "target_hp", graph_queue, character_queue)
+  class DroneTowardsTimeChangeGroupUi : public TimeChangeGroupUi
   {
-    if (rpc_value.hasMember("enemy_id"))
+  public:
+    explicit DroneTowardsTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                           std::deque<Graph>* character_queue)
+      : TimeChangeGroupUi(rpc_value, base, "drone_towards", graph_queue, character_queue)
     {
-      XmlRpc::XmlRpcValue& enemy_id = rpc_value["enemy_id"];
-      for (int i = 0; i < enemy_id.size(); i++)
+      if (rpc_value.hasMember("data"))
       {
-        int id = static_cast<int>(enemy_id[i]);
-        enemy_robot_hp_[id] = 0;
+        XmlRpc::XmlRpcValue& data = rpc_value["data"];
+        ori_x_ = static_cast<int>(data["ori_x"]);
+        ori_y_ = static_cast<int>(data["ori_y"]);
+      }
+      else
+        ROS_WARN("DroneTowardsTimeChangeGroupUi config 's member 'data' not defined.");
+
+      graph_vector_.insert(
+          std::pair<std::string, Graph*>(graph_name_ + "_mid", new Graph(rpc_value["config"], base_, id_++)));
+      graph_vector_.insert(
+          std::pair<std::string, Graph*>(graph_name_ + "_left", new Graph(rpc_value["config"], base_, id_++)));
+      graph_vector_.insert(
+          std::pair<std::string, Graph*>(graph_name_ + "_right", new Graph(rpc_value["config"], base_, id_++)));
+    };
+    void updateTowardsData(const geometry_msgs::PoseStampedConstPtr& data);
+
+  private:
+    void updateConfig() override;
+    int ori_x_, ori_y_;
+    double angle_;
+    int mid_line_x1_, mid_line_y1_, mid_line_x2_, mid_line_y2_, left_line_x2_, left_line_y2_, right_line_x2_,
+        right_line_y2_;
+  };
+
+  class FriendBulletsTimeChangeGroupUi : public TimeChangeGroupUi
+  {
+  public:
+    explicit FriendBulletsTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                            std::deque<Graph>* character_queue)
+      : TimeChangeGroupUi(rpc_value, base, "friend_bullets", graph_queue, character_queue)
+    {
+      graph_vector_.insert(std::pair<std::string, Graph*>("hero", new Graph(rpc_value["config"], base_, id_++)));
+      graph_vector_.insert(std::pair<std::string, Graph*>("standard3", new Graph(rpc_value["config"], base_, id_++)));
+      graph_vector_.insert(std::pair<std::string, Graph*>("standard4", new Graph(rpc_value["config"], base_, id_++)));
+      graph_vector_.insert(std::pair<std::string, Graph*>("standard5", new Graph(rpc_value["config"], base_, id_++)));
+      int ui_start_y = 0;
+      for (auto it = graph_vector_.begin(); it != graph_vector_.end(); ++it)
+      {
+        if (it == graph_vector_.begin())
+          ui_start_y = it->second->getConfig().start_y;
+        else
+        {
+          ui_start_y -= 40;
+          it->second->setStartY(ui_start_y);
+        }
+      }
+    };
+    void updateBulletsData(const rm_referee::BulletNumData& data);
+
+  private:
+    void updateConfig() override;
+    int hero_bullets_{ 1 }, standard3_bullets_{ 3 }, standard4_bullets_{ 4 }, standard5_bullets_{ 5 };
+  };
+
+  class TargetHpTimeChangeUi : public TimeChangeUi
+  {
+  public:
+    explicit TargetHpTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                  std::deque<Graph>* character_queue)
+      : TimeChangeUi(rpc_value, base, "target_hp", graph_queue, character_queue)
+    {
+      if (rpc_value.hasMember("enemy_id"))
+      {
+        XmlRpc::XmlRpcValue& enemy_id = rpc_value["enemy_id"];
+        for (int i = 0; i < enemy_id.size(); i++)
+        {
+          int id = static_cast<int>(enemy_id[i]);
+          enemy_robot_hp_[id] = 0;
+        }
       }
     }
-  }
-  void setEnemyHp(const rm_msgs::GameRobotHp& data);
-  void updateTrackID(int id);
-  void updateTargeHptData();
+    void setEnemyHp(const rm_msgs::GameRobotHp& data);
+    void updateTrackID(int id);
+    void updateTargeHptData();
 
-private:
-  void updateConfig() override;
-  std::map<int, int> enemy_robot_hp_;
-  int target_hp_{}, target_id_{};
-};
+  private:
+    void updateConfig() override;
+    std::map<int, int> enemy_robot_hp_;
+    int target_hp_{}, target_id_{};
+  };
 
-class LegThetaTimeChangeGroupUi : public TimeChangeGroupUi
-{
-public:
-  explicit LegThetaTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
-                                     std::deque<Graph>* character_queue)
-    : TimeChangeGroupUi(rpc_value, base, "leg_theta", graph_queue, character_queue)
+  class LegThetaTimeChangeGroupUi : public TimeChangeGroupUi
   {
-    XmlRpc::XmlRpcValue line_config;
-    line_config["type"] = "line";
-    if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("color"))
-      line_config["color"] = rpc_value["config"]["color"];
-    else
-      line_config["color"] = "cyan";
-    if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("width"))
-      line_config["width"] = rpc_value["config"]["width"];
-    else
-      line_config["width"] = 2;
-    if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("delay"))
-      line_config["delay"] = rpc_value["config"]["delay"];
-    else
-      line_config["delay"] = 0.2;
-
-    // Virtual rod is rendered as multiple short segments (dash effect).
-    XmlRpc::XmlRpcValue virtual_rod_config = line_config;
-    if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("virtual_rod_color"))
-      virtual_rod_config["color"] = rpc_value["config"]["virtual_rod_color"];
-    if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("virtual_rod_width"))
-      virtual_rod_config["width"] = rpc_value["config"]["virtual_rod_width"];
-    else
-      virtual_rod_config["width"] = 1;
-
-    XmlRpc::XmlRpcValue rect_config;
-    rect_config["type"] = "rectangle";
-    if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("chassis_color"))
-      rect_config["color"] = rpc_value["config"]["chassis_color"];
-    else
-      rect_config["color"] = line_config["color"];
-    rect_config["width"] = line_config["width"];
-    rect_config["delay"] = line_config["delay"];
-
-    if (rpc_value.hasMember("data"))
+  public:
+    explicit LegThetaTimeChangeGroupUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                       std::deque<Graph>* character_queue)
+      : TimeChangeGroupUi(rpc_value, base, "leg_theta", graph_queue, character_queue)
     {
-      XmlRpc::XmlRpcValue data = rpc_value["data"];
-      if (data.hasMember("draw_chassis"))
-        draw_chassis_ = static_cast<bool>(data["draw_chassis"]);
-      if (data.hasMember("chassis_start") && data.hasMember("chassis_end"))
+      XmlRpc::XmlRpcValue line_config;
+      line_config["type"] = "line";
+      if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("color"))
+        line_config["color"] = rpc_value["config"]["color"];
+      else
+        line_config["color"] = "cyan";
+      if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("width"))
+        line_config["width"] = rpc_value["config"]["width"];
+      else
+        line_config["width"] = 2;
+      if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("delay"))
+        line_config["delay"] = rpc_value["config"]["delay"];
+      else
+        line_config["delay"] = 0.2;
+
+      // Virtual rod is rendered as multiple short segments (dash effect).
+      XmlRpc::XmlRpcValue virtual_rod_config = line_config;
+      if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("virtual_rod_color"))
+        virtual_rod_config["color"] = rpc_value["config"]["virtual_rod_color"];
+      if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("virtual_rod_width"))
+        virtual_rod_config["width"] = rpc_value["config"]["virtual_rod_width"];
+      else
+        virtual_rod_config["width"] = 1;
+
+      XmlRpc::XmlRpcValue rect_config;
+      rect_config["type"] = "rectangle";
+      if (rpc_value.hasMember("config") && rpc_value["config"].hasMember("chassis_color"))
+        rect_config["color"] = rpc_value["config"]["chassis_color"];
+      else
+        rect_config["color"] = line_config["color"];
+      rect_config["width"] = line_config["width"];
+      rect_config["delay"] = line_config["delay"];
+
+      if (rpc_value.hasMember("data"))
       {
-        chassis_start_[0] = static_cast<int>(data["chassis_start"][0]);
-        chassis_start_[1] = static_cast<int>(data["chassis_start"][1]);
-        chassis_end_[0] = static_cast<int>(data["chassis_end"][0]);
-        chassis_end_[1] = static_cast<int>(data["chassis_end"][1]);
+        XmlRpc::XmlRpcValue data = rpc_value["data"];
+        if (data.hasMember("draw_chassis"))
+          draw_chassis_ = static_cast<bool>(data["draw_chassis"]);
+        if (data.hasMember("chassis_start") && data.hasMember("chassis_end"))
+        {
+          chassis_start_[0] = static_cast<int>(data["chassis_start"][0]);
+          chassis_start_[1] = static_cast<int>(data["chassis_start"][1]);
+          chassis_end_[0] = static_cast<int>(data["chassis_end"][0]);
+          chassis_end_[1] = static_cast<int>(data["chassis_end"][1]);
+        }
+        else
+        {
+          ROS_WARN("LegThetaTimeChangeGroupUi: 'data.chassis_start/end' not defined, using default rectangle.");
+          chassis_start_[0] = 800;
+          chassis_start_[1] = 600;
+          chassis_end_[0] = 1120;
+          chassis_end_[1] = 720;
+        }
+
+        if (data.hasMember("origin_point"))
+        {
+          origin_point_[0] = static_cast<int>(data["origin_point"][0]);
+          origin_point_[1] = static_cast<int>(data["origin_point"][1]);
+        }
+        else
+        {
+          // Default: rectangle center.
+          origin_point_[0] = (chassis_start_[0] + chassis_end_[0]) / 2;
+          origin_point_[1] = (chassis_start_[1] + chassis_end_[1]) / 2;
+        }
+
+        if (data.hasMember("link1_length"))
+          link1_length_m_ = static_cast<double>(data["link1_length"]);
+        if (data.hasMember("link2_length"))
+          link2_length_m_ = static_cast<double>(data["link2_length"]);
+        if (data.hasMember("pixels_per_meter"))
+          pixels_per_meter_ = static_cast<double>(data["pixels_per_meter"]);
+        if (data.hasMember("leg_side"))
+          leg_side_ = static_cast<std::string>(data["leg_side"]);
       }
       else
       {
-        ROS_WARN("LegThetaTimeChangeGroupUi: 'data.chassis_start/end' not defined, using default rectangle.");
-        chassis_start_[0] = 800;
-        chassis_start_[1] = 600;
-        chassis_end_[0] = 1120;
-        chassis_end_[1] = 720;
+        ROS_WARN("LegThetaTimeChangeGroupUi config 's member 'data' not defined.");
       }
 
-      if (data.hasMember("origin_point"))
+      // Chassis rectangle (left=rear, right=front).
+      if (draw_chassis_)
       {
-        origin_point_[0] = static_cast<int>(data["origin_point"][0]);
-        origin_point_[1] = static_cast<int>(data["origin_point"][1]);
-      }
-      else
-      {
-        // Default: rectangle center.
-        origin_point_[0] = (chassis_start_[0] + chassis_end_[0]) / 2;
-        origin_point_[1] = (chassis_start_[1] + chassis_end_[1]) / 2;
+        rect_config["start_position"][0] = chassis_start_[0];
+        rect_config["start_position"][1] = chassis_start_[1];
+        rect_config["end_position"][0] = chassis_end_[0];
+        rect_config["end_position"][1] = chassis_end_[1];
+        graph_vector_.insert(std::make_pair<std::string, Graph*>("chassis", new Graph(rect_config, base_, id_++)));
       }
 
-      if (data.hasMember("link1_length"))
-        link1_length_m_ = static_cast<double>(data["link1_length"]);
-      if (data.hasMember("link2_length"))
-        link2_length_m_ = static_cast<double>(data["link2_length"]);
-      if (data.hasMember("pixels_per_meter"))
-        pixels_per_meter_ = static_cast<double>(data["pixels_per_meter"]);
-      if (data.hasMember("leg_side"))
-        leg_side_ = static_cast<std::string>(data["leg_side"]);
-    }
-    else
-    {
-      ROS_WARN("LegThetaTimeChangeGroupUi config 's member 'data' not defined.");
+      // Link 1 and Link 2.
+      line_config["start_position"][0] = origin_point_[0];
+      line_config["start_position"][1] = origin_point_[1];
+      line_config["end_position"][0] = origin_point_[0];
+      line_config["end_position"][1] = origin_point_[1];
+      graph_vector_.insert(std::make_pair<std::string, Graph*>("link1", new Graph(line_config, base_, id_++)));
+      graph_vector_.insert(std::make_pair<std::string, Graph*>("link2", new Graph(line_config, base_, id_++)));
     }
 
-    // Chassis rectangle (left=rear, right=front).
-    if (draw_chassis_)
-    {
-      rect_config["start_position"][0] = chassis_start_[0];
-      rect_config["start_position"][1] = chassis_start_[1];
-      rect_config["end_position"][0] = chassis_end_[0];
-      rect_config["end_position"][1] = chassis_end_[1];
-      graph_vector_.insert(std::make_pair<std::string, Graph*>("chassis", new Graph(rect_config, base_, id_++)));
-    }
+    void calculatePointPosition(const rm_msgs::LeggedChassisStatusConstPtr& data, const ros::Time& time);
 
-    // Link 1 and Link 2.
-    line_config["start_position"][0] = origin_point_[0];
-    line_config["start_position"][1] = origin_point_[1];
-    line_config["end_position"][0] = origin_point_[0];
-    line_config["end_position"][1] = origin_point_[1];
-    graph_vector_.insert(std::make_pair<std::string, Graph*>("link1", new Graph(line_config, base_, id_++)));
-    graph_vector_.insert(std::make_pair<std::string, Graph*>("link2", new Graph(line_config, base_, id_++)));
-  }
+  private:
+    void updateConfig() override;
 
-  void calculatePointPosition(const rm_msgs::LeggedChassisStatusConstPtr& data, const ros::Time& time);
+    int chassis_start_[2]{ 800, 600 };
+    int chassis_end_[2]{ 1120, 720 };
+    int origin_point_[2]{ 960, 660 };  // hip/pivot point in screen coordinates
 
-private:
-  void updateConfig() override;
+    bool draw_chassis_{ true };
 
-  int chassis_start_[2]{ 800, 600 };
-  int chassis_end_[2]{ 1120, 720 };
-  int origin_point_[2]{ 960, 660 };  // hip/pivot point in screen coordinates
+    // IK config
+    double link1_length_m_{ 0.21 };
+    double link2_length_m_{ 0.248 };
+    double pixels_per_meter_{ 600.0 };
+    std::string leg_side_{ "left" };  // "left" or "right"
 
-  bool draw_chassis_{ true };
+    // Latest input (virtual rod)
+    double virtual_rod_length_m_{ 0.0 };
+    double virtual_rod_theta_rad_{ 0.0 };
 
-  // IK config
-  double link1_length_m_{ 0.21 };
-  double link2_length_m_{ 0.248 };
-  double pixels_per_meter_{ 600.0 };
-  std::string leg_side_{ "left" };  // "left" or "right"
+    // Solved points (screen coordinates)
+    int knee_point_[2]{ 960, 660 };
+    int foot_point_[2]{ 960, 660 };
 
-  // Latest input (virtual rod)
-  double virtual_rod_length_m_{ 0.0 };
-  double virtual_rod_theta_rad_{ 0.0 };
-
-  // Solved points (screen coordinates)
-  int knee_point_[2]{ 960, 660 };
-  int foot_point_[2]{ 960, 660 };
-
-  // Keep IK solution continuous across updates (avoid knee flipping between the two possible IK branches).
-  bool knee_initialized_{ false };
-};
+    // Keep IK solution continuous across updates (avoid knee flipping between the two possible IK branches).
+    bool knee_initialized_{ false };
+  };
 
 }  // namespace rm_referee

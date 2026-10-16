@@ -607,7 +607,7 @@ void EnemyColorTimeChangeUi::updateEnemyColorData(const std_msgs::Bool::ConstPtr
 void EnemyColorTimeChangeUi::updateConfig()
 {
   char temp_content[32];
-  snprintf(temp_content, sizeof(temp_content), "%s", enemy_color_ ? "BLUE" : "RED" );
+  snprintf(temp_content, sizeof(temp_content), "%s", enemy_color_ ? "BLUE" : "RED");
   std::string enemy_color_content(temp_content);
   graph_->setContent(enemy_color_content);
   graph_->setColor(enemy_color_ ? rm_referee::GraphColor::CYAN : rm_referee::GraphColor::PINK);

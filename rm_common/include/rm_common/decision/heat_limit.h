@@ -84,7 +84,7 @@ public:
         nh.subscribe<rm_msgs::LocalHeatState>("/local_heat_state/shooter_state", 50, &HeatLimit::heatCB, this);
     timer_ = nh.createTimer(ros::Duration(0.1), std::bind(&HeatLimit::timerCB, this));
     fly_time_sub_ = nh.subscribe<std_msgs::Float64>("/controllers/gimbal_controller/bullet_solver/fly_time", 10,
-                                             &HeatLimit::flyTimeCB, this);
+                                                    &HeatLimit::flyTimeCB, this);
   }
 
   typedef enum
@@ -157,7 +157,7 @@ public:
     std::lock_guard<std::mutex> lock(heat_mutex_);
     if (!referee_is_online_)
       return 5.0;
-    if(referee_status_change_ && abs(local_shooter_cooling_heat_ - shooter_cooling_heat_) > 10)
+    if (referee_status_change_ && abs(local_shooter_cooling_heat_ - shooter_cooling_heat_) > 10)
     {
       local_shooter_cooling_heat_ = shooter_cooling_heat_;
     }
@@ -210,7 +210,7 @@ public:
 
   void flyTimeCB(const std_msgs::Float64ConstPtr& msg)
   {
-    buff_shoot_frequency_ = 1/(msg->data + buff_offset);
+    buff_shoot_frequency_ = 1 / (msg->data + buff_offset);
   }
 
 private:
@@ -234,7 +234,7 @@ private:
     else if (state_ == HeatLimit::MINIMAL)
     {
       shoot_frequency_ = buff_shoot_frequency_;
-      //shoot_frequency_ = minimal_shoot_frequency_;
+      // shoot_frequency_ = minimal_shoot_frequency_;
       burst_flag_ = false;
     }
     else
@@ -253,7 +253,7 @@ private:
   bool referee_is_online_, use_local_heat_, last_shoot_state_{};
   int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_;
   double local_shooter_cooling_heat_{}, heat_protect_threshold_{};
-  double buff_shoot_frequency_{},buff_offset_{};
+  double buff_shoot_frequency_{}, buff_offset_{};
   int once_shoot_num_{};
   bool referee_status_change_{};
 
