@@ -5,8 +5,11 @@
 #pragma once
 
 #include <rm_common/ros_utilities.h>
-#include <ros/timer.h>
 #include <rm_common/decision/command_sender.h>
+#include <vector>
+#include <ros/timer.h>
+#include <std_msgs/Int32.h>
+#include <std_msgs/Float32MultiArray.h>
 
 #include "rm_referee/ui/ui_base.h"
 #include "rm_referee/ui/trigger_change_ui.h"
@@ -44,6 +47,7 @@ public:
   virtual void jointStateCallback(const sensor_msgs::JointState::ConstPtr& joint_state);
   virtual void actuatorStateCallback(const rm_msgs::ActuatorState::ConstPtr& data);
   virtual void dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data);
+  virtual void heroLegDataCallback(const rm_msgs::ChassisActiveSusCmd::ConstPtr& data);
   virtual void chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data);
   virtual void vel2DCmdDataCallback(const geometry_msgs::Twist::ConstPtr& data);
   virtual void shootStateCallback(const rm_msgs::ShootState::ConstPtr& data);
@@ -54,18 +58,21 @@ public:
   virtual void radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data);
   virtual void cameraNameCallBack(const std_msgs::StringConstPtr& data);
   virtual void trackCallBack(const rm_msgs::TrackDataConstPtr& data);
+  virtual void deployDistanceCallBack(const geometry_msgs::PointConstPtr& data);
   virtual void balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data);
+  virtual void leggedChassisStatusCallback(const rm_msgs::LeggedChassisStatusConstPtr& data);
   virtual void radarReceiveCallback(const rm_msgs::ClientMapReceiveData::ConstPtr& data);
   virtual void mapSentryCallback(const rm_msgs::MapSentryDataConstPtr& data);
   virtual void sentryAttackingTargetCallback(const rm_msgs::SentryAttackingTargetConstPtr& data);
   virtual void sendSentryCmdCallback(const rm_msgs::SentryCmdConstPtr& data);
-  virtual void sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data);
+  virtual void sendRadarCmdCallback(const rm_msgs::RadarCmdConstPtr& data);
   virtual void sendCustomInfoCallback(const std_msgs::StringConstPtr& data);
   virtual void dronePoseCallBack(const geometry_msgs::PoseStampedConstPtr& data);
   virtual void shootCmdCallBack(const rm_msgs::ShootCmdConstPtr& data);
   virtual void radarToRefereeCallBack(const rm_msgs::RadarToSentryConstPtr& data);
   virtual void customizeDisplayCmdCallBack(const std_msgs::UInt32ConstPtr& data);
   virtual void visualizeStateDataCallBack(const rm_msgs::VisualizeStateDataConstPtr& data);
+  virtual void relocalizeProgressCallback(const std_msgs::Int32ConstPtr& data);
 
   // send  ui
   void sendSerialDataCallback();
@@ -75,6 +82,7 @@ public:
   ros::Subscriber actuator_state_sub_;
   ros::Subscriber dbus_sub_;
   ros::Subscriber chassis_cmd_sub_;
+  ros::Subscriber hero_leg_data_sub_;
   ros::Subscriber vel2D_cmd_sub_;
   ros::Subscriber shoot_state_sub_;
   ros::Subscriber gimbal_cmd_sub_;
@@ -86,7 +94,9 @@ public:
   ros::Subscriber manual_data_sub_;
   ros::Subscriber camera_name_sub_;
   ros::Subscriber track_sub_;
+  ros::Subscriber deploy_distance_sub_;
   ros::Subscriber balance_state_sub_;
+  ros::Subscriber legged_chassis_status_sub_;
   ros::Subscriber radar_receive_sub_;
   ros::Subscriber map_sentry_sub_;
   ros::Subscriber sentry_to_referee_sub_;
@@ -98,6 +108,7 @@ public:
   ros::Subscriber shoot_cmd_sub_;
   ros::Subscriber customize_display_cmd_sub_;
   ros::Subscriber visualize_state_data_sub_;
+  ros::Subscriber relocalize_progress_sub_;
 
   ChassisTriggerChangeUi* chassis_trigger_change_ui_{};
   ShooterTriggerChangeUi* shooter_trigger_change_ui_{};
@@ -106,20 +117,25 @@ public:
   TargetViewAngleTriggerChangeUi* target_view_angle_trigger_change_ui_{};
   CameraTriggerChangeUi* camera_trigger_change_ui_{};
   FrictionSpeedTriggerChangeUi* friction_speed_trigger_change_ui_{};
+  HeroLegTriggerChangeUi* hero_leg_trigger_change_ui_{};
 
   BulletTimeChangeUi* bullet_time_change_ui_{};
   CapacitorTimeChangeUi* capacitor_time_change_ui_{};
+  RelocalizeProgressTimeChangeUi* relocalize_progress_time_change_ui_{};
   EffortTimeChangeUi* effort_time_change_ui_{};
   ProgressTimeChangeUi* progress_time_change_ui_{};
   DartStatusTimeChangeUi* dart_status_time_change_ui_{};
   RotationTimeChangeUi* rotation_time_change_ui_{};
   LaneLineTimeChangeGroupUi* lane_line_time_change_ui_{};
   BalancePitchTimeChangeGroupUi* balance_pitch_time_change_group_ui_{};
+  std::vector<LegThetaTimeChangeGroupUi*> leg_theta_time_change_group_uis_{};
   PitchAngleTimeChangeUi* pitch_angle_time_change_ui_{};
   ImageTransmissionAngleTimeChangeUi* image_transmission_angle_time_change_ui_{};
   JointPositionTimeChangeUi *engineer_joint1_time_change_ui{}, *engineer_joint2_time_change_ui{},
       *engineer_joint3_time_change_ui{};
   TargetDistanceTimeChangeUi* target_distance_time_change_ui_{};
+  DeployDistanceTimeChangeUi* deploy_distance_time_change_ui_{};
+  HeroLegTimeChangeUi* hero_leg_time_change_ui_{};
   FriendBulletsTimeChangeGroupUi* friend_bullets_time_change_group_ui_{};
   TargetHpTimeChangeUi* target_hp_time_change_ui_{};
 
@@ -137,6 +153,7 @@ public:
   ExceedBulletSpeedFlashUi* exceed_bullet_speed_flash_ui_{};
   CustomizeDisplayFlashUi* customize_display_flash_ui_{};
   BurstFlashUi* burst_flash_ui_{};
+  CapacityRunOutFlashUi* capacity_run_out_flash_ui_{};
 
   InteractiveSender* interactive_data_sender_{};
   CustomInfoSender* custom_info_sender{};

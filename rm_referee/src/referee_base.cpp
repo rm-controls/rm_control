@@ -15,6 +15,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::actuator_state_sub_ =
       nh.subscribe<rm_msgs::ActuatorState>("/actuator_states", 10, &RefereeBase::actuatorStateCallback, this);
   RefereeBase::dbus_sub_ = nh.subscribe<rm_msgs::DbusData>(dbus_topic_, 10, &RefereeBase::dbusDataCallback, this);
+  RefereeBase::hero_leg_data_sub_ =
+      nh.subscribe<rm_msgs::ChassisActiveSusCmd>("/cmd_active_suspension", 10, &RefereeBase::heroLegDataCallback, this);
   RefereeBase::chassis_cmd_sub_ =
       nh.subscribe<rm_msgs::ChassisCmd>("/cmd_chassis", 10, &RefereeBase::chassisCmdDataCallback, this);
   RefereeBase::vel2D_cmd_sub_ =
@@ -31,7 +33,13 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<rm_msgs::ManualToReferee>("/manual_to_referee", 10, &RefereeBase::manualDataCallBack, this);
   RefereeBase::camera_name_sub_ = nh.subscribe("/camera_name", 10, &RefereeBase::cameraNameCallBack, this);
   RefereeBase::balance_state_sub_ = nh.subscribe("/state", 10, &RefereeBase::balanceStateCallback, this);
+  const std::string legged_chassis_status_topic =
+      getParam(nh, "legged_chassis_status_topic", std::string("/controllers/chassis_controller/legged_chassis_status"));
+  RefereeBase::legged_chassis_status_sub_ = nh.subscribe<rm_msgs::LeggedChassisStatus>(
+      legged_chassis_status_topic, 10, &RefereeBase::leggedChassisStatusCallback, this);
   RefereeBase::track_sub_ = nh.subscribe<rm_msgs::TrackData>("/track", 10, &RefereeBase::trackCallBack, this);
+  RefereeBase::deploy_distance_sub_ =
+      nh.subscribe<geometry_msgs::Point>("/base2target", 10, &RefereeBase::deployDistanceCallBack, this);
   RefereeBase::map_sentry_sub_ =
       nh.subscribe<rm_msgs::MapSentryData>("/map_sentry_data", 10, &RefereeBase::mapSentryCallback, this);
   RefereeBase::radar_receive_sub_ =
@@ -39,7 +47,7 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
   RefereeBase::sentry_cmd_sub_ =
       nh.subscribe<rm_msgs::SentryCmd>("/sentry_cmd", 1, &RefereeBase::sendSentryCmdCallback, this);
   RefereeBase::radar_cmd_sub_ =
-      nh.subscribe<rm_msgs::RadarInfo>("/radar_cmd", 1, &RefereeBase::sendRadarCmdCallback, this);
+      nh.subscribe<rm_msgs::RadarCmd>("/radar_cmd", 1, &RefereeBase::sendRadarCmdCallback, this);
   RefereeBase::sentry_state_sub_ =
       nh.subscribe<std_msgs::String>("/custom_info", 1, &RefereeBase::sendCustomInfoCallback, this);
   RefereeBase::drone_pose_sub_ =
@@ -54,6 +62,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       nh.subscribe<std_msgs::UInt32>("/customize_display_ui", 1, &RefereeBase::customizeDisplayCmdCallBack, this);
   RefereeBase::visualize_state_data_sub_ =
       nh.subscribe<rm_msgs::VisualizeStateData>("/visualize_state", 1, &RefereeBase::visualizeStateDataCallBack, this);
+  RefereeBase::relocalize_progress_sub_ =
+      nh.subscribe<std_msgs::Int32>("/shinji/progress", 10, &RefereeBase::relocalizeProgressCallback, this);
 
   XmlRpc::XmlRpcValue rpc_value;
   send_ui_queue_delay_ = getParam(nh, "send_ui_queue_delay", 0.15);
@@ -73,6 +83,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         shooter_trigger_change_ui_ = new ShooterTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "gimbal")
         gimbal_trigger_change_ui_ = new GimbalTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "hero_leg_mode")
+        hero_leg_trigger_change_ui_ = new HeroLegTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "target")
         target_trigger_change_ui_ = new TargetTriggerChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "target_view_angle")
@@ -102,6 +114,9 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
     {
       if (rpc_value[i]["name"] == "capacitor")
         capacitor_time_change_ui_ = new CapacitorTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "relocalize")
+        relocalize_progress_time_change_ui_ =
+            new RelocalizeProgressTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "effort")
         effort_time_change_ui_ = new EffortTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "progress")
@@ -115,12 +130,19 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
             new LaneLineTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "pitch")
         pitch_angle_time_change_ui_ = new PitchAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
-      if (rpc_value[i]["name"] == "image_transmission")
-        image_transmission_angle_time_change_ui_ =
-            new ImageTransmissionAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      // if (rpc_value[i]["name"] == "image_transmission")
+      //   image_transmission_angle_time_change_ui_ =
+      //       new ImageTransmissionAngleTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "balance_pitch")
         balance_pitch_time_change_group_ui_ =
             new BalancePitchTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"].getType() == XmlRpc::XmlRpcValue::TypeString)
+      {
+        const std::string ui_name = static_cast<std::string>(rpc_value[i]["name"]);
+        if (ui_name.find("leg_theta") != std::string::npos)
+          leg_theta_time_change_group_uis_.push_back(
+              new LegThetaTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_));
+      }
       if (rpc_value[i]["name"] == "engineer_joint1")
         engineer_joint1_time_change_ui =
             new JointPositionTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_, "joint1");
@@ -135,14 +157,19 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "target_distance")
         target_distance_time_change_ui_ =
             new TargetDistanceTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "deploy_distance")
+        deploy_distance_time_change_ui_ =
+            new DeployDistanceTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "hero_leg_feedforward_countdown")
+        hero_leg_time_change_ui_ = new HeroLegTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "drone_towards")
         drone_towards_time_change_group_ui_ =
             new DroneTowardsTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "friend_bullets")
         friend_bullets_time_change_group_ui_ =
             new FriendBulletsTimeChangeGroupUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
-      if (rpc_value[i]["name"] == "target_hp")
-        target_hp_time_change_ui_ = new TargetHpTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      // if (rpc_value[i]["name"] == "target_hp")
+      //   target_hp_time_change_ui_ = new TargetHpTimeChangeUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
 
     ui_nh.getParam("fixed", rpc_value);
@@ -155,6 +182,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
         cover_flash_ui_ = new CoverFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "spin")
         spin_flash_ui_ = new SpinFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      if (rpc_value[i]["name"] == "capacity_run_out")
+        capacity_run_out_flash_ui_ = new CapacityRunOutFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "deploy")
         deploy_flash_ui_ = new DeployFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
       if (rpc_value[i]["name"] == "hero_hit")
@@ -165,8 +194,8 @@ RefereeBase::RefereeBase(ros::NodeHandle& nh, Base& base) : base_(base), nh_(nh)
       if (rpc_value[i]["name"] == "customize_display")
         customize_display_flash_ui_ =
             new CustomizeDisplayFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
-      if (rpc_value[i]["name"] == "burst")
-        burst_flash_ui_ = new BurstFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
+      // if (rpc_value[i]["name"] == "burst")
+      //   burst_flash_ui_ = new BurstFlashUi(rpc_value[i], base_, &graph_queue_, &character_queue_);
     }
   }
   if (nh.hasParam("interactive_data"))
@@ -209,6 +238,8 @@ void RefereeBase::addUi()
   ROS_INFO_THROTTLE(1.0, "Adding ui... %.1f%%", (add_ui_times_ / static_cast<double>(add_ui_max_times_)) * 100);
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->addForQueue(2);
+  if (hero_leg_trigger_change_ui_)
+    hero_leg_trigger_change_ui_->addForQueue(2);
   if (gimbal_trigger_change_ui_)
     gimbal_trigger_change_ui_->addForQueue(2);
   if (shooter_trigger_change_ui_)
@@ -229,16 +260,21 @@ void RefereeBase::addUi()
     dart_status_time_change_ui_->addForQueue();
   if (capacitor_time_change_ui_)
     capacitor_time_change_ui_->addForQueue();
+  if (relocalize_progress_time_change_ui_)
+    relocalize_progress_time_change_ui_->addForQueue();
   if (rotation_time_change_ui_)
     rotation_time_change_ui_->addForQueue();
   if (lane_line_time_change_ui_)
     lane_line_time_change_ui_->addForQueue();
   if (balance_pitch_time_change_group_ui_)
     balance_pitch_time_change_group_ui_->addForQueue();
+  for (auto* ui : leg_theta_time_change_group_uis_)
+    if (ui)
+      ui->addForQueue();
   if (pitch_angle_time_change_ui_)
     pitch_angle_time_change_ui_->addForQueue();
-  if (image_transmission_angle_time_change_ui_)
-    image_transmission_angle_time_change_ui_->addForQueue();
+  // if (image_transmission_angle_time_change_ui_)
+  //   image_transmission_angle_time_change_ui_->addForQueue();
   if (engineer_joint1_time_change_ui)
     engineer_joint1_time_change_ui->addForQueue();
   if (engineer_joint2_time_change_ui)
@@ -262,10 +298,14 @@ void RefereeBase::addUi()
   }
   if (target_distance_time_change_ui_)
     target_distance_time_change_ui_->addForQueue();
+  if (deploy_distance_time_change_ui_)
+    deploy_distance_time_change_ui_->addForQueue();
+  if (hero_leg_time_change_ui_)
+    hero_leg_time_change_ui_->addForQueue();
   if (friend_bullets_time_change_group_ui_)
     friend_bullets_time_change_group_ui_->addForQueue();
-  if (target_hp_time_change_ui_)
-    target_hp_time_change_ui_->addForQueue();
+  // if (target_hp_time_change_ui_)
+  //   target_hp_time_change_ui_->addForQueue();
   if (visualize_state_trigger_change_ui_)
     visualize_state_trigger_change_ui_->addForQueue();
   add_ui_times_++;
@@ -367,8 +407,8 @@ void RefereeBase::updateGameRobotHpDataCallBack(const rm_msgs::GameRobotHp& game
 {
   if (hero_hit_flash_ui_)
     hero_hit_flash_ui_->updateHittingConfig(game_robot_hp_data);
-  if (target_hp_time_change_ui_)
-    target_hp_time_change_ui_->setEnemyHp(game_robot_hp_data);
+  // if (target_hp_time_change_ui_)
+  //   target_hp_time_change_ui_->setEnemyHp(game_robot_hp_data);
 }
 void RefereeBase::gameStatusDataCallBack(const rm_msgs::GameStatus& data, const ros::Time& last_get_data_time)
 {
@@ -378,8 +418,15 @@ void RefereeBase::capacityDataCallBack(const rm_msgs::PowerManagementSampleAndSt
 {
   if (capacitor_time_change_ui_ && !is_adding_)
     capacitor_time_change_ui_->updateRemainCharge(data.capacity_remain_charge, last_get_data_time);
+  if (capacity_run_out_flash_ui_ && !is_adding_)
+    capacity_run_out_flash_ui_->updateCapacityData(data, last_get_data_time);
   if (chassis_trigger_change_ui_ && !is_adding_)
     chassis_trigger_change_ui_->updateCapacityResetStatus();
+}
+void RefereeBase::relocalizeProgressCallback(const std_msgs::Int32ConstPtr& data)
+{
+  if (relocalize_progress_time_change_ui_ && !is_adding_)
+    relocalize_progress_time_change_ui_->updateRelocalizeProgress(data->data, ros::Time::now());
 }
 void RefereeBase::powerHeatDataCallBack(const rm_msgs::PowerHeatData& data, const ros::Time& last_get_data_time)
 {
@@ -411,8 +458,8 @@ void RefereeBase::jointStateCallback(const sensor_msgs::JointState::ConstPtr& da
     lane_line_time_change_ui_->updateJointStateData(data, ros::Time::now());
   if (pitch_angle_time_change_ui_ && !is_adding_)
     pitch_angle_time_change_ui_->updateJointStateData(data, ros::Time::now());
-  if (image_transmission_angle_time_change_ui_ && !is_adding_)
-    image_transmission_angle_time_change_ui_->updateJointStateData(data, ros::Time::now());
+  // if (image_transmission_angle_time_change_ui_ && !is_adding_)
+  //   image_transmission_angle_time_change_ui_->updateJointStateData(data, ros::Time::now());
   if (engineer_joint1_time_change_ui && !is_adding_)
     engineer_joint1_time_change_ui->updateJointStateData(data, ros::Time::now());
   if (engineer_joint2_time_change_ui && !is_adding_)
@@ -443,6 +490,13 @@ void RefereeBase::dbusDataCallback(const rm_msgs::DbusData::ConstPtr& data)
   if (chassis_trigger_change_ui_)
     chassis_trigger_change_ui_->updateDbusData(data);
 }
+void RefereeBase::heroLegDataCallback(const rm_msgs::ChassisActiveSusCmd::ConstPtr& data)
+{
+  if (hero_leg_trigger_change_ui_ && !is_adding_)
+    hero_leg_trigger_change_ui_->updateMode(data->mode);
+  if (hero_leg_time_change_ui_ && !is_adding_)
+    hero_leg_time_change_ui_->updateFeedforwardCountdown(data->feedforward_countdown);
+}
 void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& data)
 {
   if (chassis_trigger_change_ui_)
@@ -450,7 +504,7 @@ void RefereeBase::chassisCmdDataCallback(const rm_msgs::ChassisCmd::ConstPtr& da
   if (spin_flash_ui_ && !is_adding_)
     spin_flash_ui_->updateChassisCmdData(data, ros::Time::now());
   if (deploy_flash_ui_ && !is_adding_)
-    deploy_flash_ui_->updateChassisCmdData(data, ros::Time::now());
+    deploy_flash_ui_->updateChassisCmdData(data);
   if (rotation_time_change_ui_ && !is_adding_)
     rotation_time_change_ui_->updateChassisCmdData(data);
 }
@@ -497,8 +551,8 @@ void RefereeBase::manualDataCallBack(const rm_msgs::ManualToReferee::ConstPtr& d
     target_trigger_change_ui_->updateManualCmdData(data);
   if (cover_flash_ui_ && !is_adding_)
     cover_flash_ui_->updateManualCmdData(data, ros::Time::now());
-  if (burst_flash_ui_ && !is_adding_)
-    burst_flash_ui_->updateBurstTimeData(data);
+  // if (burst_flash_ui_ && !is_adding_)
+  //   burst_flash_ui_->updateBurstTimeData(data);
 }
 void RefereeBase::radarDataCallBack(const std_msgs::Int8MultiArrayConstPtr& data)
 {
@@ -514,13 +568,27 @@ void RefereeBase::trackCallBack(const rm_msgs::TrackDataConstPtr& data)
     target_view_angle_trigger_change_ui_->updateTrackID(data->id);
   if (target_distance_time_change_ui_ && !is_adding_)
     target_distance_time_change_ui_->updateTargetDistanceData(data);
-  if (target_hp_time_change_ui_ && !is_adding_)
-    target_hp_time_change_ui_->updateTrackID(data->id);
+  // if (target_hp_time_change_ui_ && !is_adding_)
+  //   target_hp_time_change_ui_->updateTrackID(data->id);
+}
+void RefereeBase::deployDistanceCallBack(const geometry_msgs::PointConstPtr& data)
+{
+  if (deploy_distance_time_change_ui_ && !is_adding_)
+    deploy_distance_time_change_ui_->updateDeployDistanceData(data);
 }
 void RefereeBase::balanceStateCallback(const rm_msgs::BalanceStateConstPtr& data)
 {
   if (balance_pitch_time_change_group_ui_)
     balance_pitch_time_change_group_ui_->calculatePointPosition(data, ros::Time::now());
+}
+
+void RefereeBase::leggedChassisStatusCallback(const rm_msgs::LeggedChassisStatusConstPtr& data)
+{
+  if (is_adding_)
+    return;
+  for (auto* ui : leg_theta_time_change_group_uis_)
+    if (ui)
+      ui->calculatePointPosition(data, ros::Time::now());
 }
 void RefereeBase::sentryAttackingTargetCallback(const rm_msgs::SentryAttackingTargetConstPtr& data)
 {
@@ -566,7 +634,7 @@ void RefereeBase::sendSentryCmdCallback(const rm_msgs::SentryCmdConstPtr& data)
     sentry_cmd_data_last_send_ = ros::Time::now();
   }
 }
-void RefereeBase::sendRadarCmdCallback(const rm_msgs::RadarInfoConstPtr& data)
+void RefereeBase::sendRadarCmdCallback(const rm_msgs::RadarCmdConstPtr& data)
 {
   if (ros::Time::now() - radar_cmd_data_last_send_ <= ros::Duration(0.15))
     return;
@@ -604,6 +672,8 @@ void RefereeBase::shootCmdCallBack(const rm_msgs::ShootCmdConstPtr& data)
 {
   if (friction_speed_trigger_change_ui_ && !is_adding_)
     friction_speed_trigger_change_ui_->updateFrictionSpeedUiData(data);
+  if (deploy_flash_ui_)
+    deploy_flash_ui_->updateAllowDeployFire(data->allow_deploy_fire);
 }
 
 void RefereeBase::updateBulletRemainData(const rm_referee::BulletNumData& data)

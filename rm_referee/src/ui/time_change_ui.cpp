@@ -238,16 +238,16 @@ void LaneLineTimeChangeGroupUi::updateConfig()
   {
     if (it.first == "lane_line_left")
     {
-      it.second->setStartX(screen_x_ / 2 + x_offset_ - spacing_x_a);
+      it.second->setStartX(screen_x_ / 2 - spacing_x_a);
       it.second->setStartY(screen_y_ / 2 - spacing_y_a);
-      it.second->setEndX(screen_x_ / 2 + x_offset_ - spacing_x_b * surface_coefficient_);
+      it.second->setEndX(screen_x_ / 2 - spacing_x_b * surface_coefficient_);
       it.second->setEndY(screen_y_ / 2 - spacing_y_b);
     }
     else if (it.first == "lane_line_right")
     {
-      it.second->setStartX(screen_x_ / 2 + x_offset_ + spacing_x_a);
+      it.second->setStartX(screen_x_ / 2 + spacing_x_a);
       it.second->setStartY(screen_y_ / 2 - spacing_y_a);
-      it.second->setEndX(screen_x_ / 2 + x_offset_ + spacing_x_b * surface_coefficient_);
+      it.second->setEndX(screen_x_ / 2 + spacing_x_b * surface_coefficient_);
       it.second->setEndY(screen_y_ / 2 - spacing_y_b);
     }
   }
@@ -306,6 +306,149 @@ void BalancePitchTimeChangeGroupUi::calculatePointPosition(const rm_msgs::Balanc
   triangle_right_point_[0] = centre_point_[0] + length_ * sin(bottom_angle_ / 2 - data->theta);
   triangle_right_point_[1] = centre_point_[1] + length_ * cos(bottom_angle_ / 2 - data->theta);
   updateForQueue();
+}
+
+namespace
+{
+inline int clampUiCoord(int v)
+{
+  // GraphConfig uses 11-bit unsigned fields.
+  if (v < 0)
+    return 0;
+  if (v > 2047)
+    return 2047;
+  return v;
+}
+}  // namespace
+
+void LegThetaTimeChangeGroupUi::calculatePointPosition(const rm_msgs::LeggedChassisStatusConstPtr& data,
+                                                       const ros::Time& time)
+{
+  (void)time;
+  if (!data)
+    return;
+  if (pixels_per_meter_ <= 0.0 || link1_length_m_ <= 0.0 || link2_length_m_ <= 0.0)
+    return;
+
+  // Virtual rod inputs.
+  if (leg_side_ == "right")
+  {
+    virtual_rod_length_m_ = data->right_leg_length;
+    virtual_rod_theta_rad_ = data->right_leg_theta;
+  }
+  else
+  {
+    virtual_rod_length_m_ = data->left_leg_length;
+    virtual_rod_theta_rad_ = data->left_leg_theta;
+  }
+
+  // Screen coordinate convention in this UI codebase:
+  // x increases to the right; y increases upward (origin at bottom-left of a 1920x1080 screen).
+  // Angle is defined with 0 pointing downward (-y) and clockwise positive.
+  const Eigen::Vector2d A(origin_point_[0], origin_point_[1]);
+  const double L_virtual_px = virtual_rod_length_m_ * pixels_per_meter_;
+  // With y-up coordinates, the downward direction is (0, -1). A clockwise rotation by +theta from downward yields
+  // direction = (-sin(theta), -cos(theta)).
+  const Eigen::Vector2d dir(-std::sin(virtual_rod_theta_rad_), -std::cos(virtual_rod_theta_rad_));
+  Eigen::Vector2d E = A + dir * L_virtual_px;
+
+  const double L1 = link1_length_m_ * pixels_per_meter_;
+  const double L2 = link2_length_m_ * pixels_per_meter_;
+
+  Eigen::Vector2d v = E - A;
+  double d = v.norm();
+  if (d < 1e-6)
+  {
+    // Avoid division by zero; place foot a tiny bit below the hip.
+    v = Eigen::Vector2d(0.0, 1e-3);
+    d = v.norm();
+    E = A + v;
+  }
+
+  // Clamp distance into reachable annulus to keep sqrt well-defined.
+  const double d_min = std::abs(L1 - L2) + 1e-3;
+  const double d_max = (L1 + L2) - 1e-3;
+  double d_clamped = d;
+  if (d_clamped < d_min)
+    d_clamped = d_min;
+  if (d_clamped > d_max)
+    d_clamped = d_max;
+  if (std::abs(d_clamped - d) > 1e-9)
+  {
+    E = A + v / d * d_clamped;
+    v = E - A;
+    d = d_clamped;
+  }
+
+  const Eigen::Vector2d u = v / d;  // unit direction from hip to foot
+  const double a = (L1 * L1 - L2 * L2 + d * d) / (2.0 * d);
+  double h2 = L1 * L1 - a * a;
+  if (h2 < 0.0)
+    h2 = 0.0;
+  const double h = std::sqrt(h2);
+  const Eigen::Vector2d P = A + a * u;
+  const Eigen::Vector2d perp(-u.y(), u.x());
+  const Eigen::Vector2d K_pos = P + h * perp;
+  const Eigen::Vector2d K_neg = P - h * perp;
+
+  // Two valid IK solutions exist (elbow-up / elbow-down). If we pick purely by geometry
+  // (e.g. "knee on the left"), the selected branch can flip abruptly when the target
+  // crosses a singularity, causing a visible discontinuity. Instead, keep continuity by
+  // choosing the candidate closest to the previous knee position.
+  Eigen::Vector2d K;
+  if (!knee_initialized_)
+  {
+    // Initial selection: prefer knee on the left (rear). In UI: left is smaller x.
+    K = (K_pos.x() <= K_neg.x()) ? K_pos : K_neg;
+    knee_initialized_ = true;
+  }
+  else
+  {
+    const Eigen::Vector2d K_prev(knee_point_[0], knee_point_[1]);
+    const double dist_pos = (K_pos - K_prev).squaredNorm();
+    const double dist_neg = (K_neg - K_prev).squaredNorm();
+    if (std::abs(dist_pos - dist_neg) < 1e-6)
+      K = (K_pos.x() <= K_neg.x()) ? K_pos : K_neg;
+    else
+      K = (dist_pos <= dist_neg) ? K_pos : K_neg;
+  }
+
+  knee_point_[0] = clampUiCoord(static_cast<int>(std::lround(K.x())));
+  knee_point_[1] = clampUiCoord(static_cast<int>(std::lround(K.y())));
+  foot_point_[0] = clampUiCoord(static_cast<int>(std::lround(E.x())));
+  foot_point_[1] = clampUiCoord(static_cast<int>(std::lround(E.y())));
+  updateForQueue();
+}
+
+void LegThetaTimeChangeGroupUi::updateConfig()
+{
+  const Eigen::Vector2d A(origin_point_[0], origin_point_[1]);
+  const Eigen::Vector2d B(foot_point_[0], foot_point_[1]);
+
+  for (auto& it : graph_vector_)
+  {
+    if (it.first == "chassis")
+    {
+      it.second->setStartX(clampUiCoord(chassis_start_[0]));
+      it.second->setStartY(clampUiCoord(chassis_start_[1]));
+      it.second->setEndX(clampUiCoord(chassis_end_[0]));
+      it.second->setEndY(clampUiCoord(chassis_end_[1]));
+    }
+    else if (it.first == "link1")
+    {
+      it.second->setStartX(clampUiCoord(origin_point_[0]));
+      it.second->setStartY(clampUiCoord(origin_point_[1]));
+      it.second->setEndX(clampUiCoord(knee_point_[0]));
+      it.second->setEndY(clampUiCoord(knee_point_[1]));
+    }
+    else if (it.first == "link2")
+    {
+      it.second->setStartX(clampUiCoord(knee_point_[0]));
+      it.second->setStartY(clampUiCoord(knee_point_[1]));
+      it.second->setEndX(clampUiCoord(foot_point_[0]));
+      it.second->setEndY(clampUiCoord(foot_point_[1]));
+    }
+  }
 }
 
 void PitchAngleTimeChangeUi::updateJointStateData(const sensor_msgs::JointState::ConstPtr data, const ros::Time& time)
@@ -468,6 +611,12 @@ void EnemyColorTimeChangeUi::updateConfig()
   std::string enemy_color_content(temp_content);
   graph_->setContent(enemy_color_content);
   graph_->setColor(enemy_color_ ? rm_referee::GraphColor::CYAN : rm_referee::GraphColor::PINK);
+}
+
+void DeployDistanceTimeChangeUi::updateDeployDistanceData(const geometry_msgs::PointConstPtr& data)
+{
+  deploy_distance_ = sqrt(data->x * data->x + data->y * data->y);
+  updateForQueue();
 }
 
 void DeployDistanceTimeChangeUi::updateDeployDistanceData(const geometry_msgs::PointConstPtr& data)

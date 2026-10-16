@@ -365,7 +365,7 @@ void UiBase::sendSerial(const ros::Time& time, int data_len)
 
 void UiBase::clearTxBuffer()
 {
-  for (int i = 0; i < 127; i++)
+  for (int i = 0; i < k_frame_length_; i++)
     tx_buffer_[i] = 0;
   tx_len_ = 0;
 }

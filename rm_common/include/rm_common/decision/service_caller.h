@@ -135,6 +135,7 @@ protected:
   std::mutex mutex_;
   int fail_count_, fail_limit_;
 };
+
 class ColorChangeServiceCaller : public ServiceCallerBase<std_srvs::SetBool>
 {
 public:

@@ -19,7 +19,7 @@ public:
   void sendRadarInteractiveData(const rm_msgs::ClientMapReceiveData::ConstPtr& data);
   void sendMapSentryData(const rm_referee::MapSentryData& data);
   void sendSentryCmdData(const rm_msgs::SentryCmdConstPtr& data);
-  void sendRadarCmdData(const rm_msgs::RadarInfoConstPtr& data);
+  void sendRadarCmdData(const rm_msgs::RadarCmdConstPtr& data);
   virtual bool needSendInteractiveData();
   ros::Time last_send_time_;
 };

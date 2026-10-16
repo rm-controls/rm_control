@@ -233,6 +233,10 @@ public:
   {
     XmlRpc::XmlRpcValue xml_rpc_value;
     power_limit_ = new PowerLimit(nh);
+    if (!nh.getParam("follow_source_frame", follow_source_frame_))
+      ROS_ERROR("follow_source_frame no defined (namespace: %s)", nh.getNamespace().c_str());
+    else
+      msg_.follow_source_frame = follow_source_frame_;
     if (!nh.getParam("accel_x", xml_rpc_value))
       ROS_ERROR("Accel X no defined (namespace: %s)", nh.getNamespace().c_str());
     else
@@ -271,6 +275,11 @@ public:
   {
     msg_.follow_vel_des = follow_vel_des;
   }
+  void setFollowSourceFrame(std::string follow_source_frame)
+  {
+    follow_source_frame_ = std::move(follow_source_frame);
+    msg_.follow_source_frame = follow_source_frame_;
+  }
   void setWirelessState(bool state)
   {
     msg_.wireless_state = state;
@@ -288,6 +297,7 @@ public:
 
 private:
   LinearInterp accel_x_, accel_y_, accel_z_;
+  std::string follow_source_frame_;
 };
 
 class ChassisActiveSuspensionCommandSender : public TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>
@@ -296,11 +306,31 @@ public:
   explicit ChassisActiveSuspensionCommandSender(ros::NodeHandle& nh)
     : TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>(nh)
   {
+    nh.param("leg_feedforward_duration", leg_feedforward_duration_, 20.0);
+  }
+  void setLegSwitchTime(ros::Time leg_switch_time)
+  {
+    leg_switch_time_ = leg_switch_time;
+  }
+  int getLegMode()
+  {
+    return msg_.mode;
+  }
+  void sendCommand(const ros::Time& time) override
+  {
+    msg_.feedforward_countdown =
+        std::max(0, static_cast<int>(leg_feedforward_duration_ - (ros::Time::now() - leg_switch_time_).toSec()));
+    TimeStampCommandSenderBase<rm_msgs::ChassisActiveSusCmd>::sendCommand(time);
   }
   void setZero() override
   {
     msg_.mode = 0;
+    msg_.feedforward_countdown = 0;
   }
+
+private:
+  double leg_feedforward_duration_{};
+  ros::Time leg_switch_time_{};
 };
 class GimbalCommandSender : public TimeStampCommandSenderBase<rm_msgs::GimbalCmd>
 {
@@ -400,7 +430,8 @@ public:
     nh.getParam("wheel_speed_18", wheel_speed_18_);
     nh.getParam("wheel_speed_30", wheel_speed_30_);
     nh.param("wheel_speed_offset_front", wheel_speed_offset_front_, 0.0);
-    nh.param("wheel_speed_offset_back", wheel_speed_offset_back_, 0.0);
+    nh.param("wheel_speed_offset_normal", wheel_speed_offset_normal_, 0.0);
+    nh.param("wheel_speed_offset_deploy", wheel_speed_offset_deploy_, 0.0);
     nh.param("speed_oscillation", speed_oscillation_, 1.0);
     nh.param("extra_wheel_speed_once", extra_wheel_speed_once_, 0.);
     nh.param("deploy_wheel_speed", deploy_wheel_speed_, 410.0);
@@ -505,6 +536,7 @@ public:
   }
   void sendCommand(const ros::Time& time) override
   {
+    msg_.allow_deploy_fire = getDeployAllowFireFlag();
     msg_.wheel_speed = getWheelSpeedDes();
     msg_.wheels_speed_offset_front = getFrontWheelSpeedOffset();
     msg_.wheels_speed_offset_back = getBackWheelSpeedOffset();
@@ -580,6 +612,14 @@ public:
       }
     }
   }
+  void setDeployAllowFireFlag(bool flag)
+  {
+    allow_deploy_fire_ = flag;
+  }
+  bool getDeployAllowFireFlag()
+  {
+    return allow_deploy_fire_;
+  }
   double getFrontWheelSpeedOffset()
   {
     wheels_speed_offset_front_ = wheel_speed_offset_front_;
@@ -587,7 +627,10 @@ public:
   }
   double getBackWheelSpeedOffset()
   {
-    wheels_speed_offset_back_ = wheel_speed_offset_back_;
+    if (deploy_flag_)
+      wheels_speed_offset_back_ = wheel_speed_offset_deploy_;
+    else
+      wheels_speed_offset_back_ = wheel_speed_offset_normal_;
     return wheels_speed_offset_back_;
   }
   void dropSpeed()
@@ -628,7 +671,8 @@ private:
   double speed_10_{}, speed_15_{}, speed_16_{}, speed_18_{}, speed_30_{}, speed_des_{}, speed_limit_{};
   double wheel_speed_10_{}, wheel_speed_15_{}, wheel_speed_16_{}, wheel_speed_18_{}, wheel_speed_30_{},
       wheel_speed_des_{}, last_bullet_speed_{}, speed_oscillation_{};
-  double wheel_speed_offset_front_{}, wheel_speed_offset_back_{};
+  double wheel_speed_offset_normal_{}, wheel_speed_offset_deploy_{};
+  double wheel_speed_offset_front_{};
   double wheels_speed_offset_front_{}, wheels_speed_offset_back_{};
   double track_armor_error_tolerance_{};
   double track_buff_error_tolerance_{};
@@ -641,6 +685,7 @@ private:
   bool auto_wheel_speed_ = false;
   bool hero_flag_{};
   bool deploy_flag_ = false;
+  bool allow_deploy_fire_ = false;
   rm_msgs::TrackData track_data_;
   rm_msgs::GimbalDesError gimbal_des_error_;
   rm_msgs::ShootBeforehandCmd shoot_beforehand_cmd_;
@@ -649,18 +694,18 @@ private:
   uint8_t armor_type_{};
 };
 
-class UseLioCommandSender : public CommandSenderBase<std_msgs::Bool>
+class BallisticSolverRequestCommandSender : public CommandSenderBase<std_msgs::Bool>
 {
 public:
-  explicit UseLioCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Bool>(nh)
+  explicit BallisticSolverRequestCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Bool>(nh)
   {
   }
 
-  void setUseLio(bool flag)
+  void setBallisticSolverRequest(bool flag)
   {
     msg_.data = flag;
   }
-  bool getUseLio() const
+  bool getBallisticSolverRequest() const
   {
     return msg_.data;
   }
@@ -760,7 +805,10 @@ class JointPositionBinaryCommandSender : public CommandSenderBase<std_msgs::Floa
 public:
   explicit JointPositionBinaryCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
   {
-    ROS_ASSERT(nh.getParam("on_pos", on_pos_) && nh.getParam("off_pos", off_pos_));
+    if (!nh.getParam("on_pos", on_pos_))
+      ROS_ERROR("on_pos no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("off_pos", off_pos_))
+      ROS_ERROR("off_pos no defined (namespace: %s)", nh.getNamespace().c_str());
   }
   void on()
   {
@@ -798,8 +846,12 @@ class CardCommandSender : public CommandSenderBase<std_msgs::Float64>
 public:
   explicit CardCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::Float64>(nh)
   {
-    ROS_ASSERT(nh.getParam("long_pos", long_pos_) && nh.getParam("short_pos", short_pos_) &&
-               nh.getParam("off_pos", off_pos_));
+    if (!nh.getParam("long_pos", long_pos_))
+      ROS_ERROR("long_pos no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("short_pos", short_pos_))
+      ROS_ERROR("short_pos no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("off_pos", off_pos_))
+      ROS_ERROR("off_pos no defined (namespace: %s)", nh.getNamespace().c_str());
   }
   void long_on()
   {
@@ -837,8 +889,10 @@ public:
   explicit JointJogCommandSender(ros::NodeHandle& nh, const sensor_msgs::JointState& joint_state)
     : CommandSenderBase<std_msgs::Float64>(nh), joint_state_(joint_state)
   {
-    ROS_ASSERT(nh.getParam("joint", joint_));
-    ROS_ASSERT(nh.getParam("step", step_));
+    if (!nh.getParam("joint", joint_))
+      ROS_ERROR("joint no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("step", step_))
+      ROS_ERROR("step no defined (namespace: %s)", nh.getNamespace().c_str());
   }
   void reset()
   {
@@ -881,7 +935,8 @@ public:
   explicit JointPointCommandSender(ros::NodeHandle& nh, const sensor_msgs::JointState& joint_state)
     : CommandSenderBase<std_msgs::Float64>(nh), joint_state_(joint_state)
   {
-    ROS_ASSERT(nh.getParam("joint", joint_));
+    if (!nh.getParam("joint", joint_))
+      ROS_ERROR("JointPointCommandSender failed to get 'joint' param under namespace: %s", nh.getNamespace().c_str());
   }
   void setPoint(double point)
   {
@@ -914,7 +969,10 @@ class CameraSwitchCommandSender : public CommandSenderBase<std_msgs::String>
 public:
   explicit CameraSwitchCommandSender(ros::NodeHandle& nh) : CommandSenderBase<std_msgs::String>(nh)
   {
-    ROS_ASSERT(nh.getParam("camera_left_name", camera1_name_) && nh.getParam("camera_right_name", camera2_name_));
+    if (!nh.getParam("camera_left_name", camera1_name_))
+      ROS_ERROR("camera_left_name no defined (namespace: %s)", nh.getNamespace().c_str());
+    if (!nh.getParam("camera_right_name", camera2_name_))
+      ROS_ERROR("camera_right_name no defined (namespace: %s)", nh.getNamespace().c_str());
     msg_.data = camera2_name_;
   }
   void switchCameraLeft()

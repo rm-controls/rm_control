@@ -169,14 +169,38 @@ void SpinFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr data,
 void DeployFlashUi::display(const ros::Time& time)
 {
   if (!(chassis_mode_ == rm_msgs::ChassisCmd::RAW && angular_z_ == 0.0))
-    graph_->setOperation(rm_referee::GraphOperation::DELETE);
-  FlashUi::updateFlashUiForQueue(time, (chassis_mode_ == rm_msgs::ChassisCmd::RAW && angular_z_ == 0.0), false);
+  {
+    FlashUi::updateFlashUiForQueue(time, false, true);
+    return;
+  }
+  if (allow_deploy_fire_)
+  {
+    graph_->setColor(rm_referee::GraphColor ::YELLOW);
+  }
+  else
+  {
+    graph_->setColor(rm_referee::GraphColor ::PINK);
+  }
+  FlashUi::updateFlashUiForQueue(time, false, true);
+  FlashUi::updateFlashUiForQueue(time, true, true);
 }
 
-void DeployFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr& data, const ros::Time& last_get_data_time)
+void DeployFlashUi::updateChassisCmdData(const rm_msgs::ChassisCmd::ConstPtr& data)
 {
-  chassis_mode_ = data->mode;
-  display(last_get_data_time);
+  if (data->mode != chassis_mode_)
+  {
+    chassis_mode_ = data->mode;
+    display(ros::Time::now());
+  }
+}
+
+void DeployFlashUi::updateAllowDeployFire(bool flag)
+{
+  if (flag != allow_deploy_fire_)
+  {
+    allow_deploy_fire_ = flag;
+    display(ros::Time::now());
+  }
 }
 
 void DeployFlashUi::updateChassisVelData(const geometry_msgs::Twist::ConstPtr& data)
@@ -186,16 +210,8 @@ void DeployFlashUi::updateChassisVelData(const geometry_msgs::Twist::ConstPtr& d
 
 void HeroHitFlashUi::updateHittingConfig(const rm_msgs::GameRobotHp& msg)
 {
-  if (base_.robot_id_ > 100)
-  {
-    hitted_ =
-        (last_hp_msg_.red_outpost_hp - msg.red_outpost_hp > 190 || last_hp_msg_.red_base_hp - msg.red_base_hp > 190);
-  }
-  else
-  {
-    hitted_ = (last_hp_msg_.blue_outpost_hp - msg.blue_outpost_hp > 190 ||
-               last_hp_msg_.blue_base_hp - msg.blue_base_hp > 190);
-  }
+  // Temporarily disable hit flash trigger after GameRobotHp switched to ally semantics.
+  hitted_ = false;
   last_hp_msg_ = msg;
   display(ros::Time::now());
 }
@@ -236,6 +252,40 @@ void BurstFlashUi::updateBurstTimeData(const rm_msgs::ManualToReferee::ConstPtr&
 {
   start_burst_time_ = data->start_burst_time;
   display(ros::Time::now());
+}
+
+void CapacityRunOutFlashUi::display(const ros::Time& time)
+{
+  FlashUi::updateFlashUiForQueue(time, low_state_, true);
+}
+
+void CapacityRunOutFlashUi::updateCapacityData(const rm_msgs::PowerManagementSampleAndStatusData& data,
+                                               const ros::Time& last_get_data_time)
+{
+  const double capacity = data.capacity_remain_charge;
+  bool new_low_state = low_state_;
+
+  // First message: only send UI when low; avoid spamming an initial DELETE.
+  if (!has_state_)
+  {
+    has_state_ = true;
+    low_state_ = capacity < threshold_low_;
+    if (low_state_)
+      display(last_get_data_time);
+    return;
+  }
+
+  // With hysteresis to avoid flicker around the boundary.
+  if (!low_state_ && capacity < threshold_low_)
+    new_low_state = true;
+  else if (low_state_ && capacity > threshold_high_)
+    new_low_state = false;
+
+  if (new_low_state != low_state_)
+  {
+    low_state_ = new_low_state;
+    display(last_get_data_time);
+  }
 }
 }  // namespace rm_referee
 // namespace rm_referee

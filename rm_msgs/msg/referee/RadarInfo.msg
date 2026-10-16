@@ -1,1 +1,5 @@
 uint8 radar_info
+uint8 double_vulnerability_chances
+bool enemy_in_double_vulnerability
+uint8 own_encryption_level
+bool can_modify_key

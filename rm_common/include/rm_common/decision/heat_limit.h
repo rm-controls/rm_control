@@ -253,7 +253,7 @@ private:
   bool referee_is_online_, use_local_heat_, last_shoot_state_{};
   int shooter_cooling_limit_, shooter_cooling_rate_, shooter_cooling_heat_;
   double local_shooter_cooling_heat_{}, heat_protect_threshold_{};
-  double buff_shoot_frequency_{},buff_offset_{0.0};
+  double buff_shoot_frequency_{},buff_offset_{};
   int once_shoot_num_{};
   bool referee_status_change_{};
 

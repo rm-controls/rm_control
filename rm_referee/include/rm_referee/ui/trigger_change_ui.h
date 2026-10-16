@@ -78,6 +78,25 @@ private:
   double mode_change_threshold_;
 };
 
+class HeroLegTriggerChangeUi : public TriggerChangeUi
+{
+public:
+  explicit HeroLegTriggerChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                  std::deque<Graph>* character_queue)
+    : TriggerChangeUi(rpc_value, base, "hero_leg_mode", graph_queue, character_queue)
+  {
+    graph_->setContent("DOWN");
+    graph_->setColor(rm_referee::GraphColor::YELLOW);
+  }
+  void updateMode(uint8_t mode);
+
+private:
+  void update() override;
+  void updateConfig(uint8_t main_mode, bool main_flag, uint8_t sub_mode = 0, bool sub_flag = false) override;
+  std::string getHeroLegState(uint8_t mode);
+  uint8_t leg_mode_;
+};
+
 class ShooterTriggerChangeUi : public TriggerChangeUi
 {
 public:

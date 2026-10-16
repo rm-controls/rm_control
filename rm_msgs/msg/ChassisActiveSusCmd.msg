@@ -4,3 +4,4 @@ uint8 UP = 2
 
 time stamp
 uint8 mode
+int32 feedforward_countdown

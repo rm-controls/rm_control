@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
         FILES
         ActuatorState.msg
+        AssemblyErrorData.msg
         BalanceState.msg
         BulletSolverData.msg
         BusState.msg
@@ -20,6 +21,7 @@ add_message_files(
         ExchangerMsg.msg
         ChassisActiveSusCmd.msg
         ChassisCmd.msg
+        DebugData.msg
         ShootCmd.msg
         ShootState.msg
         ShootBeforehandCmd.msg
@@ -47,6 +49,7 @@ add_message_files(
         CustomControllerData.msg
         VTKeyboardMouseData.msg
         VTReceiverControlData.msg
+        VideoPacket.msg
 )
 
 add_service_files(

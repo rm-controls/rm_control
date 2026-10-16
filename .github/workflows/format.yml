@@ -15,8 +15,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
-      - name: Install clang-format
-        run: |
-          sudo apt update
-          sudo apt install clang-format
       - uses: pre-commit/action@v3.0.0

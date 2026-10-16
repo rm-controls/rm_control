@@ -51,7 +51,7 @@ public:
   void display(const ros::Time& time, bool state, bool once = false);
   void pack(uint8_t* tx_buffer, uint8_t* data, int cmd_id, int len) const;
 
-  uint8_t tx_buffer_[127];
+  uint8_t tx_buffer_[128];
   int tx_len_;
 
 protected:
