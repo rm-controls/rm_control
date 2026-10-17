@@ -39,6 +39,7 @@ add_message_files(
         LocalHeatState.msg
         KalmanData.msg
         MovingAverageData.msg
+        MPCGimbalAimCmd.msg
         GpioData.msg
         TofRadarData.msg
         MultiDofCmd.msg

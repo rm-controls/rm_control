@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include <std_msgs/Bool.h>
 #include "rm_referee/ui/ui_base.h"
 
 #include <rm_msgs/LeggedChassisStatus.h>
@@ -335,7 +335,18 @@ private:
   void updateConfig() override;
   double target_distance_;
 };
+class EnemyColorTimeChangeUi : public TimeChangeUi
+{
+public:
+  explicit EnemyColorTimeChangeUi(XmlRpc::XmlRpcValue& rpc_value, Base& base, std::deque<Graph>* graph_queue,
+                                  std::deque<Graph>* character_queue)
+    : TimeChangeUi(rpc_value, base, "enemy_color", graph_queue, character_queue){};
+  void updateEnemyColorData(const std_msgs::Bool::ConstPtr& data);
 
+private:
+  void updateConfig() override;
+  int enemy_color_{};
+};
 class DeployDistanceTimeChangeUi : public TimeChangeUi
 {
 public:
