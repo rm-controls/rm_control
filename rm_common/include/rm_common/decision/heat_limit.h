@@ -210,7 +210,7 @@ public:
 
   void flyTimeCB(const std_msgs::Float64ConstPtr& msg)
   {
-    buff_shoot_frequency_ = 1 / (msg->data + buff_offset);
+    buff_shoot_frequency_ = 1 / (msg->data + buff_offset_);
   }
 
 private:
