@@ -619,7 +619,6 @@ void DeployDistanceTimeChangeUi::updateDeployDistanceData(const geometry_msgs::P
   updateForQueue();
 }
 
-
 void DeployDistanceTimeChangeUi::updateConfig()
 {
   char buffer[32];
