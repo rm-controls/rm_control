@@ -619,11 +619,6 @@ void DeployDistanceTimeChangeUi::updateDeployDistanceData(const geometry_msgs::P
   updateForQueue();
 }
 
-void DeployDistanceTimeChangeUi::updateDeployDistanceData(const geometry_msgs::PointConstPtr& data)
-{
-  deploy_distance_ = sqrt(data->x * data->x + data->y * data->y);
-  updateForQueue();
-}
 
 void DeployDistanceTimeChangeUi::updateConfig()
 {
