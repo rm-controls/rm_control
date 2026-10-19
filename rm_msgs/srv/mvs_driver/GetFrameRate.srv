@@ -1,0 +1,34 @@
+# Live frame-rate read-out of one instance (see docs_ai/usage.md 5.1).
+#
+# Why a service and not 'rostopic hz': hz averages over the whole subscription, so it needs seconds
+# to converge and keeps reporting the old value for a while after a change, and it makes the caller
+# deserialize every frame. This service reads counters the driver already keeps, so one call answers:
+#   fps               = raw frames in the newest <= 0.3 s window (follows a change within ~0.2 s)
+#   fps_1s            = raw frames of the last finished 1 Hz interval (the number in the 1 Hz log)
+#   fps_compressed_1s = compressed frames published in that same interval
+# Calling it while nothing streams is a valid answer too (success=false / growing frame_age): that is
+# how a stalled camera is told apart from a stalled subscriber.
+#
+# Request: empty. This service takes no arguments, so 'rosservice call /<instance>/get_frame_rate'
+# works as it is written: there is no 'count' to pass and nothing a client could leave unset.
+# Besides answering, every call prints exactly one line with the same numbers to the node log /
+# rosout, so one call leaves one line behind and ten calls leave ten ("one call = one line", see
+# docs_ai/usage.md 5.1.1). That line names its instance in the text ('hk_camera: frame rate report ...'),
+# which is what tells two instances of the same manager apart in a shared log (rosconsole only knows
+# the manager process - docs_ai/known_issues.md D4). The call itself stays non-blocking: it reads only
+# counters the driver already keeps and never touches the camera device (the one lock it can take is
+# a microsecond-sized read of the compressed queue length). The line adds no thread, no timer tick and
+# no lock either - it is printed from this very callback, from exactly the values answered below.
+
+---
+bool success                # false = no frame at all since startup (camera not opened / not grabbing)
+string message              # human readable status, e.g. "no frame for 2.4s (stream stalled?)"
+float64 fps                 # raw frames/s over the newest 'window' seconds
+float64 window              # length of that window in seconds (0 = time for one sample only)
+float64 fps_1s              # raw frames/s of the last finished 1 Hz interval
+float64 fps_compressed_1s   # image_raw/compressed frames/s of that same interval
+float64 frame_age           # seconds since the newest frame (-1 = no frame since startup)
+uint64 frames               # raw frames received since startup
+uint32 queue                # frames waiting for the JPEG worker right now
+uint32 dropped_1s           # compressed frames given up (queue full) in the last finished interval
+uint32 skipped_1s           # frames not compressed because of compress_fps, same interval
