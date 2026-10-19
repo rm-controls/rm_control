@@ -1,0 +1,34 @@
+# Manual-exposure preset switch of one instance (see docs_ai/usage.md 5.10).
+#
+# Why a service and not dynamic_reconfigure: the windmill case has to switch the exposure of a
+# running camera in one call, without every caller having to know the target value, and the switch
+# has to survive a reconnect. The presets themselves stay in the yaml block of the instance
+# (exposure_value / exposure_windmill_value), so a field site stays configurable per camera.
+# All this service writes is ExposureTime - one field of ExposureParams per preset. ExposureAuto and
+# the auto range stay as configured, so under exposure_auto=true the written value has no effect and
+# the read-back in the response is what counts.
+#
+# Request: exactly one field, the preset to activate.
+#   NORMAL   (0) = ExposureTime = exposure_value of the yaml block
+#   WINDMILL (1) = ExposureTime = exposure_windmill_value
+# Extending the table is one yaml key plus one 'case' in MvsDriverNode::OnExposureStatusSwitch() plus
+# one constant here: the field stays a single int32, so existing callers keep working.
+#
+# Contrary to get_frame_rate the request HAS a field, so 'rosservice call' needs it (the terminal
+# client is what demands it - docs_ai/usage.md 5.1.1):
+#   rosservice call /<instance>/exposure_status_switch "target: 1"
+#
+# The write runs on the device lock (CameraDevice::WithHandle()) and the response carries the value
+# the camera really holds afterwards: the camera clamps out-of-range requests instead of failing
+# them, so 'requested_us' alone would not tell what is in effect. Without an open camera the call
+# still answers (success=false) instead of throwing or hanging, which is how a caller tells "preset
+# applied" from "there is no camera".
+
+int32 target                # preset to activate: NORMAL (0) or WINDMILL (1)
+int32 NORMAL = 0            # ExposureTime = exposure_value of the yaml block
+int32 WINDMILL = 1          # ExposureTime = exposure_windmill_value
+---
+bool success                # false = no camera handle (not open / not grabbing) or the write failed
+string message              # human readable status: preset name plus what the camera holds now
+float64 requested_us        # exposure (us) this call asked for (-1 = unknown target, nothing written)
+float64 exposure_us         # ExposureTime read back from the camera (-1 = no camera / unreadable)

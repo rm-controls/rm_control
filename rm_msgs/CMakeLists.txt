@@ -64,6 +64,13 @@ add_service_files(
         ShooterSpeed.srv
 )
 
+add_service_files(
+        DIRECTORY srv/mvs_driver
+        FILES
+        GetFrameRate.srv
+        ExposureStatusSwitch.srv
+)
+
 add_message_files(
         DIRECTORY msg/detection
         FILES
