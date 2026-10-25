@@ -1,0 +1,14 @@
+---
+bool success                
+string message              
+string mode                 
+string state                
+bool event_registered       
+uint64 event_count          
+float64 event_rate_hz       
+float64 event_age_ms        
+float64 window_sec          
+float64 slope_ppm           
+float64 floor_us            
+float64 residual_sd_us      
+uint64 ring_dropped         
