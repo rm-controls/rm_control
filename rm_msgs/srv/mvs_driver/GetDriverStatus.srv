@@ -1,0 +1,11 @@
+---
+bool success                
+string message              
+float64 fps                 
+float64 fps_1s              
+float64 frame_age_ms        
+float64 delay_ms            
+uint64 aligned_stamp_ns     
+uint64 now_ns               
+string timestamp_mode       
+string timestamp_state      
