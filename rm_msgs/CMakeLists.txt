@@ -62,10 +62,10 @@ add_service_files(
         EnableGyro.srv
         ExtraFrictionWheelSpeed.srv
         ShooterSpeed.srv
-        ExposureStatus.srv
-        GetDriverStatus.srv
-        GetFrameRate.srv
-        GetTimestampStatus.srv
+        mvs_driver/ExposureStatusSwitch.srv
+        mvs_driver/GetDriverStatus.srv
+        mvs_driver/GetFrameRate.srv
+        mvs_driver/GetTimestampStatus.srv
 )
 
 add_message_files(
