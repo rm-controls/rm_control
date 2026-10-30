@@ -2,7 +2,7 @@ int32 target
 int32 NORMAL = 0
 int32 WINDMILL = 1
 ---
-bool success                
-string message              
-float64 requested_us        
-float64 exposure_us         
+bool success
+string message
+float64 requested_us
+float64 exposure_us
