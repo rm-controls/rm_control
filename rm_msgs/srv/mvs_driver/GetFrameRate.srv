@@ -1,12 +1,12 @@
 ---
-bool success                
-string message              
-float64 fps                 
-float64 window              
-float64 fps_1s              
-float64 fps_compressed_1s   
-float64 frame_age           
-uint64 frames               
-uint32 queue                
-uint32 dropped_1s           
-uint32 skipped_1s           
+bool success
+string message
+float64 fps
+float64 window
+float64 fps_1s
+float64 fps_compressed_1s
+float64 frame_age
+uint64 frames
+uint32 queue
+uint32 dropped_1s
+uint32 skipped_1s
