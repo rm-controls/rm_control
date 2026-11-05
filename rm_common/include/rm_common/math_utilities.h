@@ -76,3 +76,13 @@ T alpha(T cutoff, double freq)
   T te = 1.0 / freq;
   return 1.0 / (1.0 + tau / te);
 }
+
+template <typename T>
+T limit(T val, T min, T max)
+{
+  if (val > max)
+    return max;
+  if (val < min)
+    return min;
+  return val;
+}
