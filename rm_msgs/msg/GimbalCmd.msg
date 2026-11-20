@@ -2,6 +2,7 @@ uint8 RATE = 0
 uint8 TRACK = 1
 uint8 DIRECT = 2
 uint8 TRAJ = 3
+uint8 RAW = 4
 
 time stamp
 uint8 mode
@@ -20,3 +21,8 @@ geometry_msgs/PointStamped target_pos
 float64 traj_yaw
 float64 traj_pitch
 string traj_frame_id
+
+#RAW
+float64 raw_pitch_pos
+float64 raw_yaw_pos
+float64 raw_base_yaw_pos
